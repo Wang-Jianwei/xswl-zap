@@ -898,15 +898,17 @@ flowchart TD
 
 | 编排模式 | 说明 | 适用场景 |
 |---------|------|---------|
-| **硬件同步并行** | PXI 背板触发，所有 PXI 板卡同时采集 | 纯 PXI 拓扑 |
-| **软件触发协调** | 通过 VISA 命令序列触发 USB/LAN 设备 | 包含 VISA 设备的拓扑 |
-| **混合同步** | PXI 组内硬件同步，组间软件触发 | PXI + VISA 混合拓扑 |
+| **硬件同步并行** | PXI 背板/外部硬件触发，所有 PXI 板卡同时采集 | 纯 PXI 拓扑 |
+| **软件触发协调** | 通过 VISA 命令序列触发 USB/LAN 设备；部分 PXI 也可按板卡能力使用软件触发 | 包含 VISA 设备或支持软件触发的 PXI |
+| **混合同步** | PXI 组内硬件或软件触发，组间软件触发 | PXI + VISA 混合拓扑 |
 | **实例级联** | 调用子实例的 measure() 接口，逻辑组合结果 | 包含嵌套实例的拓扑 |
 | **时序级联** | Master 先采，Slave 根据 Master 结果触发 | 特殊 de-embedding 流程 |
 
+**注**：PXI 设备是否支持软件触发取决于板卡设计；**主从角色由用户在拓扑配置中指定**，TopologyManager 负责能力校验与冲突检测。
+
 #### 5.3.1 串联触发链（Trigger / PLL / 10MHz Ref Chain）
 
-本节描述一种常见的级联测试方案：将各板卡的触发线、PLL / 10MHz 参考按序串联或背板分发，启动扫描时先确认从卡已就绪并锁定时钟，然后由主卡发起触发，利用前级输出驱动下一级板卡启动扫描，完成一次完整扫描帧。
+本节描述一种常见的级联测试方案：将各板卡的触发线、PLL / 10MHz 参考按序串联或背板分发。主从角色**由用户在拓扑配置中指定**，启动扫描时先确认从卡已就绪并锁定时钟，然后由主卡发起触发，利用前级输出驱动下一级板卡启动扫描，完成一次完整扫描帧。若板卡支持软件触发，可在该流程中替换触发链的部分节点。
 
 ```mermaid
 sequenceDiagram
@@ -959,6 +961,144 @@ sequenceDiagram
 - 在 `TopologyManager.validateTopology()` 增加触发链完整性校验（检查 TrigOut->TrigIn 连通性）。
 - 在 `HardwareCoordinator` 提供 `ensurePllLocked()`、`arm()`、`startScan()`、`getTriggerPropagationDelay()` 等接口，并在采集前做延迟测量（可通过回环测试或自检帧）。
 - 记录触发 propagation delay 与 jitter 指标到诊断日志，供后续时间戳对齐与质量评估。
+
+#### 5.3.2 主从角色配置示例
+
+主从角色由用户在拓扑配置中显式指定，TopologyManager 负责校验板卡能力与触发链完整性。以下是三种典型场景的配置示例。
+
+**场景 1：纯硬件触发链（PXI 背板触发）**
+
+```yaml
+topology:
+  nodes:
+    - id: pxi_master
+      type: pxi_boards
+      board_id: 0
+      role: master              # 用户指定主卡
+      ref_clock: 10MHz
+      trigger_mode: hardware    # 板卡支持硬件触发
+      trigger_output: PXI_TRIG0
+      
+    - id: pxi_slave_1
+      type: pxi_boards
+      board_id: 1
+      role: slave               # 用户指定从卡
+      trigger_mode: hardware
+      trigger_input: PXI_TRIG0  # 连接到主卡触发线
+      trigger_output: PXI_TRIG1 # 级联到下一级
+      
+    - id: pxi_slave_2
+      type: pxi_boards
+      board_id: 2
+      role: slave
+      trigger_mode: hardware
+      trigger_input: PXI_TRIG1  # 从上一级接收触发
+
+  sync_strategy:
+    type: hardware_chain
+    master: pxi_master
+    propagation_delay_ns: 50   # 预估延迟
+```
+
+**场景 2：混合触发（PXI 主卡 + 软件触发从卡）**
+
+```yaml
+topology:
+  nodes:
+    - id: pxi_master
+      type: pxi_boards
+      board_id: 0
+      role: master
+      trigger_mode: hardware
+      ref_clock: 10MHz
+      
+    - id: pxi_slave_sw
+      type: pxi_boards
+      board_id: 1
+      role: slave
+      trigger_mode: software    # 该板卡支持软件触发
+      # 无 trigger_input/output 配置
+      
+  sync_strategy:
+    type: mixed
+    master: pxi_master
+    software_trigger_delay_ms: 5  # 软件触发延迟补偿
+```
+
+**场景 3：全软件触发（用户指定主从仅用于逻辑顺序）**
+
+```yaml
+topology:
+  nodes:
+    - id: pxi_coordinator
+      type: pxi_boards
+      board_id: 0
+      role: master              # 逻辑主卡（非触发主）
+      trigger_mode: software
+      
+    - id: pxi_worker_1
+      type: pxi_boards
+      board_id: 1
+      role: slave
+      trigger_mode: software
+      
+    - id: pxi_worker_2
+      type: pxi_boards
+      board_id: 2
+      role: slave
+      trigger_mode: software
+      
+  sync_strategy:
+    type: software_coordinated
+    coordinator: pxi_coordinator
+    trigger_sequence: [pxi_worker_1, pxi_worker_2, pxi_coordinator]
+```
+
+**主从关系可视化（Mermaid）**
+
+```mermaid
+graph LR
+    subgraph Scene1["场景1: 硬件触发链"]
+        M1["Master<br/>Board 0<br/>HW Trigger"]
+        S1["Slave 1<br/>Board 1<br/>HW Trigger"]
+        S2["Slave 2<br/>Board 2<br/>HW Trigger"]
+        
+        M1 -->|PXI_TRIG0| S1
+        S1 -->|PXI_TRIG1| S2
+    end
+    
+    subgraph Scene2["场景2: 混合触发"]
+        M2["Master<br/>Board 0<br/>HW Trigger"]
+        S3["Slave<br/>Board 1<br/>SW Trigger"]
+        
+        M2 -.->|软件协调| S3
+    end
+    
+    subgraph Scene3["场景3: 全软件触发"]
+        C["Coordinator<br/>Board 0<br/>SW"]
+        W1["Worker 1<br/>Board 1<br/>SW"]
+        W2["Worker 2<br/>Board 2<br/>SW"]
+        
+        C -.->|命令序列| W1
+        C -.->|命令序列| W2
+    end
+    
+    style M1 fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px
+    style M2 fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px
+    style C fill:#C8E6C9,stroke:#2E7D32,stroke-width:2px
+    style S1 fill:#E1BEE7,stroke:#7B1FA2
+    style S2 fill:#E1BEE7,stroke:#7B1FA2
+    style S3 fill:#FFE0B2,stroke:#EF6C00
+    style W1 fill:#FFE0B2,stroke:#EF6C00
+    style W2 fill:#FFE0B2,stroke:#EF6C00
+```
+
+**拓扑验证规则（TopologyManager）**
+
+- 主卡必须存在且唯一（每个拓扑仅一个 `role: master`）。
+- 硬件触发链：验证 `trigger_output` → `trigger_input` 连通性与无环。
+- 板卡能力检查：若配置 `trigger_mode: hardware` 但板卡不支持，则拒绝并提示。
+- 软件触发回退：若硬件触发不可用，自动建议切换为软件触发（需用户确认）。
 
 ---
 
