@@ -15,6 +15,10 @@
 
 > 说明：该策略仅适用于“未正式发布阶段”。进入 GA（正式发布）后，接口演进需切换为兼容优先策略。
 
+### 1.1 本机环境约束（开发/CI）
+
+- **可执行文件命名**：当前环境要求所有编译生成的 `.exe` 必须以 `easy` 开头才能运行；因此本项目新增可执行目标时必须设置 `OUTPUT_NAME` 为 `easy_*`。
+
 关联文档：
 - `vna/ai-engineering-framework.md`
 - `vna/framework.md`
@@ -184,9 +188,10 @@ WU-<ID>: <Title>
 
 ## 8. 近期执行清单（未来 2 周）
 
+- [x] 完成 `VnaControlService` 拓扑结构化错误返回（便于后续 RPC 错误映射）
 - [ ] 建立 `docs/specs`、`docs/adr` 目录与模板
-- [ ] 完成 `proto/vna.proto` v0
-- [ ] 生成 C++/TS stub 并纳入构建
+- [x] 完成 `proto/vna.proto` v0（含 `ValidationResult.error_details` 结构化错误）
+- [x] 生成 C++/TS stub 并纳入构建（`scripts/generate_proto.ps1` + `vna_generate_proto`）
 - [ ] 完成 mock service 与最小联调
 - [ ] 完成 `HardwareDriver` 与 2 个 mock driver
 - [ ] 提交首批核心单测与 CI 门禁

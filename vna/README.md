@@ -132,6 +132,38 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
   - 使用 CTest 配合 GoogleTest 或 Catch2 进行单元/集成测试。
   - 在 CI 中搭建 MinGW/ GCC/Clang 的构建矩阵，并使用虚拟仪器进行集成测试。
 
+## TypeScript Stub 最小示例
+
+- 已生成文件：`generated/ts/vna.ts`
+- 主要类型：`Topology`、`ValidationResult`、`TopologyErrorDetail`
+
+```ts
+import { Topology, ValidationResult } from "./generated/ts/vna";
+
+const topology: Topology = {
+   id: "t0",
+   yaml: "instances:\n  - id: inst0\n    driver: pxi\n    device: pxi-mock-0\n    resource: dev0\n",
+};
+
+function handleValidation(result: ValidationResult): void {
+   if (result.ok) {
+      console.log("topology valid");
+      return;
+   }
+
+   for (const detail of result.errorDetails) {
+      console.error(`[${detail.code}] ${detail.field}: ${detail.message}`);
+   }
+}
+```
+
+生成命令（Windows PowerShell）：
+
+```powershell
+$env:PATH = "C:\protoc\bin;C:\msys64\mingw64\bin;C:\Program Files\nodejs;C:\Users\Administrator\AppData\Roaming\npm;" + $env:PATH
+.\scripts\generate_proto.ps1
+```
+
 ---
 
 ## 后续步骤 ✅

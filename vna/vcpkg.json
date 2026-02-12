@@ -1,0 +1,10 @@
+{
+  "name": "xswl-zap-vna",
+  "version": "0.1.0",
+  "buildsystems": ["cmake"],
+  "dependencies": [
+    "protobuf",
+    "grpc"
+  ]
+}
+
