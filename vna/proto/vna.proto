@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package vna;
+
+message Topology {
+  string id = 1;
+  string yaml = 2;
+}
+
+message ValidationResult {
+  bool ok = 1;
+  repeated string errors = 2;
+  repeated TopologyErrorDetail error_details = 3;
+}
+
+message TopologyErrorDetail {
+  string code = 1;
+  string field = 2;
+  string message = 3;
+}
+
+enum ExcitationMode {
+  EXCITATION_MODE_UNSPECIFIED = 0;
+  EXCITATION_MODE_CW = 1;
+  EXCITATION_MODE_PULSE = 2;
+}
+
+message CwExcitation {
+  double frequency_hz = 1;
+  double power_dbm = 2;
+  uint32 dwell_time_ms = 3;
+}
+
+message PulseExcitation {
+  double center_frequency_hz = 1;
+  uint32 pulse_width_ns = 2;
+  uint32 pulse_period_ns = 3;
+  double power_dbm = 4;
+  uint32 rise_time_ns = 5;
+}
+
+message ExcitationConfig {
+  ExcitationMode mode = 1;
+  uint32 settling_time_ms = 2;
+  bool enable_auto_trigger = 3;
+
+  oneof detail {
+    CwExcitation cw = 10;
+    PulseExcitation pulse = 11;
+  }
+}
+
+message AcquisitionRequest {
+  string instance_id = 1;
+  ExcitationConfig excitation = 2;
+  uint32 sample_count = 3;
+  uint32 timeout_ms = 4;
+}
+
+message FrequencyDomainPoint {
+  double frequency_hz = 1;
+  double real = 2;
+  double imag = 3;
+}
+
+message TimeDomainPoint {
+  double time_ns = 1;
+  double magnitude = 2;
+  double phase = 3;
+}
+
+message AcquisitionResult {
+  string instance_id = 1;
+  uint64 timestamp_ns = 2;
+
+  oneof data {
+    FrequencyDomainFrame frequency_frame = 10;
+    TimeDomainFrame time_frame = 11;
+  }
+}
+
+message FrequencyDomainFrame {
+  repeated FrequencyDomainPoint points = 1;
+}
+
+message TimeDomainFrame {
+  repeated TimeDomainPoint points = 1;
+  double sample_rate_ghz = 2;
+}
+
+message ResourceRequest {
+  string resource_id = 1;
+  string workspace_id = 2;
+  bool exclusive = 3;
+  uint32 timeout_ms = 4;
+}
+
+message LeaseInfo {
+  string lease_id = 1;
+  string resource_id = 2;
+  uint32 ttl_seconds = 3;
+}
+
+service VnaControl {
+  rpc ValidateTopology(Topology) returns (ValidationResult);
+  rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
+  rpc StreamAcquisition(AcquisitionRequest) returns (stream AcquisitionResult);
+}
+
+service ResourceBroker {
+  rpc Acquire(ResourceRequest) returns (LeaseInfo);
+  rpc Renew(LeaseInfo) returns (ValidationResult);
+  rpc Release(LeaseInfo) returns (ValidationResult);
+}
