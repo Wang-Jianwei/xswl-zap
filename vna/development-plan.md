@@ -202,12 +202,15 @@ WU-<ID>: <Title>
 - [x] 完成最小 gRPC client smoke（`easy_grpc_client_smoke`，验证 `GetServiceStatus/ValidateTopology` 端到端 unary）
 - [x] 完成 `Acquire` unary gRPC 适配与 smoke 验证（`inst0` 默认实例）
 - [x] 完成 `StreamAcquisition` 持续 server-streaming（直到客户端取消）与 stream smoke 验证
-- [ ] 建立 `docs/specs`、`docs/adr` 目录与模板
+- [x] 完成 `StreamAcquisition` 节流参数配置化（`service.yaml`：`stream_throttle_every_n_frames`/`stream_throttle_ms`）
+- [x] 完成 gRPC 节流矩阵 smoke 脚本（自动切换配置并执行 unary + stream 回归）
+- [x] 建立 `docs/specs`、`docs/adr` 目录与模板
 - [x] 完成 `proto/vna.proto` v0（含 `ValidationResult.error_details` 结构化错误）
 - [x] 生成 C++/TS stub 并纳入构建（`scripts/generate_proto.ps1` + `vna_generate_proto`）
-- [ ] 完成 mock service 与最小联调
-- [ ] 完成 `HardwareDriver` 与 2 个 mock driver
-- [ ] 提交首批核心单测与 CI 门禁
+- [x] 完成 mock service 与最小联调
+- [x] 完成 `HardwareDriver` 与 2 个 mock driver
+- [x] 提交首批核心单测与 CI 门禁
+- [x] 完成 VS Code 插件 MVP 骨架（命令：`XSWL: Get Service Status` + TypeScript 构建与最小单测）
 
 ---
 

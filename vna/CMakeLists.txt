@@ -231,6 +231,18 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_hardware_driver_factory_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_hardware_driver_factory_test PROPERTIES OUTPUT_NAME "easy_hardware_driver_factory_test")
 
+    add_executable(vna_pxi_driver_test
+        tests/core/pxi_driver_test.cpp
+    )
+    target_link_libraries(vna_pxi_driver_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_pxi_driver_test PROPERTIES OUTPUT_NAME "easy_pxi_driver_test")
+
+    add_executable(vna_usb_vna_driver_test
+        tests/core/usb_vna_driver_test.cpp
+    )
+    target_link_libraries(vna_usb_vna_driver_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_usb_vna_driver_test PROPERTIES OUTPUT_NAME "easy_usb_vna_driver_test")
+
     add_executable(vna_measurement_pipeline_test
         tests/core/measurement_pipeline_test.cpp
     )
@@ -324,6 +336,8 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_time_domain_processor_test COMMAND $<TARGET_FILE:vna_time_domain_processor_test>)
     add_test(NAME vna_trigger_chain_validator_test COMMAND $<TARGET_FILE:vna_trigger_chain_validator_test>)
     add_test(NAME vna_hardware_driver_factory_test COMMAND $<TARGET_FILE:vna_hardware_driver_factory_test>)
+    add_test(NAME vna_pxi_driver_test COMMAND $<TARGET_FILE:vna_pxi_driver_test>)
+    add_test(NAME vna_usb_vna_driver_test COMMAND $<TARGET_FILE:vna_usb_vna_driver_test>)
     add_test(NAME vna_measurement_pipeline_test COMMAND $<TARGET_FILE:vna_measurement_pipeline_test>)
     add_test(NAME vna_topology_manager_test COMMAND $<TARGET_FILE:vna_topology_manager_test>)
     add_test(NAME vna_resource_manager_test COMMAND $<TARGET_FILE:vna_resource_manager_test>)

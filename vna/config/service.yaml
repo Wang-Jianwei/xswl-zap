@@ -1,5 +1,8 @@
-# xswl-zap-vna service defaults (Pre-GA)
+﻿# xswl-zap-vna service defaults (Pre-GA)
 bind_address: 0.0.0.0
 port: 50051
 tls_enabled: false
 log_level: info
+stream_throttle_every_n_frames: 4
+stream_throttle_ms: 10
+

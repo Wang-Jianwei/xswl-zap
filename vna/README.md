@@ -202,6 +202,23 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\build-grpc\easy_grpc_stream_smoke.exe 127.0.0.1:50051 5
 ```
 
+流式节流参数可在 `config/service.yaml` 中配置：
+
+- `stream_throttle_every_n_frames`：每发送 N 帧后触发一次节流休眠。
+- `stream_throttle_ms`：每次节流休眠毫秒数（`0` 表示不休眠）。
+
+一键节流矩阵 smoke（自动切换配置并执行 unary + stream 验证）：
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1
+```
+
+如已完成构建，可跳过重建：
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild
+```
+
 ---
 
 ## 后续步骤 ✅
