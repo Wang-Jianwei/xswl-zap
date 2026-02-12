@@ -65,7 +65,12 @@ int main() {
   statusService.UpdateHealth(processManager.GetHealth());
   statusService.UpdateRuntimeMetrics(controlService.InstanceCount(), controlService.ActiveLeaseCount());
 
-  vna::service::VnaControlGrpcService grpcService(&controlService, &statusService, &inprocHandler);
+  vna::service::VnaControlGrpcService grpcService(
+      &controlService,
+      &statusService,
+      &inprocHandler,
+      config.streamThrottleEveryNFrames,
+      config.streamThrottleMs);
 
   std::vector<std::string> addresses;
   addresses.push_back(config.bindAddress + ":" + std::to_string(config.port));

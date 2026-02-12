@@ -15,7 +15,9 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
  public:
   VnaControlGrpcService(VnaControlService* controlService,
                         ServiceStatusService* statusService,
-                        VnaControlInProcessHandler* inprocHandler);
+                        VnaControlInProcessHandler* inprocHandler,
+                        std::uint32_t streamThrottleEveryNFrames = 4,
+                        std::uint32_t streamThrottleMs = 10);
 
   ::grpc::Status ValidateTopology(::grpc::ServerContext* context,
                                   const ::vna::Topology* request,
@@ -37,6 +39,8 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
   VnaControlService* controlService_;
   ServiceStatusService* statusService_;
   VnaControlInProcessHandler* inprocHandler_;
+  std::uint32_t streamThrottleEveryNFrames_;
+  std::uint32_t streamThrottleMs_;
 };
 
 }  // namespace service

@@ -94,10 +94,14 @@ namespace service {
 
 VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
                                              ServiceStatusService* statusService,
-                                             VnaControlInProcessHandler* inprocHandler)
+                                             VnaControlInProcessHandler* inprocHandler,
+                                             std::uint32_t streamThrottleEveryNFrames,
+                                             std::uint32_t streamThrottleMs)
     : controlService_(controlService),
       statusService_(statusService),
-      inprocHandler_(inprocHandler) {}
+      inprocHandler_(inprocHandler),
+      streamThrottleEveryNFrames_(streamThrottleEveryNFrames),
+      streamThrottleMs_(streamThrottleMs) {}
 
 ::grpc::Status VnaControlGrpcService::ValidateTopology(::grpc::ServerContext* /*context*/,
                                                        const ::vna::Topology* request,
@@ -222,8 +226,10 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     }
 
     ++frameCount;
-    if (frameCount % 4 == 0) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    if (streamThrottleEveryNFrames_ > 0 && streamThrottleMs_ > 0 &&
+        frameCount % static_cast<int>(streamThrottleEveryNFrames_) == 0) {
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<int>(streamThrottleMs_)));
     }
   }
 

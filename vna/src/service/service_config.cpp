@@ -125,6 +125,26 @@ core::Status ServiceConfigLoader::LoadFromFile(const std::string& filePath,
       }
       continue;
     }
+
+    if (key == "stream_throttle_every_n_frames") {
+      std::uint32_t interval = 0;
+      if (!ParseUInt32(value, interval) || interval == 0) {
+        outErrors.push_back("stream_throttle_every_n_frames must be integer in range 1..65535");
+      } else {
+        parsed.streamThrottleEveryNFrames = interval;
+      }
+      continue;
+    }
+
+    if (key == "stream_throttle_ms") {
+      std::uint32_t delayMs = 0;
+      if (!ParseUInt32(value, delayMs)) {
+        outErrors.push_back("stream_throttle_ms must be integer in range 0..65535");
+      } else {
+        parsed.streamThrottleMs = delayMs;
+      }
+      continue;
+    }
   }
 
   if (!outErrors.empty()) {

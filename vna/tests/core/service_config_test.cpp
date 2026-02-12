@@ -17,6 +17,8 @@ int main() {
     assert(cfg.port == 50051);
     assert(!cfg.tlsEnabled);
     assert(cfg.logLevel == "info");
+    assert(cfg.streamThrottleEveryNFrames == 4);
+    assert(cfg.streamThrottleMs == 10);
   }
 
   {
@@ -24,6 +26,8 @@ int main() {
     std::ofstream out(filePath);
     out << "port: abc\n";
     out << "tls_enabled: maybe\n";
+    out << "stream_throttle_every_n_frames: 0\n";
+    out << "stream_throttle_ms: xyz\n";
     out.close();
 
     vna::service::ServiceConfig cfg;
@@ -33,7 +37,7 @@ int main() {
         filePath, cfg, errors);
 
     assert(status == vna::core::Status::kInvalidArgument);
-    assert(errors.size() >= 2);
+    assert(errors.size() >= 4);
   }
 
   return 0;

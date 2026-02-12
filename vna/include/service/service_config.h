@@ -14,6 +14,8 @@ struct ServiceConfig {
   std::uint32_t port = 50051;
   bool tlsEnabled = false;
   std::string logLevel = "info";
+  std::uint32_t streamThrottleEveryNFrames = 4;
+  std::uint32_t streamThrottleMs = 10;
 };
 
 class ServiceConfigLoader {
