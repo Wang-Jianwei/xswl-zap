@@ -43,5 +43,9 @@
 build/
 build-*/
 
+# Node modules (ignore)
+node_modules/
+**/node_modules/
+
 # VNA subproject build folders
 vna/build*/
