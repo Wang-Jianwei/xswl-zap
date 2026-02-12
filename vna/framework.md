@@ -1703,3 +1703,19 @@ flowchart TD
 ---
 
 继续：我可以将这些接口草案和示例测试用例转换为具体的 Issue 模板并生成初始实现任务清单。
+
+## 12. 架构优化摘要（参考：architecture-optimization-plan.md）
+
+为完整支持 VNA 的高级功能（TDR、功率特性、X 参数、材料与毫米波），已制定详细的架构优化计划，关键改动如下：
+
+- **时域数据路径**：新增 `ExcitationConfig` / `AcquisitionResult`，MeasurementPipeline 支持 CW/ Pulse 两种激励模式并新增 `TimeDomainProcessor` 分支。
+- **硬件驱动抽象**：引入 `HardwareDriver` 基类与驱动工厂（PXI / USB / GPIB 驱动实现示例），支持能力查询与可插拔驱动加载。
+- **触发链验证**：新增 `TriggerChainValidator`，用于拓扑层面的触发对齐能力验证与运行时监测/校准延迟。
+- **Plugin 标准化**：定义 `MeasurementPlugin` / `ProcessPlugin` / `LoopPlugin` / `CalibrationPlugin` 基类，支持依赖解析、性能监控与插件链式调用。
+- **并行采集与流式缓冲**：新增 `ParallelAcquisitionScheduler` 与 `StreamingDataBuffer`，以支持多板卡并行采集和高吞吐流式处理。
+- **多层扫描与中断**：实现 `HierarchicalSweepExecutor` 与 `LoopPlugin`，支持嵌套扫描、进度回调与中断（CancellationToken）。
+- **外设驱动框架**：定义 `NoiseSourceDriver` / `ProbeStationDriver` / `TemperatureControllerDriver` 等接口供外部设备接入。
+
+这些改动均以**接口向后兼容、增量实现**为原则，预计在 P0-P2 阶段完成（详见 `architecture-optimization-plan.md`）。
+
+**下一步**：把 P0（接口与 Mock 支持）、时域路径、硬件驱动框架列为优先任务并创建对应 issue/branch。

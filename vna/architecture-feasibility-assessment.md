@@ -716,16 +716,13 @@ flowchart LR
 
 #### 短期（现在-3 个月）
 
-1. **确认硬件能力**：与 PXI 卡/USB VNA 厂商明确支持列表
-   - 脉冲激励能力？
-   - 多频源支持？
-   - 同步精度？
-   
-2. **完成 Proto + Mock Service**：让前端并行开发
-   
-3. **建立多实例测试基准**：2 个实例、3 个实例、4+ 个实例的延迟/稳定性
-   
-4. **设计时域数据路径**：不等硬件，先定义接口
+1. **确认硬件能力（本周）**：与 PXI 卡 / USB VNA / 探针台厂商明确支持项（脉冲激励、多频源、PXI 同步精度、ENR 噪声源、温控），并把结果记录到 Hardware Compatibility Matrix 中。
+
+2. **启动 P0 实施（立即）**：按 `architecture-optimization-plan.md` 执行 Phase 0 工作，包括：扩展 `proto/vna.proto`（时域/激励消息）、实现 mock server 的时域响应、实现 `HardwareDriver` 基类与 PXI/USB mock 驱动、以及 TimeDomainProcessor 的基础实现并加入 CI 集成测试。
+
+3. **建立并行/压力测试基准（2 周）**：定义 2/3/4/8 实例场景，自动化跑测并记录延迟/稳定性基线，以便 Phase 1 的性能优化目标化。
+
+4. **完成设计评审并创建分支（1 周）**：为 P0 创建 `feature/time-domain` 与 `feature/hardware-abstraction` 分支并在 PR 中提交设计文档与测试计划。
 
 #### 中期（3-9 个月）
 

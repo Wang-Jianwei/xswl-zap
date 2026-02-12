@@ -715,4 +715,15 @@ xswl-zap-vna 的差异化优势应该集中在：
 
 ---
 
-*文档版本：v1.1 | 创建日期：2026-02-04 | 补充内容：材料测量、毫米波测量 | 参考：Keysight PNA, Rohde & Schwarz ZVA/ZNA, 毫米波芯片表征标准*
+## 实现依赖与架构映射
+
+下面列出关键功能与架构中对应的模块/接口，便于开发与验证：
+
+- **时域测量 (TDR/TDT)** → **TimeDomainProcessor**, `ExcitationConfig`, `AcquisitionResult`, 硬件需支持脉冲激励
+- **功率扫描 / IP3** → **LoopPlugin** / **ParallelAcquisitionScheduler**, 需要多频源或嵌入 AWG
+- **材料参数 (NRW)** → **MaterialMeasurementPlugin**, **CalibrationDB**（治具元数据）
+- **毫米波 / On-Wafer** → **ProbeStationDriver**, **MMWaveOnWaferStandards**, 需探针台支持与高精度触发
+- **多实例并行与阵列合成** → **ParallelAcquisitionScheduler**, **TriggerChainValidator**, 数据融合模块
+- **高吞吐流式数据** → **StreamingDataBuffer**, 共享内存/mmap 支持（极端场景）
+
+*文档版本：v1.2 | 创建日期：2026-02-04 | 补充说明：实现依赖映射*

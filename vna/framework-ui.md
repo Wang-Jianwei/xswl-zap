@@ -80,6 +80,12 @@ flowchart LR
 - Diagnostics 面板：PLL lock status, trigger delay measurements, CPU/Memory usage, Broker state
 - 支持导出诊断包（zip）用于问题回溯
 
+### 3.8 时域 / 材料 / 毫米波 UI 支持 🔧
+- **TDR / 時域视图**：新增 TDR 控制面板（Pulse Width、PRF、Trigger、采样率），实时时域波形 (time-series) 显示与距离映射视图，支持反射点标注与多重反射检测结果高亮。
+- **材料测量面板**：材料治具选择（OSL/TRL/CPW/同轴探针）、NRW 反演结果（ε', ε'', μ', tanδ）曲线与导出，支持治具去嵌入配置与测量不确定度显示。
+- **毫米波 / On-Wafer 操作面板**：ProbeStation 控制（位置、接触/Lift）、片上标准选择、On-Wafer 校准辅助（pad map）、阵列合成视图（多实例相位/幅度合成、相位中心校正提示）。
+- **流式渲染与进度控制**：所有长任务（功率扫描、Hierarchical Sweep、X-parameter）在 UI 层显示进度条、实时日志与 Cancel 按钮，支持后端的 `ProgressCallback` 与 `CancellationToken` 协议。
+
 ---
 
 ## 4. UX Patterns / Notifications
