@@ -3,6 +3,9 @@
 
 #include "core/built_in_drivers.h"
 #include "core/hardware_driver_factory.h"
+#include "service/process_manager.h"
+#include "service/service_config.h"
+#include "service/service_status_service.h"
 #include "service/vna_control_service.h"
 
 namespace {
@@ -34,10 +37,31 @@ void PrintDriverInfo(const std::string& type, const std::string& id) {
 
 int main() {
   vna::core::RegisterBuiltInDrivers();
+  vna::service::ProcessManager processManager;
+  vna::service::ServiceStatusService statusService;
+  vna::service::ServiceConfig serviceConfig;
+  std::vector<std::string> configErrors;
+
+  const vna::core::Status configStatus =
+      vna::service::ServiceConfigLoader::LoadFromFile("config/service.yaml", serviceConfig, configErrors);
+  if (configStatus != vna::core::Status::kOk) {
+    processManager.SetDegraded("config invalid");
+    std::cout << "service config load failed\n";
+    for (std::size_t i = 0; i < configErrors.size(); ++i) {
+      std::cout << "  - " << configErrors[i] << "\n";
+    }
+    return 1;
+  }
+  statusService.UpdateConfig(serviceConfig);
 
   std::vector<std::string> drivers = vna::core::HardwareDriverFactory::ListRegisteredDrivers();
 
   std::cout << "xswl-zap vna mock server bootstrap\n";
+  std::cout << "config: bind=" << serviceConfig.bindAddress
+            << " port=" << serviceConfig.port
+            << " tls=" << (serviceConfig.tlsEnabled ? "on" : "off")
+            << " log=" << serviceConfig.logLevel
+            << "\n";
   std::cout << "registered driver count: " << drivers.size() << "\n";
   for (std::size_t index = 0; index < drivers.size(); ++index) {
     const std::string& type = drivers[index];
@@ -89,7 +113,18 @@ int main() {
             << " timestampNs=" << result.timestampNs
             << "\n";
 
-  std::cout << "status: ready (mock mode)\n";
+  processManager.SetReady("mock mode");
+  const vna::service::HealthStatus health = processManager.GetHealth();
+  statusService.UpdateHealth(health);
+  statusService.UpdateRuntimeMetrics(service.InstanceCount(), service.ActiveLeaseCount());
+
+  const vna::service::ServiceStatusSnapshot statusSnapshot = statusService.GetStatus();
+  std::cout << "status: " << statusSnapshot.state
+            << " (" << statusSnapshot.message << ")"
+            << " uptimeMs=" << statusSnapshot.uptimeMs
+            << " instances=" << statusSnapshot.instanceCount
+            << " activeLeases=" << statusSnapshot.activeLeaseCount
+            << "\n";
 
   return 0;
 }
