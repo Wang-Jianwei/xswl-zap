@@ -1,0 +1,62 @@
+name: vna-ci
+
+on:
+  push:
+    paths:
+      - '.github/workflows/vna-ci.yml'
+      - 'vna/**'
+  pull_request:
+    paths:
+      - '.github/workflows/vna-ci.yml'
+      - 'vna/**'
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Markdown lint (vna docs)
+        run: npx --yes markdownlint-cli@0.39.0 --config vna/docs/.markdownlint.json "vna/docs/**/*.md"
+
+  build-and-test:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 (MinGW64)
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+
+      - name: Configure
+        working-directory: vna
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+          cmake --preset ninja-mingw
+
+      - name: Build
+        working-directory: vna
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+          cmake --build --preset ninja-mingw
+
+      - name: Easy tests
+        working-directory: vna
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+          .\scripts\run_easy_tests.ps1
