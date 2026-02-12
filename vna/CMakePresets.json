@@ -16,18 +16,42 @@
         "XSWL_BUILD_MOCK_SERVER": "ON",
         "XSWL_BUILD_TESTS": "ON"
       }
+    },
+    {
+      "name": "grpc-mingw64",
+      "displayName": "Ninja + MSYS2 MinGW64 (gRPC adapter)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-grpc",
+      "environment": {
+        "PATH": "C:/msys64/mingw64/bin;$penv{PATH}"
+      },
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe",
+        "XSWL_BUILD_MOCK_SERVER": "OFF",
+        "XSWL_BUILD_TESTS": "OFF",
+        "XSWL_ENABLE_GRPC_CPP_ADAPTER": "ON"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "ninja-mingw",
       "configurePreset": "ninja-mingw"
+    },
+    {
+      "name": "grpc-mingw64",
+      "configurePreset": "grpc-mingw64"
     }
   ],
   "testPresets": [
     {
       "name": "ninja-mingw",
       "configurePreset": "ninja-mingw"
+    },
+    {
+      "name": "grpc-mingw64",
+      "configurePreset": "grpc-mingw64"
     }
   ]
 }

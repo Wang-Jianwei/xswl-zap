@@ -164,6 +164,44 @@ $env:PATH = "C:\protoc\bin;C:\msys64\mingw64\bin;C:\Program Files\nodejs;C:\User
 .\scripts\generate_proto.ps1
 ```
 
+gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
+
+```powershell
+.\scripts\build_grpc_adapter.ps1
+```
+
+说明：该脚本使用 `grpc-mingw64` preset（`build-grpc/`）与 MSYS2 MinGW64 工具链，避免与主线编译器产生版本耦合。
+
+最小 gRPC server 启动（仅 `ValidateTopology` + `GetServiceStatus`）：
+
+```powershell
+.\build-grpc\easy_grpc_server.exe
+```
+
+最小 gRPC client smoke（默认访问 `127.0.0.1:50051`，调用 `GetServiceStatus` + `ValidateTopology` + `Acquire`）：
+
+```powershell
+.\build-grpc\easy_grpc_client_smoke.exe
+```
+
+如需指定地址：
+
+```powershell
+.\build-grpc\easy_grpc_client_smoke.exe 127.0.0.1:50051
+```
+
+最小 gRPC stream smoke（调用 `StreamAcquisition`，默认接收 3 帧后主动取消流，验证持续 server streaming）：
+
+```powershell
+.\build-grpc\easy_grpc_stream_smoke.exe
+```
+
+可选参数：`<endpoint> <maxFrames>`，例如接收 5 帧：
+
+```powershell
+.\build-grpc\easy_grpc_stream_smoke.exe 127.0.0.1:50051 5
+```
+
 ---
 
 ## 后续步骤 ✅

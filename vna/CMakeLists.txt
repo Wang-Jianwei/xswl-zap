@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(XSWL_BUILD_MOCK_SERVER "Build mock backend server" ON)
 option(XSWL_BUILD_TESTS "Build minimal core tests" ON)
 option(XSWL_ENABLE_PROTO_GENERATION "Enable proto C++/gRPC C++ code generation target" OFF)
+option(XSWL_ENABLE_GRPC_CPP_ADAPTER "Enable gRPC C++ adapter compilation (requires grpc/protobuf headers and libs)" OFF)
 
 # Environment constraint (2026-02): built executables must start with "easy" to be runnable.
 # Therefore all add_executable() targets in this subproject set OUTPUT_NAME to an easy_* name.
@@ -41,12 +42,123 @@ target_include_directories(vna_core_bootstrap PUBLIC
 )
 
 add_library(vna_service_bootstrap STATIC
+    src/service/process_manager.cpp
+    src/service/resource_broker_service.cpp
+    src/service/service_config.cpp
+    src/service/service_status_service.cpp
+    src/service/vna_control_inproc_handler.cpp
     src/service/vna_control_service.cpp
 )
 target_link_libraries(vna_service_bootstrap PUBLIC vna_core_bootstrap)
 target_include_directories(vna_service_bootstrap PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+if(XSWL_ENABLE_GRPC_CPP_ADAPTER)
+    find_program(XSWL_PKG_CONFIG_EXECUTABLE
+        NAMES pkg-config pkgconf
+        HINTS C:/msys64/mingw64/bin
+    )
+    if(NOT XSWL_PKG_CONFIG_EXECUTABLE)
+        message(FATAL_ERROR "XSWL_ENABLE_GRPC_CPP_ADAPTER=ON but pkg-config was not found (expected in C:/msys64/mingw64/bin)")
+    endif()
+
+    execute_process(
+        COMMAND ${XSWL_PKG_CONFIG_EXECUTABLE} --libs grpc++
+        OUTPUT_VARIABLE XSWL_GRPCPP_LIBS_RAW
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${XSWL_PKG_CONFIG_EXECUTABLE} --libs protobuf
+        OUTPUT_VARIABLE XSWL_PROTOBUF_LIBS_RAW
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    separate_arguments(XSWL_GRPCPP_LIBS_LIST NATIVE_COMMAND ${XSWL_GRPCPP_LIBS_RAW})
+    separate_arguments(XSWL_PROTOBUF_LIBS_LIST NATIVE_COMMAND ${XSWL_PROTOBUF_LIBS_RAW})
+
+    add_library(vna_grpc_proto_contract STATIC
+        generated/cpp/vna.pb.cc
+        generated/cpp/vna.grpc.pb.cc
+    )
+    set_target_properties(vna_grpc_proto_contract PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_include_directories(vna_grpc_proto_contract PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/generated/cpp
+        C:/msys64/mingw64/include
+    )
+    target_compile_definitions(vna_grpc_proto_contract PUBLIC
+        _WIN32_WINNT=0x0600
+    )
+    target_link_directories(vna_grpc_proto_contract PUBLIC
+        C:/msys64/mingw64/lib
+    )
+    target_link_libraries(vna_grpc_proto_contract PUBLIC
+        ${XSWL_GRPCPP_LIBS_LIST}
+        ${XSWL_PROTOBUF_LIBS_LIST}
+    )
+
+    add_library(vna_grpc_service_adapter STATIC
+        src/service/grpc/vna_control_grpc_service.cpp
+    )
+    set_target_properties(vna_grpc_service_adapter PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_include_directories(vna_grpc_service_adapter PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/generated/cpp
+        C:/msys64/mingw64/include
+    )
+    target_compile_definitions(vna_grpc_service_adapter PUBLIC
+        _WIN32_WINNT=0x0600
+    )
+    target_link_directories(vna_grpc_service_adapter PUBLIC
+        C:/msys64/mingw64/lib
+    )
+    target_link_libraries(vna_grpc_service_adapter PUBLIC
+        vna_service_bootstrap
+        vna_grpc_proto_contract
+    )
+
+    add_executable(vna_grpc_server
+        src/service/grpc/grpc_server_main.cpp
+    )
+    set_target_properties(vna_grpc_server PROPERTIES
+        OUTPUT_NAME "easy_grpc_server"
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_link_libraries(vna_grpc_server PRIVATE vna_grpc_service_adapter)
+
+    add_executable(vna_grpc_client_smoke
+        src/service/grpc/grpc_client_smoke_main.cpp
+    )
+    set_target_properties(vna_grpc_client_smoke PROPERTIES
+        OUTPUT_NAME "easy_grpc_client_smoke"
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_link_libraries(vna_grpc_client_smoke PRIVATE vna_grpc_proto_contract)
+
+    add_executable(vna_grpc_stream_smoke
+        src/service/grpc/grpc_stream_smoke_main.cpp
+    )
+    set_target_properties(vna_grpc_stream_smoke PROPERTIES
+        OUTPUT_NAME "easy_grpc_stream_smoke"
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_link_libraries(vna_grpc_stream_smoke PRIVATE vna_grpc_proto_contract)
+endif()
 
 if(XSWL_ENABLE_PROTO_GENERATION)
     find_program(XSWL_PROTOC_EXECUTABLE protoc)
@@ -173,6 +285,42 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_vna_control_service_test PRIVATE vna_service_bootstrap)
     set_target_properties(vna_vna_control_service_test PROPERTIES OUTPUT_NAME "easy_vna_control_service_test")
 
+    add_executable(vna_resource_broker_service_test
+        tests/core/resource_broker_service_test.cpp
+    )
+    target_link_libraries(vna_resource_broker_service_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_resource_broker_service_test PROPERTIES OUTPUT_NAME "easy_resource_broker_service_test")
+
+    add_executable(vna_process_manager_test
+        tests/core/process_manager_test.cpp
+    )
+    target_link_libraries(vna_process_manager_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_process_manager_test PROPERTIES OUTPUT_NAME "easy_process_manager_test")
+
+    add_executable(vna_service_config_test
+        tests/core/service_config_test.cpp
+    )
+    target_link_libraries(vna_service_config_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_service_config_test PROPERTIES OUTPUT_NAME "easy_service_config_test")
+
+    add_executable(vna_service_flow_integration_test
+        tests/integration/service_flow_integration_test.cpp
+    )
+    target_link_libraries(vna_service_flow_integration_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_service_flow_integration_test PROPERTIES OUTPUT_NAME "easy_service_flow_integration_test")
+
+    add_executable(vna_service_status_service_test
+        tests/core/service_status_service_test.cpp
+    )
+    target_link_libraries(vna_service_status_service_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_service_status_service_test PROPERTIES OUTPUT_NAME "easy_service_status_service_test")
+
+    add_executable(vna_vna_control_inproc_handler_test
+        tests/core/vna_control_inproc_handler_test.cpp
+    )
+    target_link_libraries(vna_vna_control_inproc_handler_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_vna_control_inproc_handler_test PROPERTIES OUTPUT_NAME "easy_vna_control_inproc_handler_test")
+
     add_test(NAME vna_time_domain_processor_test COMMAND $<TARGET_FILE:vna_time_domain_processor_test>)
     add_test(NAME vna_trigger_chain_validator_test COMMAND $<TARGET_FILE:vna_trigger_chain_validator_test>)
     add_test(NAME vna_hardware_driver_factory_test COMMAND $<TARGET_FILE:vna_hardware_driver_factory_test>)
@@ -185,4 +333,10 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_instance_manager_from_topology_test COMMAND $<TARGET_FILE:vna_instance_manager_from_topology_test>)
     add_test(NAME vna_vna_runtime_test COMMAND $<TARGET_FILE:vna_vna_runtime_test>)
     add_test(NAME vna_vna_control_service_test COMMAND $<TARGET_FILE:vna_vna_control_service_test>)
+    add_test(NAME vna_resource_broker_service_test COMMAND $<TARGET_FILE:vna_resource_broker_service_test>)
+    add_test(NAME vna_process_manager_test COMMAND $<TARGET_FILE:vna_process_manager_test>)
+    add_test(NAME vna_service_config_test COMMAND $<TARGET_FILE:vna_service_config_test>)
+    add_test(NAME vna_service_flow_integration_test COMMAND $<TARGET_FILE:vna_service_flow_integration_test>)
+    add_test(NAME vna_service_status_service_test COMMAND $<TARGET_FILE:vna_service_status_service_test>)
+    add_test(NAME vna_vna_control_inproc_handler_test COMMAND $<TARGET_FILE:vna_vna_control_inproc_handler_test>)
 endif()
