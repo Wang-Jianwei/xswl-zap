@@ -24,6 +24,7 @@ namespace vna {
 
 static const char* VnaControl_method_names[] = {
   "/vna.VnaControl/ValidateTopology",
+  "/vna.VnaControl/GetServiceStatus",
   "/vna.VnaControl/Acquire",
   "/vna.VnaControl/StreamAcquisition",
 };
@@ -36,8 +37,9 @@ std::unique_ptr< VnaControl::Stub> VnaControl::NewStub(const std::shared_ptr< ::
 
 VnaControl::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_ValidateTopology_(VnaControl_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Acquire_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StreamAcquisition_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_GetServiceStatus_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Acquire_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StreamAcquisition_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status VnaControl::Stub::ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::vna::ValidationResult* response) {
@@ -59,6 +61,29 @@ void VnaControl::Stub::async::ValidateTopology(::grpc::ClientContext* context, c
 ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::AsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncValidateTopologyRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::GetServiceStatus(::grpc::ClientContext* context, const ::vna::Empty& request, ::vna::ServiceStatus* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::Empty, ::vna::ServiceStatus, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetServiceStatus_, context, request, response);
+}
+
+void VnaControl::Stub::async::GetServiceStatus(::grpc::ClientContext* context, const ::vna::Empty* request, ::vna::ServiceStatus* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::Empty, ::vna::ServiceStatus, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetServiceStatus_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::GetServiceStatus(::grpc::ClientContext* context, const ::vna::Empty* request, ::vna::ServiceStatus* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetServiceStatus_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ServiceStatus>* VnaControl::Stub::PrepareAsyncGetServiceStatusRaw(::grpc::ClientContext* context, const ::vna::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::ServiceStatus, ::vna::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetServiceStatus_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ServiceStatus>* VnaControl::Stub::AsyncGetServiceStatusRaw(::grpc::ClientContext* context, const ::vna::Empty& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetServiceStatusRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -116,6 +141,16 @@ VnaControl::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       VnaControl_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::Empty, ::vna::ServiceStatus, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::Empty* req,
+             ::vna::ServiceStatus* resp) {
+               return service->GetServiceStatus(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
              ::grpc::ServerContext* ctx,
@@ -124,7 +159,7 @@ VnaControl::Service::Service() {
                return service->Acquire(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[2],
+      VnaControl_method_names[3],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
           [](VnaControl::Service* service,
@@ -139,6 +174,13 @@ VnaControl::Service::~Service() {
 }
 
 ::grpc::Status VnaControl::Service::ValidateTopology(::grpc::ServerContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::GetServiceStatus(::grpc::ServerContext* context, const ::vna::Empty* request, ::vna::ServiceStatus* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package vna;
 
+message Empty {}
+
 message Topology {
   string id = 1;
   string yaml = 2;
@@ -101,8 +103,22 @@ message LeaseInfo {
   uint32 ttl_seconds = 3;
 }
 
+message ServiceStatus {
+  bool ready = 1;
+  string state = 2;
+  string message = 3;
+  uint64 uptime_ms = 4;
+  string bind_address = 5;
+  uint32 port = 6;
+  bool tls_enabled = 7;
+  string log_level = 8;
+  uint32 instance_count = 9;
+  uint32 active_lease_count = 10;
+}
+
 service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
+  rpc GetServiceStatus(Empty) returns (ServiceStatus);
   rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
   rpc StreamAcquisition(AcquisitionRequest) returns (stream AcquisitionResult);
 }
