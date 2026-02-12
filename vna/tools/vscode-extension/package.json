@@ -1,0 +1,54 @@
+{
+  "name": "xswl-zap-vna-tools",
+  "displayName": "XSWL ZAP VNA Tools",
+  "description": "MVP VS Code extension for xswl-zap vna backend",
+  "version": "0.0.1",
+  "publisher": "xswl",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "xswlZapVna.getServiceStatus",
+        "title": "XSWL: Get Service Status"
+      }
+    ],
+    "configuration": {
+      "title": "XSWL ZAP VNA",
+      "properties": {
+        "xswlZapVna.grpcAddress": {
+          "type": "string",
+          "default": "127.0.0.1:50051",
+          "description": "VNA gRPC service address"
+        },
+        "xswlZapVna.grpcDeadlineMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 100,
+          "description": "Deadline in milliseconds for gRPC unary calls"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . -w",
+    "test": "npm run build && node ./out/test/statusFormatter.test.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.24",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.7.3",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.1",
+    "@grpc/proto-loader": "^0.8.0"
+  }
+}
