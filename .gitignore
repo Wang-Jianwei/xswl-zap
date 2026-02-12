@@ -47,5 +47,8 @@ build-*/
 node_modules/
 **/node_modules/
 
+# VS Code extension build output
+vna/tools/vscode-extension/out/
+
 # VNA subproject build folders
 vna/build*/
