@@ -437,7 +437,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const primaryTraceId = data.traces[0]?.id ?? "";
   const primaryTrace = data.traces[0];
   const primaryMarkerCopyText = primaryTrace
-    ? `timestampNs=${data.timestampNs} | ${primaryTrace.label} | ${primaryTrace.markers
+    ? `timestampNs=${data.timestampNs} | source=${data.traceSource} | channel=${data.channelIndex} | ${primaryTrace.label} | ${primaryTrace.markers
         .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
         .join("; ")}`
     : "";
@@ -558,9 +558,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="actions">
     <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
-    <span class="shortcut-hint">Ctrl/Cmd + C</span>
+    <span class="shortcut-hint" title="Ctrl/Cmd + C to copy primary marker">Ctrl/Cmd + C</span>
   </div>
-  <div id="copyStatus" class="copy-status"></div>
+  <div id="copyStatus" class="copy-status" aria-live="polite"></div>
   <div class="legend" id="legend">${legendItems}</div>
   <div class="marker" id="markerPanel">${markerRows || "none"}</div>
   ${
@@ -579,6 +579,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const copyButton = document.getElementById("copyPrimaryMarker");
       const copyStatus = document.getElementById("copyStatus");
       let statusTimer = undefined;
+      let lastCopyStartedAt = 0;
+      let buttonResetTimer = undefined;
       const clearCopyStatus = () => {
         if (!(copyStatus instanceof HTMLElement)) {
           return;
@@ -606,6 +608,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const setCopying = () => {
         if (copyButton instanceof HTMLButtonElement) {
           copyButton.disabled = true;
+          copyButton.textContent = "Copying...";
         }
         if (copyStatus instanceof HTMLElement) {
           copyStatus.classList.remove("is-success", "is-error");
@@ -617,6 +620,20 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const finishCopying = () => {
         if (copyButton instanceof HTMLButtonElement && copyButton.getAttribute("data-copy-text")) {
           copyButton.disabled = false;
+          if (buttonResetTimer) {
+            clearTimeout(buttonResetTimer);
+          }
+          buttonResetTimer = setTimeout(() => {
+            if (copyButton instanceof HTMLButtonElement) {
+              copyButton.textContent = "Copy Primary Marker";
+            }
+          }, 1200);
+        }
+      };
+
+      const markCopied = () => {
+        if (copyButton instanceof HTMLButtonElement) {
+          copyButton.textContent = "Copied!";
         }
       };
 
@@ -624,6 +641,11 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         if (!(copyButton instanceof HTMLButtonElement) || copyButton.disabled) {
           return;
         }
+        const now = Date.now();
+        if (now - lastCopyStartedAt < 500) {
+          return;
+        }
+        lastCopyStartedAt = now;
         const copyText = copyButton.getAttribute("data-copy-text") || "";
         if (!copyText) {
           return;
@@ -637,6 +659,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           try {
             await navigator.clipboard.writeText(copyText);
             updateCopyStatus(true, "Primary marker copied.");
+            markCopied();
           } catch (error) {
             updateCopyStatus(false, "Copy failed.");
           } finally {
@@ -672,6 +695,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           return;
         }
         updateCopyStatus(Boolean(payload.ok), String(payload.message || ""));
+        if (Boolean(payload.ok)) {
+          markCopied();
+        }
         finishCopying();
       });
 

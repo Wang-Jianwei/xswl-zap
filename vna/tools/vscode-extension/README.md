@@ -24,6 +24,9 @@
   - 无可复制主曲线时按钮置灰并给出原因提示
   - 复制状态文案附带本地时间戳，按 `Esc` 可立即清除状态提示
   - 复制按钮 tooltip 显示字符数（便于预估粘贴体积）
+  - 复制文本附带 `source/channel` 维度；支持防连点（500ms）
+  - 复制成功时按钮短暂显示 `Copied!`，并恢复默认文案
+  - 状态条使用 `aria-live`，增强可访问性反馈
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

@@ -2408,6 +2408,85 @@ WU-MAINLINE-078: 复制按钮字符数 tooltip
 - Validation result (WU076~078 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.61 已完成 Work Unit
+
+WU-MAINLINE-079: 复制文本附带 source/channel
+
+- Objective: 提升复制结果的上下文完整性。
+- Scope (in/out):
+  - in: 复制文本增加 `source` 与 `channel` 字段。
+  - out: 完整会话上下文导出。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.62 已完成 Work Unit
+
+WU-MAINLINE-080: 复制防连点（500ms）
+
+- Objective: 避免连续触发导致重复复制与状态抖动。
+- Scope (in/out):
+  - in: 增加 500ms 去抖保护。
+  - out: 可配置节流参数。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.63 已完成 Work Unit
+
+WU-MAINLINE-081: 复制成功按钮短态 `Copied!`
+
+- Objective: 提供更直观的按钮级反馈。
+- Scope (in/out):
+  - in: 复制成功后按钮短暂显示 `Copied!`。
+  - out: 多状态动画体系。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.64 已完成 Work Unit
+
+WU-MAINLINE-082: 快捷键提示增强 tooltip
+
+- Objective: 增强快捷键可发现性。
+- Scope (in/out):
+  - in: 快捷键提示追加说明 tooltip。
+  - out: 自定义提示文案。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.65 已完成 Work Unit
+
+WU-MAINLINE-083: 状态反馈可访问性（aria-live）
+
+- Objective: 提升状态消息对辅助技术的可感知性。
+- Scope (in/out):
+  - in: 状态条启用 `aria-live=polite`。
+  - out: 更细粒度可访问性语义。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.66 已完成 Work Unit
+
+WU-MAINLINE-084: 批次收敛与回归保持
+
+- Objective: 将多项简单交互增强以单批方式完成并统一验证。
+- Scope (in/out):
+  - in: 聚合 WU079~084 的代码/测试/文档变更并统一测试。
+  - out: 跨批次依赖调整。
+- Status: ✅ Completed (2026-02-13)
+
+- Files to change (WU079~084):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件前端交互增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复 WU078 状态。
+- Risks: 无关键风险（均为前端提示与交互细化）。
+- Acceptance criteria:
+  - 新增交互文案/防抖/短态/可访问性生效。
+  - 插件测试通过。
+
+- Validation result (WU079~084 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
