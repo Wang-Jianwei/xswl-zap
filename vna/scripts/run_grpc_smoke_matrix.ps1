@@ -240,13 +240,21 @@ try {
       $streamExit = $streamResult.ExitCode
       $unknownStderrCount = $unaryResult.UnknownStderrCount + $streamResult.UnknownStderrCount
       $casePassed = $false
+      $failureReason = "none"
 
       if ($unaryExit -ne 0 -or $streamExit -ne 0) {
         $hasFailure = $true
+        if ($unaryResult.TimedOut -or $streamResult.TimedOut) {
+          $failureReason = "timeout"
+        }
+        else {
+          $failureReason = "exit_code"
+        }
         Write-Host "[MATRIX][FAIL] case=$($case.Name) unary=$unaryExit stream=$streamExit"
       }
       elseif ($FailOnUnknownStderr -and $unknownStderrCount -gt 0) {
         $hasFailure = $true
+        $failureReason = "unknown_stderr"
         Write-Host "[MATRIX][FAIL] case=$($case.Name) unknown_stderr=$unknownStderrCount (strict mode)"
       }
       else {
@@ -265,6 +273,7 @@ try {
         streamTimedOut = $streamResult.TimedOut
         suppressedNoiseCount = $unaryResult.SuppressedCount + $streamResult.SuppressedCount
         unknownStderrCount = $unknownStderrCount
+        failureReason = $failureReason
         passed = $casePassed
       }
     }
@@ -283,12 +292,20 @@ finally {
 if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   $resolvedReportPath = Resolve-ReportPath -PathTemplate $ReportJsonPath
 
+  $failureSummary = [PSCustomObject]@{
+    totalFailedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
+    exitCode = @($matrixResults | Where-Object { $_.failureReason -eq "exit_code" }).Count
+    timeout = @($matrixResults | Where-Object { $_.failureReason -eq "timeout" }).Count
+    unknownStderr = @($matrixResults | Where-Object { $_.failureReason -eq "unknown_stderr" }).Count
+  }
+
   $report = [PSCustomObject]@{
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     strictMode = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
+    failureSummary = $failureSummary
     cases = $matrixResults
   }
 

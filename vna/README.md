@@ -241,6 +241,13 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath .\build-grpc\smoke-matrix-report.json
 ```
 
+报告 JSON 顶层包含 `failureSummary` 分类统计：
+
+- `totalFailedCases`：失败 case 总数
+- `exitCode`：由非 0 退出码导致的失败数
+- `timeout`：由超时导致的失败数
+- `unknownStderr`：严格模式下由未知 stderr 导致的失败数
+
 `ReportJsonPath` 支持时间戳占位符：`{timestamp}` / `{timestampUtc}` / `{timestampLocal}`。
 
 注意：在 PowerShell 中使用占位符时请给路径加引号，避免 `{}` 被表达式语法解析。

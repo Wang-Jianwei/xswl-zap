@@ -602,7 +602,7 @@ WU-MAINLINE-013: smoke 报告路径时间戳占位符
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'` 通过
   - 已生成示例文件：`build-grpc/smoke-matrix-20260213-060232.json`
 
-### 8.13 当前 Work Unit
+### 8.13 已完成 Work Unit
 
 WU-MAINLINE-014: smoke 报告失败原因分类统计
 
@@ -623,6 +623,12 @@ WU-MAINLINE-014: smoke 报告失败原因分类统计
   - 报告新增 `failureSummary`（按类型计数）并保持向后兼容。
   - 默认成功场景统计为 0，失败场景能体现主因分类。
   - 现有矩阵通过/失败判定逻辑不变。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-pass.json'` 通过，`failureSummary` 全 0
+  - 受控失败验证（临时将 `config/service.yaml` 端口改为 `50052` 后执行）：`vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-fail.json'` 返回失败，`failureSummary.exitCode = 3`
+  - 验证后已恢复 `config/service.yaml` 原值
 
 ---
 
