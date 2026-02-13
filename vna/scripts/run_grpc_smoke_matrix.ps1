@@ -303,6 +303,21 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     unknownStderr = @($matrixResults | Where-Object { $_.failureReason -eq "unknown_stderr" }).Count
   }
 
+  $failedCount = [double]$failureSummary.totalFailedCases
+  $caseCount = [double]$matrixResults.Count
+  $failureSummary | Add-Member -NotePropertyName failureRate -NotePropertyValue $(if ($caseCount -gt 0) { [Math]::Round($failedCount / $caseCount, 4) } else { 0.0 })
+  $failureSummary | Add-Member -NotePropertyName exitCodeRate -NotePropertyValue $(if ($caseCount -gt 0) { [Math]::Round(([double]$failureSummary.exitCode) / $caseCount, 4) } else { 0.0 })
+  $failureSummary | Add-Member -NotePropertyName timeoutRate -NotePropertyValue $(if ($caseCount -gt 0) { [Math]::Round(([double]$failureSummary.timeout) / $caseCount, 4) } else { 0.0 })
+  $failureSummary | Add-Member -NotePropertyName unknownStderrRate -NotePropertyValue $(if ($caseCount -gt 0) { [Math]::Round(([double]$failureSummary.unknownStderr) / $caseCount, 4) } else { 0.0 })
+
+  $executionOptions = [PSCustomObject]@{
+    skipBuild = [bool]$SkipBuild
+    failOnUnknownStderr = [bool]$FailOnUnknownStderr
+    smokeTimeoutSec = $SmokeTimeoutSec
+    reportJsonPathTemplate = $ReportJsonPath
+    reportJsonPathResolved = $resolvedReportPath
+  }
+
   $report = [PSCustomObject]@{
     reportVersion = "1.1"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
@@ -312,6 +327,7 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
     failedCaseNames = $failedCaseNames
+    executionOptions = $executionOptions
     failureSummary = $failureSummary
     cases = $matrixResults
   }

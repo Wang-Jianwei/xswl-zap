@@ -690,6 +690,48 @@ WU-MAINLINE-017: smoke 报告增加版本字段
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v11.json'` 通过
   - 报告包含 `reportVersion=1.1`、`durationMs`、`cases[*].durationMs`、`failedCaseNames=[]`
 
+### 8.15 已完成 Work Unit（批量）
+
+WU-MAINLINE-018: failureSummary 增加占比字段
+
+- Objective: 为失败分类提供比例视图，便于趋势分析。
+- Scope (in/out):
+  - in: 增加 `failureRate/exitCodeRate/timeoutRate/unknownStderrRate`。
+  - out: 外部图表分析系统。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增比率字段。
+- Risks: 低样本下比例波动较大，仅用于快速判断。
+- Acceptance criteria:
+  - 报告中包含 4 个比率字段，取值范围 `0.0~1.0`。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-019: 报告增加执行参数快照
+
+- Objective: 记录本次执行关键参数，提升复现与审计能力。
+- Scope (in/out):
+  - in: 增加 `executionOptions` 顶层字段。
+  - out: 命令历史持久化服务。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增 `executionOptions` 字段。
+- Risks: 参数快照遗漏会影响复现质量。
+- Acceptance criteria:
+  - 报告包含 `executionOptions`，至少覆盖 `skipBuild/failOnUnknownStderr/smokeTimeoutSec/reportJsonPath*`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v12.json'` 通过
+  - 报告包含 `failureSummary.*Rate` 与 `executionOptions.*` 字段
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
