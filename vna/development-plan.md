@@ -324,7 +324,7 @@ WU-MAINLINE-002: 服务状态并发安全改造
   - 新增并发回归测试可执行并纳入 easy tests。
   - 不改变现有服务状态字段语义。
 
-### 8.2 当前 Work Unit
+### 8.2 已完成 Work Unit
 
 WU-MAINLINE-003: ServiceStatus 可观测性字段结构化增强（内部）
 
@@ -348,6 +348,12 @@ WU-MAINLINE-003: ServiceStatus 可观测性字段结构化增强（内部）
   - 不破坏现有 `GetServiceStatus` 对外字段语义。
   - 状态信息来源清晰，减少 message 语义重载。
   - 相关 easy 测试全部通过。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `cmake --build --preset ninja-mingw` 通过
+  - `vna/scripts/run_easy_tests.ps1` 通过
+  - 后续 `WU-MAINLINE-004~029` 的连续交付与回归基于该结构化结果持续通过
 
 ### 8.3 已完成 Work Unit（最新）
 
