@@ -97,7 +97,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
-  assert(html.includes("markers=frame["));
+  assert(html.includes("class=\"marker-row\""));
+  assert(html.includes("class=\"marker-name\""));
+  assert(html.includes("class=\"marker-point\""));
   assert(html.includes("axis-line"));
   assert(html.includes("axis-tick"));
   assert(html.includes("xMin="));

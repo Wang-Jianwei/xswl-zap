@@ -267,24 +267,50 @@ function toPolyline(points: WaveformPoint[], width: number, height: number): str
     return "";
   }
 
-  const xValues = points.map((point) => point.x);
-  const yValues = points.map((point) => point.y);
-
-  const minX = Math.min(...xValues);
-  const maxX = Math.max(...xValues);
-  const minY = Math.min(...yValues);
-  const maxY = Math.max(...yValues);
-
-  const safeRangeX = Math.max(maxX - minX, 1e-12);
-  const safeRangeY = Math.max(maxY - minY, 1e-12);
+  const bounds = getPointBounds(points);
 
   return points
     .map((point) => {
-      const x = ((point.x - minX) / safeRangeX) * (width - 20) + 10;
-      const y = height - (((point.y - minY) / safeRangeY) * (height - 20) + 10);
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
+      const normalized = normalizePoint(point, bounds, width, height);
+      return `${normalized.x.toFixed(2)},${normalized.y.toFixed(2)}`;
     })
     .join(" ");
+}
+
+function getPointBounds(points: WaveformPoint[]): { minX: number; maxX: number; minY: number; maxY: number } {
+  if (points.length === 0) {
+    return {
+      minX: 0,
+      maxX: 1,
+      minY: 0,
+      maxY: 1,
+    };
+  }
+
+  const xValues = points.map((point) => point.x);
+  const yValues = points.map((point) => point.y);
+
+  return {
+    minX: Math.min(...xValues),
+    maxX: Math.max(...xValues),
+    minY: Math.min(...yValues),
+    maxY: Math.max(...yValues),
+  };
+}
+
+function normalizePoint(
+  point: WaveformPoint,
+  bounds: { minX: number; maxX: number; minY: number; maxY: number },
+  width: number,
+  height: number,
+): WaveformPoint {
+  const safeRangeX = Math.max(bounds.maxX - bounds.minX, 1e-12);
+  const safeRangeY = Math.max(bounds.maxY - bounds.minY, 1e-12);
+
+  return {
+    x: ((point.x - bounds.minX) / safeRangeX) * (width - 20) + 10,
+    y: height - (((point.y - bounds.minY) / safeRangeY) * (height - 20) + 10),
+  };
 }
 
 function toNormalizedPoints(points: WaveformPoint[], width: number, height: number): WaveformPoint[] {
@@ -292,21 +318,8 @@ function toNormalizedPoints(points: WaveformPoint[], width: number, height: numb
     return [];
   }
 
-  const xValues = points.map((point) => point.x);
-  const yValues = points.map((point) => point.y);
-
-  const minX = Math.min(...xValues);
-  const maxX = Math.max(...xValues);
-  const minY = Math.min(...yValues);
-  const maxY = Math.max(...yValues);
-
-  const safeRangeX = Math.max(maxX - minX, 1e-12);
-  const safeRangeY = Math.max(maxY - minY, 1e-12);
-
-  return points.map((point) => ({
-    x: ((point.x - minX) / safeRangeX) * (width - 20) + 10,
-    y: height - (((point.y - minY) / safeRangeY) * (height - 20) + 10),
-  }));
+  const bounds = getPointBounds(points);
+  return points.map((point) => normalizePoint(point, bounds, width, height));
 }
 
 function renderTrace(trace: WaveformTrace, width: number, height: number): string {
@@ -322,6 +335,23 @@ function renderTrace(trace: WaveformTrace, width: number, height: number): strin
 
   const points = toPolyline(trace.points, width, height);
   return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
+}
+
+function renderTraceMarkers(trace: WaveformTrace, width: number, height: number): string {
+  if (trace.points.length === 0 || trace.markers.length === 0) {
+    return "";
+  }
+
+  const bounds = getPointBounds(trace.points);
+  return trace.markers
+    .map((marker) => {
+      const normalized = normalizePoint({ x: marker.x, y: marker.y }, bounds, width, height);
+      return `<g class="marker-point" data-trace-id="${trace.id}">
+  <circle cx="${normalized.x.toFixed(2)}" cy="${normalized.y.toFixed(2)}" r="3" fill="${trace.color}" stroke="var(--vscode-editor-background)" stroke-width="1.2" />
+  <text x="${(normalized.x + 6).toFixed(2)}" y="${(normalized.y - 6).toFixed(2)}">${marker.label}</text>
+</g>`;
+    })
+    .join("\n");
 }
 
 function formatTick(value: number): string {
@@ -399,14 +429,14 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         `<button type="button" class="legend-item" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
     )
     .join("");
-  const markerText = data.traces
+  const markerRows = data.traces
     .map((trace) => {
       const text = trace.markers
         .map((marker) => `${marker.label}=(${marker.x.toFixed(4)}, ${marker.y.toFixed(4)})`)
         .join(", ");
-      return `${trace.label}[${text}]`;
+      return `<div class="marker-row" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
     })
-    .join(" | ");
+    .join("");
   const legendText = data.traces.map((trace) => `${trace.label}:${trace.color}`).join(" | ");
 
   return `<!doctype html>
@@ -420,7 +450,11 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 12px; }
     .meta { margin-bottom: 10px; }
     .axis { margin-bottom: 6px; opacity: 0.9; }
-    .marker { margin-bottom: 10px; opacity: 0.9; }
+    .marker { margin-bottom: 10px; opacity: 0.9; display: grid; gap: 4px; }
+    .marker-row { display: flex; gap: 8px; align-items: baseline; }
+    .marker-row.is-hidden { opacity: 0.45; text-decoration: line-through; }
+    .marker-name { font-weight: 600; min-width: 150px; }
+    .marker-values { opacity: 0.9; }
     .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
     .legend-item {
       border: 1px solid var(--vscode-editorWidget-border);
@@ -439,6 +473,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
     .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
     .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
+    .chart .marker-point text { fill: var(--vscode-foreground); font-size: 10px; opacity: 0.95; }
     .empty { opacity: 0.8; }
   </style>
 </head>
@@ -447,14 +482,14 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="legend" id="legend">${legendItems}</div>
-  <div class="marker">markers=${markerText || "none"}</div>
+  <div class="marker" id="markerPanel">${markerRows || "none"}</div>
   ${
     data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
          ${renderAxes(width, height, getTraceBounds(data.traces))}
            ${data.traces
-             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>`)
+             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>\n${renderTraceMarkers(trace, width, height)}`)
              .join("\n")}
          </svg>`
   }
@@ -478,10 +513,16 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           return;
         }
         const groups = document.querySelectorAll("g[data-trace-id=\"" + traceId + "\"]");
+        const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
         const hidden = item.classList.toggle("is-hidden");
         groups.forEach((group) => {
           if (group instanceof HTMLElement) {
             group.style.display = hidden ? "none" : "";
+          }
+        });
+        markerRows.forEach((row) => {
+          if (row instanceof HTMLElement) {
+            row.classList.toggle("is-hidden", hidden);
           }
         });
       });

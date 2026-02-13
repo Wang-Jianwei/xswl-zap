@@ -12,6 +12,7 @@
   - 选择 `all` 时可进一步勾选可见曲线（显隐控制）
   - 波形页图例可点击，支持运行中临时隐藏/显示曲线
   - 波形坐标轴显示基础刻度文本（x/y 的 min/max）
+  - marker 以按曲线分组列表展示，并在图内绘制 min/max 标记点
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

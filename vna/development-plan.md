@@ -1982,6 +1982,37 @@ WU-MAINLINE-063: 插件波形坐标轴刻度文本（x/y min/max）
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.46 已完成 Work Unit
+
+WU-MAINLINE-064: 插件 marker 分组列表与图内标记点
+
+- Objective: 提升多曲线读数效率，将 marker 从纯文本提升为结构化展示与图内可视化。
+- Scope (in/out):
+  - in: marker 面板按 trace 分组展示；图内绘制 min/max 标记点；图例显隐与 marker 行联动；补测试与文档。
+  - out: 交互式 marker 拖拽、更多 marker 类型（delta/reference）与持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端渲染增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 marker 分组/图内标记点逻辑，恢复文本 marker 展示。
+- Risks: 多曲线场景下标记点文本可能局部重叠（当前为最小实现，后续可引入避让策略）。
+- Acceptance criteria:
+  - marker 面板按 trace 分组展示。
+  - 图内可见 min/max 标记点。
+  - 图例显隐后 marker 行同步状态变化。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
