@@ -1290,6 +1290,39 @@ WU-MAINLINE-043: VNA 实例生命周期与多实例最小并发
   - `vna/build/easy_vna_control_service_test.exe` 通过
   - `vna/scripts/run_easy_tests.ps1` 全通过（包含新并行测试）
 
+### 8.26 已完成 Work Unit
+
+WU-MAINLINE-044: 复数结果派生格式（幅度 dB / 相位 deg）
+
+- Objective: 为接收机与 S 参数导出提供用户常用派生格式，减少下游重复计算。
+- Scope (in/out):
+  - in: 新增复数派生计算模块并接入 CSV 导出。
+  - out: Smith/Z/Y 等更高阶派生视图。
+- Files to change:
+  - `vna/include/core/s_parameter_math.h`
+  - `vna/src/core/s_parameter_math.cpp`
+  - `vna/src/core/measurement_exporter.cpp`
+  - `vna/tests/core/s_parameter_math_test.cpp`
+  - `vna/tests/core/measurement_exporter_test.cpp`
+- Contract impact: 无（不改动 proto）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_s_parameter_math_test vna_measurement_exporter_test`
+  - `vna/build/easy_s_parameter_math_test.exe`
+  - `vna/build/easy_measurement_exporter_test.exe`
+- Rollback plan: 回滚派生计算模块与导出字段扩展。
+- Risks: 数值边界（接近 0）需避免 `-inf`，已通过 epsilon 保护。
+- Acceptance criteria:
+  - CSV 导出新增 `magnitude_db` 与 `phase_deg` 列。
+  - 接收机与 S 参数导出行均包含派生值。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_s_parameter_math_test vna_measurement_exporter_test` 通过
+  - `vna/build/easy_s_parameter_math_test.exe` 通过
+  - `vna/build/easy_measurement_exporter_test.exe` 通过
+  - `vna/scripts/run_easy_tests.ps1` 全通过（包含 `easy_s_parameter_math_test.exe`）
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

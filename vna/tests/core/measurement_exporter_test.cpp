@@ -55,6 +55,8 @@ int main() {
 
   const std::string csvText = ReadAll(csvPath);
   assert(csvText.find("data_product") != std::string::npos);
+  assert(csvText.find("magnitude_db") != std::string::npos);
+  assert(csvText.find("phase_deg") != std::string::npos);
   assert(csvText.find("receiver_raw") != std::string::npos);
   assert(csvText.find("s_parameter") != std::string::npos);
 

@@ -86,6 +86,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU42 进展）：已具备基于 `AcquisitionResult` 的 Touchstone/CSV 最小导出能力（core + service），当前范围不含 MAT 与导入回放。
 
+补充（WU44 进展）：CSV 导出已内置复数派生字段 `magnitude_db`、`phase_deg`，覆盖接收机数据与 S 参数数据行。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

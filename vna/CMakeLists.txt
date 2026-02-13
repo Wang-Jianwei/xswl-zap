@@ -29,6 +29,7 @@ add_library(vna_core_bootstrap STATIC
     src/core/plugin_manager.cpp
     src/core/plugin_registry.cpp
     src/core/resource_manager.cpp
+    src/core/s_parameter_math.cpp
     src/core/topology_manager.cpp
     src/core/topology_parser.cpp
     src/core/vna_runtime.cpp
@@ -274,6 +275,12 @@ if(XSWL_BUILD_TESTS)
     )
     target_link_libraries(vna_measurement_exporter_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_measurement_exporter_test PROPERTIES OUTPUT_NAME "easy_measurement_exporter_test")
+
+    add_executable(vna_s_parameter_math_test
+        tests/core/s_parameter_math_test.cpp
+    )
+    target_link_libraries(vna_s_parameter_math_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_s_parameter_math_test PROPERTIES OUTPUT_NAME "easy_s_parameter_math_test")
 
     add_executable(vna_topology_manager_test
         tests/core/topology_manager_test.cpp

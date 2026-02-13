@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <sstream>
 
+#include "core/s_parameter_math.h"
+
 namespace vna {
 namespace core {
 
@@ -44,7 +46,7 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std
     return Status::kInvalidArgument;
   }
 
-  out << "frequency_hz,data_product,channel,row_port,col_port,real,imag,clipped,timestamp_ns\n";
+  out << "frequency_hz,data_product,channel,row_port,col_port,real,imag,magnitude_db,phase_deg,clipped,timestamp_ns\n";
 
   for (std::size_t i = 0; i < result.receiverRaw.points.size(); ++i) {
     const ReceiverFrequencyPoint& point = result.receiverRaw.points[i];
@@ -52,6 +54,8 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std
       const ReceiverChannelSample& channel = point.channels[channelIndex];
       out << FormatDouble(point.frequencyHz) << ",receiver_raw," << channel.channelId
           << ",0,0," << FormatDouble(channel.iq.real()) << "," << FormatDouble(channel.iq.imag())
+          << "," << FormatDouble(SParameterMath::MagnitudeDb(channel.iq))
+          << "," << FormatDouble(SParameterMath::PhaseDeg(channel.iq))
           << "," << (channel.clipped ? "true" : "false") << "," << point.timestampNs << "\n";
     }
   }
@@ -62,6 +66,8 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std
       const ReceiverChannelSample& channel = point.channels[channelIndex];
       out << FormatDouble(point.frequencyHz) << ",receiver_compensated," << channel.channelId
           << ",0,0," << FormatDouble(channel.iq.real()) << "," << FormatDouble(channel.iq.imag())
+          << "," << FormatDouble(SParameterMath::MagnitudeDb(channel.iq))
+          << "," << FormatDouble(SParameterMath::PhaseDeg(channel.iq))
           << "," << (channel.clipped ? "true" : "false") << "," << point.timestampNs << "\n";
     }
   }
@@ -74,6 +80,8 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std
         const std::complex<double> value = ReadMatrixPoint(point, row, col);
         out << FormatDouble(point.frequencyHz) << ",s_parameter,," << (row + 1) << "," << (col + 1)
             << "," << FormatDouble(value.real()) << "," << FormatDouble(value.imag())
+            << "," << FormatDouble(SParameterMath::MagnitudeDb(value))
+            << "," << FormatDouble(SParameterMath::PhaseDeg(value))
             << ",false,0\n";
       }
     }
