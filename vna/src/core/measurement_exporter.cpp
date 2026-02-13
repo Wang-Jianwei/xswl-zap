@@ -1,9 +1,15 @@
 #include "core/measurement_exporter.h"
 
+#include <cerrno>
 #include <cstddef>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <sys/stat.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 #include "core/s_parameter_math.h"
 
@@ -16,6 +22,85 @@ std::string FormatDouble(double value) {
   std::ostringstream stream;
   stream << std::setprecision(16) << value;
   return stream.str();
+}
+
+std::string GetParentPath(const std::string& path) {
+  const std::size_t pos = path.find_last_of("\\/");
+  if (pos == std::string::npos) {
+    return "";
+  }
+  return path.substr(0, pos);
+}
+
+bool IsDirectory(const std::string& path) {
+  if (path.empty()) {
+    return false;
+  }
+
+  struct stat info;
+  if (stat(path.c_str(), &info) != 0) {
+    return false;
+  }
+
+  return (info.st_mode & S_IFDIR) != 0;
+}
+
+bool CreateDirectorySingle(const std::string& path) {
+#ifdef _WIN32
+  const int rc = _mkdir(path.c_str());
+#else
+  const int rc = mkdir(path.c_str(), 0755);
+#endif
+  if (rc == 0 || errno == EEXIST) {
+    return true;
+  }
+  return false;
+}
+
+bool EnsureDirectoryRecursive(const std::string& rawPath) {
+  if (rawPath.empty()) {
+    return true;
+  }
+
+  std::string path = rawPath;
+  for (std::size_t i = 0; i < path.size(); ++i) {
+    if (path[i] == '\\') {
+      path[i] = '/';
+    }
+  }
+
+  std::string current;
+  std::size_t start = 0;
+  if (path.size() > 1 && path[1] == ':') {
+    current = path.substr(0, 2);
+    start = 2;
+  }
+  if (!path.empty() && path[0] == '/') {
+    current = "/";
+    start = 1;
+  }
+
+  while (start < path.size()) {
+    const std::size_t slashPos = path.find('/', start);
+    const std::string part = path.substr(start, slashPos == std::string::npos ? std::string::npos : slashPos - start);
+    if (!part.empty()) {
+      if (!current.empty() && current[current.size() - 1] != '/' && current[current.size() - 1] != ':') {
+        current += '/';
+      }
+      current += part;
+
+      if (!IsDirectory(current) && !CreateDirectorySingle(current)) {
+        return false;
+      }
+    }
+
+    if (slashPos == std::string::npos) {
+      break;
+    }
+    start = slashPos + 1;
+  }
+
+  return true;
 }
 
 std::complex<double> ReadMatrixPoint(const SParameterFrequencyPoint& point,
@@ -42,6 +127,14 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result,
   if (outputPath.empty()) {
     if (errorMessage != nullptr) {
       *errorMessage = "csv export path is empty";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  const std::string parentPath = GetParentPath(outputPath);
+  if (!parentPath.empty() && !EnsureDirectoryRecursive(parentPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to create csv output directory: " + parentPath;
     }
     return Status::kInvalidArgument;
   }
@@ -116,6 +209,14 @@ Status MeasurementExporter::ExportTouchstone(const AcquisitionResult& result,
       *errorMessage = outputPath.empty()
                           ? "touchstone export path is empty"
                           : "touchstone export requires non-empty s-parameter points";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  const std::string parentPath = GetParentPath(outputPath);
+  if (!parentPath.empty() && !EnsureDirectoryRecursive(parentPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to create touchstone output directory: " + parentPath;
     }
     return Status::kInvalidArgument;
   }

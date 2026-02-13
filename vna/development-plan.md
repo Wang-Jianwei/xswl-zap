@@ -1420,6 +1420,36 @@ WU-MAINLINE-047: MinGW 运行时环境自愈与脚本稳定性
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu47-v1.json'` 通过
   - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-wu47.json' -AsJson` 通过
 
+### 8.30 已完成 Work Unit
+
+WU-MAINLINE-048: 导出路径目录自动创建
+
+- Objective: 导出路径父目录不存在时自动创建，降低调用方路径准备成本。
+- Scope (in/out):
+  - in: CSV/Touchstone 导出前的目录递归创建。
+  - out: 跨盘符映射策略与权限升级处理。
+- Files to change:
+  - `vna/src/core/measurement_exporter.cpp`
+  - `vna/tests/core/measurement_exporter_test.cpp`
+  - `vna/development-plan.md`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test`
+  - `vna/build/easy_measurement_exporter_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚目录自动创建逻辑，恢复由调用方预建目录。
+- Risks: 深层目录创建在权限受限路径下可能失败，仍需返回可诊断错误。
+- Acceptance criteria:
+  - 指定嵌套导出路径时可自动创建父目录并成功写出文件。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test` 通过
+  - `vna/build/easy_measurement_exporter_test.exe` 通过（含嵌套目录导出断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
