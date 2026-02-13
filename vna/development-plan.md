@@ -122,14 +122,29 @@ WU-<ID>: <Title>
 每次 WU 达到 Acceptance criteria 后，必须在同一轮收尾中完成以下动作：
 
 1. 更新 `vna/development-plan.md` 中该 WU 的 `Status` 与 `Validation result`
-2. 提交一次对应的 Git 记录（一个 WU 对应一次独立 commit）
+2. 提交对应的 Git 记录（默认一个 WU 一个独立 commit；简单 WU 可合并批量提交）
 3. 在最终说明中给出本次 commit hash 与测试结果摘要
+
+### 4.2 简单 WU 合并提交规则（允许）
+
+满足以下条件的 WU，可合并为一次提交：
+
+- 仅文档/脚本轻量改动，不涉及 proto/公共接口/核心业务逻辑
+- 变更文件少且彼此同主题（建议不超过 3 个 WU）
+- 可在一组测试命令中完成共同验证
+
+合并提交时必须满足：
+
+1. 在 commit message 中标注 WU 范围（如 `WU-MAINLINE-014~016`）
+2. 在 `development-plan.md` 中分别更新每个 WU 的 `Status` 和 `Validation result`
+3. 在最终说明中列出“每个 WU -> 对应验证结果”映射
 
 建议 commit 信息格式：
 
 - `feat(wu): complete WU-MAINLINE-013 smoke report timestamp placeholder`
 - `fix(wu): complete WU-MAINLINE-011 smoke timeout protection`
 - `docs(wu): complete WU-MAINLINE-012 json report output docs`
+- `chore(wu): complete WU-MAINLINE-014~016 smoke report refinements`
 
 ---
 
