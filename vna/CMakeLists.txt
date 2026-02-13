@@ -128,6 +128,7 @@ if(XSWL_ENABLE_GRPC_CPP_ADAPTER)
 
     add_executable(vna_grpc_server
         src/service/grpc/grpc_server_main.cpp
+        src/service/grpc/grpc_bootstrap_paths.cpp
     )
     set_target_properties(vna_grpc_server PROPERTIES
         OUTPUT_NAME "easy_grpc_server"
@@ -243,6 +244,13 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_usb_vna_driver_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_usb_vna_driver_test PROPERTIES OUTPUT_NAME "easy_usb_vna_driver_test")
 
+    add_executable(vna_grpc_bootstrap_paths_test
+        tests/core/grpc_bootstrap_paths_test.cpp
+        src/service/grpc/grpc_bootstrap_paths.cpp
+    )
+    target_link_libraries(vna_grpc_bootstrap_paths_test PRIVATE vna_contract)
+    set_target_properties(vna_grpc_bootstrap_paths_test PROPERTIES OUTPUT_NAME "easy_grpc_bootstrap_paths_test")
+
     add_executable(vna_measurement_pipeline_test
         tests/core/measurement_pipeline_test.cpp
     )
@@ -327,6 +335,12 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_service_status_service_test PRIVATE vna_service_bootstrap)
     set_target_properties(vna_service_status_service_test PROPERTIES OUTPUT_NAME "easy_service_status_service_test")
 
+    add_executable(vna_service_status_concurrency_test
+        tests/core/service_status_concurrency_test.cpp
+    )
+    target_link_libraries(vna_service_status_concurrency_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_service_status_concurrency_test PROPERTIES OUTPUT_NAME "easy_service_status_concurrency_test")
+
     add_executable(vna_vna_control_inproc_handler_test
         tests/core/vna_control_inproc_handler_test.cpp
     )
@@ -338,6 +352,7 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_hardware_driver_factory_test COMMAND $<TARGET_FILE:vna_hardware_driver_factory_test>)
     add_test(NAME vna_pxi_driver_test COMMAND $<TARGET_FILE:vna_pxi_driver_test>)
     add_test(NAME vna_usb_vna_driver_test COMMAND $<TARGET_FILE:vna_usb_vna_driver_test>)
+    add_test(NAME vna_grpc_bootstrap_paths_test COMMAND $<TARGET_FILE:vna_grpc_bootstrap_paths_test>)
     add_test(NAME vna_measurement_pipeline_test COMMAND $<TARGET_FILE:vna_measurement_pipeline_test>)
     add_test(NAME vna_topology_manager_test COMMAND $<TARGET_FILE:vna_topology_manager_test>)
     add_test(NAME vna_resource_manager_test COMMAND $<TARGET_FILE:vna_resource_manager_test>)
@@ -352,5 +367,6 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_service_config_test COMMAND $<TARGET_FILE:vna_service_config_test>)
     add_test(NAME vna_service_flow_integration_test COMMAND $<TARGET_FILE:vna_service_flow_integration_test>)
     add_test(NAME vna_service_status_service_test COMMAND $<TARGET_FILE:vna_service_status_service_test>)
+    add_test(NAME vna_service_status_concurrency_test COMMAND $<TARGET_FILE:vna_service_status_concurrency_test>)
     add_test(NAME vna_vna_control_inproc_handler_test COMMAND $<TARGET_FILE:vna_vna_control_inproc_handler_test>)
 endif()

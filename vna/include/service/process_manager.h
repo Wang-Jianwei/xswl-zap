@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <mutex>
 #include <string>
 
 namespace vna {
@@ -25,6 +26,7 @@ class ProcessManager {
  private:
   static std::uint64_t NowNs();
 
+  mutable std::mutex mutex_;
   std::uint64_t startedAtNs_;
   bool ready_;
   std::string message_;

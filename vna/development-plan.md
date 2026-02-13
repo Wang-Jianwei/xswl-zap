@@ -211,7 +211,110 @@ WU-<ID>: <Title>
 - [x] 完成 `HardwareDriver` 与 2 个 mock driver
 - [x] 提交首批核心单测与 CI 门禁
 - [x] 完成 VS Code 插件 MVP 骨架（命令：`XSWL: Get Service Status` + TypeScript 构建与最小单测）
+- [x] 完成 VS Code 插件 MVP-2（命令：`XSWL: Acquire Once` + 最小结果摘要）
+- [x] 完成 VS Code 插件 MVP-3（命令：`XSWL: Stream Preview` + 可取消帧计数摘要）
+- [x] 完成 gRPC server 启动稳健性改进（配置路径候选加载 + 启动诊断增强）
+- [x] 完成服务状态并发安全改造（`ProcessManager/ServiceStatusService` 加锁 + 并发回归测试）
+
+### 8.1 当前 Work Unit
+
+WU-VSCODE-002: VS Code 插件 Acquire Once 命令
+
+- Objective: 在扩展中提供最小 `Acquire` 联调入口，支持输入实例与采样点，回显帧摘要。
+- Scope (in/out):
+  - in: 命令注册、gRPC `Acquire` 调用、最小结果格式化、单测。
+  - out: webview 图形渲染、流式采集 UI、历史记录持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+- Contract impact: 无（复用已有 `vna.proto` 的 `Acquire` RPC）。
+- Test plan: `cd vna/tools/vscode-extension && npm run test`。
+- Rollback plan: 回滚上述扩展目录文件变更并移除命令贡献项。
+- Risks: 后端未就绪或参数不完整会返回 gRPC 错误，需在 UI 给出明确提示。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Acquire Once`。
+  - 成功时显示 instanceId / timestamp / frame 类型与点数摘要。
+  - 失败时显示可读错误信息。
+  - TypeScript 构建与最小单测通过。
+
+WU-VSCODE-003: VS Code 插件 StreamAcquisition 预览命令
+
+- Objective: 在扩展中提供最小 `StreamAcquisition` 预览入口，支持用户取消并回显帧计数摘要。
+- Scope (in/out):
+  - in: 命令注册、gRPC `StreamAcquisition` 调用、取消控制、最小摘要格式化、单测。
+  - out: 波形图渲染、频谱图、历史缓存、导出。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+- Contract impact: 无（复用已有 `vna.proto` 的 `StreamAcquisition` RPC）。
+- Test plan: `cd vna/tools/vscode-extension && npm run test`。
+- Rollback plan: 回滚扩展目录对应文件改动并移除命令贡献项。
+- Risks: 流式请求可能因后端状态或网络中断提前结束；取消动作需避免误报错误。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Stream Preview`。
+  - 运行中可取消，取消后命令正常结束。
+  - 结束后显示 frameCount / latestTimestamp / lastFrameType / lastPointCount 摘要。
+  - TypeScript 构建与最小单测通过。
+
+WU-MAINLINE-001: gRPC server 启动稳健性改进
+
+- Objective: 解决 `easy_grpc_server.exe` 在不同工作目录下启动失败且诊断不足的问题。
+- Scope (in/out):
+  - in: 增加配置文件候选路径解析、启动失败错误输出增强、最小单测。
+  - out: TLS 启用实现、端口自动切换策略、服务自恢复守护进程。
+- Files to change:
+  - `vna/src/service/grpc/grpc_server_main.cpp`
+  - `vna/src/service/grpc/grpc_bootstrap_paths.cpp`
+  - `vna/include/service/grpc/grpc_bootstrap_paths.h`
+  - `vna/tests/core/grpc_bootstrap_paths_test.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/scripts/run_easy_tests.ps1`
+- Contract impact: 无（不改动 proto 或公共 RPC 接口）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚上述文件并恢复 gRPC server 原始单路径配置加载逻辑。
+- Risks: 候选路径策略错误可能导致加载到非预期配置文件。
+- Acceptance criteria:
+  - `easy_grpc_server.exe` 在仓库根目录和 `vna` 目录均可加载配置并启动。
+  - 配置加载失败时输出所有候选路径和对应错误。
+  - 新增单测通过且不影响现有 easy tests。
+
+WU-MAINLINE-002: 服务状态并发安全改造
+
+- Objective: 消除并发访问 `ProcessManager` 与 `ServiceStatusService` 的数据竞争风险，提升 gRPC 多请求场景稳定性。
+- Scope (in/out):
+  - in: 两个服务类的互斥保护、并发回归测试、测试脚本接线。
+  - out: 引入读写锁、跨进程共享状态、指标系统重构。
+- Files to change:
+  - `vna/include/service/process_manager.h`
+  - `vna/src/service/process_manager.cpp`
+  - `vna/include/service/service_status_service.h`
+  - `vna/src/service/service_status_service.cpp`
+  - `vna/tests/core/service_status_concurrency_test.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/scripts/run_easy_tests.ps1`
+- Contract impact: 无（不改动 proto 或公开接口）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚上述文件，移除并发测试目标并恢复原有实现。
+- Risks: 锁粒度设计不当可能影响极端高频状态读取吞吐。
+- Acceptance criteria:
+  - 状态更新/读取在并发执行时无数据竞争。
+  - 新增并发回归测试可执行并纳入 easy tests。
+  - 不改变现有服务状态字段语义。
 
 ---
 
-*版本：v2.0（AI Agent 执行版） | 日期：2026-02-12*
+*版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

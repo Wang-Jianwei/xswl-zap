@@ -16,8 +16,50 @@
       {
         "command": "xswlZapVna.getServiceStatus",
         "title": "XSWL: Get Service Status"
+      },
+      {
+        "command": "xswlZapVna.validateTopology",
+        "title": "XSWL: Validate Topology"
+      },
+      {
+        "command": "xswlZapVna.acquireOnce",
+        "title": "XSWL: Acquire Once"
+      },
+      {
+        "command": "xswlZapVna.streamPreview",
+        "title": "XSWL: Stream Preview"
+      },
+      {
+        "command": "xswlZapVna.openOutput",
+        "title": "XSWL: Open Output"
+      },
+      {
+        "command": "xswlZapVna.clearOutput",
+        "title": "XSWL: Clear Output"
       }
     ],
+    "keybindings": [
+      {
+        "command": "xswlZapVna.openOutput",
+        "key": "ctrl+alt+o"
+      },
+      {
+        "command": "xswlZapVna.clearOutput",
+        "key": "ctrl+alt+l"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "xswlZapVna.openOutput",
+          "group": "navigation@90"
+        },
+        {
+          "command": "xswlZapVna.clearOutput",
+          "group": "navigation@91"
+        }
+      ]
+    },
     "configuration": {
       "title": "XSWL ZAP VNA",
       "properties": {
@@ -31,6 +73,11 @@
           "default": 2000,
           "minimum": 100,
           "description": "Deadline in milliseconds for gRPC unary calls"
+        },
+        "xswlZapVna.autoOpenOutput": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto focus XSWL VNA output channel after commands"
         }
       }
     }

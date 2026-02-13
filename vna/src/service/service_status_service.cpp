@@ -6,6 +6,7 @@ namespace service {
 ServiceStatusService::ServiceStatusService() : snapshot_() {}
 
 void ServiceStatusService::UpdateConfig(const ServiceConfig& config) {
+  std::lock_guard<std::mutex> lock(mutex_);
   snapshot_.bindAddress = config.bindAddress;
   snapshot_.port = config.port;
   snapshot_.tlsEnabled = config.tlsEnabled;
@@ -13,6 +14,7 @@ void ServiceStatusService::UpdateConfig(const ServiceConfig& config) {
 }
 
 void ServiceStatusService::UpdateHealth(const HealthStatus& health) {
+  std::lock_guard<std::mutex> lock(mutex_);
   snapshot_.ready = health.ready;
   snapshot_.state = health.state;
   snapshot_.message = health.message;
@@ -21,11 +23,13 @@ void ServiceStatusService::UpdateHealth(const HealthStatus& health) {
 
 void ServiceStatusService::UpdateRuntimeMetrics(std::size_t instanceCount,
                                                 std::size_t activeLeaseCount) {
+  std::lock_guard<std::mutex> lock(mutex_);
   snapshot_.instanceCount = instanceCount;
   snapshot_.activeLeaseCount = activeLeaseCount;
 }
 
 ServiceStatusSnapshot ServiceStatusService::GetStatus() const {
+  std::lock_guard<std::mutex> lock(mutex_);
   return snapshot_;
 }
 

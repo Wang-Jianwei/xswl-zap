@@ -9,25 +9,53 @@
 #include "service/process_manager.h"
 #include "service/service_config.h"
 #include "service/service_status_service.h"
+#include "service/grpc/grpc_bootstrap_paths.h"
 #include "service/vna_control_inproc_handler.h"
 #include "service/vna_control_service.h"
 #include "service/grpc/vna_control_grpc_service.h"
 
-int main() {
+int main(int argc, char** argv) {
   vna::core::RegisterBuiltInDrivers();
 
   vna::service::ServiceConfig config;
-  std::vector<std::string> configErrors;
-  const vna::core::Status configStatus =
-      vna::service::ServiceConfigLoader::LoadFromFile("config/service.yaml", config, configErrors);
+  std::string selectedConfigPath;
+  std::vector<std::string> loadDiagnostics;
+  const std::string executablePath = (argc > 0 && argv != nullptr) ? argv[0] : "";
+  const std::vector<std::string> configCandidates =
+      vna::service::BuildGrpcServerConfigCandidates(executablePath);
 
-  if (configStatus != vna::core::Status::kOk) {
+  for (std::size_t i = 0; i < configCandidates.size(); ++i) {
+    std::vector<std::string> configErrors;
+    const vna::core::Status configStatus =
+        vna::service::ServiceConfigLoader::LoadFromFile(configCandidates[i], config, configErrors);
+    if (configStatus == vna::core::Status::kOk) {
+      selectedConfigPath = configCandidates[i];
+      break;
+    }
+
+    std::string message = configCandidates[i] + " => ";
+    if (configErrors.empty()) {
+      message += "unknown error";
+    } else {
+      for (std::size_t j = 0; j < configErrors.size(); ++j) {
+        if (j > 0) {
+          message += " | ";
+        }
+        message += configErrors[j];
+      }
+    }
+    loadDiagnostics.push_back(message);
+  }
+
+  if (selectedConfigPath.empty()) {
     std::cout << "grpc server config load failed\n";
-    for (std::size_t i = 0; i < configErrors.size(); ++i) {
-      std::cout << "  - " << configErrors[i] << "\n";
+    for (std::size_t i = 0; i < loadDiagnostics.size(); ++i) {
+      std::cout << "  - " << loadDiagnostics[i] << "\n";
     }
     return 1;
   }
+
+  std::cout << "grpc server config loaded: " << selectedConfigPath << "\n";
 
   if (config.tlsEnabled) {
     std::cout << "grpc server tls_enabled=true is not supported in minimal bootstrap mode\n";
@@ -60,7 +88,7 @@ int main() {
     return 1;
   }
 
-  processManager.SetReady("grpc bootstrap");
+  processManager.SetReady("grpc bootstrap | config=" + selectedConfigPath);
   statusService.UpdateConfig(config);
   statusService.UpdateHealth(processManager.GetHealth());
   statusService.UpdateRuntimeMetrics(controlService.InstanceCount(), controlService.ActiveLeaseCount());

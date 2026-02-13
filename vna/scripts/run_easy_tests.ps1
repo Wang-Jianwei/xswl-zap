@@ -10,6 +10,7 @@ $tests = @(
   'easy_hardware_driver_factory_test.exe',
   'easy_pxi_driver_test.exe',
   'easy_usb_vna_driver_test.exe',
+  'easy_grpc_bootstrap_paths_test.exe',
   'easy_measurement_pipeline_test.exe',
   'easy_topology_manager_test.exe',
   'easy_resource_manager_test.exe',
@@ -24,6 +25,7 @@ $tests = @(
   'easy_service_config_test.exe',
   'easy_service_flow_integration_test.exe',
   'easy_service_status_service_test.exe',
+  'easy_service_status_concurrency_test.exe',
   'easy_vna_control_inproc_handler_test.exe'
 )
 foreach ($test in $tests) {

@@ -1,7 +1,14 @@
 import * as path from "node:path";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
-import type { ServiceStatus } from "./types";
+import type {
+  AcquisitionSummary,
+  ServiceStatus,
+  StreamPreviewFrame,
+  StreamPreviewSummary,
+  ValidationResult,
+  TopologyErrorDetail,
+} from "./types";
 
 export interface ServiceClientOptions {
   address: string;
@@ -62,6 +69,206 @@ export class ServiceClient {
           });
         },
       );
+    });
+  }
+
+  validateTopology(topologyId: string, topologyYaml: string): Promise<ValidationResult> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ValidationResult>((resolve, reject) => {
+      (this.client as unknown as {
+        validateTopology: (
+          request: { id: string; yaml: string },
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).validateTopology(
+        { id: topologyId, yaml: topologyYaml },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const payload = response;
+          const rawErrors = payload.errors;
+          const rawDetails = payload.errorDetails;
+          const errors = Array.isArray(rawErrors) ? rawErrors.map((item) => String(item)) : [];
+          const errorDetails: TopologyErrorDetail[] = Array.isArray(rawDetails)
+            ? rawDetails.map((item) => {
+              const detail = item as Record<string, unknown>;
+              return {
+                code: String(detail.code ?? ""),
+                field: String(detail.field ?? ""),
+                message: String(detail.message ?? ""),
+              };
+            })
+            : [];
+
+          resolve({
+            ok: Boolean(payload.ok),
+            errors,
+            errorDetails,
+          });
+        },
+      );
+    });
+  }
+
+  acquireOnce(instanceId: string, sampleCount: number): Promise<AcquisitionSummary> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<AcquisitionSummary>((resolve, reject) => {
+      (this.client as unknown as {
+        acquire: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).acquire(
+        {
+          instanceId,
+          sampleCount,
+          timeoutMs: Math.max(this.deadlineMs, 1000),
+          excitation: {
+            mode: 1,
+            settlingTimeMs: 0,
+            enableAutoTrigger: true,
+            cw: {
+              frequencyHz: 1.0e9,
+              powerDbm: -10,
+              dwellTimeMs: 1,
+            },
+          },
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const payload = response;
+          const frequencyFrame = payload.frequencyFrame as Record<string, unknown> | undefined;
+          const timeFrame = payload.timeFrame as Record<string, unknown> | undefined;
+          const frequencyPoints = frequencyFrame?.points;
+          const timePoints = timeFrame?.points;
+
+          let frameType: "frequency" | "time" | "unknown" = "unknown";
+          let pointCount = 0;
+          if (Array.isArray(frequencyPoints)) {
+            frameType = "frequency";
+            pointCount = frequencyPoints.length;
+          } else if (Array.isArray(timePoints)) {
+            frameType = "time";
+            pointCount = timePoints.length;
+          }
+
+          resolve({
+            instanceId: String(payload.instanceId ?? instanceId),
+            timestampNs: Number(payload.timestampNs ?? 0),
+            frameType,
+            pointCount,
+          });
+        },
+      );
+    });
+  }
+
+  streamPreview(
+    instanceId: string,
+    sampleCount: number,
+    onFrame?: (frame: StreamPreviewFrame) => void,
+    abortSignal?: AbortSignal,
+  ): Promise<StreamPreviewSummary> {
+    const deadline = new Date(Date.now() + Math.max(this.deadlineMs * 30, 60_000));
+
+    return new Promise<StreamPreviewSummary>((resolve, reject) => {
+      const call = (this.client as unknown as {
+        streamAcquisition: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+        ) => grpc.ClientReadableStream<Record<string, unknown>>;
+      }).streamAcquisition(
+        {
+          instanceId,
+          sampleCount,
+          timeoutMs: Math.max(this.deadlineMs, 1000),
+          excitation: {
+            mode: 1,
+            settlingTimeMs: 0,
+            enableAutoTrigger: true,
+            cw: {
+              frequencyHz: 1.0e9,
+              powerDbm: -10,
+              dwellTimeMs: 1,
+            },
+          },
+        },
+        { deadline },
+      );
+
+      let finished = false;
+      let frameCount = 0;
+      let latestTimestampNs = 0;
+      let lastFrameType: "frequency" | "time" | "unknown" = "unknown";
+      let lastPointCount = 0;
+
+      const finish = (canceled: boolean) => {
+        if (finished) {
+          return;
+        }
+        finished = true;
+        resolve({ frameCount, latestTimestampNs, lastFrameType, lastPointCount, canceled });
+      };
+
+      call.on("data", (response) => {
+        const payload = response;
+        const frequencyFrame = payload.frequencyFrame as Record<string, unknown> | undefined;
+        const timeFrame = payload.timeFrame as Record<string, unknown> | undefined;
+        const frequencyPoints = frequencyFrame?.points;
+        const timePoints = timeFrame?.points;
+
+        frameCount += 1;
+        latestTimestampNs = Number(payload.timestampNs ?? latestTimestampNs);
+        if (Array.isArray(frequencyPoints)) {
+          lastFrameType = "frequency";
+          lastPointCount = frequencyPoints.length;
+        } else if (Array.isArray(timePoints)) {
+          lastFrameType = "time";
+          lastPointCount = timePoints.length;
+        } else {
+          lastFrameType = "unknown";
+          lastPointCount = 0;
+        }
+
+        onFrame?.({ frameCount, latestTimestampNs, lastFrameType, lastPointCount });
+      });
+
+      call.on("end", () => {
+        finish(Boolean(abortSignal?.aborted));
+      });
+
+      call.on("error", (error: grpc.ServiceError) => {
+        if (abortSignal?.aborted || error.code === grpc.status.CANCELLED) {
+          finish(true);
+          return;
+        }
+        reject(error);
+      });
+
+      if (abortSignal) {
+        abortSignal.addEventListener(
+          "abort",
+          () => {
+            call.cancel();
+          },
+          { once: true },
+        );
+
+        if (abortSignal.aborted) {
+          call.cancel();
+        }
+      }
     });
   }
 

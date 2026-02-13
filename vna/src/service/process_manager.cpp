@@ -16,16 +16,19 @@ std::uint64_t NsToMs(std::uint64_t ns) {
 ProcessManager::ProcessManager() : startedAtNs_(NowNs()), ready_(false), message_("booting") {}
 
 void ProcessManager::SetReady(const std::string& message) {
+  std::lock_guard<std::mutex> lock(mutex_);
   ready_ = true;
   message_ = message;
 }
 
 void ProcessManager::SetDegraded(const std::string& message) {
+  std::lock_guard<std::mutex> lock(mutex_);
   ready_ = false;
   message_ = message;
 }
 
 HealthStatus ProcessManager::GetHealth() const {
+  std::lock_guard<std::mutex> lock(mutex_);
   HealthStatus status;
   status.ready = ready_;
   status.state = ready_ ? "ready" : "degraded";

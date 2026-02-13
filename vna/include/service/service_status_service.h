@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <mutex>
 #include <string>
 
 #include "service/process_manager.h"
@@ -37,6 +38,7 @@ class ServiceStatusService {
   ServiceStatusSnapshot GetStatus() const;
 
  private:
+    mutable std::mutex mutex_;
   ServiceStatusSnapshot snapshot_;
 };
 

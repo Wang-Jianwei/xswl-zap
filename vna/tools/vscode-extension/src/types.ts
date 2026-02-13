@@ -10,3 +10,33 @@ export interface ServiceStatus {
   instanceCount: number;
   activeLeaseCount: number;
 }
+
+export interface TopologyErrorDetail {
+  code: string;
+  field: string;
+  message: string;
+}
+
+export interface ValidationResult {
+  ok: boolean;
+  errors: string[];
+  errorDetails: TopologyErrorDetail[];
+}
+
+export interface AcquisitionSummary {
+  instanceId: string;
+  timestampNs: number;
+  frameType: "frequency" | "time" | "unknown";
+  pointCount: number;
+}
+
+export interface StreamPreviewFrame {
+  frameCount: number;
+  latestTimestampNs: number;
+  lastFrameType: "frequency" | "time" | "unknown";
+  lastPointCount: number;
+}
+
+export interface StreamPreviewSummary extends StreamPreviewFrame {
+  canceled: boolean;
+}

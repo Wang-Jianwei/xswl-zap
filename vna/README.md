@@ -219,6 +219,59 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild
 ```
 
+## VS Code 插件联调快速开始
+
+在使用 `vna/tools/vscode-extension` 命令前，先确保 gRPC 后端已在 `vna` 目录启动：
+
+```powershell
+cd vna
+.\scripts\start_grpc_for_vscode.ps1
+```
+
+如已完成构建，可跳过重建：
+
+```powershell
+.\scripts\start_grpc_for_vscode.ps1 -SkipBuild
+```
+
+停止后端：
+
+```powershell
+.\scripts\stop_grpc_for_vscode.ps1
+```
+
+重启后端：
+
+```powershell
+.\scripts\restart_grpc_for_vscode.ps1
+```
+
+如已完成构建，可跳过重建：
+
+```powershell
+.\scripts\restart_grpc_for_vscode.ps1 -SkipBuild
+```
+
+插件默认连接参数：
+
+- `xswlZapVna.grpcAddress`: `127.0.0.1:50051`
+- `xswlZapVna.grpcDeadlineMs`: `2000`
+
+然后在插件目录执行：
+
+```powershell
+cd vna\tools\vscode-extension
+npm install
+npm run test
+```
+
+在 VS Code 中按 `F5` 启动 Extension Development Host 后，可运行：
+
+- `XSWL: Get Service Status`
+- `XSWL: Validate Topology`
+- `XSWL: Acquire Once`
+- `XSWL: Stream Preview`
+
 ---
 
 ## 后续步骤 ✅
