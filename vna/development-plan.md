@@ -1178,6 +1178,80 @@ WU-MAINLINE-040: 摘要 JSON 压缩输出与落盘
   - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v20-warning.json' -FailOnWarningCodes known_noise_suppressed -AsJson -ResultJsonPath '.\build-grpc\gate-result-v20-fail-{timestamp}.json'` 按策略失败并输出 FAIL JSON（exit 1）
   - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v20.json' -AsJson -CompactJson -OutputJsonPath '.\build-grpc\smoke-summary-v20-{timestamp}.json'` 成功输出并落盘摘要 JSON
 
+### 8.25 下一批 Work Unit（业务功能优先，计划中）
+
+WU-MAINLINE-041: 基本测量参数模型与 S 参数扫描 MVP
+
+- Objective: 将“频率/点数/功率/IFBW”参数接入测量主流程，形成最小可验收 S 参数扫描链路。
+- Scope (in/out):
+  - in: 参数模型、服务层接入、最小回归测试。
+  - out: 高阶测量算法优化与性能调优。
+- Files to change:
+  - `vna/include/core/measurement_pipeline.h`
+  - `vna/src/core/measurement_pipeline.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/*measurement*`
+- Contract impact: 可能涉及 `proto/vna.proto` 扩展（待实现时确认）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+  - gRPC smoke 最小回归
+- Rollback plan: 回滚参数扩展与服务映射改动，保留现有最小 Acquire/Stream 路径。
+- Risks: 参数语义定义不完整会导致前后端行为不一致。
+- Acceptance criteria:
+  - 可配置并生效最小测量参数集合。
+  - 回归测试覆盖关键参数有效/无效路径。
+
+- Status: 🟡 Planned
+
+WU-MAINLINE-042: 数据导出 MVP（Touchstone/CSV）
+
+- Objective: 打通测量结果导出闭环，优先交付 Touchstone 与 CSV。
+- Scope (in/out):
+  - in: 最小导出器实现、导出接口与基础回归测试。
+  - out: MAT 导出与导入回放完整能力。
+- Files to change:
+  - `vna/include/core/*export*`
+  - `vna/src/core/*export*`
+  - `vna/src/service/*`
+  - `vna/tests/core/*export*`
+- Contract impact: 可能新增导出相关 RPC（待实现时确认）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+  - 导出文件格式回归（Touchstone/CSV）
+- Rollback plan: 回滚新增导出接口与实现，保留原始测量路径。
+- Risks: 文件格式细节（单位/精度/头信息）需与行业工具兼容。
+- Acceptance criteria:
+  - 能导出可被常见工具识别的 `.sNp` 与 `.csv` 文件。
+  - 导出失败路径可给出结构化错误信息。
+
+- Status: 🟡 Planned
+
+WU-MAINLINE-043: VNA 实例生命周期与多实例最小并发
+
+- Objective: 建立实例创建/销毁与双实例并行测量的最小闭环。
+- Scope (in/out):
+  - in: 实例生命周期最小接口、资源隔离校验、并发回归测试。
+  - out: 完整同步触发与时钟对齐高级能力。
+- Files to change:
+  - `vna/include/core/topology_manager.h`
+  - `vna/src/core/topology_manager.cpp`
+  - `vna/src/service/resource_broker_service.cpp`
+  - `vna/tests/integration/*instance*`
+- Contract impact: 可能涉及实例管理 RPC 扩展（待实现时确认）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+  - 双实例并行测量集成回归
+- Rollback plan: 回滚实例生命周期新增路径，保留单实例默认链路。
+- Risks: 资源竞争与状态同步逻辑复杂，需先保证观测与错误诊断。
+- Acceptance criteria:
+  - 至少两个逻辑实例可并行执行最小测量且互不干扰。
+  - 资源冲突时返回可诊断错误。
+
+- Status: 🟡 Planned
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
