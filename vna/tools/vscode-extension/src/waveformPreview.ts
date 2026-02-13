@@ -261,6 +261,43 @@ function toPolyline(points: WaveformPoint[], width: number, height: number): str
     .join(" ");
 }
 
+function toNormalizedPoints(points: WaveformPoint[], width: number, height: number): WaveformPoint[] {
+  if (points.length === 0) {
+    return [];
+  }
+
+  const xValues = points.map((point) => point.x);
+  const yValues = points.map((point) => point.y);
+
+  const minX = Math.min(...xValues);
+  const maxX = Math.max(...xValues);
+  const minY = Math.min(...yValues);
+  const maxY = Math.max(...yValues);
+
+  const safeRangeX = Math.max(maxX - minX, 1e-12);
+  const safeRangeY = Math.max(maxY - minY, 1e-12);
+
+  return points.map((point) => ({
+    x: ((point.x - minX) / safeRangeX) * (width - 20) + 10,
+    y: height - (((point.y - minY) / safeRangeY) * (height - 20) + 10),
+  }));
+}
+
+function renderTrace(trace: WaveformTrace, width: number, height: number): string {
+  if (trace.points.length === 0) {
+    return "";
+  }
+
+  if (trace.points.length === 1) {
+    const normalized = toNormalizedPoints(trace.points, width, height);
+    const point = normalized[0];
+    return `<circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="3.5" fill="${trace.color}" />`;
+  }
+
+  const points = toPolyline(trace.points, width, height);
+  return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
+}
+
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
@@ -300,10 +337,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       ? "<div class=\"empty\">No waveform points available.</div>"
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
            ${data.traces
-             .map((trace) => {
-               const points = toPolyline(trace.points, width, height);
-               return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
-             })
+             .map((trace) => renderTrace(trace, width, height))
              .join("\n")}
          </svg>`
   }

@@ -66,6 +66,17 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert.equal(s11Data.traces.length, 1);
   assert.equal(s11Data.traces[0].id, "s11");
 
+  const singlePointPayload = {
+    instanceId: "inst-single",
+    timestampNs: 1,
+    frequencyFrame: {
+      points: [{ frequencyHz: 1.0e9, real: 0, imag: 0 }],
+    },
+  } as Record<string, unknown>;
+  const singlePointData = buildWaveformPreviewData(singlePointPayload);
+  assert.equal(singlePointData.points.length, 1);
+  assert(buildWaveformPreviewHtml(singlePointData).includes("<circle"));
+
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
