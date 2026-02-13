@@ -296,6 +296,12 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild
 ```
 
+如需机器可解析输出（JSON）：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild -AsJson
+```
+
 如需在门禁中把特定告警码升级为失败（例如已知噪声也视为失败）：
 
 ```powershell
@@ -306,6 +312,12 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 
 ```powershell
 .\scripts\summarize_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v17-fail.json
+```
+
+输出摘要 JSON：
+
+```powershell
+.\scripts\summarize_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v17-fail.json -AsJson
 ```
 
 ## 报告演进策略

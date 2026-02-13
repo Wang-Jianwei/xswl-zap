@@ -1073,6 +1073,50 @@ WU-MAINLINE-035: 报告演进策略文档化
   - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v18-warning.json' -FailOnWarningCodes known_noise_suppressed` 按策略失败（exit 1）
   - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v18.json'` 成功输出摘要
 
+### 8.23 已完成 Work Unit（批量）
+
+WU-MAINLINE-036: Gate 机器可解析结果输出
+
+- Objective: 为 gate 脚本提供稳定机器输出，便于 CI/自动化消费。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 增加 `AsJson` 模式。
+  - out: 外部告警平台联动与流水线模板。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 `AsJson` 输出分支。
+- Risks: 输出字段变更会影响外部消费者解析。
+- Acceptance criteria:
+  - `-AsJson` 可输出稳定 JSON 结果（含 `status/reportPath/error`）。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-037: Gate 失败路径统一结构化输出
+
+- Objective: 让 gate 在失败场景也保持统一机器结果格式，避免分支解析逻辑。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 在 PASS/FAIL 均输出统一结构结果。
+  - out: 报告 schema 升级。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚统一输出与错误封装逻辑。
+- Risks: 错误消息文案调整可能影响日志检索规则。
+- Acceptance criteria:
+  - FAIL 路径在 `-AsJson` 下输出 `status=FAIL` 且包含 `error`。
+  - warning policy 触发失败时返回码为 1。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v19.json' -AsJson` 通过并输出 PASS JSON
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v19-warning.json' -FailOnWarningCodes known_noise_suppressed -AsJson` 按策略失败并输出 FAIL JSON（exit 1）
+  - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v19.json' -AsJson` 成功输出摘要 JSON
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
