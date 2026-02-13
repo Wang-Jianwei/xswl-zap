@@ -18,6 +18,8 @@
   - 主曲线 marker 标签显示 `min/max + x/y` 完整数值（紧凑排版）
   - 新增 `Copy Primary Marker` 按钮，可一键复制主曲线 marker 数值
   - 复制操作在页面内显示成功/失败状态条
+  - 复制触发后先显示 `Copying...` 状态，2 秒后自动淡出
+  - 支持快捷键 `Ctrl+C` / `Cmd+C` 触发主曲线 marker 复制（无输入焦点时）
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

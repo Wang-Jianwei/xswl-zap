@@ -2165,6 +2165,87 @@ WU-MAINLINE-069: 复制主曲线 marker 的页面内状态反馈
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.52 已完成 Work Unit
+
+WU-MAINLINE-070: 复制过程 `Copying...` 过渡态
+
+- Objective: 让复制动作具备即时过程反馈，避免用户误判点击未生效。
+- Scope (in/out):
+  - in: 点击复制后立即显示 `Copying...` 状态。
+  - out: 进度条动画与多阶段状态细分。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚复制过程过渡态逻辑。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 点击复制立即显示 `Copying...`。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.53 已完成 Work Unit
+
+WU-MAINLINE-071: 复制状态条自动淡出
+
+- Objective: 降低状态提示长期驻留造成的页面噪声。
+- Scope (in/out):
+  - in: 复制状态（成功/失败）2 秒后自动清理。
+  - out: 用户可配置的持续时长设置。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚自动淡出逻辑，保持常驻状态条。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 状态条在 2 秒后自动隐藏。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.54 已完成 Work Unit
+
+WU-MAINLINE-072: 快捷键复制主曲线 marker
+
+- Objective: 提高操作效率，支持键盘快速复制关键读数。
+- Scope (in/out):
+  - in: 支持 `Ctrl/Cmd + C` 触发主曲线 marker 复制（非输入焦点）。
+  - out: 快捷键自定义映射。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚快捷键监听逻辑。
+- Risks: 需避免与输入框默认复制冲突（当前已做输入焦点保护）。
+- Acceptance criteria:
+  - `Ctrl/Cmd + C` 可触发复制（非输入焦点）。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result (WU070~072 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

@@ -573,6 +573,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const vscodeApi = typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
       const copyButton = document.getElementById("copyPrimaryMarker");
       const copyStatus = document.getElementById("copyStatus");
+      let statusTimer = undefined;
       const updateCopyStatus = (ok, message) => {
         if (!(copyStatus instanceof HTMLElement)) {
           return;
@@ -580,28 +581,77 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         copyStatus.classList.remove("is-success", "is-error");
         copyStatus.classList.add(ok ? "is-success" : "is-error");
         copyStatus.textContent = message;
+        if (statusTimer) {
+          clearTimeout(statusTimer);
+        }
+        statusTimer = setTimeout(() => {
+          if (!(copyStatus instanceof HTMLElement)) {
+            return;
+          }
+          copyStatus.classList.remove("is-success", "is-error");
+          copyStatus.textContent = "";
+          copyStatus.style.display = "";
+        }, 2000);
+      };
+
+      const setCopying = () => {
+        if (copyButton instanceof HTMLButtonElement) {
+          copyButton.disabled = true;
+        }
+        if (copyStatus instanceof HTMLElement) {
+          copyStatus.classList.remove("is-success", "is-error");
+          copyStatus.textContent = "Copying...";
+          copyStatus.style.display = "block";
+        }
+      };
+
+      const finishCopying = () => {
+        if (copyButton instanceof HTMLButtonElement && copyButton.getAttribute("data-copy-text")) {
+          copyButton.disabled = false;
+        }
+      };
+
+      const copyPrimaryMarker = async () => {
+        if (!(copyButton instanceof HTMLButtonElement) || copyButton.disabled) {
+          return;
+        }
+        const copyText = copyButton.getAttribute("data-copy-text") || "";
+        if (!copyText) {
+          return;
+        }
+        setCopying();
+        if (vscodeApi) {
+          vscodeApi.postMessage({ type: "copy-primary-marker", text: copyText });
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(copyText);
+            updateCopyStatus(true, "Primary marker copied.");
+          } catch (error) {
+            updateCopyStatus(false, "Copy failed.");
+          } finally {
+            finishCopying();
+          }
+        }
       };
 
       if (copyButton instanceof HTMLButtonElement && !copyButton.disabled) {
-        copyButton.addEventListener("click", async () => {
-          const copyText = copyButton.getAttribute("data-copy-text") || "";
-          if (!copyText) {
-            return;
-          }
-          if (vscodeApi) {
-            vscodeApi.postMessage({ type: "copy-primary-marker", text: copyText });
-            return;
-          }
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            try {
-              await navigator.clipboard.writeText(copyText);
-              updateCopyStatus(true, "Primary marker copied.");
-            } catch (error) {
-              updateCopyStatus(false, "Copy failed.");
-            }
-          }
-        });
+        copyButton.addEventListener("click", copyPrimaryMarker);
       }
+
+      document.addEventListener("keydown", (event) => {
+        const isCopyHotkey = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c";
+        if (!isCopyHotkey) {
+          return;
+        }
+        const active = document.activeElement;
+        if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+          return;
+        }
+        event.preventDefault();
+        void copyPrimaryMarker();
+      });
 
       window.addEventListener("message", (event) => {
         const payload = event.data;
@@ -609,6 +659,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           return;
         }
         updateCopyStatus(Boolean(payload.ok), String(payload.message || ""));
+        finishCopying();
       });
 
       const legend = document.getElementById("legend");
