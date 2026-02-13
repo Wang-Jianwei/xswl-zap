@@ -2134,6 +2134,37 @@ WU-MAINLINE-068: 一键复制主曲线 marker 读数
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.51 已完成 Work Unit
+
+WU-MAINLINE-069: 复制主曲线 marker 的页面内状态反馈
+
+- Objective: 提升复制操作可感知性，在 Webview 内即时反馈复制结果。
+- Scope (in/out):
+  - in: 增加复制状态条；扩展端回传复制成功/失败消息；页面响应展示；补测试与文档。
+  - out: 历史状态队列、可关闭通知、复制统计埋点。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件端交互增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚状态条渲染与复制结果消息处理，保留原有复制功能。
+- Risks: 主题 token 在部分版本下可能不可用导致状态颜色退化（不影响功能）。
+- Acceptance criteria:
+  - 复制动作后页面可见成功/失败状态。
+  - 扩展端与 Webview 消息通道稳定。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

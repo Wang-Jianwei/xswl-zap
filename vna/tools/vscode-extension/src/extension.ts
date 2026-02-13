@@ -424,8 +424,21 @@ export function activate(context: vscode.ExtensionContext): void {
         if (text.length === 0) {
           return;
         }
-        await vscode.env.clipboard.writeText(text);
-        vscode.window.showInformationMessage("Primary marker copied to clipboard.");
+        try {
+          await vscode.env.clipboard.writeText(text);
+          panel.webview.postMessage({
+            type: "copy-primary-marker-result",
+            ok: true,
+            message: "Primary marker copied.",
+          });
+          vscode.window.showInformationMessage("Primary marker copied to clipboard.");
+        } catch (error) {
+          panel.webview.postMessage({
+            type: "copy-primary-marker-result",
+            ok: false,
+            message: "Copy failed.",
+          });
+        }
       });
 
       if (previewTypeSelection.label === "snapshot") {

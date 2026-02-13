@@ -106,6 +106,8 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("y="));
   assert(html.includes("id=\"copyPrimaryMarker\""));
   assert(html.includes("copy-primary-marker"));
+  assert(html.includes("id=\"copyStatus\""));
+  assert(html.includes("copy-primary-marker-result"));
   assert(html.includes("axis-line"));
   assert(html.includes("axis-tick"));
   assert(html.includes("xMin="));

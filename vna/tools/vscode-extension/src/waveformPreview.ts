@@ -495,6 +495,25 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .marker-values { opacity: 0.9; }
     .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
     .actions { margin-bottom: 8px; display: flex; gap: 8px; }
+    .copy-status {
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      border: 1px solid var(--vscode-editorWidget-border);
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0.9;
+      display: none;
+    }
+    .copy-status.is-success {
+      display: block;
+      color: var(--vscode-testing-iconPassed);
+      border-color: var(--vscode-testing-iconPassed);
+    }
+    .copy-status.is-error {
+      display: block;
+      color: var(--vscode-testing-iconFailed);
+      border-color: var(--vscode-testing-iconFailed);
+    }
     .action-btn {
       border: 1px solid var(--vscode-editorWidget-border);
       background: var(--vscode-button-background);
@@ -536,6 +555,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="actions">
     <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
   </div>
+  <div id="copyStatus" class="copy-status"></div>
   <div class="legend" id="legend">${legendItems}</div>
   <div class="marker" id="markerPanel">${markerRows || "none"}</div>
   ${
@@ -552,6 +572,16 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     (function () {
       const vscodeApi = typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
       const copyButton = document.getElementById("copyPrimaryMarker");
+      const copyStatus = document.getElementById("copyStatus");
+      const updateCopyStatus = (ok, message) => {
+        if (!(copyStatus instanceof HTMLElement)) {
+          return;
+        }
+        copyStatus.classList.remove("is-success", "is-error");
+        copyStatus.classList.add(ok ? "is-success" : "is-error");
+        copyStatus.textContent = message;
+      };
+
       if (copyButton instanceof HTMLButtonElement && !copyButton.disabled) {
         copyButton.addEventListener("click", async () => {
           const copyText = copyButton.getAttribute("data-copy-text") || "";
@@ -563,10 +593,23 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
             return;
           }
           if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(copyText);
+            try {
+              await navigator.clipboard.writeText(copyText);
+              updateCopyStatus(true, "Primary marker copied.");
+            } catch (error) {
+              updateCopyStatus(false, "Copy failed.");
+            }
           }
         });
       }
+
+      window.addEventListener("message", (event) => {
+        const payload = event.data;
+        if (!payload || payload.type !== "copy-primary-marker-result") {
+          return;
+        }
+        updateCopyStatus(Boolean(payload.ok), String(payload.message || ""));
+      });
 
       const legend = document.getElementById("legend");
       if (!legend) {
