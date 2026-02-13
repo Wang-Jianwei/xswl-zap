@@ -164,6 +164,34 @@ struct ServiceStatusDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServiceStatusDefaultTypeInternal _ServiceStatus_default_instance_;
 
+inline constexpr SParameterPoint::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        row_port_{0u},
+        col_port_{0u},
+        real_{0},
+        imag_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR SParameterPoint::SParameterPoint(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(SParameterPoint_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct SParameterPointDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SParameterPointDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~SParameterPointDefaultTypeInternal() {}
+  union {
+    SParameterPoint _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SParameterPointDefaultTypeInternal _SParameterPoint_default_instance_;
+
 inline constexpr ResourceRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -195,6 +223,36 @@ struct ResourceRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResourceRequestDefaultTypeInternal _ResourceRequest_default_instance_;
+
+inline constexpr ReceiverChannelSample::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        channel_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        real_{0},
+        imag_{0},
+        clipped_{false} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR ReceiverChannelSample::ReceiverChannelSample(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(ReceiverChannelSample_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct ReceiverChannelSampleDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ReceiverChannelSampleDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ReceiverChannelSampleDefaultTypeInternal() {}
+  union {
+    ReceiverChannelSample _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ReceiverChannelSampleDefaultTypeInternal _ReceiverChannelSample_default_instance_;
 
 inline constexpr PulseExcitation::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -306,7 +364,13 @@ inline constexpr CwExcitation::Impl_::Impl_(
       : _cached_size_{0},
         frequency_hz_{0},
         power_dbm_{0},
-        dwell_time_ms_{0u} {}
+        start_frequency_hz_{0},
+        dwell_time_ms_{0u},
+        sweep_point_count_{0u},
+        stop_frequency_hz_{0},
+        if_bandwidth_hz_{0},
+        port_count_{0u},
+        excitation_port_{0u} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR CwExcitation::CwExcitation(::_pbi::ConstantInitialized)
@@ -381,6 +445,60 @@ struct TimeDomainFrameDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TimeDomainFrameDefaultTypeInternal _TimeDomainFrame_default_instance_;
 
+inline constexpr SParameterFrequencyPoint::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        points_{},
+        frequency_hz_{0},
+        port_count_{0u} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR SParameterFrequencyPoint::SParameterFrequencyPoint(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(SParameterFrequencyPoint_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct SParameterFrequencyPointDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SParameterFrequencyPointDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~SParameterFrequencyPointDefaultTypeInternal() {}
+  union {
+    SParameterFrequencyPoint _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SParameterFrequencyPointDefaultTypeInternal _SParameterFrequencyPoint_default_instance_;
+
+inline constexpr ReceiverFrequencyPoint::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        channels_{},
+        frequency_hz_{0},
+        timestamp_ns_{::uint64_t{0u}} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR ReceiverFrequencyPoint::ReceiverFrequencyPoint(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(ReceiverFrequencyPoint_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct ReceiverFrequencyPointDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ReceiverFrequencyPointDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ReceiverFrequencyPointDefaultTypeInternal() {}
+  union {
+    ReceiverFrequencyPoint _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ReceiverFrequencyPointDefaultTypeInternal _ReceiverFrequencyPoint_default_instance_;
+
 inline constexpr FrequencyDomainFrame::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -438,6 +556,9 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr AcquisitionResult::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
+        receiver_raw_points_{},
+        receiver_compensated_points_{},
+        s_parameter_points_{},
         instance_id_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -530,13 +651,25 @@ const ::uint32_t
         2,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_._has_bits_),
-        6, // hasbit index offset
+        12, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.frequency_hz_),
         PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.power_dbm_),
         PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.dwell_time_ms_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.start_frequency_hz_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.stop_frequency_hz_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.sweep_point_count_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.if_bandwidth_hz_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.port_count_),
+        PROTOBUF_FIELD_OFFSET(::vna::CwExcitation, _impl_.excitation_port_),
         0,
         1,
+        3,
         2,
+        5,
+        4,
+        6,
+        7,
+        8,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::PulseExcitation, _impl_._has_bits_),
         8, // hasbit index offset
@@ -594,19 +727,65 @@ const ::uint32_t
         0,
         1,
         2,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverChannelSample, _impl_._has_bits_),
+        7, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverChannelSample, _impl_.channel_id_),
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverChannelSample, _impl_.real_),
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverChannelSample, _impl_.imag_),
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverChannelSample, _impl_.clipped_),
+        0,
+        1,
+        2,
+        3,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverFrequencyPoint, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverFrequencyPoint, _impl_.frequency_hz_),
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverFrequencyPoint, _impl_.timestamp_ns_),
+        PROTOBUF_FIELD_OFFSET(::vna::ReceiverFrequencyPoint, _impl_.channels_),
+        1,
+        2,
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterPoint, _impl_._has_bits_),
+        7, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterPoint, _impl_.row_port_),
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterPoint, _impl_.col_port_),
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterPoint, _impl_.real_),
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterPoint, _impl_.imag_),
+        0,
+        1,
+        2,
+        3,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterFrequencyPoint, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterFrequencyPoint, _impl_.frequency_hz_),
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterFrequencyPoint, _impl_.port_count_),
+        PROTOBUF_FIELD_OFFSET(::vna::SParameterFrequencyPoint, _impl_.points_),
+        1,
+        2,
+        0,
         0x085, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_._oneof_case_[0]),
-        9, // hasbit index offset
+        12, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.instance_id_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.timestamp_ns_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.data_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.data_),
+        PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.receiver_raw_points_),
+        PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.receiver_compensated_points_),
+        PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.s_parameter_points_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionResult, _impl_.data_),
+        3,
+        4,
+        ~0u,
+        ~0u,
         0,
         1,
-        ~0u,
-        ~0u,
+        2,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::FrequencyDomainFrame, _impl_._has_bits_),
         4, // hasbit index offset
@@ -675,17 +854,21 @@ static const ::_pbi::MigrationSchema
         {8, sizeof(::vna::ValidationResult)},
         {17, sizeof(::vna::TopologyErrorDetail)},
         {26, sizeof(::vna::CwExcitation)},
-        {35, sizeof(::vna::PulseExcitation)},
-        {48, sizeof(::vna::ExcitationConfig)},
-        {63, sizeof(::vna::AcquisitionRequest)},
-        {74, sizeof(::vna::FrequencyDomainPoint)},
-        {83, sizeof(::vna::TimeDomainPoint)},
-        {92, sizeof(::vna::AcquisitionResult)},
-        {105, sizeof(::vna::FrequencyDomainFrame)},
-        {110, sizeof(::vna::TimeDomainFrame)},
-        {117, sizeof(::vna::ResourceRequest)},
-        {128, sizeof(::vna::LeaseInfo)},
-        {137, sizeof(::vna::ServiceStatus)},
+        {47, sizeof(::vna::PulseExcitation)},
+        {60, sizeof(::vna::ExcitationConfig)},
+        {75, sizeof(::vna::AcquisitionRequest)},
+        {86, sizeof(::vna::FrequencyDomainPoint)},
+        {95, sizeof(::vna::TimeDomainPoint)},
+        {104, sizeof(::vna::ReceiverChannelSample)},
+        {115, sizeof(::vna::ReceiverFrequencyPoint)},
+        {124, sizeof(::vna::SParameterPoint)},
+        {135, sizeof(::vna::SParameterFrequencyPoint)},
+        {144, sizeof(::vna::AcquisitionResult)},
+        {163, sizeof(::vna::FrequencyDomainFrame)},
+        {168, sizeof(::vna::TimeDomainFrame)},
+        {175, sizeof(::vna::ResourceRequest)},
+        {186, sizeof(::vna::LeaseInfo)},
+        {195, sizeof(::vna::ServiceStatus)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_Empty_default_instance_._instance,
@@ -698,6 +881,10 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_AcquisitionRequest_default_instance_._instance,
     &::vna::_FrequencyDomainPoint_default_instance_._instance,
     &::vna::_TimeDomainPoint_default_instance_._instance,
+    &::vna::_ReceiverChannelSample_default_instance_._instance,
+    &::vna::_ReceiverFrequencyPoint_default_instance_._instance,
+    &::vna::_SParameterPoint_default_instance_._instance,
+    &::vna::_SParameterFrequencyPoint_default_instance_._instance,
     &::vna::_AcquisitionResult_default_instance_._instance,
     &::vna::_FrequencyDomainFrame_default_instance_._instance,
     &::vna::_TimeDomainFrame_default_instance_._instance,
@@ -712,68 +899,87 @@ const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "ult\022\n\n\002ok\030\001 \001(\010\022\016\n\006errors\030\002 \003(\t\022/\n\rerror"
     "_details\030\003 \003(\0132\030.vna.TopologyErrorDetail"
     "\"C\n\023TopologyErrorDetail\022\014\n\004code\030\001 \001(\t\022\r\n"
-    "\005field\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"N\n\014CwExcit"
-    "ation\022\024\n\014frequency_hz\030\001 \001(\001\022\021\n\tpower_dbm"
-    "\030\002 \001(\001\022\025\n\rdwell_time_ms\030\003 \001(\r\"\210\001\n\017PulseE"
-    "xcitation\022\033\n\023center_frequency_hz\030\001 \001(\001\022\026"
-    "\n\016pulse_width_ns\030\002 \001(\r\022\027\n\017pulse_period_n"
-    "s\030\003 \001(\r\022\021\n\tpower_dbm\030\004 \001(\001\022\024\n\014rise_time_"
-    "ns\030\005 \001(\r\"\276\001\n\020ExcitationConfig\022!\n\004mode\030\001 "
-    "\001(\0162\023.vna.ExcitationMode\022\030\n\020settling_tim"
-    "e_ms\030\002 \001(\r\022\033\n\023enable_auto_trigger\030\003 \001(\010\022"
-    "\037\n\002cw\030\n \001(\0132\021.vna.CwExcitationH\000\022%\n\005puls"
-    "e\030\013 \001(\0132\024.vna.PulseExcitationH\000B\010\n\006detai"
-    "l\"~\n\022AcquisitionRequest\022\023\n\013instance_id\030\001"
-    " \001(\t\022)\n\nexcitation\030\002 \001(\0132\025.vna.Excitatio"
-    "nConfig\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeout"
-    "_ms\030\004 \001(\r\"H\n\024FrequencyDomainPoint\022\024\n\014fre"
-    "quency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 "
-    "\001(\001\"D\n\017TimeDomainPoint\022\017\n\007time_ns\030\001 \001(\001\022"
-    "\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"\250\001\n\021Ac"
-    "quisitionResult\022\023\n\013instance_id\030\001 \001(\t\022\024\n\014"
-    "timestamp_ns\030\002 \001(\004\0224\n\017frequency_frame\030\n "
-    "\001(\0132\031.vna.FrequencyDomainFrameH\000\022*\n\ntime"
-    "_frame\030\013 \001(\0132\024.vna.TimeDomainFrameH\000B\006\n\004"
-    "data\"A\n\024FrequencyDomainFrame\022)\n\006points\030\001"
-    " \003(\0132\031.vna.FrequencyDomainPoint\"P\n\017TimeD"
-    "omainFrame\022$\n\006points\030\001 \003(\0132\024.vna.TimeDom"
-    "ainPoint\022\027\n\017sample_rate_ghz\030\002 \001(\001\"c\n\017Res"
-    "ourceRequest\022\023\n\013resource_id\030\001 \001(\t\022\024\n\014wor"
-    "kspace_id\030\002 \001(\t\022\021\n\texclusive\030\003 \001(\010\022\022\n\nti"
-    "meout_ms\030\004 \001(\r\"G\n\tLeaseInfo\022\020\n\010lease_id\030"
-    "\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022\023\n\013ttl_second"
-    "s\030\003 \001(\r\"\376\001\n\rServiceStatus\022\r\n\005ready\030\001 \001(\010"
-    "\022\r\n\005state\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\021\n\tupti"
-    "me_ms\030\004 \001(\004\022\024\n\014bind_address\030\005 \001(\t\022\014\n\004por"
-    "t\030\006 \001(\r\022\023\n\013tls_enabled\030\007 \001(\010\022\021\n\tlog_leve"
-    "l\030\010 \001(\t\022\026\n\016instance_count\030\t \001(\r\022\032\n\022activ"
-    "e_lease_count\030\n \001(\r\022\026\n\016bootstrap_mode\030\013 "
-    "\001(\t\022\023\n\013config_path\030\014 \001(\t*d\n\016ExcitationMo"
-    "de\022\037\n\033EXCITATION_MODE_UNSPECIFIED\020\000\022\026\n\022E"
-    "XCITATION_MODE_CW\020\001\022\031\n\025EXCITATION_MODE_P"
-    "ULSE\020\0022\376\001\n\nVnaControl\0228\n\020ValidateTopolog"
-    "y\022\r.vna.Topology\032\025.vna.ValidationResult\022"
-    "2\n\020GetServiceStatus\022\n.vna.Empty\032\022.vna.Se"
-    "rviceStatus\022:\n\007Acquire\022\027.vna.Acquisition"
-    "Request\032\026.vna.AcquisitionResult\022F\n\021Strea"
-    "mAcquisition\022\027.vna.AcquisitionRequest\032\026."
-    "vna.AcquisitionResult0\0012\243\001\n\016ResourceBrok"
-    "er\022/\n\007Acquire\022\024.vna.ResourceRequest\032\016.vn"
-    "a.LeaseInfo\022.\n\005Renew\022\016.vna.LeaseInfo\032\025.v"
-    "na.ValidationResult\0220\n\007Release\022\016.vna.Lea"
-    "seInfo\032\025.vna.ValidationResultb\006proto3"
+    "\005field\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\346\001\n\014CwExci"
+    "tation\022\024\n\014frequency_hz\030\001 \001(\001\022\021\n\tpower_db"
+    "m\030\002 \001(\001\022\025\n\rdwell_time_ms\030\003 \001(\r\022\032\n\022start_"
+    "frequency_hz\030\004 \001(\001\022\031\n\021stop_frequency_hz\030"
+    "\005 \001(\001\022\031\n\021sweep_point_count\030\006 \001(\r\022\027\n\017if_b"
+    "andwidth_hz\030\007 \001(\001\022\022\n\nport_count\030\010 \001(\r\022\027\n"
+    "\017excitation_port\030\t \001(\r\"\210\001\n\017PulseExcitati"
+    "on\022\033\n\023center_frequency_hz\030\001 \001(\001\022\026\n\016pulse"
+    "_width_ns\030\002 \001(\r\022\027\n\017pulse_period_ns\030\003 \001(\r"
+    "\022\021\n\tpower_dbm\030\004 \001(\001\022\024\n\014rise_time_ns\030\005 \001("
+    "\r\"\276\001\n\020ExcitationConfig\022!\n\004mode\030\001 \001(\0162\023.v"
+    "na.ExcitationMode\022\030\n\020settling_time_ms\030\002 "
+    "\001(\r\022\033\n\023enable_auto_trigger\030\003 \001(\010\022\037\n\002cw\030\n"
+    " \001(\0132\021.vna.CwExcitationH\000\022%\n\005pulse\030\013 \001(\013"
+    "2\024.vna.PulseExcitationH\000B\010\n\006detail\"~\n\022Ac"
+    "quisitionRequest\022\023\n\013instance_id\030\001 \001(\t\022)\n"
+    "\nexcitation\030\002 \001(\0132\025.vna.ExcitationConfig"
+    "\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeout_ms\030\004 \001"
+    "(\r\"H\n\024FrequencyDomainPoint\022\024\n\014frequency_"
+    "hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\"D\n\017"
+    "TimeDomainPoint\022\017\n\007time_ns\030\001 \001(\001\022\021\n\tmagn"
+    "itude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"X\n\025ReceiverCh"
+    "annelSample\022\022\n\nchannel_id\030\001 \001(\t\022\014\n\004real\030"
+    "\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007clipped\030\004 \001(\010\"r\n\026"
+    "ReceiverFrequencyPoint\022\024\n\014frequency_hz\030\001"
+    " \001(\001\022\024\n\014timestamp_ns\030\002 \001(\004\022,\n\010channels\030\003"
+    " \003(\0132\032.vna.ReceiverChannelSample\"Q\n\017SPar"
+    "ameterPoint\022\020\n\010row_port\030\001 \001(\r\022\020\n\010col_por"
+    "t\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004imag\030\004 \001(\001\"j\n\030S"
+    "ParameterFrequencyPoint\022\024\n\014frequency_hz\030"
+    "\001 \001(\001\022\022\n\nport_count\030\002 \001(\r\022$\n\006points\030\003 \003("
+    "\0132\024.vna.SParameterPoint\"\337\002\n\021AcquisitionR"
+    "esult\022\023\n\013instance_id\030\001 \001(\t\022\024\n\014timestamp_"
+    "ns\030\002 \001(\004\0224\n\017frequency_frame\030\n \001(\0132\031.vna."
+    "FrequencyDomainFrameH\000\022*\n\ntime_frame\030\013 \001"
+    "(\0132\024.vna.TimeDomainFrameH\000\0228\n\023receiver_r"
+    "aw_points\030\024 \003(\0132\033.vna.ReceiverFrequencyP"
+    "oint\022@\n\033receiver_compensated_points\030\025 \003("
+    "\0132\033.vna.ReceiverFrequencyPoint\0229\n\022s_para"
+    "meter_points\030\026 \003(\0132\035.vna.SParameterFrequ"
+    "encyPointB\006\n\004data\"A\n\024FrequencyDomainFram"
+    "e\022)\n\006points\030\001 \003(\0132\031.vna.FrequencyDomainP"
+    "oint\"P\n\017TimeDomainFrame\022$\n\006points\030\001 \003(\0132"
+    "\024.vna.TimeDomainPoint\022\027\n\017sample_rate_ghz"
+    "\030\002 \001(\001\"c\n\017ResourceRequest\022\023\n\013resource_id"
+    "\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022\021\n\texclusiv"
+    "e\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G\n\tLeaseInfo"
+    "\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022"
+    "\023\n\013ttl_seconds\030\003 \001(\r\"\376\001\n\rServiceStatus\022\r"
+    "\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007message\030"
+    "\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_address"
+    "\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabled\030\007 \001("
+    "\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016instance_count\030\t"
+    " \001(\r\022\032\n\022active_lease_count\030\n \001(\r\022\026\n\016boot"
+    "strap_mode\030\013 \001(\t\022\023\n\013config_path\030\014 \001(\t*d\n"
+    "\016ExcitationMode\022\037\n\033EXCITATION_MODE_UNSPE"
+    "CIFIED\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022\031\n\025EXCI"
+    "TATION_MODE_PULSE\020\0022\376\001\n\nVnaControl\0228\n\020Va"
+    "lidateTopology\022\r.vna.Topology\032\025.vna.Vali"
+    "dationResult\0222\n\020GetServiceStatus\022\n.vna.E"
+    "mpty\032\022.vna.ServiceStatus\022:\n\007Acquire\022\027.vn"
+    "a.AcquisitionRequest\032\026.vna.AcquisitionRe"
+    "sult\022F\n\021StreamAcquisition\022\027.vna.Acquisit"
+    "ionRequest\032\026.vna.AcquisitionResult0\0012\243\001\n"
+    "\016ResourceBroker\022/\n\007Acquire\022\024.vna.Resourc"
+    "eRequest\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vna."
+    "LeaseInfo\032\025.vna.ValidationResult\0220\n\007Rele"
+    "ase\022\016.vna.LeaseInfo\032\025.vna.ValidationResu"
+    "ltb\006proto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    2197,
+    2930,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
     nullptr,
     0,
-    16,
+    20,
     schemas,
     file_default_instances,
     TableStruct_vna_2eproto::offsets,
@@ -1979,9 +2185,9 @@ inline void CwExcitation::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, frequency_hz_),
            0,
-           offsetof(Impl_, dwell_time_ms_) -
+           offsetof(Impl_, excitation_port_) -
                offsetof(Impl_, frequency_hz_) +
-               sizeof(Impl_::dwell_time_ms_));
+               sizeof(Impl_::excitation_port_));
 }
 CwExcitation::~CwExcitation() {
   // @@protoc_insertion_point(destructor:vna.CwExcitation)
@@ -2040,16 +2246,16 @@ CwExcitation::GetClassData() const {
   return CwExcitation_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 0, 2>
+const ::_pbi::TcParseTable<4, 9, 0, 0, 2>
 CwExcitation::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_._has_bits_),
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    9, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294966784,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    9,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     CwExcitation_class_data_.base(),
@@ -2069,9 +2275,39 @@ CwExcitation::_table_ = {
      {17, 1, 0,
       PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.power_dbm_)}},
     // uint32 dwell_time_ms = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(CwExcitation, _impl_.dwell_time_ms_), 2>(),
-     {24, 2, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(CwExcitation, _impl_.dwell_time_ms_), 3>(),
+     {24, 3, 0,
       PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.dwell_time_ms_)}},
+    // double start_frequency_hz = 4;
+    {::_pbi::TcParser::FastF64S1,
+     {33, 2, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.start_frequency_hz_)}},
+    // double stop_frequency_hz = 5;
+    {::_pbi::TcParser::FastF64S1,
+     {41, 5, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.stop_frequency_hz_)}},
+    // uint32 sweep_point_count = 6;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(CwExcitation, _impl_.sweep_point_count_), 4>(),
+     {48, 4, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.sweep_point_count_)}},
+    // double if_bandwidth_hz = 7;
+    {::_pbi::TcParser::FastF64S1,
+     {57, 6, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.if_bandwidth_hz_)}},
+    // uint32 port_count = 8;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(CwExcitation, _impl_.port_count_), 7>(),
+     {64, 7, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.port_count_)}},
+    // uint32 excitation_port = 9;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(CwExcitation, _impl_.excitation_port_), 8>(),
+     {72, 8, 0,
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.excitation_port_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
@@ -2080,7 +2316,19 @@ CwExcitation::_table_ = {
     // double power_dbm = 2;
     {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.power_dbm_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
     // uint32 dwell_time_ms = 3;
-    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.dwell_time_ms_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.dwell_time_ms_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // double start_frequency_hz = 4;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.start_frequency_hz_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double stop_frequency_hz = 5;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.stop_frequency_hz_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // uint32 sweep_point_count = 6;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.sweep_point_count_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // double if_bandwidth_hz = 7;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.if_bandwidth_hz_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // uint32 port_count = 8;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.port_count_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // uint32 excitation_port = 9;
+    {PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.excitation_port_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
   }},
   // no aux_entries
   {{
@@ -2094,11 +2342,12 @@ PROTOBUF_NOINLINE void CwExcitation::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
     ::memset(&_impl_.frequency_hz_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.dwell_time_ms_) -
-        reinterpret_cast<char*>(&_impl_.frequency_hz_)) + sizeof(_impl_.dwell_time_ms_));
+        reinterpret_cast<char*>(&_impl_.port_count_) -
+        reinterpret_cast<char*>(&_impl_.frequency_hz_)) + sizeof(_impl_.port_count_));
   }
+  _impl_.excitation_port_ = 0u;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -2141,11 +2390,65 @@ PROTOBUF_NOINLINE void CwExcitation::Clear() {
   }
 
   // uint32 dwell_time_ms = 3;
-  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
     if (this_._internal_dwell_time_ms() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
           3, this_._internal_dwell_time_ms(), target);
+    }
+  }
+
+  // double start_frequency_hz = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_start_frequency_hz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          4, this_._internal_start_frequency_hz(), target);
+    }
+  }
+
+  // double stop_frequency_hz = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_stop_frequency_hz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          5, this_._internal_stop_frequency_hz(), target);
+    }
+  }
+
+  // uint32 sweep_point_count = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (this_._internal_sweep_point_count() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          6, this_._internal_sweep_point_count(), target);
+    }
+  }
+
+  // double if_bandwidth_hz = 7;
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_if_bandwidth_hz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          7, this_._internal_if_bandwidth_hz(), target);
+    }
+  }
+
+  // uint32 port_count = 8;
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (this_._internal_port_count() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          8, this_._internal_port_count(), target);
+    }
+  }
+
+  // uint32 excitation_port = 9;
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (this_._internal_excitation_port() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          9, this_._internal_excitation_port(), target);
     }
   }
 
@@ -2174,7 +2477,7 @@ PROTOBUF_NOINLINE void CwExcitation::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
     // double frequency_hz = 1;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (::absl::bit_cast<::uint64_t>(this_._internal_frequency_hz()) != 0) {
@@ -2187,11 +2490,52 @@ PROTOBUF_NOINLINE void CwExcitation::Clear() {
         total_size += 9;
       }
     }
-    // uint32 dwell_time_ms = 3;
+    // double start_frequency_hz = 4;
     if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_start_frequency_hz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // uint32 dwell_time_ms = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (this_._internal_dwell_time_ms() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_dwell_time_ms());
+      }
+    }
+    // uint32 sweep_point_count = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (this_._internal_sweep_point_count() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_sweep_point_count());
+      }
+    }
+    // double stop_frequency_hz = 5;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_stop_frequency_hz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // double if_bandwidth_hz = 7;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_if_bandwidth_hz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // uint32 port_count = 8;
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (this_._internal_port_count() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_port_count());
+      }
+    }
+  }
+   {
+    // uint32 excitation_port = 9;
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+      if (this_._internal_excitation_port() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_excitation_port());
       }
     }
   }
@@ -2213,7 +2557,7 @@ void CwExcitation::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x000000ffU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (::absl::bit_cast<::uint64_t>(from._internal_frequency_hz()) != 0) {
         _this->_impl_.frequency_hz_ = from._impl_.frequency_hz_;
@@ -2225,9 +2569,39 @@ void CwExcitation::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_start_frequency_hz()) != 0) {
+        _this->_impl_.start_frequency_hz_ = from._impl_.start_frequency_hz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (from._internal_dwell_time_ms() != 0) {
         _this->_impl_.dwell_time_ms_ = from._impl_.dwell_time_ms_;
       }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (from._internal_sweep_point_count() != 0) {
+        _this->_impl_.sweep_point_count_ = from._impl_.sweep_point_count_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_stop_frequency_hz()) != 0) {
+        _this->_impl_.stop_frequency_hz_ = from._impl_.stop_frequency_hz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_if_bandwidth_hz()) != 0) {
+        _this->_impl_.if_bandwidth_hz_ = from._impl_.if_bandwidth_hz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+      if (from._internal_port_count() != 0) {
+        _this->_impl_.port_count_ = from._impl_.port_count_;
+      }
+    }
+  }
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (from._internal_excitation_port() != 0) {
+      _this->_impl_.excitation_port_ = from._impl_.excitation_port_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -2248,8 +2622,8 @@ void CwExcitation::InternalSwap(CwExcitation* PROTOBUF_RESTRICT PROTOBUF_NONNULL
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.dwell_time_ms_)
-      + sizeof(CwExcitation::_impl_.dwell_time_ms_)
+      PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.excitation_port_)
+      + sizeof(CwExcitation::_impl_.excitation_port_)
       - PROTOBUF_FIELD_OFFSET(CwExcitation, _impl_.frequency_hz_)>(
           reinterpret_cast<char*>(&_impl_.frequency_hz_),
           reinterpret_cast<char*>(&other->_impl_.frequency_hz_));
@@ -4155,6 +4529,1459 @@ void TimeDomainPoint::InternalSwap(TimeDomainPoint* PROTOBUF_RESTRICT PROTOBUF_N
 }
 // ===================================================================
 
+class ReceiverChannelSample::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<ReceiverChannelSample>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_._has_bits_);
+};
+
+ReceiverChannelSample::ReceiverChannelSample(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ReceiverChannelSample_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.ReceiverChannelSample)
+}
+PROTOBUF_NDEBUG_INLINE ReceiverChannelSample::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::ReceiverChannelSample& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        channel_id_(arena, from.channel_id_) {}
+
+ReceiverChannelSample::ReceiverChannelSample(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const ReceiverChannelSample& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ReceiverChannelSample_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ReceiverChannelSample* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, real_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, real_),
+           offsetof(Impl_, clipped_) -
+               offsetof(Impl_, real_) +
+               sizeof(Impl_::clipped_));
+
+  // @@protoc_insertion_point(copy_constructor:vna.ReceiverChannelSample)
+}
+PROTOBUF_NDEBUG_INLINE ReceiverChannelSample::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        channel_id_(arena) {}
+
+inline void ReceiverChannelSample::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, real_),
+           0,
+           offsetof(Impl_, clipped_) -
+               offsetof(Impl_, real_) +
+               sizeof(Impl_::clipped_));
+}
+ReceiverChannelSample::~ReceiverChannelSample() {
+  // @@protoc_insertion_point(destructor:vna.ReceiverChannelSample)
+  SharedDtor(*this);
+}
+inline void ReceiverChannelSample::SharedDtor(MessageLite& self) {
+  ReceiverChannelSample& this_ = static_cast<ReceiverChannelSample&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.channel_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL ReceiverChannelSample::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) ReceiverChannelSample(arena);
+}
+constexpr auto ReceiverChannelSample::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ReceiverChannelSample),
+                                            alignof(ReceiverChannelSample));
+}
+constexpr auto ReceiverChannelSample::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_ReceiverChannelSample_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &ReceiverChannelSample::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<ReceiverChannelSample>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &ReceiverChannelSample::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<ReceiverChannelSample>(), &ReceiverChannelSample::ByteSizeLong,
+              &ReceiverChannelSample::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_._cached_size_),
+          false,
+      },
+      &ReceiverChannelSample::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull ReceiverChannelSample_class_data_ =
+        ReceiverChannelSample::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+ReceiverChannelSample::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&ReceiverChannelSample_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(ReceiverChannelSample_class_data_.tc_table);
+  return ReceiverChannelSample_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 44, 2>
+ReceiverChannelSample::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_._has_bits_),
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    ReceiverChannelSample_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::ReceiverChannelSample>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // bool clipped = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ReceiverChannelSample, _impl_.clipped_), 3>(),
+     {32, 3, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.clipped_)}},
+    // string channel_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.channel_id_)}},
+    // double real = 2;
+    {::_pbi::TcParser::FastF64S1,
+     {17, 1, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.real_)}},
+    // double imag = 3;
+    {::_pbi::TcParser::FastF64S1,
+     {25, 2, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.imag_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string channel_id = 1;
+    {PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.channel_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // double real = 2;
+    {PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.real_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double imag = 3;
+    {PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.imag_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // bool clipped = 4;
+    {PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.clipped_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+  }},
+  // no aux_entries
+  {{
+    "\31\12\0\0\0\0\0\0"
+    "vna.ReceiverChannelSample"
+    "channel_id"
+  }},
+};
+PROTOBUF_NOINLINE void ReceiverChannelSample::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.ReceiverChannelSample)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.channel_id_.ClearNonDefaultToEmpty();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000eU)) {
+    ::memset(&_impl_.real_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.clipped_) -
+        reinterpret_cast<char*>(&_impl_.real_)) + sizeof(_impl_.clipped_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL ReceiverChannelSample::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const ReceiverChannelSample& this_ = static_cast<const ReceiverChannelSample&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL ReceiverChannelSample::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const ReceiverChannelSample& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.ReceiverChannelSample)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string channel_id = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_channel_id().empty()) {
+      const ::std::string& _s = this_._internal_channel_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.ReceiverChannelSample.channel_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // double real = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_real()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          2, this_._internal_real(), target);
+    }
+  }
+
+  // double imag = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_imag()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          3, this_._internal_imag(), target);
+    }
+  }
+
+  // bool clipped = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (this_._internal_clipped() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          4, this_._internal_clipped(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.ReceiverChannelSample)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t ReceiverChannelSample::ByteSizeLong(const MessageLite& base) {
+  const ReceiverChannelSample& this_ = static_cast<const ReceiverChannelSample&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t ReceiverChannelSample::ByteSizeLong() const {
+  const ReceiverChannelSample& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.ReceiverChannelSample)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    // string channel_id = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_channel_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_channel_id());
+      }
+    }
+    // double real = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_real()) != 0) {
+        total_size += 9;
+      }
+    }
+    // double imag = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_imag()) != 0) {
+        total_size += 9;
+      }
+    }
+    // bool clipped = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (this_._internal_clipped() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void ReceiverChannelSample::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<ReceiverChannelSample*>(&to_msg);
+  auto& from = static_cast<const ReceiverChannelSample&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.ReceiverChannelSample)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_channel_id().empty()) {
+        _this->_internal_set_channel_id(from._internal_channel_id());
+      } else {
+        if (_this->_impl_.channel_id_.IsDefault()) {
+          _this->_internal_set_channel_id("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_real()) != 0) {
+        _this->_impl_.real_ = from._impl_.real_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_imag()) != 0) {
+        _this->_impl_.imag_ = from._impl_.imag_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (from._internal_clipped() != 0) {
+        _this->_impl_.clipped_ = from._impl_.clipped_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void ReceiverChannelSample::CopyFrom(const ReceiverChannelSample& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.ReceiverChannelSample)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ReceiverChannelSample::InternalSwap(ReceiverChannelSample* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.channel_id_, &other->_impl_.channel_id_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.clipped_)
+      + sizeof(ReceiverChannelSample::_impl_.clipped_)
+      - PROTOBUF_FIELD_OFFSET(ReceiverChannelSample, _impl_.real_)>(
+          reinterpret_cast<char*>(&_impl_.real_),
+          reinterpret_cast<char*>(&other->_impl_.real_));
+}
+
+::google::protobuf::Metadata ReceiverChannelSample::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class ReceiverFrequencyPoint::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<ReceiverFrequencyPoint>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_._has_bits_);
+};
+
+ReceiverFrequencyPoint::ReceiverFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ReceiverFrequencyPoint_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.ReceiverFrequencyPoint)
+}
+PROTOBUF_NDEBUG_INLINE ReceiverFrequencyPoint::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::ReceiverFrequencyPoint& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        channels_{visibility, arena, from.channels_} {}
+
+ReceiverFrequencyPoint::ReceiverFrequencyPoint(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const ReceiverFrequencyPoint& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, ReceiverFrequencyPoint_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ReceiverFrequencyPoint* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, frequency_hz_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, frequency_hz_),
+           offsetof(Impl_, timestamp_ns_) -
+               offsetof(Impl_, frequency_hz_) +
+               sizeof(Impl_::timestamp_ns_));
+
+  // @@protoc_insertion_point(copy_constructor:vna.ReceiverFrequencyPoint)
+}
+PROTOBUF_NDEBUG_INLINE ReceiverFrequencyPoint::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        channels_{visibility, arena} {}
+
+inline void ReceiverFrequencyPoint::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, frequency_hz_),
+           0,
+           offsetof(Impl_, timestamp_ns_) -
+               offsetof(Impl_, frequency_hz_) +
+               sizeof(Impl_::timestamp_ns_));
+}
+ReceiverFrequencyPoint::~ReceiverFrequencyPoint() {
+  // @@protoc_insertion_point(destructor:vna.ReceiverFrequencyPoint)
+  SharedDtor(*this);
+}
+inline void ReceiverFrequencyPoint::SharedDtor(MessageLite& self) {
+  ReceiverFrequencyPoint& this_ = static_cast<ReceiverFrequencyPoint&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL ReceiverFrequencyPoint::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) ReceiverFrequencyPoint(arena);
+}
+constexpr auto ReceiverFrequencyPoint::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.channels_) +
+          decltype(ReceiverFrequencyPoint::_impl_.channels_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
+        sizeof(ReceiverFrequencyPoint), alignof(ReceiverFrequencyPoint), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&ReceiverFrequencyPoint::PlacementNew_,
+                                 sizeof(ReceiverFrequencyPoint),
+                                 alignof(ReceiverFrequencyPoint));
+  }
+}
+constexpr auto ReceiverFrequencyPoint::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_ReceiverFrequencyPoint_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &ReceiverFrequencyPoint::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<ReceiverFrequencyPoint>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &ReceiverFrequencyPoint::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<ReceiverFrequencyPoint>(), &ReceiverFrequencyPoint::ByteSizeLong,
+              &ReceiverFrequencyPoint::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_._cached_size_),
+          false,
+      },
+      &ReceiverFrequencyPoint::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull ReceiverFrequencyPoint_class_data_ =
+        ReceiverFrequencyPoint::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+ReceiverFrequencyPoint::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&ReceiverFrequencyPoint_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(ReceiverFrequencyPoint_class_data_.tc_table);
+  return ReceiverFrequencyPoint_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 1, 0, 2>
+ReceiverFrequencyPoint::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    ReceiverFrequencyPoint_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::ReceiverFrequencyPoint>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // double frequency_hz = 1;
+    {::_pbi::TcParser::FastF64S1,
+     {9, 1, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.frequency_hz_)}},
+    // uint64 timestamp_ns = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ReceiverFrequencyPoint, _impl_.timestamp_ns_), 2>(),
+     {16, 2, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.timestamp_ns_)}},
+    // repeated .vna.ReceiverChannelSample channels = 3;
+    {::_pbi::TcParser::FastMtR1,
+     {26, 0, 0,
+      PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.channels_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // double frequency_hz = 1;
+    {PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.frequency_hz_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // uint64 timestamp_ns = 2;
+    {PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.timestamp_ns_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+    // repeated .vna.ReceiverChannelSample channels = 3;
+    {PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.channels_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::ReceiverChannelSample>()},
+  }},
+  {{
+  }},
+};
+PROTOBUF_NOINLINE void ReceiverFrequencyPoint::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.ReceiverFrequencyPoint)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    _impl_.channels_.Clear();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00000006U)) {
+    ::memset(&_impl_.frequency_hz_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.timestamp_ns_) -
+        reinterpret_cast<char*>(&_impl_.frequency_hz_)) + sizeof(_impl_.timestamp_ns_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL ReceiverFrequencyPoint::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const ReceiverFrequencyPoint& this_ = static_cast<const ReceiverFrequencyPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL ReceiverFrequencyPoint::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const ReceiverFrequencyPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.ReceiverFrequencyPoint)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // double frequency_hz = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_frequency_hz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          1, this_._internal_frequency_hz(), target);
+    }
+  }
+
+  // uint64 timestamp_ns = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_timestamp_ns() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+          2, this_._internal_timestamp_ns(), target);
+    }
+  }
+
+  // repeated .vna.ReceiverChannelSample channels = 3;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_channels_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_channels().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              3, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.ReceiverFrequencyPoint)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t ReceiverFrequencyPoint::ByteSizeLong(const MessageLite& base) {
+  const ReceiverFrequencyPoint& this_ = static_cast<const ReceiverFrequencyPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t ReceiverFrequencyPoint::ByteSizeLong() const {
+  const ReceiverFrequencyPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.ReceiverFrequencyPoint)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // repeated .vna.ReceiverChannelSample channels = 3;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size += 1UL * this_._internal_channels_size();
+      for (const auto& msg : this_._internal_channels()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // double frequency_hz = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_frequency_hz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // uint64 timestamp_ns = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_timestamp_ns() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+            this_._internal_timestamp_ns());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void ReceiverFrequencyPoint::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<ReceiverFrequencyPoint*>(&to_msg);
+  auto& from = static_cast<const ReceiverFrequencyPoint&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.ReceiverFrequencyPoint)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_channels()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_channels());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_frequency_hz()) != 0) {
+        _this->_impl_.frequency_hz_ = from._impl_.frequency_hz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_timestamp_ns() != 0) {
+        _this->_impl_.timestamp_ns_ = from._impl_.timestamp_ns_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void ReceiverFrequencyPoint::CopyFrom(const ReceiverFrequencyPoint& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.ReceiverFrequencyPoint)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ReceiverFrequencyPoint::InternalSwap(ReceiverFrequencyPoint* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.channels_.InternalSwap(&other->_impl_.channels_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.timestamp_ns_)
+      + sizeof(ReceiverFrequencyPoint::_impl_.timestamp_ns_)
+      - PROTOBUF_FIELD_OFFSET(ReceiverFrequencyPoint, _impl_.frequency_hz_)>(
+          reinterpret_cast<char*>(&_impl_.frequency_hz_),
+          reinterpret_cast<char*>(&other->_impl_.frequency_hz_));
+}
+
+::google::protobuf::Metadata ReceiverFrequencyPoint::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class SParameterPoint::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<SParameterPoint>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_._has_bits_);
+};
+
+SParameterPoint::SParameterPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SParameterPoint_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.SParameterPoint)
+}
+SParameterPoint::SParameterPoint(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SParameterPoint& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SParameterPoint_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+PROTOBUF_NDEBUG_INLINE SParameterPoint::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0} {}
+
+inline void SParameterPoint::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, row_port_),
+           0,
+           offsetof(Impl_, imag_) -
+               offsetof(Impl_, row_port_) +
+               sizeof(Impl_::imag_));
+}
+SParameterPoint::~SParameterPoint() {
+  // @@protoc_insertion_point(destructor:vna.SParameterPoint)
+  SharedDtor(*this);
+}
+inline void SParameterPoint::SharedDtor(MessageLite& self) {
+  SParameterPoint& this_ = static_cast<SParameterPoint&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL SParameterPoint::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) SParameterPoint(arena);
+}
+constexpr auto SParameterPoint::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(SParameterPoint),
+                                            alignof(SParameterPoint));
+}
+constexpr auto SParameterPoint::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_SParameterPoint_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &SParameterPoint::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<SParameterPoint>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &SParameterPoint::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<SParameterPoint>(), &SParameterPoint::ByteSizeLong,
+              &SParameterPoint::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_._cached_size_),
+          false,
+      },
+      &SParameterPoint::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull SParameterPoint_class_data_ =
+        SParameterPoint::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+SParameterPoint::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&SParameterPoint_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(SParameterPoint_class_data_.tc_table);
+  return SParameterPoint_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 0, 2>
+SParameterPoint::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_._has_bits_),
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    SParameterPoint_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::SParameterPoint>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // double imag = 4;
+    {::_pbi::TcParser::FastF64S1,
+     {33, 3, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.imag_)}},
+    // uint32 row_port = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SParameterPoint, _impl_.row_port_), 0>(),
+     {8, 0, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.row_port_)}},
+    // uint32 col_port = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SParameterPoint, _impl_.col_port_), 1>(),
+     {16, 1, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.col_port_)}},
+    // double real = 3;
+    {::_pbi::TcParser::FastF64S1,
+     {25, 2, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.real_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // uint32 row_port = 1;
+    {PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.row_port_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // uint32 col_port = 2;
+    {PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.col_port_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // double real = 3;
+    {PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.real_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // double imag = 4;
+    {PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.imag_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+  }},
+  // no aux_entries
+  {{
+  }},
+};
+PROTOBUF_NOINLINE void SParameterPoint::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.SParameterPoint)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    ::memset(&_impl_.row_port_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.imag_) -
+        reinterpret_cast<char*>(&_impl_.row_port_)) + sizeof(_impl_.imag_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL SParameterPoint::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const SParameterPoint& this_ = static_cast<const SParameterPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL SParameterPoint::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const SParameterPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.SParameterPoint)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // uint32 row_port = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (this_._internal_row_port() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          1, this_._internal_row_port(), target);
+    }
+  }
+
+  // uint32 col_port = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (this_._internal_col_port() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          2, this_._internal_col_port(), target);
+    }
+  }
+
+  // double real = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_real()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          3, this_._internal_real(), target);
+    }
+  }
+
+  // double imag = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_imag()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          4, this_._internal_imag(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.SParameterPoint)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t SParameterPoint::ByteSizeLong(const MessageLite& base) {
+  const SParameterPoint& this_ = static_cast<const SParameterPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t SParameterPoint::ByteSizeLong() const {
+  const SParameterPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.SParameterPoint)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    // uint32 row_port = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (this_._internal_row_port() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_row_port());
+      }
+    }
+    // uint32 col_port = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (this_._internal_col_port() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_col_port());
+      }
+    }
+    // double real = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_real()) != 0) {
+        total_size += 9;
+      }
+    }
+    // double imag = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_imag()) != 0) {
+        total_size += 9;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void SParameterPoint::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<SParameterPoint*>(&to_msg);
+  auto& from = static_cast<const SParameterPoint&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.SParameterPoint)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (from._internal_row_port() != 0) {
+        _this->_impl_.row_port_ = from._impl_.row_port_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (from._internal_col_port() != 0) {
+        _this->_impl_.col_port_ = from._impl_.col_port_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_real()) != 0) {
+        _this->_impl_.real_ = from._impl_.real_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_imag()) != 0) {
+        _this->_impl_.imag_ = from._impl_.imag_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void SParameterPoint::CopyFrom(const SParameterPoint& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.SParameterPoint)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void SParameterPoint::InternalSwap(SParameterPoint* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.imag_)
+      + sizeof(SParameterPoint::_impl_.imag_)
+      - PROTOBUF_FIELD_OFFSET(SParameterPoint, _impl_.row_port_)>(
+          reinterpret_cast<char*>(&_impl_.row_port_),
+          reinterpret_cast<char*>(&other->_impl_.row_port_));
+}
+
+::google::protobuf::Metadata SParameterPoint::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class SParameterFrequencyPoint::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<SParameterFrequencyPoint>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_._has_bits_);
+};
+
+SParameterFrequencyPoint::SParameterFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SParameterFrequencyPoint_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.SParameterFrequencyPoint)
+}
+PROTOBUF_NDEBUG_INLINE SParameterFrequencyPoint::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::SParameterFrequencyPoint& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        points_{visibility, arena, from.points_} {}
+
+SParameterFrequencyPoint::SParameterFrequencyPoint(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const SParameterFrequencyPoint& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, SParameterFrequencyPoint_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SParameterFrequencyPoint* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, frequency_hz_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, frequency_hz_),
+           offsetof(Impl_, port_count_) -
+               offsetof(Impl_, frequency_hz_) +
+               sizeof(Impl_::port_count_));
+
+  // @@protoc_insertion_point(copy_constructor:vna.SParameterFrequencyPoint)
+}
+PROTOBUF_NDEBUG_INLINE SParameterFrequencyPoint::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        points_{visibility, arena} {}
+
+inline void SParameterFrequencyPoint::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, frequency_hz_),
+           0,
+           offsetof(Impl_, port_count_) -
+               offsetof(Impl_, frequency_hz_) +
+               sizeof(Impl_::port_count_));
+}
+SParameterFrequencyPoint::~SParameterFrequencyPoint() {
+  // @@protoc_insertion_point(destructor:vna.SParameterFrequencyPoint)
+  SharedDtor(*this);
+}
+inline void SParameterFrequencyPoint::SharedDtor(MessageLite& self) {
+  SParameterFrequencyPoint& this_ = static_cast<SParameterFrequencyPoint&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL SParameterFrequencyPoint::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) SParameterFrequencyPoint(arena);
+}
+constexpr auto SParameterFrequencyPoint::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.points_) +
+          decltype(SParameterFrequencyPoint::_impl_.points_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
+        sizeof(SParameterFrequencyPoint), alignof(SParameterFrequencyPoint), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&SParameterFrequencyPoint::PlacementNew_,
+                                 sizeof(SParameterFrequencyPoint),
+                                 alignof(SParameterFrequencyPoint));
+  }
+}
+constexpr auto SParameterFrequencyPoint::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_SParameterFrequencyPoint_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &SParameterFrequencyPoint::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<SParameterFrequencyPoint>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &SParameterFrequencyPoint::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<SParameterFrequencyPoint>(), &SParameterFrequencyPoint::ByteSizeLong,
+              &SParameterFrequencyPoint::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_._cached_size_),
+          false,
+      },
+      &SParameterFrequencyPoint::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull SParameterFrequencyPoint_class_data_ =
+        SParameterFrequencyPoint::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+SParameterFrequencyPoint::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&SParameterFrequencyPoint_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(SParameterFrequencyPoint_class_data_.tc_table);
+  return SParameterFrequencyPoint_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 1, 0, 2>
+SParameterFrequencyPoint::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    SParameterFrequencyPoint_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::SParameterFrequencyPoint>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // double frequency_hz = 1;
+    {::_pbi::TcParser::FastF64S1,
+     {9, 1, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.frequency_hz_)}},
+    // uint32 port_count = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SParameterFrequencyPoint, _impl_.port_count_), 2>(),
+     {16, 2, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.port_count_)}},
+    // repeated .vna.SParameterPoint points = 3;
+    {::_pbi::TcParser::FastMtR1,
+     {26, 0, 0,
+      PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.points_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // double frequency_hz = 1;
+    {PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.frequency_hz_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+    // uint32 port_count = 2;
+    {PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.port_count_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // repeated .vna.SParameterPoint points = 3;
+    {PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.points_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::SParameterPoint>()},
+  }},
+  {{
+  }},
+};
+PROTOBUF_NOINLINE void SParameterFrequencyPoint::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.SParameterFrequencyPoint)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    _impl_.points_.Clear();
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00000006U)) {
+    ::memset(&_impl_.frequency_hz_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.port_count_) -
+        reinterpret_cast<char*>(&_impl_.frequency_hz_)) + sizeof(_impl_.port_count_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL SParameterFrequencyPoint::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const SParameterFrequencyPoint& this_ = static_cast<const SParameterFrequencyPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL SParameterFrequencyPoint::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const SParameterFrequencyPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.SParameterFrequencyPoint)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // double frequency_hz = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_frequency_hz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          1, this_._internal_frequency_hz(), target);
+    }
+  }
+
+  // uint32 port_count = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_port_count() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          2, this_._internal_port_count(), target);
+    }
+  }
+
+  // repeated .vna.SParameterPoint points = 3;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_points_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_points().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              3, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.SParameterFrequencyPoint)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t SParameterFrequencyPoint::ByteSizeLong(const MessageLite& base) {
+  const SParameterFrequencyPoint& this_ = static_cast<const SParameterFrequencyPoint&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t SParameterFrequencyPoint::ByteSizeLong() const {
+  const SParameterFrequencyPoint& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.SParameterFrequencyPoint)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // repeated .vna.SParameterPoint points = 3;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size += 1UL * this_._internal_points_size();
+      for (const auto& msg : this_._internal_points()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // double frequency_hz = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_frequency_hz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // uint32 port_count = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_port_count() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_port_count());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void SParameterFrequencyPoint::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<SParameterFrequencyPoint*>(&to_msg);
+  auto& from = static_cast<const SParameterFrequencyPoint&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.SParameterFrequencyPoint)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_points()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_points());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_frequency_hz()) != 0) {
+        _this->_impl_.frequency_hz_ = from._impl_.frequency_hz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_port_count() != 0) {
+        _this->_impl_.port_count_ = from._impl_.port_count_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void SParameterFrequencyPoint::CopyFrom(const SParameterFrequencyPoint& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.SParameterFrequencyPoint)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void SParameterFrequencyPoint::InternalSwap(SParameterFrequencyPoint* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.points_.InternalSwap(&other->_impl_.points_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.port_count_)
+      + sizeof(SParameterFrequencyPoint::_impl_.port_count_)
+      - PROTOBUF_FIELD_OFFSET(SParameterFrequencyPoint, _impl_.frequency_hz_)>(
+          reinterpret_cast<char*>(&_impl_.frequency_hz_),
+          reinterpret_cast<char*>(&other->_impl_.frequency_hz_));
+}
+
+::google::protobuf::Metadata SParameterFrequencyPoint::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
 class AcquisitionResult::_Internal {
  public:
   using HasBits =
@@ -4206,6 +6033,9 @@ PROTOBUF_NDEBUG_INLINE AcquisitionResult::Impl_::Impl_(
     [[maybe_unused]] const ::vna::AcquisitionResult& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
+        receiver_raw_points_{visibility, arena, from.receiver_raw_points_},
+        receiver_compensated_points_{visibility, arena, from.receiver_compensated_points_},
+        s_parameter_points_{visibility, arena, from.s_parameter_points_},
         instance_id_(arena, from.instance_id_),
         data_{},
         _oneof_case_{from._oneof_case_[0]} {}
@@ -4241,6 +6071,9 @@ PROTOBUF_NDEBUG_INLINE AcquisitionResult::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
+        receiver_raw_points_{visibility, arena},
+        receiver_compensated_points_{visibility, arena},
+        s_parameter_points_{visibility, arena},
         instance_id_(arena),
         data_{},
         _oneof_case_{} {}
@@ -4301,8 +6134,28 @@ inline void* PROTOBUF_NONNULL AcquisitionResult::PlacementNew_(
   return ::new (mem) AcquisitionResult(arena);
 }
 constexpr auto AcquisitionResult::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AcquisitionResult),
-                                            alignof(AcquisitionResult));
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_raw_points_) +
+          decltype(AcquisitionResult::_impl_.receiver_raw_points_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_compensated_points_) +
+          decltype(AcquisitionResult::_impl_.receiver_compensated_points_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.s_parameter_points_) +
+          decltype(AcquisitionResult::_impl_.s_parameter_points_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(AcquisitionResult), alignof(AcquisitionResult), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&AcquisitionResult::PlacementNew_,
+                                 sizeof(AcquisitionResult),
+                                 alignof(AcquisitionResult));
+  }
 }
 constexpr auto AcquisitionResult::InternalGenerateClassData_() {
   return ::google::protobuf::internal::ClassDataFull{
@@ -4338,17 +6191,17 @@ AcquisitionResult::GetClassData() const {
   return AcquisitionResult_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 4, 2, 41, 2>
+const ::_pbi::TcParseTable<3, 7, 5, 41, 2>
 AcquisitionResult::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_._has_bits_),
     0, // no _extensions_
-    11, 8,  // max_field_number, fast_idx_mask
+    22, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294965756,  // skipmap
+    4291295740,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    4,  // num_field_entries
-    2,  // num_aux_entries
+    7,  // num_field_entries
+    5,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     AcquisitionResult_class_data_.base(),
     nullptr,  // post_loop_handler
@@ -4357,29 +6210,53 @@ AcquisitionResult::_table_ = {
     ::_pbi::TcParser::GetTable<::vna::AcquisitionResult>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // uint64 timestamp_ns = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AcquisitionResult, _impl_.timestamp_ns_), 1>(),
-     {16, 1, 0,
-      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.timestamp_ns_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // string instance_id = 1;
     {::_pbi::TcParser::FastUS1,
-     {10, 0, 0,
+     {10, 3, 0,
       PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.instance_id_)}},
+    // uint64 timestamp_ns = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AcquisitionResult, _impl_.timestamp_ns_), 4>(),
+     {16, 4, 0,
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.timestamp_ns_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    // repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+    {::_pbi::TcParser::FastMtR2,
+     {418, 0, 2,
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_raw_points_)}},
+    // repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+    {::_pbi::TcParser::FastMtR2,
+     {426, 1, 3,
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_compensated_points_)}},
+    // repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+    {::_pbi::TcParser::FastMtR2,
+     {434, 2, 4,
+      PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.s_parameter_points_)}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
     // string instance_id = 1;
-    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.instance_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.instance_id_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // uint64 timestamp_ns = 2;
-    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.timestamp_ns_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.timestamp_ns_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
     // .vna.FrequencyDomainFrame frequency_frame = 10;
     {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.data_.frequency_frame_), _Internal::kOneofCaseOffset + 0, 0, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     // .vna.TimeDomainFrame time_frame = 11;
     {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.data_.time_frame_), _Internal::kOneofCaseOffset + 0, 1, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    // repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_raw_points_), _Internal::kHasBitsOffset + 0, 2, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.receiver_compensated_points_), _Internal::kHasBitsOffset + 1, 3, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+    {PROTOBUF_FIELD_OFFSET(AcquisitionResult, _impl_.s_parameter_points_), _Internal::kHasBitsOffset + 2, 4, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::vna::FrequencyDomainFrame>()},
       {::_pbi::TcParser::GetTable<::vna::TimeDomainFrame>()},
+      {::_pbi::TcParser::GetTable<::vna::ReceiverFrequencyPoint>()},
+      {::_pbi::TcParser::GetTable<::vna::ReceiverFrequencyPoint>()},
+      {::_pbi::TcParser::GetTable<::vna::SParameterFrequencyPoint>()},
   }},
   {{
     "\25\13\0\0\0\0\0\0"
@@ -4395,8 +6272,19 @@ PROTOBUF_NOINLINE void AcquisitionResult::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    _impl_.instance_id_.ClearNonDefaultToEmpty();
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _impl_.receiver_raw_points_.Clear();
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      _impl_.receiver_compensated_points_.Clear();
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
+      _impl_.s_parameter_points_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      _impl_.instance_id_.ClearNonDefaultToEmpty();
+    }
   }
   _impl_.timestamp_ns_ = ::uint64_t{0u};
   clear_data();
@@ -4424,7 +6312,7 @@ PROTOBUF_NOINLINE void AcquisitionResult::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // string instance_id = 1;
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
     if (!this_._internal_instance_id().empty()) {
       const ::std::string& _s = this_._internal_instance_id();
       ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -4434,7 +6322,7 @@ PROTOBUF_NOINLINE void AcquisitionResult::Clear() {
   }
 
   // uint64 timestamp_ns = 2;
-  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
     if (this_._internal_timestamp_ns() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
@@ -4458,6 +6346,45 @@ PROTOBUF_NOINLINE void AcquisitionResult::Clear() {
     default:
       break;
   }
+  // repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_receiver_raw_points_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_receiver_raw_points().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              20, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  // repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_receiver_compensated_points_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_receiver_compensated_points().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              21, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  // repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_s_parameter_points_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_s_parameter_points().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              22, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -4483,16 +6410,37 @@ PROTOBUF_NOINLINE void AcquisitionResult::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+    // repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size += 2UL * this_._internal_receiver_raw_points_size();
+      for (const auto& msg : this_._internal_receiver_raw_points()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      total_size += 2UL * this_._internal_receiver_compensated_points_size();
+      for (const auto& msg : this_._internal_receiver_compensated_points()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
+      total_size += 2UL * this_._internal_s_parameter_points_size();
+      for (const auto& msg : this_._internal_s_parameter_points()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
     // string instance_id = 1;
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (!this_._internal_instance_id().empty()) {
         total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                         this_._internal_instance_id());
       }
     }
     // uint64 timestamp_ns = 2;
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (this_._internal_timestamp_ns() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
             this_._internal_timestamp_ns());
@@ -4535,8 +6483,23 @@ void AcquisitionResult::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_receiver_raw_points()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_receiver_raw_points());
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000002U)) {
+      _this->_internal_mutable_receiver_compensated_points()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_receiver_compensated_points());
+    }
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000004U)) {
+      _this->_internal_mutable_s_parameter_points()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_s_parameter_points());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       if (!from._internal_instance_id().empty()) {
         _this->_internal_set_instance_id(from._internal_instance_id());
       } else {
@@ -4545,7 +6508,7 @@ void AcquisitionResult::MergeImpl(::google::protobuf::MessageLite& to_msg,
         }
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (from._internal_timestamp_ns() != 0) {
         _this->_impl_.timestamp_ns_ = from._impl_.timestamp_ns_;
       }
@@ -4602,6 +6565,9 @@ void AcquisitionResult::InternalSwap(AcquisitionResult* PROTOBUF_RESTRICT PROTOB
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.receiver_raw_points_.InternalSwap(&other->_impl_.receiver_raw_points_);
+  _impl_.receiver_compensated_points_.InternalSwap(&other->_impl_.receiver_compensated_points_);
+  _impl_.s_parameter_points_.InternalSwap(&other->_impl_.s_parameter_points_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
   swap(_impl_.timestamp_ns_, other->_impl_.timestamp_ns_);
   swap(_impl_.data_, other->_impl_.data_);

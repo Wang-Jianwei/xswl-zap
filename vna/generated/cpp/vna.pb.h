@@ -93,10 +93,26 @@ class PulseExcitation;
 struct PulseExcitationDefaultTypeInternal;
 extern PulseExcitationDefaultTypeInternal _PulseExcitation_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull PulseExcitation_class_data_;
+class ReceiverChannelSample;
+struct ReceiverChannelSampleDefaultTypeInternal;
+extern ReceiverChannelSampleDefaultTypeInternal _ReceiverChannelSample_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ReceiverChannelSample_class_data_;
+class ReceiverFrequencyPoint;
+struct ReceiverFrequencyPointDefaultTypeInternal;
+extern ReceiverFrequencyPointDefaultTypeInternal _ReceiverFrequencyPoint_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ReceiverFrequencyPoint_class_data_;
 class ResourceRequest;
 struct ResourceRequestDefaultTypeInternal;
 extern ResourceRequestDefaultTypeInternal _ResourceRequest_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ResourceRequest_class_data_;
+class SParameterFrequencyPoint;
+struct SParameterFrequencyPointDefaultTypeInternal;
+extern SParameterFrequencyPointDefaultTypeInternal _SParameterFrequencyPoint_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull SParameterFrequencyPoint_class_data_;
+class SParameterPoint;
+struct SParameterPointDefaultTypeInternal;
+extern SParameterPointDefaultTypeInternal _SParameterPoint_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull SParameterPoint_class_data_;
 class ServiceStatus;
 struct ServiceStatusDefaultTypeInternal;
 extern ServiceStatusDefaultTypeInternal _ServiceStatus_default_instance_;
@@ -884,7 +900,7 @@ class ServiceStatus final : public ::google::protobuf::Message
     return *reinterpret_cast<const ServiceStatus*>(
         &_ServiceStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 15;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(ServiceStatus& a, ServiceStatus& b) { a.Swap(&b); }
   inline void Swap(ServiceStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1181,6 +1197,232 @@ class ServiceStatus final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull ServiceStatus_class_data_;
 // -------------------------------------------------------------------
 
+class SParameterPoint final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.SParameterPoint) */ {
+ public:
+  inline SParameterPoint() : SParameterPoint(nullptr) {}
+  ~SParameterPoint() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SParameterPoint* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SParameterPoint));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR SParameterPoint(::google::protobuf::internal::ConstantInitialized);
+
+  inline SParameterPoint(const SParameterPoint& from) : SParameterPoint(nullptr, from) {}
+  inline SParameterPoint(SParameterPoint&& from) noexcept
+      : SParameterPoint(nullptr, ::std::move(from)) {}
+  inline SParameterPoint& operator=(const SParameterPoint& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SParameterPoint& operator=(SParameterPoint&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SParameterPoint& default_instance() {
+    return *reinterpret_cast<const SParameterPoint*>(
+        &_SParameterPoint_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 12;
+  friend void swap(SParameterPoint& a, SParameterPoint& b) { a.Swap(&b); }
+  inline void Swap(SParameterPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SParameterPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SParameterPoint* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SParameterPoint>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SParameterPoint& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SParameterPoint& from) { SParameterPoint::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SParameterPoint* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.SParameterPoint"; }
+
+  explicit SParameterPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  SParameterPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SParameterPoint& from);
+  SParameterPoint(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SParameterPoint&& from) noexcept
+      : SParameterPoint(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kRowPortFieldNumber = 1,
+    kColPortFieldNumber = 2,
+    kRealFieldNumber = 3,
+    kImagFieldNumber = 4,
+  };
+  // uint32 row_port = 1;
+  void clear_row_port() ;
+  ::uint32_t row_port() const;
+  void set_row_port(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_row_port() const;
+  void _internal_set_row_port(::uint32_t value);
+
+  public:
+  // uint32 col_port = 2;
+  void clear_col_port() ;
+  ::uint32_t col_port() const;
+  void set_col_port(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_col_port() const;
+  void _internal_set_col_port(::uint32_t value);
+
+  public:
+  // double real = 3;
+  void clear_real() ;
+  double real() const;
+  void set_real(double value);
+
+  private:
+  double _internal_real() const;
+  void _internal_set_real(double value);
+
+  public:
+  // double imag = 4;
+  void clear_imag() ;
+  double imag() const;
+  void set_imag(double value);
+
+  private:
+  double _internal_imag() const;
+  void _internal_set_imag(double value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.SParameterPoint)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 4,
+                                   0, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const SParameterPoint& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::uint32_t row_port_;
+    ::uint32_t col_port_;
+    double real_;
+    double imag_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull SParameterPoint_class_data_;
+// -------------------------------------------------------------------
+
 class ResourceRequest final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.ResourceRequest) */ {
  public:
@@ -1236,7 +1478,7 @@ class ResourceRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ResourceRequest*>(
         &_ResourceRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 13;
+  static constexpr int kIndexInFileMessages = 17;
   friend void swap(ResourceRequest& a, ResourceRequest& b) { a.Swap(&b); }
   inline void Swap(ResourceRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1415,6 +1657,237 @@ class ResourceRequest final : public ::google::protobuf::Message
 };
 
 extern const ::google::protobuf::internal::ClassDataFull ResourceRequest_class_data_;
+// -------------------------------------------------------------------
+
+class ReceiverChannelSample final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.ReceiverChannelSample) */ {
+ public:
+  inline ReceiverChannelSample() : ReceiverChannelSample(nullptr) {}
+  ~ReceiverChannelSample() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ReceiverChannelSample* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ReceiverChannelSample));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ReceiverChannelSample(::google::protobuf::internal::ConstantInitialized);
+
+  inline ReceiverChannelSample(const ReceiverChannelSample& from) : ReceiverChannelSample(nullptr, from) {}
+  inline ReceiverChannelSample(ReceiverChannelSample&& from) noexcept
+      : ReceiverChannelSample(nullptr, ::std::move(from)) {}
+  inline ReceiverChannelSample& operator=(const ReceiverChannelSample& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReceiverChannelSample& operator=(ReceiverChannelSample&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ReceiverChannelSample& default_instance() {
+    return *reinterpret_cast<const ReceiverChannelSample*>(
+        &_ReceiverChannelSample_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 10;
+  friend void swap(ReceiverChannelSample& a, ReceiverChannelSample& b) { a.Swap(&b); }
+  inline void Swap(ReceiverChannelSample* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReceiverChannelSample* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ReceiverChannelSample* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ReceiverChannelSample>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ReceiverChannelSample& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ReceiverChannelSample& from) { ReceiverChannelSample::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ReceiverChannelSample* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.ReceiverChannelSample"; }
+
+  explicit ReceiverChannelSample(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ReceiverChannelSample(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ReceiverChannelSample& from);
+  ReceiverChannelSample(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ReceiverChannelSample&& from) noexcept
+      : ReceiverChannelSample(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kChannelIdFieldNumber = 1,
+    kRealFieldNumber = 2,
+    kImagFieldNumber = 3,
+    kClippedFieldNumber = 4,
+  };
+  // string channel_id = 1;
+  void clear_channel_id() ;
+  const ::std::string& channel_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_channel_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_channel_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_channel_id();
+  void set_allocated_channel_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_channel_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_channel_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_channel_id();
+
+  public:
+  // double real = 2;
+  void clear_real() ;
+  double real() const;
+  void set_real(double value);
+
+  private:
+  double _internal_real() const;
+  void _internal_set_real(double value);
+
+  public:
+  // double imag = 3;
+  void clear_imag() ;
+  double imag() const;
+  void set_imag(double value);
+
+  private:
+  double _internal_imag() const;
+  void _internal_set_imag(double value);
+
+  public:
+  // bool clipped = 4;
+  void clear_clipped() ;
+  bool clipped() const;
+  void set_clipped(bool value);
+
+  private:
+  bool _internal_clipped() const;
+  void _internal_set_clipped(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.ReceiverChannelSample)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 4,
+                                   0, 44,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ReceiverChannelSample& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr channel_id_;
+    double real_;
+    double imag_;
+    bool clipped_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ReceiverChannelSample_class_data_;
 // -------------------------------------------------------------------
 
 class PulseExcitation final : public ::google::protobuf::Message
@@ -1710,7 +2183,7 @@ class LeaseInfo final : public ::google::protobuf::Message
     return *reinterpret_cast<const LeaseInfo*>(
         &_LeaseInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 14;
+  static constexpr int kIndexInFileMessages = 18;
   friend void swap(LeaseInfo& a, LeaseInfo& b) { a.Swap(&b); }
   inline void Swap(LeaseInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2371,7 +2844,13 @@ class CwExcitation final : public ::google::protobuf::Message
   enum : int {
     kFrequencyHzFieldNumber = 1,
     kPowerDbmFieldNumber = 2,
+    kStartFrequencyHzFieldNumber = 4,
     kDwellTimeMsFieldNumber = 3,
+    kSweepPointCountFieldNumber = 6,
+    kStopFrequencyHzFieldNumber = 5,
+    kIfBandwidthHzFieldNumber = 7,
+    kPortCountFieldNumber = 8,
+    kExcitationPortFieldNumber = 9,
   };
   // double frequency_hz = 1;
   void clear_frequency_hz() ;
@@ -2393,6 +2872,16 @@ class CwExcitation final : public ::google::protobuf::Message
   void _internal_set_power_dbm(double value);
 
   public:
+  // double start_frequency_hz = 4;
+  void clear_start_frequency_hz() ;
+  double start_frequency_hz() const;
+  void set_start_frequency_hz(double value);
+
+  private:
+  double _internal_start_frequency_hz() const;
+  void _internal_set_start_frequency_hz(double value);
+
+  public:
   // uint32 dwell_time_ms = 3;
   void clear_dwell_time_ms() ;
   ::uint32_t dwell_time_ms() const;
@@ -2403,11 +2892,61 @@ class CwExcitation final : public ::google::protobuf::Message
   void _internal_set_dwell_time_ms(::uint32_t value);
 
   public:
+  // uint32 sweep_point_count = 6;
+  void clear_sweep_point_count() ;
+  ::uint32_t sweep_point_count() const;
+  void set_sweep_point_count(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_sweep_point_count() const;
+  void _internal_set_sweep_point_count(::uint32_t value);
+
+  public:
+  // double stop_frequency_hz = 5;
+  void clear_stop_frequency_hz() ;
+  double stop_frequency_hz() const;
+  void set_stop_frequency_hz(double value);
+
+  private:
+  double _internal_stop_frequency_hz() const;
+  void _internal_set_stop_frequency_hz(double value);
+
+  public:
+  // double if_bandwidth_hz = 7;
+  void clear_if_bandwidth_hz() ;
+  double if_bandwidth_hz() const;
+  void set_if_bandwidth_hz(double value);
+
+  private:
+  double _internal_if_bandwidth_hz() const;
+  void _internal_set_if_bandwidth_hz(double value);
+
+  public:
+  // uint32 port_count = 8;
+  void clear_port_count() ;
+  ::uint32_t port_count() const;
+  void set_port_count(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_port_count() const;
+  void _internal_set_port_count(::uint32_t value);
+
+  public:
+  // uint32 excitation_port = 9;
+  void clear_excitation_port() ;
+  ::uint32_t excitation_port() const;
+  void set_excitation_port(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_excitation_port() const;
+  void _internal_set_excitation_port(::uint32_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:vna.CwExcitation)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 3,
+  static const ::google::protobuf::internal::TcParseTable<4, 9,
                                    0, 0,
                                    2>
       _table_;
@@ -2431,7 +2970,13 @@ class CwExcitation final : public ::google::protobuf::Message
     ::google::protobuf::internal::CachedSize _cached_size_;
     double frequency_hz_;
     double power_dbm_;
+    double start_frequency_hz_;
     ::uint32_t dwell_time_ms_;
+    ::uint32_t sweep_point_count_;
+    double stop_frequency_hz_;
+    double if_bandwidth_hz_;
+    ::uint32_t port_count_;
+    ::uint32_t excitation_port_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -2729,7 +3274,7 @@ class TimeDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const TimeDomainFrame*>(
         &_TimeDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 12;
+  static constexpr int kIndexInFileMessages = 16;
   friend void swap(TimeDomainFrame& a, TimeDomainFrame& b) { a.Swap(&b); }
   inline void Swap(TimeDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2883,6 +3428,448 @@ class TimeDomainFrame final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull TimeDomainFrame_class_data_;
 // -------------------------------------------------------------------
 
+class SParameterFrequencyPoint final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.SParameterFrequencyPoint) */ {
+ public:
+  inline SParameterFrequencyPoint() : SParameterFrequencyPoint(nullptr) {}
+  ~SParameterFrequencyPoint() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SParameterFrequencyPoint* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SParameterFrequencyPoint));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR SParameterFrequencyPoint(::google::protobuf::internal::ConstantInitialized);
+
+  inline SParameterFrequencyPoint(const SParameterFrequencyPoint& from) : SParameterFrequencyPoint(nullptr, from) {}
+  inline SParameterFrequencyPoint(SParameterFrequencyPoint&& from) noexcept
+      : SParameterFrequencyPoint(nullptr, ::std::move(from)) {}
+  inline SParameterFrequencyPoint& operator=(const SParameterFrequencyPoint& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SParameterFrequencyPoint& operator=(SParameterFrequencyPoint&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SParameterFrequencyPoint& default_instance() {
+    return *reinterpret_cast<const SParameterFrequencyPoint*>(
+        &_SParameterFrequencyPoint_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 13;
+  friend void swap(SParameterFrequencyPoint& a, SParameterFrequencyPoint& b) { a.Swap(&b); }
+  inline void Swap(SParameterFrequencyPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SParameterFrequencyPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SParameterFrequencyPoint* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SParameterFrequencyPoint>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SParameterFrequencyPoint& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SParameterFrequencyPoint& from) { SParameterFrequencyPoint::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SParameterFrequencyPoint* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.SParameterFrequencyPoint"; }
+
+  explicit SParameterFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  SParameterFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const SParameterFrequencyPoint& from);
+  SParameterFrequencyPoint(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, SParameterFrequencyPoint&& from) noexcept
+      : SParameterFrequencyPoint(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kPointsFieldNumber = 3,
+    kFrequencyHzFieldNumber = 1,
+    kPortCountFieldNumber = 2,
+  };
+  // repeated .vna.SParameterPoint points = 3;
+  int points_size() const;
+  private:
+  int _internal_points_size() const;
+
+  public:
+  void clear_points() ;
+  ::vna::SParameterPoint* PROTOBUF_NONNULL mutable_points(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>* PROTOBUF_NONNULL mutable_points();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>& _internal_points() const;
+  ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>* PROTOBUF_NONNULL _internal_mutable_points();
+  public:
+  const ::vna::SParameterPoint& points(int index) const;
+  ::vna::SParameterPoint* PROTOBUF_NONNULL add_points();
+  const ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>& points() const;
+  // double frequency_hz = 1;
+  void clear_frequency_hz() ;
+  double frequency_hz() const;
+  void set_frequency_hz(double value);
+
+  private:
+  double _internal_frequency_hz() const;
+  void _internal_set_frequency_hz(double value);
+
+  public:
+  // uint32 port_count = 2;
+  void clear_port_count() ;
+  ::uint32_t port_count() const;
+  void set_port_count(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_port_count() const;
+  void _internal_set_port_count(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.SParameterFrequencyPoint)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3,
+                                   1, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const SParameterFrequencyPoint& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::vna::SParameterPoint > points_;
+    double frequency_hz_;
+    ::uint32_t port_count_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull SParameterFrequencyPoint_class_data_;
+// -------------------------------------------------------------------
+
+class ReceiverFrequencyPoint final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.ReceiverFrequencyPoint) */ {
+ public:
+  inline ReceiverFrequencyPoint() : ReceiverFrequencyPoint(nullptr) {}
+  ~ReceiverFrequencyPoint() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ReceiverFrequencyPoint* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ReceiverFrequencyPoint));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ReceiverFrequencyPoint(::google::protobuf::internal::ConstantInitialized);
+
+  inline ReceiverFrequencyPoint(const ReceiverFrequencyPoint& from) : ReceiverFrequencyPoint(nullptr, from) {}
+  inline ReceiverFrequencyPoint(ReceiverFrequencyPoint&& from) noexcept
+      : ReceiverFrequencyPoint(nullptr, ::std::move(from)) {}
+  inline ReceiverFrequencyPoint& operator=(const ReceiverFrequencyPoint& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ReceiverFrequencyPoint& operator=(ReceiverFrequencyPoint&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ReceiverFrequencyPoint& default_instance() {
+    return *reinterpret_cast<const ReceiverFrequencyPoint*>(
+        &_ReceiverFrequencyPoint_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 11;
+  friend void swap(ReceiverFrequencyPoint& a, ReceiverFrequencyPoint& b) { a.Swap(&b); }
+  inline void Swap(ReceiverFrequencyPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ReceiverFrequencyPoint* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ReceiverFrequencyPoint* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ReceiverFrequencyPoint>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ReceiverFrequencyPoint& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ReceiverFrequencyPoint& from) { ReceiverFrequencyPoint::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ReceiverFrequencyPoint* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.ReceiverFrequencyPoint"; }
+
+  explicit ReceiverFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ReceiverFrequencyPoint(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ReceiverFrequencyPoint& from);
+  ReceiverFrequencyPoint(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ReceiverFrequencyPoint&& from) noexcept
+      : ReceiverFrequencyPoint(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kChannelsFieldNumber = 3,
+    kFrequencyHzFieldNumber = 1,
+    kTimestampNsFieldNumber = 2,
+  };
+  // repeated .vna.ReceiverChannelSample channels = 3;
+  int channels_size() const;
+  private:
+  int _internal_channels_size() const;
+
+  public:
+  void clear_channels() ;
+  ::vna::ReceiverChannelSample* PROTOBUF_NONNULL mutable_channels(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>* PROTOBUF_NONNULL mutable_channels();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>& _internal_channels() const;
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>* PROTOBUF_NONNULL _internal_mutable_channels();
+  public:
+  const ::vna::ReceiverChannelSample& channels(int index) const;
+  ::vna::ReceiverChannelSample* PROTOBUF_NONNULL add_channels();
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>& channels() const;
+  // double frequency_hz = 1;
+  void clear_frequency_hz() ;
+  double frequency_hz() const;
+  void set_frequency_hz(double value);
+
+  private:
+  double _internal_frequency_hz() const;
+  void _internal_set_frequency_hz(double value);
+
+  public:
+  // uint64 timestamp_ns = 2;
+  void clear_timestamp_ns() ;
+  ::uint64_t timestamp_ns() const;
+  void set_timestamp_ns(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_timestamp_ns() const;
+  void _internal_set_timestamp_ns(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.ReceiverFrequencyPoint)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3,
+                                   1, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ReceiverFrequencyPoint& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::vna::ReceiverChannelSample > channels_;
+    double frequency_hz_;
+    ::uint64_t timestamp_ns_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ReceiverFrequencyPoint_class_data_;
+// -------------------------------------------------------------------
+
 class FrequencyDomainFrame final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.FrequencyDomainFrame) */ {
  public:
@@ -2938,7 +3925,7 @@ class FrequencyDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const FrequencyDomainFrame*>(
         &_FrequencyDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 11;
+  static constexpr int kIndexInFileMessages = 15;
   friend void swap(FrequencyDomainFrame& a, FrequencyDomainFrame& b) { a.Swap(&b); }
   inline void Swap(FrequencyDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3412,7 +4399,7 @@ class AcquisitionResult final : public ::google::protobuf::Message
     kTimeFrame = 11,
     DATA_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 10;
+  static constexpr int kIndexInFileMessages = 14;
   friend void swap(AcquisitionResult& a, AcquisitionResult& b) { a.Swap(&b); }
   inline void Swap(AcquisitionResult* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3499,11 +4486,65 @@ class AcquisitionResult final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
+    kReceiverRawPointsFieldNumber = 20,
+    kReceiverCompensatedPointsFieldNumber = 21,
+    kSParameterPointsFieldNumber = 22,
     kInstanceIdFieldNumber = 1,
     kTimestampNsFieldNumber = 2,
     kFrequencyFrameFieldNumber = 10,
     kTimeFrameFieldNumber = 11,
   };
+  // repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+  int receiver_raw_points_size() const;
+  private:
+  int _internal_receiver_raw_points_size() const;
+
+  public:
+  void clear_receiver_raw_points() ;
+  ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL mutable_receiver_raw_points(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL mutable_receiver_raw_points();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& _internal_receiver_raw_points() const;
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL _internal_mutable_receiver_raw_points();
+  public:
+  const ::vna::ReceiverFrequencyPoint& receiver_raw_points(int index) const;
+  ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL add_receiver_raw_points();
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& receiver_raw_points() const;
+  // repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+  int receiver_compensated_points_size() const;
+  private:
+  int _internal_receiver_compensated_points_size() const;
+
+  public:
+  void clear_receiver_compensated_points() ;
+  ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL mutable_receiver_compensated_points(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL mutable_receiver_compensated_points();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& _internal_receiver_compensated_points() const;
+  ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL _internal_mutable_receiver_compensated_points();
+  public:
+  const ::vna::ReceiverFrequencyPoint& receiver_compensated_points(int index) const;
+  ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL add_receiver_compensated_points();
+  const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& receiver_compensated_points() const;
+  // repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+  int s_parameter_points_size() const;
+  private:
+  int _internal_s_parameter_points_size() const;
+
+  public:
+  void clear_s_parameter_points() ;
+  ::vna::SParameterFrequencyPoint* PROTOBUF_NONNULL mutable_s_parameter_points(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>* PROTOBUF_NONNULL mutable_s_parameter_points();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>& _internal_s_parameter_points() const;
+  ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>* PROTOBUF_NONNULL _internal_mutable_s_parameter_points();
+  public:
+  const ::vna::SParameterFrequencyPoint& s_parameter_points(int index) const;
+  ::vna::SParameterFrequencyPoint* PROTOBUF_NONNULL add_s_parameter_points();
+  const ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>& s_parameter_points() const;
   // string instance_id = 1;
   void clear_instance_id() ;
   const ::std::string& instance_id() const;
@@ -3577,8 +4618,8 @@ class AcquisitionResult final : public ::google::protobuf::Message
   inline bool has_data() const;
   inline void clear_has_data();
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<1, 4,
-                                   2, 41,
+  static const ::google::protobuf::internal::TcParseTable<3, 7,
+                                   5, 41,
                                    2>
       _table_;
 
@@ -3599,6 +4640,9 @@ class AcquisitionResult final : public ::google::protobuf::Message
         const AcquisitionResult& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::vna::ReceiverFrequencyPoint > receiver_raw_points_;
+    ::google::protobuf::RepeatedPtrField< ::vna::ReceiverFrequencyPoint > receiver_compensated_points_;
+    ::google::protobuf::RepeatedPtrField< ::vna::SParameterFrequencyPoint > s_parameter_points_;
     ::google::protobuf::internal::ArenaStringPtr instance_id_;
     ::uint64_t timestamp_ns_;
     union DataUnion {
@@ -4417,7 +5461,7 @@ inline void CwExcitation::clear_dwell_time_ms() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.dwell_time_ms_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000004U);
+                  0x00000008U);
 }
 inline ::uint32_t CwExcitation::dwell_time_ms() const {
   // @@protoc_insertion_point(field_get:vna.CwExcitation.dwell_time_ms)
@@ -4425,7 +5469,7 @@ inline ::uint32_t CwExcitation::dwell_time_ms() const {
 }
 inline void CwExcitation::set_dwell_time_ms(::uint32_t value) {
   _internal_set_dwell_time_ms(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   // @@protoc_insertion_point(field_set:vna.CwExcitation.dwell_time_ms)
 }
 inline ::uint32_t CwExcitation::_internal_dwell_time_ms() const {
@@ -4435,6 +5479,156 @@ inline ::uint32_t CwExcitation::_internal_dwell_time_ms() const {
 inline void CwExcitation::_internal_set_dwell_time_ms(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.dwell_time_ms_ = value;
+}
+
+// double start_frequency_hz = 4;
+inline void CwExcitation::clear_start_frequency_hz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.start_frequency_hz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline double CwExcitation::start_frequency_hz() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.start_frequency_hz)
+  return _internal_start_frequency_hz();
+}
+inline void CwExcitation::set_start_frequency_hz(double value) {
+  _internal_set_start_frequency_hz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.start_frequency_hz)
+}
+inline double CwExcitation::_internal_start_frequency_hz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.start_frequency_hz_;
+}
+inline void CwExcitation::_internal_set_start_frequency_hz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.start_frequency_hz_ = value;
+}
+
+// double stop_frequency_hz = 5;
+inline void CwExcitation::clear_stop_frequency_hz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.stop_frequency_hz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline double CwExcitation::stop_frequency_hz() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.stop_frequency_hz)
+  return _internal_stop_frequency_hz();
+}
+inline void CwExcitation::set_stop_frequency_hz(double value) {
+  _internal_set_stop_frequency_hz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.stop_frequency_hz)
+}
+inline double CwExcitation::_internal_stop_frequency_hz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.stop_frequency_hz_;
+}
+inline void CwExcitation::_internal_set_stop_frequency_hz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.stop_frequency_hz_ = value;
+}
+
+// uint32 sweep_point_count = 6;
+inline void CwExcitation::clear_sweep_point_count() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.sweep_point_count_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline ::uint32_t CwExcitation::sweep_point_count() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.sweep_point_count)
+  return _internal_sweep_point_count();
+}
+inline void CwExcitation::set_sweep_point_count(::uint32_t value) {
+  _internal_set_sweep_point_count(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.sweep_point_count)
+}
+inline ::uint32_t CwExcitation::_internal_sweep_point_count() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.sweep_point_count_;
+}
+inline void CwExcitation::_internal_set_sweep_point_count(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.sweep_point_count_ = value;
+}
+
+// double if_bandwidth_hz = 7;
+inline void CwExcitation::clear_if_bandwidth_hz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.if_bandwidth_hz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000040U);
+}
+inline double CwExcitation::if_bandwidth_hz() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.if_bandwidth_hz)
+  return _internal_if_bandwidth_hz();
+}
+inline void CwExcitation::set_if_bandwidth_hz(double value) {
+  _internal_set_if_bandwidth_hz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.if_bandwidth_hz)
+}
+inline double CwExcitation::_internal_if_bandwidth_hz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.if_bandwidth_hz_;
+}
+inline void CwExcitation::_internal_set_if_bandwidth_hz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.if_bandwidth_hz_ = value;
+}
+
+// uint32 port_count = 8;
+inline void CwExcitation::clear_port_count() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.port_count_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000080U);
+}
+inline ::uint32_t CwExcitation::port_count() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.port_count)
+  return _internal_port_count();
+}
+inline void CwExcitation::set_port_count(::uint32_t value) {
+  _internal_set_port_count(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.port_count)
+}
+inline ::uint32_t CwExcitation::_internal_port_count() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.port_count_;
+}
+inline void CwExcitation::_internal_set_port_count(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.port_count_ = value;
+}
+
+// uint32 excitation_port = 9;
+inline void CwExcitation::clear_excitation_port() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.excitation_port_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000100U);
+}
+inline ::uint32_t CwExcitation::excitation_port() const {
+  // @@protoc_insertion_point(field_get:vna.CwExcitation.excitation_port)
+  return _internal_excitation_port();
+}
+inline void CwExcitation::set_excitation_port(::uint32_t value) {
+  _internal_set_excitation_port(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  // @@protoc_insertion_point(field_set:vna.CwExcitation.excitation_port)
+}
+inline ::uint32_t CwExcitation::_internal_excitation_port() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.excitation_port_;
+}
+inline void CwExcitation::_internal_set_excitation_port(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.excitation_port_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -5196,6 +6390,474 @@ inline void TimeDomainPoint::_internal_set_phase(double value) {
 
 // -------------------------------------------------------------------
 
+// ReceiverChannelSample
+
+// string channel_id = 1;
+inline void ReceiverChannelSample::clear_channel_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.channel_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& ReceiverChannelSample::channel_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ReceiverChannelSample.channel_id)
+  return _internal_channel_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ReceiverChannelSample::set_channel_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.channel_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ReceiverChannelSample.channel_id)
+}
+inline ::std::string* PROTOBUF_NONNULL ReceiverChannelSample::mutable_channel_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_channel_id();
+  // @@protoc_insertion_point(field_mutable:vna.ReceiverChannelSample.channel_id)
+  return _s;
+}
+inline const ::std::string& ReceiverChannelSample::_internal_channel_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.channel_id_.Get();
+}
+inline void ReceiverChannelSample::_internal_set_channel_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.channel_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ReceiverChannelSample::_internal_mutable_channel_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.channel_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ReceiverChannelSample::release_channel_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ReceiverChannelSample.channel_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.channel_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.channel_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ReceiverChannelSample::set_allocated_channel_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.channel_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.channel_id_.IsDefault()) {
+    _impl_.channel_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ReceiverChannelSample.channel_id)
+}
+
+// double real = 2;
+inline void ReceiverChannelSample::clear_real() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.real_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline double ReceiverChannelSample::real() const {
+  // @@protoc_insertion_point(field_get:vna.ReceiverChannelSample.real)
+  return _internal_real();
+}
+inline void ReceiverChannelSample::set_real(double value) {
+  _internal_set_real(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.ReceiverChannelSample.real)
+}
+inline double ReceiverChannelSample::_internal_real() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.real_;
+}
+inline void ReceiverChannelSample::_internal_set_real(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.real_ = value;
+}
+
+// double imag = 3;
+inline void ReceiverChannelSample::clear_imag() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.imag_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline double ReceiverChannelSample::imag() const {
+  // @@protoc_insertion_point(field_get:vna.ReceiverChannelSample.imag)
+  return _internal_imag();
+}
+inline void ReceiverChannelSample::set_imag(double value) {
+  _internal_set_imag(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.ReceiverChannelSample.imag)
+}
+inline double ReceiverChannelSample::_internal_imag() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.imag_;
+}
+inline void ReceiverChannelSample::_internal_set_imag(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.imag_ = value;
+}
+
+// bool clipped = 4;
+inline void ReceiverChannelSample::clear_clipped() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clipped_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline bool ReceiverChannelSample::clipped() const {
+  // @@protoc_insertion_point(field_get:vna.ReceiverChannelSample.clipped)
+  return _internal_clipped();
+}
+inline void ReceiverChannelSample::set_clipped(bool value) {
+  _internal_set_clipped(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:vna.ReceiverChannelSample.clipped)
+}
+inline bool ReceiverChannelSample::_internal_clipped() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.clipped_;
+}
+inline void ReceiverChannelSample::_internal_set_clipped(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clipped_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ReceiverFrequencyPoint
+
+// double frequency_hz = 1;
+inline void ReceiverFrequencyPoint::clear_frequency_hz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.frequency_hz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline double ReceiverFrequencyPoint::frequency_hz() const {
+  // @@protoc_insertion_point(field_get:vna.ReceiverFrequencyPoint.frequency_hz)
+  return _internal_frequency_hz();
+}
+inline void ReceiverFrequencyPoint::set_frequency_hz(double value) {
+  _internal_set_frequency_hz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.ReceiverFrequencyPoint.frequency_hz)
+}
+inline double ReceiverFrequencyPoint::_internal_frequency_hz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.frequency_hz_;
+}
+inline void ReceiverFrequencyPoint::_internal_set_frequency_hz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.frequency_hz_ = value;
+}
+
+// uint64 timestamp_ns = 2;
+inline void ReceiverFrequencyPoint::clear_timestamp_ns() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.timestamp_ns_ = ::uint64_t{0u};
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline ::uint64_t ReceiverFrequencyPoint::timestamp_ns() const {
+  // @@protoc_insertion_point(field_get:vna.ReceiverFrequencyPoint.timestamp_ns)
+  return _internal_timestamp_ns();
+}
+inline void ReceiverFrequencyPoint::set_timestamp_ns(::uint64_t value) {
+  _internal_set_timestamp_ns(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.ReceiverFrequencyPoint.timestamp_ns)
+}
+inline ::uint64_t ReceiverFrequencyPoint::_internal_timestamp_ns() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.timestamp_ns_;
+}
+inline void ReceiverFrequencyPoint::_internal_set_timestamp_ns(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.timestamp_ns_ = value;
+}
+
+// repeated .vna.ReceiverChannelSample channels = 3;
+inline int ReceiverFrequencyPoint::_internal_channels_size() const {
+  return _internal_channels().size();
+}
+inline int ReceiverFrequencyPoint::channels_size() const {
+  return _internal_channels_size();
+}
+inline void ReceiverFrequencyPoint::clear_channels() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.channels_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::vna::ReceiverChannelSample* PROTOBUF_NONNULL ReceiverFrequencyPoint::mutable_channels(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.ReceiverFrequencyPoint.channels)
+  return _internal_mutable_channels()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>* PROTOBUF_NONNULL ReceiverFrequencyPoint::mutable_channels()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:vna.ReceiverFrequencyPoint.channels)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_channels();
+}
+inline const ::vna::ReceiverChannelSample& ReceiverFrequencyPoint::channels(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ReceiverFrequencyPoint.channels)
+  return _internal_channels().Get(index);
+}
+inline ::vna::ReceiverChannelSample* PROTOBUF_NONNULL ReceiverFrequencyPoint::add_channels()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::ReceiverChannelSample* _add =
+      _internal_mutable_channels()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:vna.ReceiverFrequencyPoint.channels)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>& ReceiverFrequencyPoint::channels() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.ReceiverFrequencyPoint.channels)
+  return _internal_channels();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>&
+ReceiverFrequencyPoint::_internal_channels() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.channels_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverChannelSample>* PROTOBUF_NONNULL
+ReceiverFrequencyPoint::_internal_mutable_channels() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.channels_;
+}
+
+// -------------------------------------------------------------------
+
+// SParameterPoint
+
+// uint32 row_port = 1;
+inline void SParameterPoint::clear_row_port() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.row_port_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::uint32_t SParameterPoint::row_port() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterPoint.row_port)
+  return _internal_row_port();
+}
+inline void SParameterPoint::set_row_port(::uint32_t value) {
+  _internal_set_row_port(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_set:vna.SParameterPoint.row_port)
+}
+inline ::uint32_t SParameterPoint::_internal_row_port() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.row_port_;
+}
+inline void SParameterPoint::_internal_set_row_port(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.row_port_ = value;
+}
+
+// uint32 col_port = 2;
+inline void SParameterPoint::clear_col_port() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.col_port_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline ::uint32_t SParameterPoint::col_port() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterPoint.col_port)
+  return _internal_col_port();
+}
+inline void SParameterPoint::set_col_port(::uint32_t value) {
+  _internal_set_col_port(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.SParameterPoint.col_port)
+}
+inline ::uint32_t SParameterPoint::_internal_col_port() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.col_port_;
+}
+inline void SParameterPoint::_internal_set_col_port(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.col_port_ = value;
+}
+
+// double real = 3;
+inline void SParameterPoint::clear_real() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.real_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline double SParameterPoint::real() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterPoint.real)
+  return _internal_real();
+}
+inline void SParameterPoint::set_real(double value) {
+  _internal_set_real(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.SParameterPoint.real)
+}
+inline double SParameterPoint::_internal_real() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.real_;
+}
+inline void SParameterPoint::_internal_set_real(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.real_ = value;
+}
+
+// double imag = 4;
+inline void SParameterPoint::clear_imag() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.imag_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline double SParameterPoint::imag() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterPoint.imag)
+  return _internal_imag();
+}
+inline void SParameterPoint::set_imag(double value) {
+  _internal_set_imag(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:vna.SParameterPoint.imag)
+}
+inline double SParameterPoint::_internal_imag() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.imag_;
+}
+inline void SParameterPoint::_internal_set_imag(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.imag_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// SParameterFrequencyPoint
+
+// double frequency_hz = 1;
+inline void SParameterFrequencyPoint::clear_frequency_hz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.frequency_hz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline double SParameterFrequencyPoint::frequency_hz() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterFrequencyPoint.frequency_hz)
+  return _internal_frequency_hz();
+}
+inline void SParameterFrequencyPoint::set_frequency_hz(double value) {
+  _internal_set_frequency_hz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.SParameterFrequencyPoint.frequency_hz)
+}
+inline double SParameterFrequencyPoint::_internal_frequency_hz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.frequency_hz_;
+}
+inline void SParameterFrequencyPoint::_internal_set_frequency_hz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.frequency_hz_ = value;
+}
+
+// uint32 port_count = 2;
+inline void SParameterFrequencyPoint::clear_port_count() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.port_count_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline ::uint32_t SParameterFrequencyPoint::port_count() const {
+  // @@protoc_insertion_point(field_get:vna.SParameterFrequencyPoint.port_count)
+  return _internal_port_count();
+}
+inline void SParameterFrequencyPoint::set_port_count(::uint32_t value) {
+  _internal_set_port_count(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.SParameterFrequencyPoint.port_count)
+}
+inline ::uint32_t SParameterFrequencyPoint::_internal_port_count() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.port_count_;
+}
+inline void SParameterFrequencyPoint::_internal_set_port_count(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.port_count_ = value;
+}
+
+// repeated .vna.SParameterPoint points = 3;
+inline int SParameterFrequencyPoint::_internal_points_size() const {
+  return _internal_points().size();
+}
+inline int SParameterFrequencyPoint::points_size() const {
+  return _internal_points_size();
+}
+inline void SParameterFrequencyPoint::clear_points() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.points_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::vna::SParameterPoint* PROTOBUF_NONNULL SParameterFrequencyPoint::mutable_points(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.SParameterFrequencyPoint.points)
+  return _internal_mutable_points()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>* PROTOBUF_NONNULL SParameterFrequencyPoint::mutable_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:vna.SParameterFrequencyPoint.points)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_points();
+}
+inline const ::vna::SParameterPoint& SParameterFrequencyPoint::points(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.SParameterFrequencyPoint.points)
+  return _internal_points().Get(index);
+}
+inline ::vna::SParameterPoint* PROTOBUF_NONNULL SParameterFrequencyPoint::add_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::SParameterPoint* _add =
+      _internal_mutable_points()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:vna.SParameterFrequencyPoint.points)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>& SParameterFrequencyPoint::points() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.SParameterFrequencyPoint.points)
+  return _internal_points();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>&
+SParameterFrequencyPoint::_internal_points() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.points_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::SParameterPoint>* PROTOBUF_NONNULL
+SParameterFrequencyPoint::_internal_mutable_points() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.points_;
+}
+
+// -------------------------------------------------------------------
+
 // AcquisitionResult
 
 // string instance_id = 1;
@@ -5203,7 +6865,7 @@ inline void AcquisitionResult::clear_instance_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.instance_id_.ClearToEmpty();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000001U);
+                  0x00000008U);
 }
 inline const ::std::string& AcquisitionResult::instance_id() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
@@ -5213,13 +6875,13 @@ inline const ::std::string& AcquisitionResult::instance_id() const
 template <typename Arg_, typename... Args_>
 PROTOBUF_ALWAYS_INLINE void AcquisitionResult::set_instance_id(Arg_&& arg, Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
   // @@protoc_insertion_point(field_set:vna.AcquisitionResult.instance_id)
 }
 inline ::std::string* PROTOBUF_NONNULL AcquisitionResult::mutable_instance_id()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   ::std::string* _s = _internal_mutable_instance_id();
   // @@protoc_insertion_point(field_mutable:vna.AcquisitionResult.instance_id)
   return _s;
@@ -5239,10 +6901,10 @@ inline ::std::string* PROTOBUF_NONNULL AcquisitionResult::_internal_mutable_inst
 inline ::std::string* PROTOBUF_NULLABLE AcquisitionResult::release_instance_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:vna.AcquisitionResult.instance_id)
-  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000008U)) {
     return nullptr;
   }
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   auto* released = _impl_.instance_id_.Release();
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
     _impl_.instance_id_.Set("", GetArena());
@@ -5252,9 +6914,9 @@ inline ::std::string* PROTOBUF_NULLABLE AcquisitionResult::release_instance_id()
 inline void AcquisitionResult::set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   }
   _impl_.instance_id_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
@@ -5268,7 +6930,7 @@ inline void AcquisitionResult::clear_timestamp_ns() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.timestamp_ns_ = ::uint64_t{0u};
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000002U);
+                  0x00000010U);
 }
 inline ::uint64_t AcquisitionResult::timestamp_ns() const {
   // @@protoc_insertion_point(field_get:vna.AcquisitionResult.timestamp_ns)
@@ -5276,7 +6938,7 @@ inline ::uint64_t AcquisitionResult::timestamp_ns() const {
 }
 inline void AcquisitionResult::set_timestamp_ns(::uint64_t value) {
   _internal_set_timestamp_ns(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   // @@protoc_insertion_point(field_set:vna.AcquisitionResult.timestamp_ns)
 }
 inline ::uint64_t AcquisitionResult::_internal_timestamp_ns() const {
@@ -5450,6 +7112,174 @@ inline ::vna::TimeDomainFrame* PROTOBUF_NONNULL AcquisitionResult::mutable_time_
   ::vna::TimeDomainFrame* _msg = _internal_mutable_time_frame();
   // @@protoc_insertion_point(field_mutable:vna.AcquisitionResult.time_frame)
   return _msg;
+}
+
+// repeated .vna.ReceiverFrequencyPoint receiver_raw_points = 20;
+inline int AcquisitionResult::_internal_receiver_raw_points_size() const {
+  return _internal_receiver_raw_points().size();
+}
+inline int AcquisitionResult::receiver_raw_points_size() const {
+  return _internal_receiver_raw_points_size();
+}
+inline void AcquisitionResult::clear_receiver_raw_points() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.receiver_raw_points_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::mutable_receiver_raw_points(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.AcquisitionResult.receiver_raw_points)
+  return _internal_mutable_receiver_raw_points()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL AcquisitionResult::mutable_receiver_raw_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:vna.AcquisitionResult.receiver_raw_points)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_receiver_raw_points();
+}
+inline const ::vna::ReceiverFrequencyPoint& AcquisitionResult::receiver_raw_points(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.AcquisitionResult.receiver_raw_points)
+  return _internal_receiver_raw_points().Get(index);
+}
+inline ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::add_receiver_raw_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::ReceiverFrequencyPoint* _add =
+      _internal_mutable_receiver_raw_points()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:vna.AcquisitionResult.receiver_raw_points)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& AcquisitionResult::receiver_raw_points() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.AcquisitionResult.receiver_raw_points)
+  return _internal_receiver_raw_points();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>&
+AcquisitionResult::_internal_receiver_raw_points() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.receiver_raw_points_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL
+AcquisitionResult::_internal_mutable_receiver_raw_points() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.receiver_raw_points_;
+}
+
+// repeated .vna.ReceiverFrequencyPoint receiver_compensated_points = 21;
+inline int AcquisitionResult::_internal_receiver_compensated_points_size() const {
+  return _internal_receiver_compensated_points().size();
+}
+inline int AcquisitionResult::receiver_compensated_points_size() const {
+  return _internal_receiver_compensated_points_size();
+}
+inline void AcquisitionResult::clear_receiver_compensated_points() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.receiver_compensated_points_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::mutable_receiver_compensated_points(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.AcquisitionResult.receiver_compensated_points)
+  return _internal_mutable_receiver_compensated_points()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL AcquisitionResult::mutable_receiver_compensated_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_mutable_list:vna.AcquisitionResult.receiver_compensated_points)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_receiver_compensated_points();
+}
+inline const ::vna::ReceiverFrequencyPoint& AcquisitionResult::receiver_compensated_points(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.AcquisitionResult.receiver_compensated_points)
+  return _internal_receiver_compensated_points().Get(index);
+}
+inline ::vna::ReceiverFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::add_receiver_compensated_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::ReceiverFrequencyPoint* _add =
+      _internal_mutable_receiver_compensated_points()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_add:vna.AcquisitionResult.receiver_compensated_points)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>& AcquisitionResult::receiver_compensated_points() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.AcquisitionResult.receiver_compensated_points)
+  return _internal_receiver_compensated_points();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>&
+AcquisitionResult::_internal_receiver_compensated_points() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.receiver_compensated_points_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::ReceiverFrequencyPoint>* PROTOBUF_NONNULL
+AcquisitionResult::_internal_mutable_receiver_compensated_points() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.receiver_compensated_points_;
+}
+
+// repeated .vna.SParameterFrequencyPoint s_parameter_points = 22;
+inline int AcquisitionResult::_internal_s_parameter_points_size() const {
+  return _internal_s_parameter_points().size();
+}
+inline int AcquisitionResult::s_parameter_points_size() const {
+  return _internal_s_parameter_points_size();
+}
+inline void AcquisitionResult::clear_s_parameter_points() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.s_parameter_points_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline ::vna::SParameterFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::mutable_s_parameter_points(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.AcquisitionResult.s_parameter_points)
+  return _internal_mutable_s_parameter_points()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>* PROTOBUF_NONNULL AcquisitionResult::mutable_s_parameter_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_mutable_list:vna.AcquisitionResult.s_parameter_points)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_s_parameter_points();
+}
+inline const ::vna::SParameterFrequencyPoint& AcquisitionResult::s_parameter_points(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.AcquisitionResult.s_parameter_points)
+  return _internal_s_parameter_points().Get(index);
+}
+inline ::vna::SParameterFrequencyPoint* PROTOBUF_NONNULL AcquisitionResult::add_s_parameter_points()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::SParameterFrequencyPoint* _add =
+      _internal_mutable_s_parameter_points()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_add:vna.AcquisitionResult.s_parameter_points)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>& AcquisitionResult::s_parameter_points() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.AcquisitionResult.s_parameter_points)
+  return _internal_s_parameter_points();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>&
+AcquisitionResult::_internal_s_parameter_points() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.s_parameter_points_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::SParameterFrequencyPoint>* PROTOBUF_NONNULL
+AcquisitionResult::_internal_mutable_s_parameter_points() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.s_parameter_points_;
 }
 
 inline bool AcquisitionResult::has_data() const {

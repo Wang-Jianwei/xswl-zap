@@ -86,6 +86,12 @@ int main(int argc, char** argv) {
     request.set_timeout_ms(1000);
     request.mutable_excitation()->set_mode(vna::ExcitationMode::EXCITATION_MODE_CW);
     request.mutable_excitation()->mutable_cw()->set_frequency_hz(1.0e9);
+    request.mutable_excitation()->mutable_cw()->set_start_frequency_hz(1.0e9);
+    request.mutable_excitation()->mutable_cw()->set_stop_frequency_hz(1.1e9);
+    request.mutable_excitation()->mutable_cw()->set_sweep_point_count(3);
+    request.mutable_excitation()->mutable_cw()->set_if_bandwidth_hz(1.0e3);
+    request.mutable_excitation()->mutable_cw()->set_port_count(4);
+    request.mutable_excitation()->mutable_cw()->set_excitation_port(2);
     request.mutable_excitation()->mutable_cw()->set_power_dbm(-10.0);
 
     const grpc::Status status = stub->Acquire(&context, request, &response);
@@ -103,7 +109,17 @@ int main(int argc, char** argv) {
     if (response.has_time_frame()) {
       std::cout << " points=" << response.time_frame().points_size();
     }
+    std::cout << " receiver_raw=" << response.receiver_raw_points_size()
+              << " receiver_comp=" << response.receiver_compensated_points_size()
+              << " s_param=" << response.s_parameter_points_size();
     std::cout << "\n";
+
+    if (response.receiver_raw_points_size() == 0 ||
+        response.receiver_compensated_points_size() == 0 ||
+        response.s_parameter_points_size() == 0) {
+      std::cout << "Acquire validation failed: receiver/s-parameter outputs are missing\n";
+      return 8;
+    }
   }
 
   std::cout << "grpc smoke client success" << "\n";

@@ -69,6 +69,61 @@ void FillProtoFromCoreResult(const ::vna::core::AcquisitionResult& in,
       point->set_imag(in.frequencyDomain.samples[i].imag());
     }
   }
+
+  for (std::size_t i = 0; i < in.receiverRaw.points.size(); ++i) {
+    const ::vna::core::ReceiverFrequencyPoint& sourcePoint = in.receiverRaw.points[i];
+    ::vna::ReceiverFrequencyPoint* targetPoint = out->add_receiver_raw_points();
+    targetPoint->set_frequency_hz(sourcePoint.frequencyHz);
+    targetPoint->set_timestamp_ns(sourcePoint.timestampNs);
+
+    for (std::size_t channelIndex = 0; channelIndex < sourcePoint.channels.size(); ++channelIndex) {
+      const ::vna::core::ReceiverChannelSample& sourceChannel = sourcePoint.channels[channelIndex];
+      ::vna::ReceiverChannelSample* targetChannel = targetPoint->add_channels();
+      targetChannel->set_channel_id(sourceChannel.channelId);
+      targetChannel->set_real(sourceChannel.iq.real());
+      targetChannel->set_imag(sourceChannel.iq.imag());
+      targetChannel->set_clipped(sourceChannel.clipped);
+    }
+  }
+
+  for (std::size_t i = 0; i < in.receiverCompensated.points.size(); ++i) {
+    const ::vna::core::ReceiverFrequencyPoint& sourcePoint = in.receiverCompensated.points[i];
+    ::vna::ReceiverFrequencyPoint* targetPoint = out->add_receiver_compensated_points();
+    targetPoint->set_frequency_hz(sourcePoint.frequencyHz);
+    targetPoint->set_timestamp_ns(sourcePoint.timestampNs);
+
+    for (std::size_t channelIndex = 0; channelIndex < sourcePoint.channels.size(); ++channelIndex) {
+      const ::vna::core::ReceiverChannelSample& sourceChannel = sourcePoint.channels[channelIndex];
+      ::vna::ReceiverChannelSample* targetChannel = targetPoint->add_channels();
+      targetChannel->set_channel_id(sourceChannel.channelId);
+      targetChannel->set_real(sourceChannel.iq.real());
+      targetChannel->set_imag(sourceChannel.iq.imag());
+      targetChannel->set_clipped(sourceChannel.clipped);
+    }
+  }
+
+  for (std::size_t i = 0; i < in.sParameters.points.size(); ++i) {
+    const ::vna::core::SParameterFrequencyPoint& sourcePoint = in.sParameters.points[i];
+    ::vna::SParameterFrequencyPoint* targetPoint = out->add_s_parameter_points();
+    targetPoint->set_frequency_hz(sourcePoint.frequencyHz);
+    targetPoint->set_port_count(sourcePoint.portCount);
+
+    const std::size_t portCount = static_cast<std::size_t>(sourcePoint.portCount);
+    const std::size_t expectedSize = portCount * portCount;
+    const std::size_t matrixSize = sourcePoint.matrix.size() < expectedSize
+                                       ? sourcePoint.matrix.size()
+                                       : expectedSize;
+    for (std::size_t matrixIndex = 0; matrixIndex < matrixSize; ++matrixIndex) {
+      const std::size_t row = portCount == 0 ? 0 : (matrixIndex / portCount);
+      const std::size_t col = portCount == 0 ? 0 : (matrixIndex % portCount);
+
+      ::vna::SParameterPoint* sPoint = targetPoint->add_points();
+      sPoint->set_row_port(static_cast<std::uint32_t>(row + 1));
+      sPoint->set_col_port(static_cast<std::uint32_t>(col + 1));
+      sPoint->set_real(sourcePoint.matrix[matrixIndex].real());
+      sPoint->set_imag(sourcePoint.matrix[matrixIndex].imag());
+    }
+  }
 }
 
 ::vna::core::ExcitationConfig BuildCoreExcitation(const ::vna::AcquisitionRequest& request) {
@@ -79,6 +134,12 @@ void FillProtoFromCoreResult(const ::vna::core::AcquisitionResult& in,
   excitation.cw.frequencyHz = request.excitation().cw().frequency_hz();
   excitation.cw.powerDbm = request.excitation().cw().power_dbm();
   excitation.cw.dwellTimeMs = request.excitation().cw().dwell_time_ms();
+  excitation.cw.startFrequencyHz = request.excitation().cw().start_frequency_hz();
+  excitation.cw.stopFrequencyHz = request.excitation().cw().stop_frequency_hz();
+  excitation.cw.sweepPointCount = request.excitation().cw().sweep_point_count();
+  excitation.cw.ifBandwidthHz = request.excitation().cw().if_bandwidth_hz();
+  excitation.cw.portCount = request.excitation().cw().port_count();
+  excitation.cw.excitationPort = request.excitation().cw().excitation_port();
   excitation.pulse.centerFrequencyHz = request.excitation().pulse().center_frequency_hz();
   excitation.pulse.pulseWidthNs = request.excitation().pulse().pulse_width_ns();
   excitation.pulse.pulsePeriodNs = request.excitation().pulse().pulse_period_ns();

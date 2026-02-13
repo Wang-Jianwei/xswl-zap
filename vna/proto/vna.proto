@@ -31,6 +31,12 @@ message CwExcitation {
   double frequency_hz = 1;
   double power_dbm = 2;
   uint32 dwell_time_ms = 3;
+  double start_frequency_hz = 4;
+  double stop_frequency_hz = 5;
+  uint32 sweep_point_count = 6;
+  double if_bandwidth_hz = 7;
+  uint32 port_count = 8;
+  uint32 excitation_port = 9;
 }
 
 message PulseExcitation {
@@ -71,6 +77,32 @@ message TimeDomainPoint {
   double phase = 3;
 }
 
+message ReceiverChannelSample {
+  string channel_id = 1;
+  double real = 2;
+  double imag = 3;
+  bool clipped = 4;
+}
+
+message ReceiverFrequencyPoint {
+  double frequency_hz = 1;
+  uint64 timestamp_ns = 2;
+  repeated ReceiverChannelSample channels = 3;
+}
+
+message SParameterPoint {
+  uint32 row_port = 1;
+  uint32 col_port = 2;
+  double real = 3;
+  double imag = 4;
+}
+
+message SParameterFrequencyPoint {
+  double frequency_hz = 1;
+  uint32 port_count = 2;
+  repeated SParameterPoint points = 3;
+}
+
 message AcquisitionResult {
   string instance_id = 1;
   uint64 timestamp_ns = 2;
@@ -79,6 +111,10 @@ message AcquisitionResult {
     FrequencyDomainFrame frequency_frame = 10;
     TimeDomainFrame time_frame = 11;
   }
+
+  repeated ReceiverFrequencyPoint receiver_raw_points = 20;
+  repeated ReceiverFrequencyPoint receiver_compensated_points = 21;
+  repeated SParameterFrequencyPoint s_parameter_points = 22;
 }
 
 message FrequencyDomainFrame {

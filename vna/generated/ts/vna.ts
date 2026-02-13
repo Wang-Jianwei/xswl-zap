@@ -86,6 +86,12 @@ export interface CwExcitation {
   frequencyHz: number;
   powerDbm: number;
   dwellTimeMs: number;
+  startFrequencyHz: number;
+  stopFrequencyHz: number;
+  sweepPointCount: number;
+  ifBandwidthHz: number;
+  portCount: number;
+  excitationPort: number;
 }
 
 export interface PulseExcitation {
@@ -123,11 +129,40 @@ export interface TimeDomainPoint {
   phase: number;
 }
 
+export interface ReceiverChannelSample {
+  channelId: string;
+  real: number;
+  imag: number;
+  clipped: boolean;
+}
+
+export interface ReceiverFrequencyPoint {
+  frequencyHz: number;
+  timestampNs: number;
+  channels: ReceiverChannelSample[];
+}
+
+export interface SParameterPoint {
+  rowPort: number;
+  colPort: number;
+  real: number;
+  imag: number;
+}
+
+export interface SParameterFrequencyPoint {
+  frequencyHz: number;
+  portCount: number;
+  points: SParameterPoint[];
+}
+
 export interface AcquisitionResult {
   instanceId: string;
   timestampNs: number;
   frequencyFrame?: FrequencyDomainFrame | undefined;
   timeFrame?: TimeDomainFrame | undefined;
+  receiverRawPoints: ReceiverFrequencyPoint[];
+  receiverCompensatedPoints: ReceiverFrequencyPoint[];
+  sParameterPoints: SParameterFrequencyPoint[];
 }
 
 export interface FrequencyDomainFrame {
@@ -475,7 +510,17 @@ export const TopologyErrorDetail: MessageFns<TopologyErrorDetail> = {
 };
 
 function createBaseCwExcitation(): CwExcitation {
-  return { frequencyHz: 0, powerDbm: 0, dwellTimeMs: 0 };
+  return {
+    frequencyHz: 0,
+    powerDbm: 0,
+    dwellTimeMs: 0,
+    startFrequencyHz: 0,
+    stopFrequencyHz: 0,
+    sweepPointCount: 0,
+    ifBandwidthHz: 0,
+    portCount: 0,
+    excitationPort: 0,
+  };
 }
 
 export const CwExcitation: MessageFns<CwExcitation> = {
@@ -488,6 +533,24 @@ export const CwExcitation: MessageFns<CwExcitation> = {
     }
     if (message.dwellTimeMs !== 0) {
       writer.uint32(24).uint32(message.dwellTimeMs);
+    }
+    if (message.startFrequencyHz !== 0) {
+      writer.uint32(33).double(message.startFrequencyHz);
+    }
+    if (message.stopFrequencyHz !== 0) {
+      writer.uint32(41).double(message.stopFrequencyHz);
+    }
+    if (message.sweepPointCount !== 0) {
+      writer.uint32(48).uint32(message.sweepPointCount);
+    }
+    if (message.ifBandwidthHz !== 0) {
+      writer.uint32(57).double(message.ifBandwidthHz);
+    }
+    if (message.portCount !== 0) {
+      writer.uint32(64).uint32(message.portCount);
+    }
+    if (message.excitationPort !== 0) {
+      writer.uint32(72).uint32(message.excitationPort);
     }
     return writer;
   },
@@ -523,6 +586,54 @@ export const CwExcitation: MessageFns<CwExcitation> = {
           message.dwellTimeMs = reader.uint32();
           continue;
         }
+        case 4: {
+          if (tag !== 33) {
+            break;
+          }
+
+          message.startFrequencyHz = reader.double();
+          continue;
+        }
+        case 5: {
+          if (tag !== 41) {
+            break;
+          }
+
+          message.stopFrequencyHz = reader.double();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.sweepPointCount = reader.uint32();
+          continue;
+        }
+        case 7: {
+          if (tag !== 57) {
+            break;
+          }
+
+          message.ifBandwidthHz = reader.double();
+          continue;
+        }
+        case 8: {
+          if (tag !== 64) {
+            break;
+          }
+
+          message.portCount = reader.uint32();
+          continue;
+        }
+        case 9: {
+          if (tag !== 72) {
+            break;
+          }
+
+          message.excitationPort = reader.uint32();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -549,6 +660,36 @@ export const CwExcitation: MessageFns<CwExcitation> = {
         : isSet(object.dwell_time_ms)
         ? globalThis.Number(object.dwell_time_ms)
         : 0,
+      startFrequencyHz: isSet(object.startFrequencyHz)
+        ? globalThis.Number(object.startFrequencyHz)
+        : isSet(object.start_frequency_hz)
+        ? globalThis.Number(object.start_frequency_hz)
+        : 0,
+      stopFrequencyHz: isSet(object.stopFrequencyHz)
+        ? globalThis.Number(object.stopFrequencyHz)
+        : isSet(object.stop_frequency_hz)
+        ? globalThis.Number(object.stop_frequency_hz)
+        : 0,
+      sweepPointCount: isSet(object.sweepPointCount)
+        ? globalThis.Number(object.sweepPointCount)
+        : isSet(object.sweep_point_count)
+        ? globalThis.Number(object.sweep_point_count)
+        : 0,
+      ifBandwidthHz: isSet(object.ifBandwidthHz)
+        ? globalThis.Number(object.ifBandwidthHz)
+        : isSet(object.if_bandwidth_hz)
+        ? globalThis.Number(object.if_bandwidth_hz)
+        : 0,
+      portCount: isSet(object.portCount)
+        ? globalThis.Number(object.portCount)
+        : isSet(object.port_count)
+        ? globalThis.Number(object.port_count)
+        : 0,
+      excitationPort: isSet(object.excitationPort)
+        ? globalThis.Number(object.excitationPort)
+        : isSet(object.excitation_port)
+        ? globalThis.Number(object.excitation_port)
+        : 0,
     };
   },
 
@@ -563,6 +704,24 @@ export const CwExcitation: MessageFns<CwExcitation> = {
     if (message.dwellTimeMs !== 0) {
       obj.dwellTimeMs = Math.round(message.dwellTimeMs);
     }
+    if (message.startFrequencyHz !== 0) {
+      obj.startFrequencyHz = message.startFrequencyHz;
+    }
+    if (message.stopFrequencyHz !== 0) {
+      obj.stopFrequencyHz = message.stopFrequencyHz;
+    }
+    if (message.sweepPointCount !== 0) {
+      obj.sweepPointCount = Math.round(message.sweepPointCount);
+    }
+    if (message.ifBandwidthHz !== 0) {
+      obj.ifBandwidthHz = message.ifBandwidthHz;
+    }
+    if (message.portCount !== 0) {
+      obj.portCount = Math.round(message.portCount);
+    }
+    if (message.excitationPort !== 0) {
+      obj.excitationPort = Math.round(message.excitationPort);
+    }
     return obj;
   },
 
@@ -574,6 +733,12 @@ export const CwExcitation: MessageFns<CwExcitation> = {
     message.frequencyHz = object.frequencyHz ?? 0;
     message.powerDbm = object.powerDbm ?? 0;
     message.dwellTimeMs = object.dwellTimeMs ?? 0;
+    message.startFrequencyHz = object.startFrequencyHz ?? 0;
+    message.stopFrequencyHz = object.stopFrequencyHz ?? 0;
+    message.sweepPointCount = object.sweepPointCount ?? 0;
+    message.ifBandwidthHz = object.ifBandwidthHz ?? 0;
+    message.portCount = object.portCount ?? 0;
+    message.excitationPort = object.excitationPort ?? 0;
     return message;
   },
 };
@@ -1170,8 +1335,448 @@ export const TimeDomainPoint: MessageFns<TimeDomainPoint> = {
   },
 };
 
+function createBaseReceiverChannelSample(): ReceiverChannelSample {
+  return { channelId: "", real: 0, imag: 0, clipped: false };
+}
+
+export const ReceiverChannelSample: MessageFns<ReceiverChannelSample> = {
+  encode(message: ReceiverChannelSample, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.channelId !== "") {
+      writer.uint32(10).string(message.channelId);
+    }
+    if (message.real !== 0) {
+      writer.uint32(17).double(message.real);
+    }
+    if (message.imag !== 0) {
+      writer.uint32(25).double(message.imag);
+    }
+    if (message.clipped !== false) {
+      writer.uint32(32).bool(message.clipped);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ReceiverChannelSample {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseReceiverChannelSample();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.channelId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 17) {
+            break;
+          }
+
+          message.real = reader.double();
+          continue;
+        }
+        case 3: {
+          if (tag !== 25) {
+            break;
+          }
+
+          message.imag = reader.double();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.clipped = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ReceiverChannelSample {
+    return {
+      channelId: isSet(object.channelId)
+        ? globalThis.String(object.channelId)
+        : isSet(object.channel_id)
+        ? globalThis.String(object.channel_id)
+        : "",
+      real: isSet(object.real) ? globalThis.Number(object.real) : 0,
+      imag: isSet(object.imag) ? globalThis.Number(object.imag) : 0,
+      clipped: isSet(object.clipped) ? globalThis.Boolean(object.clipped) : false,
+    };
+  },
+
+  toJSON(message: ReceiverChannelSample): unknown {
+    const obj: any = {};
+    if (message.channelId !== "") {
+      obj.channelId = message.channelId;
+    }
+    if (message.real !== 0) {
+      obj.real = message.real;
+    }
+    if (message.imag !== 0) {
+      obj.imag = message.imag;
+    }
+    if (message.clipped !== false) {
+      obj.clipped = message.clipped;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ReceiverChannelSample>, I>>(base?: I): ReceiverChannelSample {
+    return ReceiverChannelSample.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ReceiverChannelSample>, I>>(object: I): ReceiverChannelSample {
+    const message = createBaseReceiverChannelSample();
+    message.channelId = object.channelId ?? "";
+    message.real = object.real ?? 0;
+    message.imag = object.imag ?? 0;
+    message.clipped = object.clipped ?? false;
+    return message;
+  },
+};
+
+function createBaseReceiverFrequencyPoint(): ReceiverFrequencyPoint {
+  return { frequencyHz: 0, timestampNs: 0, channels: [] };
+}
+
+export const ReceiverFrequencyPoint: MessageFns<ReceiverFrequencyPoint> = {
+  encode(message: ReceiverFrequencyPoint, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.frequencyHz !== 0) {
+      writer.uint32(9).double(message.frequencyHz);
+    }
+    if (message.timestampNs !== 0) {
+      writer.uint32(16).uint64(message.timestampNs);
+    }
+    for (const v of message.channels) {
+      ReceiverChannelSample.encode(v!, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ReceiverFrequencyPoint {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseReceiverFrequencyPoint();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 9) {
+            break;
+          }
+
+          message.frequencyHz = reader.double();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.timestampNs = longToNumber(reader.uint64());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.channels.push(ReceiverChannelSample.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ReceiverFrequencyPoint {
+    return {
+      frequencyHz: isSet(object.frequencyHz)
+        ? globalThis.Number(object.frequencyHz)
+        : isSet(object.frequency_hz)
+        ? globalThis.Number(object.frequency_hz)
+        : 0,
+      timestampNs: isSet(object.timestampNs)
+        ? globalThis.Number(object.timestampNs)
+        : isSet(object.timestamp_ns)
+        ? globalThis.Number(object.timestamp_ns)
+        : 0,
+      channels: globalThis.Array.isArray(object?.channels)
+        ? object.channels.map((e: any) => ReceiverChannelSample.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: ReceiverFrequencyPoint): unknown {
+    const obj: any = {};
+    if (message.frequencyHz !== 0) {
+      obj.frequencyHz = message.frequencyHz;
+    }
+    if (message.timestampNs !== 0) {
+      obj.timestampNs = Math.round(message.timestampNs);
+    }
+    if (message.channels?.length) {
+      obj.channels = message.channels.map((e) => ReceiverChannelSample.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ReceiverFrequencyPoint>, I>>(base?: I): ReceiverFrequencyPoint {
+    return ReceiverFrequencyPoint.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ReceiverFrequencyPoint>, I>>(object: I): ReceiverFrequencyPoint {
+    const message = createBaseReceiverFrequencyPoint();
+    message.frequencyHz = object.frequencyHz ?? 0;
+    message.timestampNs = object.timestampNs ?? 0;
+    message.channels = object.channels?.map((e) => ReceiverChannelSample.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseSParameterPoint(): SParameterPoint {
+  return { rowPort: 0, colPort: 0, real: 0, imag: 0 };
+}
+
+export const SParameterPoint: MessageFns<SParameterPoint> = {
+  encode(message: SParameterPoint, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.rowPort !== 0) {
+      writer.uint32(8).uint32(message.rowPort);
+    }
+    if (message.colPort !== 0) {
+      writer.uint32(16).uint32(message.colPort);
+    }
+    if (message.real !== 0) {
+      writer.uint32(25).double(message.real);
+    }
+    if (message.imag !== 0) {
+      writer.uint32(33).double(message.imag);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SParameterPoint {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSParameterPoint();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.rowPort = reader.uint32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.colPort = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 25) {
+            break;
+          }
+
+          message.real = reader.double();
+          continue;
+        }
+        case 4: {
+          if (tag !== 33) {
+            break;
+          }
+
+          message.imag = reader.double();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SParameterPoint {
+    return {
+      rowPort: isSet(object.rowPort)
+        ? globalThis.Number(object.rowPort)
+        : isSet(object.row_port)
+        ? globalThis.Number(object.row_port)
+        : 0,
+      colPort: isSet(object.colPort)
+        ? globalThis.Number(object.colPort)
+        : isSet(object.col_port)
+        ? globalThis.Number(object.col_port)
+        : 0,
+      real: isSet(object.real) ? globalThis.Number(object.real) : 0,
+      imag: isSet(object.imag) ? globalThis.Number(object.imag) : 0,
+    };
+  },
+
+  toJSON(message: SParameterPoint): unknown {
+    const obj: any = {};
+    if (message.rowPort !== 0) {
+      obj.rowPort = Math.round(message.rowPort);
+    }
+    if (message.colPort !== 0) {
+      obj.colPort = Math.round(message.colPort);
+    }
+    if (message.real !== 0) {
+      obj.real = message.real;
+    }
+    if (message.imag !== 0) {
+      obj.imag = message.imag;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SParameterPoint>, I>>(base?: I): SParameterPoint {
+    return SParameterPoint.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SParameterPoint>, I>>(object: I): SParameterPoint {
+    const message = createBaseSParameterPoint();
+    message.rowPort = object.rowPort ?? 0;
+    message.colPort = object.colPort ?? 0;
+    message.real = object.real ?? 0;
+    message.imag = object.imag ?? 0;
+    return message;
+  },
+};
+
+function createBaseSParameterFrequencyPoint(): SParameterFrequencyPoint {
+  return { frequencyHz: 0, portCount: 0, points: [] };
+}
+
+export const SParameterFrequencyPoint: MessageFns<SParameterFrequencyPoint> = {
+  encode(message: SParameterFrequencyPoint, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.frequencyHz !== 0) {
+      writer.uint32(9).double(message.frequencyHz);
+    }
+    if (message.portCount !== 0) {
+      writer.uint32(16).uint32(message.portCount);
+    }
+    for (const v of message.points) {
+      SParameterPoint.encode(v!, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): SParameterFrequencyPoint {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseSParameterFrequencyPoint();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 9) {
+            break;
+          }
+
+          message.frequencyHz = reader.double();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.portCount = reader.uint32();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.points.push(SParameterPoint.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): SParameterFrequencyPoint {
+    return {
+      frequencyHz: isSet(object.frequencyHz)
+        ? globalThis.Number(object.frequencyHz)
+        : isSet(object.frequency_hz)
+        ? globalThis.Number(object.frequency_hz)
+        : 0,
+      portCount: isSet(object.portCount)
+        ? globalThis.Number(object.portCount)
+        : isSet(object.port_count)
+        ? globalThis.Number(object.port_count)
+        : 0,
+      points: globalThis.Array.isArray(object?.points)
+        ? object.points.map((e: any) => SParameterPoint.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: SParameterFrequencyPoint): unknown {
+    const obj: any = {};
+    if (message.frequencyHz !== 0) {
+      obj.frequencyHz = message.frequencyHz;
+    }
+    if (message.portCount !== 0) {
+      obj.portCount = Math.round(message.portCount);
+    }
+    if (message.points?.length) {
+      obj.points = message.points.map((e) => SParameterPoint.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<SParameterFrequencyPoint>, I>>(base?: I): SParameterFrequencyPoint {
+    return SParameterFrequencyPoint.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<SParameterFrequencyPoint>, I>>(object: I): SParameterFrequencyPoint {
+    const message = createBaseSParameterFrequencyPoint();
+    message.frequencyHz = object.frequencyHz ?? 0;
+    message.portCount = object.portCount ?? 0;
+    message.points = object.points?.map((e) => SParameterPoint.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseAcquisitionResult(): AcquisitionResult {
-  return { instanceId: "", timestampNs: 0, frequencyFrame: undefined, timeFrame: undefined };
+  return {
+    instanceId: "",
+    timestampNs: 0,
+    frequencyFrame: undefined,
+    timeFrame: undefined,
+    receiverRawPoints: [],
+    receiverCompensatedPoints: [],
+    sParameterPoints: [],
+  };
 }
 
 export const AcquisitionResult: MessageFns<AcquisitionResult> = {
@@ -1187,6 +1792,15 @@ export const AcquisitionResult: MessageFns<AcquisitionResult> = {
     }
     if (message.timeFrame !== undefined) {
       TimeDomainFrame.encode(message.timeFrame, writer.uint32(90).fork()).join();
+    }
+    for (const v of message.receiverRawPoints) {
+      ReceiverFrequencyPoint.encode(v!, writer.uint32(162).fork()).join();
+    }
+    for (const v of message.receiverCompensatedPoints) {
+      ReceiverFrequencyPoint.encode(v!, writer.uint32(170).fork()).join();
+    }
+    for (const v of message.sParameterPoints) {
+      SParameterFrequencyPoint.encode(v!, writer.uint32(178).fork()).join();
     }
     return writer;
   },
@@ -1230,6 +1844,30 @@ export const AcquisitionResult: MessageFns<AcquisitionResult> = {
           message.timeFrame = TimeDomainFrame.decode(reader, reader.uint32());
           continue;
         }
+        case 20: {
+          if (tag !== 162) {
+            break;
+          }
+
+          message.receiverRawPoints.push(ReceiverFrequencyPoint.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 21: {
+          if (tag !== 170) {
+            break;
+          }
+
+          message.receiverCompensatedPoints.push(ReceiverFrequencyPoint.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 22: {
+          if (tag !== 178) {
+            break;
+          }
+
+          message.sParameterPoints.push(SParameterFrequencyPoint.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1261,6 +1899,21 @@ export const AcquisitionResult: MessageFns<AcquisitionResult> = {
         : isSet(object.time_frame)
         ? TimeDomainFrame.fromJSON(object.time_frame)
         : undefined,
+      receiverRawPoints: globalThis.Array.isArray(object?.receiverRawPoints)
+        ? object.receiverRawPoints.map((e: any) => ReceiverFrequencyPoint.fromJSON(e))
+        : globalThis.Array.isArray(object?.receiver_raw_points)
+        ? object.receiver_raw_points.map((e: any) => ReceiverFrequencyPoint.fromJSON(e))
+        : [],
+      receiverCompensatedPoints: globalThis.Array.isArray(object?.receiverCompensatedPoints)
+        ? object.receiverCompensatedPoints.map((e: any) => ReceiverFrequencyPoint.fromJSON(e))
+        : globalThis.Array.isArray(object?.receiver_compensated_points)
+        ? object.receiver_compensated_points.map((e: any) => ReceiverFrequencyPoint.fromJSON(e))
+        : [],
+      sParameterPoints: globalThis.Array.isArray(object?.sParameterPoints)
+        ? object.sParameterPoints.map((e: any) => SParameterFrequencyPoint.fromJSON(e))
+        : globalThis.Array.isArray(object?.s_parameter_points)
+        ? object.s_parameter_points.map((e: any) => SParameterFrequencyPoint.fromJSON(e))
+        : [],
     };
   },
 
@@ -1278,6 +1931,15 @@ export const AcquisitionResult: MessageFns<AcquisitionResult> = {
     if (message.timeFrame !== undefined) {
       obj.timeFrame = TimeDomainFrame.toJSON(message.timeFrame);
     }
+    if (message.receiverRawPoints?.length) {
+      obj.receiverRawPoints = message.receiverRawPoints.map((e) => ReceiverFrequencyPoint.toJSON(e));
+    }
+    if (message.receiverCompensatedPoints?.length) {
+      obj.receiverCompensatedPoints = message.receiverCompensatedPoints.map((e) => ReceiverFrequencyPoint.toJSON(e));
+    }
+    if (message.sParameterPoints?.length) {
+      obj.sParameterPoints = message.sParameterPoints.map((e) => SParameterFrequencyPoint.toJSON(e));
+    }
     return obj;
   },
 
@@ -1294,6 +1956,10 @@ export const AcquisitionResult: MessageFns<AcquisitionResult> = {
     message.timeFrame = (object.timeFrame !== undefined && object.timeFrame !== null)
       ? TimeDomainFrame.fromPartial(object.timeFrame)
       : undefined;
+    message.receiverRawPoints = object.receiverRawPoints?.map((e) => ReceiverFrequencyPoint.fromPartial(e)) || [];
+    message.receiverCompensatedPoints =
+      object.receiverCompensatedPoints?.map((e) => ReceiverFrequencyPoint.fromPartial(e)) || [];
+    message.sParameterPoints = object.sParameterPoints?.map((e) => SParameterFrequencyPoint.fromPartial(e)) || [];
     return message;
   },
 };

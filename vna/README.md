@@ -205,6 +205,12 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\build-grpc\easy_grpc_client_smoke.exe
 ```
 
+说明：`Acquire` 响应除 `frequency_frame/time_frame` 外，还会返回：
+
+- `receiver_raw_points`：接收机原始通道数据（参考/测量通道 I/Q）
+- `receiver_compensated_points`：应用出厂补偿后的接收机通道数据
+- `s_parameter_points`：按频点组织的 n 端口 S 参数矩阵点集
+
 说明：`GetServiceStatus` 会额外校验 `bootstrap_mode` 与 `config_path` 为非空，若为空将返回非 0 退出码。
 
 如需指定地址：
