@@ -775,6 +775,48 @@ WU-MAINLINE-021: 报告增加 config 哈希快照
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v13.json'` 通过
   - 报告包含 `reportVersion=1.2`、`executionOptions.endpoint`、`executionOptions.configHashSha256`
 
+### 8.17 已完成 Work Unit（批量）
+
+WU-MAINLINE-022: 报告增加噪声抑制总量统计
+
+- Objective: 为 CI 阈值判断提供顶层噪声统计。
+- Scope (in/out):
+  - in: 增加 `noiseSuppressedTotal` 顶层字段。
+  - out: 噪声趋势告警系统。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增统计字段。
+- Risks: 仅统计已知噪声，不代表全部日志量。
+- Acceptance criteria:
+  - 报告包含 `noiseSuppressedTotal` 且与各 case 之和一致。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-023: 报告增加结构化 warnings 摘要
+
+- Objective: 在报告层汇总关键告警，提升可读性。
+- Scope (in/out):
+  - in: 增加 `warnings[]` 顶层字段。
+  - out: 外部通知系统联动。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增 warnings 字段。
+- Risks: 告警编码扩展时需保持命名一致。
+- Acceptance criteria:
+  - 报告包含 `warnings[]`，至少支持 `known_noise_suppressed`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v14.json'` 通过
+  - 报告包含 `reportVersion=1.3`、`noiseSuppressedTotal`、`warnings[]`
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

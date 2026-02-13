@@ -313,6 +313,14 @@ finally {
 if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   $resolvedReportPath = Resolve-ReportPath -PathTemplate $ReportJsonPath
   $failedCaseNames = @($matrixResults | Where-Object { -not $_.passed } | ForEach-Object { $_.name })
+  $noiseSuppressedTotal = @($matrixResults | Measure-Object -Property suppressedNoiseCount -Sum).Sum
+  if ($null -eq $noiseSuppressedTotal) {
+    $noiseSuppressedTotal = 0
+  }
+  $unknownStderrTotal = @($matrixResults | Measure-Object -Property unknownStderrCount -Sum).Sum
+  if ($null -eq $unknownStderrTotal) {
+    $unknownStderrTotal = 0
+  }
 
   $failureSummary = [PSCustomObject]@{
     totalFailedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
@@ -339,8 +347,25 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     reportJsonPathResolved = $resolvedReportPath
   }
 
+  $warnings = @()
+  if ($noiseSuppressedTotal -gt 0) {
+    $warnings += [PSCustomObject]@{
+      code = "known_noise_suppressed"
+      count = [int]$noiseSuppressedTotal
+      message = "Known gRPC warnings were suppressed from output."
+    }
+  }
+
+  if (-not $FailOnUnknownStderr -and $unknownStderrTotal -gt 0) {
+    $warnings += [PSCustomObject]@{
+      code = "unknown_stderr_not_fatal"
+      count = [int]$unknownStderrTotal
+      message = "Unknown stderr lines were observed but strict mode is disabled."
+    }
+  }
+
   $report = [PSCustomObject]@{
-    reportVersion = "1.2"
+    reportVersion = "1.3"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     strictMode = [bool]$FailOnUnknownStderr
@@ -348,6 +373,8 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
     failedCaseNames = $failedCaseNames
+    noiseSuppressedTotal = [int]$noiseSuppressedTotal
+    warnings = $warnings
     executionOptions = $executionOptions
     failureSummary = $failureSummary
     cases = $matrixResults
