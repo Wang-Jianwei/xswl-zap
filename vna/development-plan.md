@@ -2103,6 +2103,37 @@ WU-MAINLINE-067: 主曲线 marker 完整数值标签（min/max + x/y）
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.50 已完成 Work Unit
+
+WU-MAINLINE-068: 一键复制主曲线 marker 读数
+
+- Objective: 降低人工抄录成本，支持将主曲线关键 marker 数值快速导出到外部上下文。
+- Scope (in/out):
+  - in: 波形页新增 `Copy Primary Marker` 按钮；Webview 向扩展发送复制消息；扩展写入系统剪贴板；补测试与文档。
+  - out: 复制格式自定义模板、批量复制多 trace marker。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件前端交互与扩展侧剪贴板能力增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚复制按钮与消息处理逻辑，恢复只读展示。
+- Risks: Webview 与扩展通信失败时复制动作无效（已保留浏览器剪贴板后备路径）。
+- Acceptance criteria:
+  - 页面可点击复制主曲线 marker 文本。
+  - 扩展端可将文本写入剪贴板。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

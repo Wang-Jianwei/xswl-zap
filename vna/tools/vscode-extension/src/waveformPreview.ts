@@ -435,6 +435,12 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
   const primaryTraceId = data.traces[0]?.id ?? "";
+  const primaryTrace = data.traces[0];
+  const primaryMarkerCopyText = primaryTrace
+    ? `${primaryTrace.label} | ${primaryTrace.markers
+        .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
+        .join("; ")}`
+    : "";
   const markerEntries = data.traces
     .map((trace) => {
       const text = trace.markers
@@ -474,7 +480,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XSWL Waveform Preview</title>
   <style>
@@ -488,6 +494,17 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .marker-name { font-weight: 600; min-width: 150px; }
     .marker-values { opacity: 0.9; }
     .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .actions { margin-bottom: 8px; display: flex; gap: 8px; }
+    .action-btn {
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      border-radius: 4px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .action-btn[disabled] { opacity: 0.5; cursor: default; }
     .legend-item {
       border: 1px solid var(--vscode-editorWidget-border);
       background: var(--vscode-editor-background);
@@ -516,6 +533,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | visible=${data.visibleTraceIds.join(",") || "all"} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
+  <div class="actions">
+    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
+  </div>
   <div class="legend" id="legend">${legendItems}</div>
   <div class="marker" id="markerPanel">${markerRows || "none"}</div>
   ${
@@ -530,6 +550,24 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   }
   <script>
     (function () {
+      const vscodeApi = typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
+      const copyButton = document.getElementById("copyPrimaryMarker");
+      if (copyButton instanceof HTMLButtonElement && !copyButton.disabled) {
+        copyButton.addEventListener("click", async () => {
+          const copyText = copyButton.getAttribute("data-copy-text") || "";
+          if (!copyText) {
+            return;
+          }
+          if (vscodeApi) {
+            vscodeApi.postMessage({ type: "copy-primary-marker", text: copyText });
+            return;
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(copyText);
+          }
+        });
+      }
+
       const legend = document.getElementById("legend");
       if (!legend) {
         return;

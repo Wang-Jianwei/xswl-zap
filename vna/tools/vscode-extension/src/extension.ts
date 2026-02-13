@@ -415,6 +415,19 @@ export function activate(context: vscode.ExtensionContext): void {
         { enableScripts: true },
       );
 
+      panel.webview.onDidReceiveMessage(async (message: unknown) => {
+        const payload = message as { type?: string; text?: string };
+        if (payload.type !== "copy-primary-marker") {
+          return;
+        }
+        const text = String(payload.text ?? "").trim();
+        if (text.length === 0) {
+          return;
+        }
+        await vscode.env.clipboard.writeText(text);
+        vscode.window.showInformationMessage("Primary marker copied to clipboard.");
+      });
+
       if (previewTypeSelection.label === "snapshot") {
         const waveform = await client.acquireWaveform(
           instanceIdInput,

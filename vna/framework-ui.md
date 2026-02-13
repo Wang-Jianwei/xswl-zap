@@ -116,6 +116,7 @@ flowchart LR
 - marker 分组按 y 值优先级排序，并高亮当前主曲线。
 - 主曲线 marker 文本带背景框，避免与曲线/网格叠加后读数不清。
 - 主曲线 marker 标签展示 `min/max + x/y` 完整数值，采用紧凑排版。
+- 提供 `Copy Primary Marker` 操作，便于将关键读数快速粘贴到日志/报告。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---
