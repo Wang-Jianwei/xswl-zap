@@ -2073,6 +2073,36 @@ WU-MAINLINE-066: 主曲线 marker 标签背景框
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.49 已完成 Work Unit
+
+WU-MAINLINE-067: 主曲线 marker 完整数值标签（min/max + x/y）
+
+- Objective: 在图内直接提供主曲线 marker 关键读数，减少上下文切换与人工换算。
+- Scope (in/out):
+  - in: 主曲线 marker 标签显示 `min/max + x/y` 完整数值；保持紧凑排版；补测试与文档。
+  - out: 单位动态切换、数值复制交互、标签重叠自动避让。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件前端展示增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚主曲线标签完整数值渲染，恢复简短标签。
+- Risks: 在极端数值宽度场景下，标签长度仍可能造成局部遮挡（已限制宽度并紧凑排版）。
+- Acceptance criteria:
+  - 主曲线 marker 标签显示 `min/max + x/y`。
+  - 与现有背景框、排序、高亮逻辑兼容。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

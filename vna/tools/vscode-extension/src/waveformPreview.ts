@@ -346,10 +346,12 @@ function renderTraceMarkers(trace: WaveformTrace, width: number, height: number,
   return trace.markers
     .map((marker) => {
       const normalized = normalizePoint({ x: marker.x, y: marker.y }, bounds, width, height);
-      const label = `${marker.label}`;
+      const label = isPrimary
+        ? `${marker.label} x=${formatTick(marker.x)} y=${formatTick(marker.y)}`
+        : `${marker.label}`;
       const textX = normalized.x + 6;
       const textY = normalized.y - 6;
-      const labelWidth = Math.max(28, label.length * 7 + 8);
+      const labelWidth = Math.max(30, Math.min(240, label.length * 6.4 + 10));
       const labelHeight = 14;
       const labelRect = isPrimary
         ? `<rect class="marker-label-bg" x="${textX.toFixed(2)}" y="${(textY - 10).toFixed(2)}" width="${labelWidth.toFixed(2)}" height="${labelHeight}" rx="3" ry="3" />`
@@ -506,7 +508,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
     .chart .marker-point text { fill: var(--vscode-foreground); font-size: 10px; opacity: 0.95; }
     .chart .marker-label-bg { fill: var(--vscode-editor-background); stroke: var(--vscode-focusBorder); stroke-width: 0.8; opacity: 0.95; }
-    .chart .marker-label-text { fill: var(--vscode-foreground); }
+    .chart .marker-label-text { fill: var(--vscode-foreground); font-size: 9.5px; letter-spacing: 0.1px; }
     .empty { opacity: 0.8; }
   </style>
 </head>
