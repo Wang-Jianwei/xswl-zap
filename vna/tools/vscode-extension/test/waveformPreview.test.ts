@@ -70,7 +70,8 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const filteredHtml = buildWaveformPreviewHtml(filteredAllData);
   assert(filteredHtml.includes("visible=frame,s11"));
   assert(filteredHtml.includes("legend=frame:#4ec9b0 | s-parameter s11:#c586c0"));
-  assert(filteredHtml.includes("class=\"legend-item\""));
+  assert(filteredHtml.includes("class=\"legend-item is-primary\""));
+  assert(filteredHtml.includes("class=\"marker-row is-primary\""));
   assert(filteredHtml.includes("data-trace-id=\"frame\""));
   assert(filteredHtml.includes("legend.addEventListener(\"click\""));
 
@@ -97,7 +98,7 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
-  assert(html.includes("class=\"marker-row\""));
+  assert(html.includes("class=\"marker-row is-primary\""));
   assert(html.includes("class=\"marker-name\""));
   assert(html.includes("class=\"marker-point\""));
   assert(html.includes("axis-line"));
@@ -105,6 +106,13 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("xMin="));
   assert(html.includes("yMax="));
   assert(html.includes("channel=0"));
+
+  const allHtml = buildWaveformPreviewHtml(allTraceData);
+  const frameIndex = allHtml.indexOf("data-trace-id=\"frame\"");
+  const s11Index = allHtml.indexOf("data-trace-id=\"s11\"");
+  assert(frameIndex >= 0);
+  assert(s11Index >= 0);
+  assert(frameIndex < s11Index);
 
   const timePayload = {
     instanceId: "inst1",

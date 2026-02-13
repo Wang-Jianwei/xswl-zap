@@ -423,18 +423,38 @@ function renderAxes(
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
-  const legendItems = data.traces
-    .map(
-      (trace) =>
-        `<button type="button" class="legend-item" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
-    )
-    .join("");
-  const markerRows = data.traces
+  const primaryTraceId = data.traces[0]?.id ?? "";
+  const markerEntries = data.traces
     .map((trace) => {
       const text = trace.markers
         .map((marker) => `${marker.label}=(${marker.x.toFixed(4)}, ${marker.y.toFixed(4)})`)
         .join(", ");
-      return `<div class="marker-row" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
+      const sortValue = Math.max(...trace.markers.map((marker) => marker.y));
+      return {
+        trace,
+        text,
+        sortValue: Number.isFinite(sortValue) ? sortValue : Number.NEGATIVE_INFINITY,
+      };
+    })
+    .sort((left, right) => {
+      if (left.trace.id === primaryTraceId) {
+        return -1;
+      }
+      if (right.trace.id === primaryTraceId) {
+        return 1;
+      }
+      return right.sortValue - left.sortValue;
+    });
+
+  const legendItems = markerEntries
+    .map(
+      ({ trace }) =>
+        `<button type="button" class="legend-item ${trace.id === primaryTraceId ? "is-primary" : ""}" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
+    )
+    .join("");
+  const markerRows = markerEntries
+    .map(({ trace, text }) => {
+      return `<div class="marker-row ${trace.id === primaryTraceId ? "is-primary" : ""}" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
     })
     .join("");
   const legendText = data.traces.map((trace) => `${trace.label}:${trace.color}`).join(" | ");
@@ -453,6 +473,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .marker { margin-bottom: 10px; opacity: 0.9; display: grid; gap: 4px; }
     .marker-row { display: flex; gap: 8px; align-items: baseline; }
     .marker-row.is-hidden { opacity: 0.45; text-decoration: line-through; }
+    .marker-row.is-primary { border-left: 2px solid var(--vscode-focusBorder); padding-left: 6px; }
     .marker-name { font-weight: 600; min-width: 150px; }
     .marker-values { opacity: 0.9; }
     .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
@@ -468,6 +489,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       gap: 6px;
     }
     .legend-item.is-hidden { opacity: 0.45; text-decoration: line-through; }
+    .legend-item.is-primary { border-color: var(--vscode-focusBorder); }
     .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
     .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
     .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }

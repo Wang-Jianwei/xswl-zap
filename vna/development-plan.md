@@ -2013,6 +2013,36 @@ WU-MAINLINE-064: 插件 marker 分组列表与图内标记点
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.47 已完成 Work Unit
+
+WU-MAINLINE-065: marker 分组排序与主曲线高亮
+
+- Objective: 在多曲线波形预览中提升 marker 可读性与关注点定位速度。
+- Scope (in/out):
+  - in: marker 分组按 y 值优先级排序；主曲线在图例与 marker 面板高亮；补测试与文档。
+  - out: 用户自定义排序规则、主曲线手动切换与持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端呈现增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 marker 排序与高亮样式，恢复默认原始顺序显示。
+- Risks: 排序逻辑在极端同值场景下可能不稳定（当前保持主曲线优先，其他按数值降序）。
+- Acceptance criteria:
+  - marker 分组按 y 值优先级排序。
+  - 主曲线在图例与 marker 面板可见高亮。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
