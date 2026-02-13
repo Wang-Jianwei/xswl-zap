@@ -45,5 +45,19 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert.equal(emptyData.points.length, 0);
   assert(buildWaveformPreviewHtml(emptyData).includes("No waveform points available"));
 
+  const densePayload = {
+    instanceId: "dense",
+    timestampNs: 1,
+    frequencyFrame: {
+      points: Array.from({ length: 1000 }, (_, idx) => ({
+        frequencyHz: 1.0e9 + idx,
+        real: idx,
+        imag: 0,
+      })),
+    },
+  } as Record<string, unknown>;
+  const denseData = buildWaveformPreviewData(densePayload);
+  assert.equal(denseData.points.length, 512);
+
   process.stdout.write("waveformPreview.test passed\n");
 })();

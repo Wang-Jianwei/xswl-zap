@@ -303,28 +303,102 @@ export function activate(context: vscode.ExtensionContext): void {
     }
 
     const waveformMode = modeSelection.label as "frequency" | "time";
+    const previewTypeSelection = await vscode.window.showQuickPick(
+      [
+        { label: "snapshot", description: "单次采集后打开图形" },
+        { label: "live", description: "短时流式自动刷新" },
+      ],
+      {
+        title: "Preview type",
+        ignoreFocusOut: true,
+      },
+    );
+    if (!previewTypeSelection) {
+      return;
+    }
+
+    let liveMaxFrames = 30;
+    if (previewTypeSelection.label === "live") {
+      const maxFramesInput = await vscode.window.showInputBox({
+        prompt: "Live refresh max frames",
+        value: "30",
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const parsed = Number(value);
+          if (!Number.isInteger(parsed) || parsed <= 0 || parsed > 200) {
+            return "Max frames must be an integer between 1 and 200.";
+          }
+          return undefined;
+        },
+      });
+      if (!maxFramesInput) {
+        return;
+      }
+      liveMaxFrames = Number(maxFramesInput);
+    }
+
     const requestId = createRequestId();
     const { address, deadlineMs, autoOpenOutput } = readConfig();
     const client = new ServiceClient({ address, deadlineMs });
 
     try {
-      const waveform = await client.acquireWaveform(instanceIdInput, sampleCount, waveformMode);
       const panel = vscode.window.createWebviewPanel(
         "xswlWaveformPreview",
         `XSWL Waveform: ${instanceIdInput}`,
         vscode.ViewColumn.Beside,
         { enableScripts: false },
       );
-      panel.webview.html = buildWaveformPreviewHtml(waveform);
 
-      logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-        `instanceId=${instanceIdInput}, mode=${waveformMode}, sampleCount=${sampleCount}, frame=${waveform.frameType}, points=${waveform.points.length}`,
-        `markers=${waveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
-      ]);
-      showOutputIfEnabled(outputChannel, autoOpenOutput);
-      vscode.window.showInformationMessage(
-        `Waveform preview opened: frame=${waveform.frameType}, points=${waveform.points.length} | req=${requestId}`,
-      );
+      if (previewTypeSelection.label === "snapshot") {
+        const waveform = await client.acquireWaveform(instanceIdInput, sampleCount, waveformMode);
+        panel.webview.html = buildWaveformPreviewHtml(waveform);
+
+        logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, points=${waveform.points.length}`,
+          `markers=${waveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
+        ]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        vscode.window.showInformationMessage(
+          `Waveform preview opened: frame=${waveform.frameType}, points=${waveform.points.length} | req=${requestId}`,
+        );
+      } else {
+        const abortController = new AbortController();
+        panel.onDidDispose(() => abortController.abort());
+
+        const finalWaveform = await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: "XSWL Waveform Live Preview",
+            cancellable: true,
+          },
+          async (progress, token) => {
+            token.onCancellationRequested(() => abortController.abort());
+
+            return client.streamWaveform(
+              instanceIdInput,
+              sampleCount,
+              waveformMode,
+              liveMaxFrames,
+              (waveform, frameCount) => {
+                if (frameCount === 1 || frameCount % 3 === 0 || frameCount === liveMaxFrames) {
+                  panel.webview.html = buildWaveformPreviewHtml(waveform);
+                  progress.report({ message: `frames=${frameCount}, points=${waveform.points.length}` });
+                }
+              },
+              abortController.signal,
+            );
+          },
+        );
+
+        logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, points=${finalWaveform.points.length}`,
+          `markers=${finalWaveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
+        ]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        vscode.window.showInformationMessage(
+          `Live waveform preview finished: frame=${finalWaveform.frameType}, points=${finalWaveform.points.length} | req=${requestId}`,
+        );
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       logBlock(outputChannel, "ERROR", `[PreviewWaveform][requestId=${requestId}]`, [errorMessage]);

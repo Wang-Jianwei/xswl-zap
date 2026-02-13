@@ -1,5 +1,7 @@
 import type { WaveformMarker, WaveformPoint, WaveformPreviewData } from "./types";
 
+const kMaxRenderPoints = 512;
+
 function toNumber(value: unknown, fallback = 0): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -60,12 +62,26 @@ function buildMarkers(points: WaveformPoint[]): WaveformMarker[] {
   ];
 }
 
+function downsample(points: WaveformPoint[], maxPoints = kMaxRenderPoints): WaveformPoint[] {
+  if (points.length <= maxPoints) {
+    return points;
+  }
+
+  const sampled: WaveformPoint[] = [];
+  const step = (points.length - 1) / (maxPoints - 1);
+  for (let i = 0; i < maxPoints; i += 1) {
+    const index = Math.min(points.length - 1, Math.round(i * step));
+    sampled.push(points[index]);
+  }
+  return sampled;
+}
+
 export function buildWaveformPreviewData(response: Record<string, unknown>): WaveformPreviewData {
   const frequencyFrame = response.frequencyFrame as Record<string, unknown> | undefined;
   const timeFrame = response.timeFrame as Record<string, unknown> | undefined;
 
   if (frequencyFrame) {
-    const points = buildFrequencyPoints(frequencyFrame);
+    const points = downsample(buildFrequencyPoints(frequencyFrame));
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
@@ -78,7 +94,7 @@ export function buildWaveformPreviewData(response: Record<string, unknown>): Wav
   }
 
   if (timeFrame) {
-    const points = buildTimePoints(timeFrame);
+    const points = downsample(buildTimePoints(timeFrame));
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),

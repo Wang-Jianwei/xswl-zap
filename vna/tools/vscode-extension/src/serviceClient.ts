@@ -231,6 +231,109 @@ export class ServiceClient {
     });
   }
 
+  streamWaveform(
+    instanceId: string,
+    sampleCount: number,
+    mode: WaveformMode,
+    maxFrames: number,
+    onFrame?: (data: WaveformPreviewData, frameCount: number) => void,
+    abortSignal?: AbortSignal,
+  ): Promise<WaveformPreviewData> {
+    const deadline = new Date(Date.now() + Math.max(this.deadlineMs * 30, 60_000));
+
+    return new Promise<WaveformPreviewData>((resolve, reject) => {
+      const call = (this.client as unknown as {
+        streamAcquisition: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+        ) => grpc.ClientReadableStream<Record<string, unknown>>;
+      }).streamAcquisition(
+        {
+          instanceId,
+          sampleCount,
+          timeoutMs: Math.max(this.deadlineMs, 1000),
+          excitation:
+            mode === "time"
+              ? {
+                  mode: 2,
+                  settlingTimeMs: 0,
+                  enableAutoTrigger: true,
+                  pulse: {
+                    centerFrequencyHz: 1.0e9,
+                    pulseWidthNs: 200,
+                    pulsePeriodNs: 2000,
+                    powerDbm: -10,
+                    riseTimeNs: 20,
+                  },
+                }
+              : {
+                  mode: 1,
+                  settlingTimeMs: 0,
+                  enableAutoTrigger: true,
+                  cw: {
+                    frequencyHz: 1.0e9,
+                    powerDbm: -10,
+                    dwellTimeMs: 1,
+                  },
+                },
+        },
+        { deadline },
+      );
+
+      let finished = false;
+      let frameCount = 0;
+      let latest: WaveformPreviewData = {
+        instanceId,
+        timestampNs: 0,
+        frameType: "unknown",
+        xLabel: "x",
+        yLabel: "y",
+        points: [],
+        markers: [],
+      };
+
+      const done = () => {
+        if (finished) {
+          return;
+        }
+        finished = true;
+        resolve(latest);
+      };
+
+      call.on("data", (response) => {
+        frameCount += 1;
+        latest = buildWaveformPreviewData(response);
+        onFrame?.(latest, frameCount);
+        if (frameCount >= maxFrames) {
+          call.cancel();
+        }
+      });
+
+      call.on("end", done);
+      call.on("error", (error: grpc.ServiceError) => {
+        if (abortSignal?.aborted || error.code === grpc.status.CANCELLED) {
+          done();
+          return;
+        }
+        reject(error);
+      });
+
+      if (abortSignal) {
+        abortSignal.addEventListener(
+          "abort",
+          () => {
+            call.cancel();
+          },
+          { once: true },
+        );
+
+        if (abortSignal.aborted) {
+          call.cancel();
+        }
+      }
+    });
+  }
+
   streamPreview(
     instanceId: string,
     sampleCount: number,

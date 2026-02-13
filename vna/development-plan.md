@@ -1789,6 +1789,39 @@ WU-MAINLINE-057: 插件波形预览模式切换与基础 Marker
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.40 已完成 Work Unit
+
+WU-MAINLINE-058: 插件波形 live 自动刷新与性能保护
+
+- Objective: 提升插件端波形监看体验，支持短时自动刷新并避免渲染卡顿。
+- Scope (in/out):
+  - in: `Preview Waveform` 增加 `snapshot/live` 选择；live 通过 stream 短时刷新；增加点数下采样与刷新节流。
+  - out: 长时后台采集会话管理、交互缩放与历史缓存。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用现有 Acquire/StreamAcquisition）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 live 分支与节流/下采样逻辑，恢复单次预览。
+- Risks: live 模式依赖后端 stream 稳定性，网络抖动下可能提前结束。
+- Acceptance criteria:
+  - 预览命令支持 `snapshot/live`。
+  - live 模式可自动刷新并可取消。
+  - 渲染点数保护与刷新节流生效。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

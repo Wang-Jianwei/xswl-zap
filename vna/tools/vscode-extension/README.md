@@ -6,7 +6,7 @@
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
-- Command: `XSWL: Preview Waveform` (选择频域/时域模式并在 Webview 渲染折线图，显示 min/max marker)
+- Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 会短时自动刷新）
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation
@@ -78,6 +78,8 @@ npm run test
 - Run command `XSWL: Acquire Once`
 - Run command `XSWL: Stream Preview` and cancel from progress notification when needed
 - Run command `XSWL: Preview Waveform` to visualize latest acquired points in a Webview chart
+  - `snapshot`: 单次采集并显示
+  - `live`: 基于 stream 的短时自动刷新（可设置 max frames，支持取消）
 - Run command `XSWL: Open Output` to view command logs in one place
 - Run command `XSWL: Clear Output` to reset logs quickly
 
@@ -89,3 +91,8 @@ npm run test
 - Editor context menu:
   - `XSWL: Open Output`
   - `XSWL: Clear Output`
+
+## 波形预览性能保护（MVP）
+
+- Webview 渲染点数上限：512（超出自动下采样）
+- live 模式刷新节流：默认每 3 帧刷新一次图形
