@@ -70,6 +70,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const filteredHtml = buildWaveformPreviewHtml(filteredAllData);
   assert(filteredHtml.includes("visible=frame,s11"));
   assert(filteredHtml.includes("legend=frame:#4ec9b0 | s-parameter s11:#c586c0"));
+  assert(filteredHtml.includes("class=\"legend-item\""));
+  assert(filteredHtml.includes("data-trace-id=\"frame\""));
+  assert(filteredHtml.includes("legend.addEventListener(\"click\""));
 
   const s11Data = buildWaveformPreviewData(frequencyPayload, "sParameterS11");
   assert.equal(s11Data.traces.length, 1);

@@ -1921,6 +1921,37 @@ WU-MAINLINE-061: 插件 `all` 模式曲线显隐控制
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.44 已完成 Work Unit
+
+WU-MAINLINE-062: 插件图例点击显隐（运行中交互）
+
+- Objective: 提升波形预览交互效率，支持在已打开图形中直接切换曲线显隐。
+- Scope (in/out):
+  - in: Webview 图例改为可点击控件；点击后即时隐藏/显示对应 trace；补齐测试与文档。
+  - out: 缩放/平移、图内 marker 拖拽、显隐状态跨刷新持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（纯插件前端交互增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚可点击图例与脚本化显隐逻辑，恢复静态图例展示。
+- Risks: 需启用 webview script；若脚本异常将回退为静态图形显示。
+- Acceptance criteria:
+  - 图例可点击切换对应曲线显隐。
+  - 不需要重新运行命令即可完成多曲线对比。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

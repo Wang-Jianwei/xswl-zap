@@ -110,6 +110,7 @@ flowchart LR
 - 频域 trace source 可选：`frame` / `receiver raw` / `receiver compensated` / `s11` / `all` 叠加。
 - 接收机相关 trace 支持 `channel index` 选择（`receiver raw` / `receiver compensated` / `all`）。
 - `all` 模式支持可见曲线勾选（trace 显隐控制）。
+- 图例支持点击临时显隐曲线（无需重新发起采集命令）。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---

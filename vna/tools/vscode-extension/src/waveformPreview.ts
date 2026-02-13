@@ -351,6 +351,12 @@ function renderAxes(width: number, height: number): string {
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
+  const legendItems = data.traces
+    .map(
+      (trace) =>
+        `<button type="button" class="legend-item" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
+    )
+    .join("");
   const markerText = data.traces
     .map((trace) => {
       const text = trace.markers
@@ -373,6 +379,20 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .meta { margin-bottom: 10px; }
     .axis { margin-bottom: 6px; opacity: 0.9; }
     .marker { margin-bottom: 10px; opacity: 0.9; }
+    .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .legend-item {
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-editor-background);
+      color: var(--vscode-foreground);
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-item.is-hidden { opacity: 0.45; text-decoration: line-through; }
+    .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
     .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
     .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
     .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
@@ -383,17 +403,47 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | visible=${data.visibleTraceIds.join(",") || "all"} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
+  <div class="legend" id="legend">${legendItems}</div>
   <div class="marker">markers=${markerText || "none"}</div>
   ${
     data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
-       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+      : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
          ${renderAxes(width, height)}
            ${data.traces
-             .map((trace) => renderTrace(trace, width, height))
+             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>`)
              .join("\n")}
          </svg>`
   }
+  <script>
+    (function () {
+      const legend = document.getElementById("legend");
+      if (!legend) {
+        return;
+      }
+      legend.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+        const item = target.closest(".legend-item");
+        if (!(item instanceof HTMLElement)) {
+          return;
+        }
+        const traceId = item.getAttribute("data-trace-id");
+        if (!traceId) {
+          return;
+        }
+        const groups = document.querySelectorAll("g[data-trace-id=\"" + traceId + "\"]");
+        const hidden = item.classList.toggle("is-hidden");
+        groups.forEach((group) => {
+          if (group instanceof HTMLElement) {
+            group.style.display = hidden ? "none" : "";
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }

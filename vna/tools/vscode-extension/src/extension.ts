@@ -412,7 +412,7 @@ export function activate(context: vscode.ExtensionContext): void {
         "xswlWaveformPreview",
         `XSWL Waveform: ${instanceIdInput}`,
         vscode.ViewColumn.Beside,
-        { enableScripts: false },
+        { enableScripts: true },
       );
 
       if (previewTypeSelection.label === "snapshot") {
