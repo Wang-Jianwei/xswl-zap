@@ -200,6 +200,7 @@ if (-not (Test-Path $serverExe) -or -not (Test-Path $unarySmokeExe) -or -not (Te
 $originalConfig = Get-Content -Path $configPath -Raw
 $hasFailure = $false
 $matrixResults = @()
+$matrixStartedAt = Get-Date
 
 if ($FailOnUnknownStderr) {
   Write-Host "[MATRIX] strict mode enabled: unknown stderr will fail cases"
@@ -211,6 +212,7 @@ if ($SmokeTimeoutSec -le 0) {
 
 try {
   foreach ($case in $cases) {
+    $caseStartedAt = Get-Date
     Write-Host "[MATRIX] case=$($case.Name) every=$($case.Every) ms=$($case.Ms) frames=$($case.Frames)"
 
     $updatedConfig = $originalConfig
@@ -267,6 +269,7 @@ try {
         throttleEveryFrames = $case.Every
         throttleMs = $case.Ms
         streamFrames = $case.Frames
+        durationMs = [int]((Get-Date) - $caseStartedAt).TotalMilliseconds
         unaryExitCode = $unaryExit
         streamExitCode = $streamExit
         unaryTimedOut = $unaryResult.TimedOut
@@ -291,6 +294,7 @@ finally {
 
 if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   $resolvedReportPath = Resolve-ReportPath -PathTemplate $ReportJsonPath
+  $failedCaseNames = @($matrixResults | Where-Object { -not $_.passed } | ForEach-Object { $_.name })
 
   $failureSummary = [PSCustomObject]@{
     totalFailedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
@@ -300,11 +304,14 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   }
 
   $report = [PSCustomObject]@{
+    reportVersion = "1.1"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
+    durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     strictMode = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
+    failedCaseNames = $failedCaseNames
     failureSummary = $failureSummary
     cases = $matrixResults
   }

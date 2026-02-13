@@ -630,6 +630,66 @@ WU-MAINLINE-014: smoke 报告失败原因分类统计
   - 受控失败验证（临时将 `config/service.yaml` 端口改为 `50052` 后执行）：`vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-fail.json'` 返回失败，`failureSummary.exitCode = 3`
   - 验证后已恢复 `config/service.yaml` 原值
 
+### 8.14 已完成 Work Unit（批量）
+
+WU-MAINLINE-015: smoke 报告增加执行耗时字段
+
+- Objective: 在报告中增加整体与单 case 耗时，便于回归性能对比。
+- Scope (in/out):
+  - in: 增加 `durationMs`（top-level 与 `cases[*]`）。
+  - out: 新增性能基准测试框架。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增耗时字段。
+- Risks: 环境抖动导致耗时仅可用于趋势参考，不能作为绝对门限。
+- Acceptance criteria:
+  - 报告包含 `durationMs` 与 `cases[*].durationMs`。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-016: smoke 报告增加失败 case 名单
+
+- Objective: 快速定位失败 case，减少排查时间。
+- Scope (in/out):
+  - in: 增加 `failedCaseNames` 顶层字段。
+  - out: 外部告警路由。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增名单字段。
+- Risks: 无失败时应返回空数组而非 null。
+- Acceptance criteria:
+  - 报告包含 `failedCaseNames`，成功场景为空数组。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-017: smoke 报告增加版本字段
+
+- Objective: 为后续报告结构演进提供版本标识。
+- Scope (in/out):
+  - in: 增加 `reportVersion` 顶层字段并在 README 说明。
+  - out: 兼容转换工具。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增版本字段。
+- Risks: 版本命名不一致会影响下游解析。
+- Acceptance criteria:
+  - 报告包含 `reportVersion`（当前 `1.1`）。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v11.json'` 通过
+  - 报告包含 `reportVersion=1.1`、`durationMs`、`cases[*].durationMs`、`failedCaseNames=[]`
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

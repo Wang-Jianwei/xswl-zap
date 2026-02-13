@@ -248,6 +248,13 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 - `timeout`：由超时导致的失败数
 - `unknownStderr`：严格模式下由未知 stderr 导致的失败数
 
+报告还包含以下元数据：
+
+- `reportVersion`：报告结构版本（当前 `1.1`）
+- `durationMs`：整次矩阵执行耗时（毫秒）
+- `failedCaseNames`：失败 case 名称列表
+- `cases[*].durationMs`：单个 case 执行耗时（毫秒）
+
 `ReportJsonPath` 支持时间戳占位符：`{timestamp}` / `{timestampUtc}` / `{timestampLocal}`。
 
 注意：在 PowerShell 中使用占位符时请给路径加引号，避免 `{}` 被表达式语法解析。
