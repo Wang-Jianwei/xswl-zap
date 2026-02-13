@@ -68,6 +68,10 @@ message AcquisitionRequest {
   string export_json_path = 7;
 }
 
+message ImportAcquisitionRequest {
+  string json_path = 1;
+}
+
 message FrequencyDomainPoint {
   double frequency_hz = 1;
   double real = 2;
@@ -161,6 +165,7 @@ service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
   rpc GetServiceStatus(Empty) returns (ServiceStatus);
   rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
+  rpc ImportAcquisition(ImportAcquisitionRequest) returns (AcquisitionResult);
   rpc StreamAcquisition(AcquisitionRequest) returns (stream AcquisitionResult);
 }
 

@@ -134,6 +134,26 @@ int main(int argc, char** argv) {
     }
   }
 
+  {
+    grpc::ClientContext context;
+    vna::ImportAcquisitionRequest request;
+    vna::AcquisitionResult response;
+
+    request.set_json_path("build-grpc/grpc-acquire-export.json");
+
+    const grpc::Status status = stub->ImportAcquisition(&context, request, &response);
+    if (!status.ok()) {
+      std::cout << "ImportAcquisition RPC failed: code=" << status.error_code()
+                << " message=" << status.error_message() << "\n";
+      return 10;
+    }
+
+    if (response.instance_id().empty() || response.s_parameter_points_size() == 0) {
+      std::cout << "ImportAcquisition validation failed: imported payload is incomplete\n";
+      return 11;
+    }
+  }
+
   std::cout << "grpc smoke client success" << "\n";
   return 0;
 }

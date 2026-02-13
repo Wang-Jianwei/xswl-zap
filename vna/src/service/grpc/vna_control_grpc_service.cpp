@@ -266,6 +266,31 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   return ::grpc::Status::OK;
 }
 
+::grpc::Status VnaControlGrpcService::ImportAcquisition(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::ImportAcquisitionRequest* request,
+    ::vna::AcquisitionResult* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->json_path().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "json_path is required");
+  }
+
+  ::vna::core::AcquisitionResult result;
+  std::string importError;
+  const ::vna::core::Status status =
+      controlService_->ImportAcquisitionResult(request->json_path(), result, &importError);
+  if (status != ::vna::core::Status::kOk) {
+    const std::string message = importError.empty() ? "import failed" : "import failed: " + importError;
+    return ToGrpcStatus(status, message);
+  }
+
+  FillProtoFromCoreResult(result, response);
+  return ::grpc::Status::OK;
+}
+
 ::grpc::Status VnaControlGrpcService::StreamAcquisition(
     ::grpc::ServerContext* context,
     const ::vna::AcquisitionRequest* request,

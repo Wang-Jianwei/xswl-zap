@@ -102,6 +102,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU51 进展）：已新增 service 层导入入口 `VnaControlService::ImportAcquisitionResult`，可直接通过 JSON 路径读取测量结果并返回统一错误信息。
 
+补充（WU52 进展）：已新增 gRPC `ImportAcquisition` RPC（输入 `json_path`，返回 `AcquisitionResult`），并纳入 gRPC smoke client 回归路径。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

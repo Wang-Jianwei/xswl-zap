@@ -26,6 +26,7 @@ static const char* VnaControl_method_names[] = {
   "/vna.VnaControl/ValidateTopology",
   "/vna.VnaControl/GetServiceStatus",
   "/vna.VnaControl/Acquire",
+  "/vna.VnaControl/ImportAcquisition",
   "/vna.VnaControl/StreamAcquisition",
 };
 
@@ -39,7 +40,8 @@ VnaControl::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel
   : channel_(channel), rpcmethod_ValidateTopology_(VnaControl_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_GetServiceStatus_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_Acquire_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StreamAcquisition_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_ImportAcquisition_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StreamAcquisition_(VnaControl_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status VnaControl::Stub::ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::vna::ValidationResult* response) {
@@ -111,6 +113,29 @@ void VnaControl::Stub::async::Acquire(::grpc::ClientContext* context, const ::vn
   return result;
 }
 
+::grpc::Status VnaControl::Stub::ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::vna::AcquisitionResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ImportAcquisition_, context, request, response);
+}
+
+void VnaControl::Stub::async::ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ImportAcquisition_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ImportAcquisition_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>* VnaControl::Stub::PrepareAsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::AcquisitionResult, ::vna::ImportAcquisitionRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ImportAcquisition_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>* VnaControl::Stub::AsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncImportAcquisitionRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 ::grpc::ClientReader< ::vna::AcquisitionResult>* VnaControl::Stub::StreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request) {
   return ::grpc::internal::ClientReaderFactory< ::vna::AcquisitionResult>::Create(channel_.get(), rpcmethod_StreamAcquisition_, context, request);
 }
@@ -160,6 +185,16 @@ VnaControl::Service::Service() {
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       VnaControl_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::ImportAcquisitionRequest* req,
+             ::vna::AcquisitionResult* resp) {
+               return service->ImportAcquisition(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[4],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
           [](VnaControl::Service* service,
@@ -188,6 +223,13 @@ VnaControl::Service::~Service() {
 }
 
 ::grpc::Status VnaControl::Service::Acquire(::grpc::ServerContext* context, const ::vna::AcquisitionRequest* request, ::vna::AcquisitionResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::ImportAcquisition(::grpc::ServerContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response) {
   (void) context;
   (void) request;
   (void) response;

@@ -1559,6 +1559,46 @@ WU-MAINLINE-051: Service 层导入入口接线
   - `vna/build/easy_vna_control_service_test.exe` 通过（含 service 导入 round-trip 与错误路径断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.34 已完成 Work Unit
+
+WU-MAINLINE-052: gRPC 导入 RPC（ImportAcquisition）
+
+- Objective: 将导入能力从 service 层暴露到 gRPC 对外接口，支持远程按 JSON 路径回读测量结果。
+- Scope (in/out):
+  - in: proto 新增 `ImportAcquisitionRequest` 与 `ImportAcquisition` RPC；gRPC service 实现与 smoke client 校验接线。
+  - out: 导入结果持久化缓存、批量导入任务编排。
+- Files to change:
+  - `vna/proto/vna.proto`
+  - `vna/generated/cpp/vna.pb.h`
+  - `vna/generated/cpp/vna.pb.cc`
+  - `vna/generated/cpp/vna.grpc.pb.h`
+  - `vna/generated/cpp/vna.grpc.pb.cc`
+  - `vna/generated/ts/vna.ts`
+  - `vna/include/service/grpc/vna_control_grpc_service.h`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 是（`VnaControl` 新增 `ImportAcquisition` RPC）。
+- Test plan:
+  - `vna/scripts/generate_proto.ps1`
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu52.json'`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚 proto 新 RPC 与 gRPC 适配分支，恢复仅本地导入入口。
+- Risks: 目前按文件路径导入，服务部署形态变化时需进一步约束路径可见性与访问策略。
+- Acceptance criteria:
+  - gRPC 可通过 `ImportAcquisition` 成功回读已导出的 JSON 测量结果。
+  - smoke 回归矩阵覆盖新增 RPC 且不影响既有 Acquire/Stream 流程。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `vna/scripts/generate_proto.ps1` 通过
+  - `vna/scripts/build_grpc_adapter.ps1` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu52.json'` 通过
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
