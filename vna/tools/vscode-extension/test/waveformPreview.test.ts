@@ -105,12 +105,14 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("min x="));
   assert(html.includes("y="));
   assert(html.includes("id=\"copyPrimaryMarker\""));
+  assert(html.includes("id=\"clearCopyStatus\""));
   assert(html.includes("copy-primary-marker"));
   assert(html.includes("timestampNs=123"));
   assert(html.includes("source=frame"));
   assert(html.includes("channel=0"));
-  assert(html.includes("Ctrl/Cmd + C"));
-  assert(html.includes("Ctrl/Cmd + C to copy primary marker"));
+  assert(html.includes("Ctrl/Cmd + C | Alt + C | Esc"));
+  assert(html.includes("Ctrl/Cmd + C or Alt + C to copy, Esc to clear"));
+  assert(html.includes("data-copy-length="));
   assert(html.includes("chars)"));
   assert(html.includes("No primary marker available") || html.includes("Copy primary marker to clipboard"));
   assert(html.includes("id=\"copyStatus\""));
@@ -118,6 +120,8 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("copy-primary-marker-result"));
   assert(html.includes("Copying..."));
   assert(html.includes("Copied!"));
+  assert(html.includes("Primary marker copied ("));
+  assert(html.includes("Clipboard API unavailable."));
   assert(html.includes("lastCopyStartedAt"));
   assert(html.includes("now - lastCopyStartedAt < 500"));
   assert(html.includes("toLocaleTimeString"));

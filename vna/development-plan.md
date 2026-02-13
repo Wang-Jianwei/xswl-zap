@@ -2487,6 +2487,85 @@ WU-MAINLINE-084: 批次收敛与回归保持
 - Validation result (WU079~084 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.67 已完成 Work Unit
+
+WU-MAINLINE-085: 新增 `Clear Status` 操作
+
+- Objective: 提供主动清理状态提示的入口。
+- Scope (in/out):
+  - in: 复制区新增 `Clear Status` 按钮。
+  - out: 历史状态管理。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.68 已完成 Work Unit
+
+WU-MAINLINE-086: 新增 `Alt + C` 复制快捷键
+
+- Objective: 提升键盘操作覆盖率。
+- Scope (in/out):
+  - in: 支持 `Alt + C` 触发复制。
+  - out: 快捷键可配置。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.69 已完成 Work Unit
+
+WU-MAINLINE-087: 成功提示附带字符数
+
+- Objective: 提供复制体积感知。
+- Scope (in/out):
+  - in: 成功提示附带 chars 数值。
+  - out: 分级阈值告警。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.70 已完成 Work Unit
+
+WU-MAINLINE-088: Clipboard 不可用显式提示
+
+- Objective: 明确失败原因，减少误判。
+- Scope (in/out):
+  - in: Clipboard API 不可用时显示明确错误。
+  - out: 自动降级复制策略。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.71 已完成 Work Unit
+
+WU-MAINLINE-089: 快捷键提示文案补齐
+
+- Objective: 强化操作可发现性。
+- Scope (in/out):
+  - in: 显示 `Ctrl/Cmd + C | Alt + C | Esc` 提示。
+  - out: 本地化多语言提示。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.72 已完成 Work Unit
+
+WU-MAINLINE-090: 批次收敛与统一验证
+
+- Objective: 合并处理多个简单交互 WU，降低切换成本。
+- Scope (in/out):
+  - in: 聚合 WU085~090 代码/测试/文档并统一回归。
+  - out: 跨模块重构。
+- Status: ✅ Completed (2026-02-13)
+
+- Files to change (WU085~090):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件前端交互增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复 WU084 状态。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 新增清理入口、Alt 快捷键、字符数反馈与不可用提示可用。
+  - 插件测试通过。
+
+- Validation result (WU085~090 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

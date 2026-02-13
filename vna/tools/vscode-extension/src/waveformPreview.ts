@@ -557,8 +557,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="actions">
-    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
-    <span class="shortcut-hint" title="Ctrl/Cmd + C to copy primary marker">Ctrl/Cmd + C</span>
+    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-length="${primaryMarkerCopyText.length}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
+    <button id="clearCopyStatus" class="action-btn" title="Clear copy status">Clear Status</button>
+    <span class="shortcut-hint" title="Ctrl/Cmd + C or Alt + C to copy, Esc to clear">Ctrl/Cmd + C | Alt + C | Esc</span>
   </div>
   <div id="copyStatus" class="copy-status" aria-live="polite"></div>
   <div class="legend" id="legend">${legendItems}</div>
@@ -577,6 +578,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     (function () {
       const vscodeApi = typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
       const copyButton = document.getElementById("copyPrimaryMarker");
+      const clearStatusButton = document.getElementById("clearCopyStatus");
       const copyStatus = document.getElementById("copyStatus");
       let statusTimer = undefined;
       let lastCopyStartedAt = 0;
@@ -647,6 +649,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         }
         lastCopyStartedAt = now;
         const copyText = copyButton.getAttribute("data-copy-text") || "";
+        const copyLength = Number(copyButton.getAttribute("data-copy-length") || "0");
         if (!copyText) {
           return;
         }
@@ -658,13 +661,16 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           try {
             await navigator.clipboard.writeText(copyText);
-            updateCopyStatus(true, "Primary marker copied.");
+            updateCopyStatus(true, "Primary marker copied (" + copyLength + " chars).");
             markCopied();
           } catch (error) {
             updateCopyStatus(false, "Copy failed.");
           } finally {
             finishCopying();
           }
+        } else {
+          updateCopyStatus(false, "Clipboard API unavailable.");
+          finishCopying();
         }
       };
 
@@ -672,12 +678,18 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         copyButton.addEventListener("click", copyPrimaryMarker);
       }
 
+      if (clearStatusButton instanceof HTMLButtonElement) {
+        clearStatusButton.addEventListener("click", clearCopyStatus);
+      }
+
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
           clearCopyStatus();
           return;
         }
-        const isCopyHotkey = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c";
+        const isPrimaryCopyHotkey = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c";
+        const isAltCopyHotkey = event.altKey && event.key.toLowerCase() === "c";
+        const isCopyHotkey = isPrimaryCopyHotkey || isAltCopyHotkey;
         if (!isCopyHotkey) {
           return;
         }

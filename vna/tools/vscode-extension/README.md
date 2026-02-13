@@ -27,6 +27,9 @@
   - 复制文本附带 `source/channel` 维度；支持防连点（500ms）
   - 复制成功时按钮短暂显示 `Copied!`，并恢复默认文案
   - 状态条使用 `aria-live`，增强可访问性反馈
+  - 新增 `Clear Status` 按钮，支持手动清理复制状态
+  - 快捷键扩展为 `Ctrl/Cmd + C` 与 `Alt + C`，并显示 `Esc` 清理提示
+  - 成功提示包含复制字符数；无 Clipboard API 时给出明确提示
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

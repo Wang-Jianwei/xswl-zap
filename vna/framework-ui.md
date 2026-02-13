@@ -125,6 +125,8 @@ flowchart LR
 - 复制按钮 tooltip 展示字符数信息，便于内容长度预判。
 - 复制文本包含 `source/channel` 上下文，按钮支持防连点与 `Copied!` 短态反馈。
 - 状态反馈区域启用 `aria-live`，提升可访问性。
+- 增加 `Clear Status` 手动清理入口；支持 `Alt + C` 快捷复制。
+- 成功反馈附带复制字符数，Clipboard 不可用时给出显式错误提示。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---
