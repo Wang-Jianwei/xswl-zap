@@ -30,6 +30,10 @@
         "title": "XSWL: Stream Preview"
       },
       {
+        "command": "xswlZapVna.previewWaveform",
+        "title": "XSWL: Preview Waveform"
+      },
+      {
         "command": "xswlZapVna.openOutput",
         "title": "XSWL: Open Output"
       },
@@ -85,7 +89,7 @@
   "scripts": {
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
-    "test": "npm run build && node ./out/test/statusFormatter.test.js",
+    "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js",
     "package": "vsce package"
   },
   "devDependencies": {

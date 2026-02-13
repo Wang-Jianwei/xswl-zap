@@ -8,7 +8,9 @@ import type {
   StreamPreviewSummary,
   ValidationResult,
   TopologyErrorDetail,
+  WaveformPreviewData,
 } from "./types";
+import { buildWaveformPreviewData } from "./waveformPreview";
 
 export interface ServiceClientOptions {
   address: string;
@@ -171,6 +173,44 @@ export class ServiceClient {
             frameType,
             pointCount,
           });
+        },
+      );
+    });
+  }
+
+  acquireWaveform(instanceId: string, sampleCount: number): Promise<WaveformPreviewData> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<WaveformPreviewData>((resolve, reject) => {
+      (this.client as unknown as {
+        acquire: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).acquire(
+        {
+          instanceId,
+          sampleCount,
+          timeoutMs: Math.max(this.deadlineMs, 1000),
+          excitation: {
+            mode: 1,
+            settlingTimeMs: 0,
+            enableAutoTrigger: true,
+            cw: {
+              frequencyHz: 1.0e9,
+              powerDbm: -10,
+              dwellTimeMs: 1,
+            },
+          },
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve(buildWaveformPreviewData(response));
         },
       );
     });

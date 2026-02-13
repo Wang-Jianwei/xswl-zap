@@ -42,3 +42,15 @@ export interface StreamPreviewFrame {
 export interface StreamPreviewSummary extends StreamPreviewFrame {
   canceled: boolean;
 }
+
+export interface WaveformPoint {
+  x: number;
+  y: number;
+}
+
+export interface WaveformPreviewData {
+  instanceId: string;
+  timestampNs: number;
+  frameType: "frequency" | "time" | "unknown";
+  points: WaveformPoint[];
+}

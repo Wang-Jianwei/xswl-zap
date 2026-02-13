@@ -97,6 +97,14 @@ flowchart LR
 - **毫米波 / On-Wafer 操作面板**：ProbeStation 控制（位置、接触/Lift）、片上标准选择、On-Wafer 校准辅助（pad map）、阵列合成视图（多实例相位/幅度合成、相位中心校正提示）。
 - **流式渲染与进度控制**：所有长任务（功率扫描、Hierarchical Sweep、X-parameter）在 UI 层显示进度条、实时日志与 Cancel 按钮，支持后端的 `ProgressCallback` 与 `CancellationToken` 协议。
 
+### 3.9 VS Code 插件波形预览（MVP）
+
+- 插件命令 `XSWL: Preview Waveform`：触发一次 `Acquire`，在 Webview 内展示最小折线图。
+- 当前渲染范围：
+  - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。
+  - 时域帧：`magnitude` 作为纵轴，`time_ns` 作为横轴。
+- 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
+
 ---
 
 ## 4. UX Patterns / Notifications

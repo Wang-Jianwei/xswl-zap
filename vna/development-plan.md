@@ -1722,6 +1722,40 @@ WU-MAINLINE-055: gRPC 回放比对 RPC（CompareImportedAcquisition）
   - `vna/build/easy_vna_control_service_test.exe` 通过
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.38 已完成 Work Unit
+
+WU-MAINLINE-056: VS Code 插件波形预览（MVP）
+
+- Objective: 尽快达到“可在 VS Code 插件端查看波形”的主线里程碑。
+- Scope (in/out):
+  - in: 新增插件命令 `XSWL: Preview Waveform`；复用 `Acquire` 获取点集；Webview 折线图渲染；插件单测补齐。
+  - out: 交互缩放、Marker、多 trace 叠加与历史缓存。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用现有 `Acquire` RPC）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚插件命令与波形渲染模块，恢复摘要文本模式。
+- Risks: 当前 Webview 图仅为 MVP，复杂数据量下渲染性能与交互体验仍需后续增强。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Preview Waveform`。
+  - 能在 Webview 看到采集点折线图（频域或时域）。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

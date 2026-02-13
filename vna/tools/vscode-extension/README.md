@@ -6,6 +6,7 @@
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
+- Command: `XSWL: Preview Waveform` (opens a Webview line chart for acquired frequency/time frame)
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation
@@ -76,6 +77,7 @@ npm run test
 - Open a topology YAML file and run `XSWL: Validate Topology`
 - Run command `XSWL: Acquire Once`
 - Run command `XSWL: Stream Preview` and cancel from progress notification when needed
+- Run command `XSWL: Preview Waveform` to visualize latest acquired points in a Webview chart
 - Run command `XSWL: Open Output` to view command logs in one place
 - Run command `XSWL: Clear Output` to reset logs quickly
 

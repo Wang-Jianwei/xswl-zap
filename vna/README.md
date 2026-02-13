@@ -110,6 +110,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU55 进展）：已新增 gRPC `CompareImportedAcquisition` RPC（导入文件 + 当前采集参数 + 容差），支持返回 `matched` 与对比详情，用于远程回放比对。
 
+补充（WU56 进展）：VS Code 插件已新增 `XSWL: Preview Waveform`，可在 Webview 直接查看采集波形（MVP 折线图），主线可见能力已从“摘要文本”升级为“图形预览”。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

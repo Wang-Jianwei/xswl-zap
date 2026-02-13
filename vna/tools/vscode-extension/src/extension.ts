@@ -7,6 +7,7 @@ import {
   formatValidationResult,
 } from "./statusFormatter";
 import { ServiceClient } from "./serviceClient";
+import { buildWaveformPreviewHtml } from "./waveformPreview";
 
 type LogLevel = "INFO" | "ERROR";
 let requestSequence = 0;
@@ -260,6 +261,64 @@ export function activate(context: vscode.ExtensionContext): void {
     }
   });
 
+  const previewWaveformCommand = vscode.commands.registerCommand("xswlZapVna.previewWaveform", async () => {
+    const instanceIdInput = await vscode.window.showInputBox({
+      prompt: "Instance ID",
+      value: "inst0",
+      ignoreFocusOut: true,
+    });
+    if (!instanceIdInput) {
+      return;
+    }
+
+    const sampleCountInput = await vscode.window.showInputBox({
+      prompt: "Sample count",
+      value: "256",
+      ignoreFocusOut: true,
+      validateInput: (value) => {
+        const parsed = Number(value);
+        if (!Number.isInteger(parsed) || parsed <= 0) {
+          return "Sample count must be a positive integer.";
+        }
+        return undefined;
+      },
+    });
+    if (!sampleCountInput) {
+      return;
+    }
+
+    const sampleCount = Number(sampleCountInput);
+    const requestId = createRequestId();
+    const { address, deadlineMs, autoOpenOutput } = readConfig();
+    const client = new ServiceClient({ address, deadlineMs });
+
+    try {
+      const waveform = await client.acquireWaveform(instanceIdInput, sampleCount);
+      const panel = vscode.window.createWebviewPanel(
+        "xswlWaveformPreview",
+        `XSWL Waveform: ${instanceIdInput}`,
+        vscode.ViewColumn.Beside,
+        { enableScripts: false },
+      );
+      panel.webview.html = buildWaveformPreviewHtml(waveform);
+
+      logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
+        `instanceId=${instanceIdInput}, sampleCount=${sampleCount}, frame=${waveform.frameType}, points=${waveform.points.length}`,
+      ]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showInformationMessage(
+        `Waveform preview opened: frame=${waveform.frameType}, points=${waveform.points.length} | req=${requestId}`,
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logBlock(outputChannel, "ERROR", `[PreviewWaveform][requestId=${requestId}]`, [errorMessage]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showErrorMessage(`PreviewWaveform failed: ${errorMessage} | req=${requestId}`);
+    } finally {
+      client.dispose();
+    }
+  });
+
   context.subscriptions.push(
     outputChannel,
     openOutputCommand,
@@ -268,6 +327,7 @@ export function activate(context: vscode.ExtensionContext): void {
     validateTopologyCommand,
     acquireOnceCommand,
     streamPreviewCommand,
+    previewWaveformCommand,
   );
 }
 
