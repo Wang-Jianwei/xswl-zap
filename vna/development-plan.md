@@ -2767,6 +2767,88 @@ WU-MAINLINE-103: comparator 回归断言扩展
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.86 已完成 Work Unit
+
+WU-MAINLINE-104: compare 成功摘要增加 receiver raw 最大误差位置
+
+- Objective: 在 matched 场景下提供 receiver raw 峰值误差定位信息。
+- Scope (in/out):
+  - in: `receiver_raw_max_at=point:<i>,channel:<j>` 摘要输出。
+  - out: 结构化 proto 字段拆分。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.87 已完成 Work Unit
+
+WU-MAINLINE-105: compare 成功摘要增加 receiver compensated 最大误差位置
+
+- Objective: 在 matched 场景下提供补偿后通道峰值误差定位信息。
+- Scope (in/out):
+  - in: `receiver_comp_max_at=point:<i>,channel:<j>` 摘要输出。
+  - out: 自动定位历史趋势分析。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.88 已完成 Work Unit
+
+WU-MAINLINE-106: compare 成功摘要增加 s-parameter 最大误差位置
+
+- Objective: 在 matched 场景下提供 s-parameter 维度峰值误差定位信息。
+- Scope (in/out):
+  - in: `sparameter_max_at=point:<i>,value:<k>` 摘要输出。
+  - out: 频段聚合统计。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.89 已完成 Work Unit
+
+WU-MAINLINE-107: comparator 观测逻辑记录类别与索引
+
+- Objective: 为最大误差位置摘要提供统一记录机制。
+- Scope (in/out):
+  - in: `Observe` 记录 category/point/sub-index 并更新对应最大误差位置。
+  - out: 全量诊断模型重构。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.90 已完成 Work Unit
+
+WU-MAINLINE-108: core/service 回归断言补齐 max_at 字段
+
+- Objective: 防止最大误差位置摘要在后续迭代中回归丢失。
+- Scope (in/out):
+  - in: comparator 与 control service 测试增加 `*_max_at` 断言。
+  - out: 端到端 UI 展示校验。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.91 已完成 Work Unit
+
+WU-MAINLINE-109: 批次收敛与统一验证（WU104~109）
+
+- Objective: 合并后端 compare 诊断简单 WU，降低切换成本并保证闭环质量。
+- Scope (in/out):
+  - in: 聚合 WU104~109 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-13)
+
+- Files to change (WU104~109):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU098~103 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含三类 `*_max_at` 位置字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU104~109 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

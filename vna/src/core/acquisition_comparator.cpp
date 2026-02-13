@@ -46,6 +46,18 @@ struct ComparisonStats {
   double maxComponentDelta = 0.0;
   double sumSquareDelta = 0.0;
   double tolerance = 0.0;
+  bool hasReceiverRawMax = false;
+  bool hasReceiverCompMax = false;
+  bool hasSParameterMax = false;
+  double receiverRawMaxDelta = 0.0;
+  double receiverCompMaxDelta = 0.0;
+  double sParameterMaxDelta = 0.0;
+  std::size_t receiverRawMaxPoint = 0;
+  std::size_t receiverRawMaxChannel = 0;
+  std::size_t receiverCompMaxPoint = 0;
+  std::size_t receiverCompMaxChannel = 0;
+  std::size_t sParameterMaxPoint = 0;
+  std::size_t sParameterMaxValue = 0;
 
   enum class Category {
     kReceiverRaw,
@@ -53,14 +65,32 @@ struct ComparisonStats {
     kSParameter,
   };
 
-  void Observe(double delta, Category category) {
+  void Observe(double delta, Category category, std::size_t pointIndex, std::size_t subIndex) {
     sampleCount += 1;
     if (category == Category::kReceiverRaw) {
       receiverRawSamples += 1;
+      if (!hasReceiverRawMax || delta > receiverRawMaxDelta) {
+        hasReceiverRawMax = true;
+        receiverRawMaxDelta = delta;
+        receiverRawMaxPoint = pointIndex;
+        receiverRawMaxChannel = subIndex;
+      }
     } else if (category == Category::kReceiverCompensated) {
       receiverCompSamples += 1;
+      if (!hasReceiverCompMax || delta > receiverCompMaxDelta) {
+        hasReceiverCompMax = true;
+        receiverCompMaxDelta = delta;
+        receiverCompMaxPoint = pointIndex;
+        receiverCompMaxChannel = subIndex;
+      }
     } else {
       sParameterSamples += 1;
+      if (!hasSParameterMax || delta > sParameterMaxDelta) {
+        hasSParameterMax = true;
+        sParameterMaxDelta = delta;
+        sParameterMaxPoint = pointIndex;
+        sParameterMaxValue = subIndex;
+      }
     }
     maxComponentDelta = std::max(maxComponentDelta, delta);
     sumSquareDelta += delta * delta;
@@ -78,7 +108,23 @@ struct ComparisonStats {
           << ", receiver_comp_samples=" << receiverCompSamples
           << ", sparameter_samples=" << sParameterSamples
            << ", max_component_delta=" << maxComponentDelta
-           << ", rms_component_delta=" << rmsDelta;
+              << ", rms_component_delta=" << rmsDelta;
+
+            if (hasReceiverRawMax) {
+              stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta
+                << ", receiver_raw_max_at=point:" << receiverRawMaxPoint
+                << "/channel:" << receiverRawMaxChannel;
+            }
+            if (hasReceiverCompMax) {
+              stream << ", receiver_comp_max_delta=" << receiverCompMaxDelta
+                << ", receiver_comp_max_at=point:" << receiverCompMaxPoint
+                << "/channel:" << receiverCompMaxChannel;
+            }
+            if (hasSParameterMax) {
+              stream << ", sparameter_max_delta=" << sParameterMaxDelta
+                << ", sparameter_max_at=point:" << sParameterMaxPoint
+                << "/value:" << sParameterMaxValue;
+            }
     return stream.str();
   }
 };
@@ -170,7 +216,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta, ComparisonStats::Category::kReceiverRaw);
+      stats.Observe(delta, ComparisonStats::Category::kReceiverRaw, pointIndex, channelIndex);
     }
   }
 
@@ -237,7 +283,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta, ComparisonStats::Category::kReceiverCompensated);
+      stats.Observe(delta, ComparisonStats::Category::kReceiverCompensated, pointIndex, channelIndex);
     }
   }
 
@@ -292,7 +338,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta, ComparisonStats::Category::kSParameter);
+      stats.Observe(delta, ComparisonStats::Category::kSParameter, pointIndex, valueIndex);
     }
   }
 

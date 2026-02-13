@@ -60,6 +60,9 @@ int main() {
   assert(diff.find("sparameter_samples=") != std::string::npos);
   assert(diff.find("max_component_delta=") != std::string::npos);
   assert(diff.find("rms_component_delta=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_at=point:") != std::string::npos);
+  assert(diff.find("receiver_comp_max_at=point:") != std::string::npos);
+  assert(diff.find("sparameter_max_at=point:") != std::string::npos);
 
   vna::core::AcquisitionResult mismatch = BuildResult();
   mismatch.sParameters.points[0].matrix[0] = std::complex<double>(9.9, 9.9);
