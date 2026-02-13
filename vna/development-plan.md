@@ -1389,6 +1389,37 @@ WU-MAINLINE-046: 导出失败可诊断信息增强
   - `vna/build/easy_vna_control_service_test.exe` 通过（含无效导出路径错误消息断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.29 已完成 Work Unit
+
+WU-MAINLINE-047: MinGW 运行时环境自愈与脚本稳定性
+
+- Objective: 避免因终端 PATH/PowerShell native 错误策略导致的误判失败。
+- Scope (in/out):
+  - in: 关键脚本增加 MinGW 运行时自检与 PATH 注入，关闭 native stderr 误报。
+  - out: 构建系统级工具链安装流程重构。
+- Files to change:
+  - `vna/scripts/run_easy_tests.ps1`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_easy_tests.ps1`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu47-v1.json'`
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-wu47.json' -AsJson`
+- Rollback plan: 回滚脚本环境自检逻辑。
+- Risks: 固定的 MinGW 路径假设在非标准安装机器上可能不适配。
+- Acceptance criteria:
+  - 脚本在缺失 MinGW 运行时时可给出明确错误。
+  - 标准环境下脚本不再受终端 PATH 漂移影响。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `vna/scripts/run_easy_tests.ps1` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu47-v1.json'` 通过
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-wu47.json' -AsJson` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

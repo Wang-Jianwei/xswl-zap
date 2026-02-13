@@ -10,6 +10,23 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Ensure-MingwRuntime {
+  $mingwBin = "C:\msys64\mingw64\bin"
+  if (-not (Test-Path $mingwBin)) {
+    throw "Missing MinGW runtime path: $mingwBin"
+  }
+
+  if ($env:PATH -notlike "$mingwBin*") {
+    $env:PATH = "$mingwBin;" + $env:PATH
+  }
+}
+
+if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue)) {
+  $PSNativeCommandUseErrorActionPreference = $false
+}
+
+Ensure-MingwRuntime
+
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptDir
 $matrixScript = Join-Path $scriptDir "run_grpc_smoke_matrix.ps1"
