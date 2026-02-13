@@ -104,6 +104,8 @@ int main() {
         assert(service.CompareImportedAcquisition(jsonPath, result, 1e-9, &compareDiff) ==
           vna::core::Status::kOk);
         assert(compareDiff.find("COMPARE_MATCHED:") == 0);
+        assert(compareDiff.find("tolerance=") != std::string::npos);
+        assert(compareDiff.find("receiver_raw_samples=") != std::string::npos);
         assert(compareDiff.find("max_component_delta=") != std::string::npos);
 
         vna::core::AcquisitionResult altered = result;

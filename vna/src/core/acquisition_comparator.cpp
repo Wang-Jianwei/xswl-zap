@@ -3,6 +3,7 @@
 #include <cmath>
 #include <complex>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 
 namespace vna {
@@ -26,6 +27,10 @@ bool CompareComplex(const std::complex<double>& lhs,
   return realDelta <= tolerance && imagDelta <= tolerance;
 }
 
+bool IsFiniteComplex(const std::complex<double>& value) {
+  return std::isfinite(value.real()) && std::isfinite(value.imag());
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -35,11 +40,28 @@ bool Fail(std::string* diffMessage, const std::string& message) {
 
 struct ComparisonStats {
   std::size_t sampleCount = 0;
+  std::size_t receiverRawSamples = 0;
+  std::size_t receiverCompSamples = 0;
+  std::size_t sParameterSamples = 0;
   double maxComponentDelta = 0.0;
   double sumSquareDelta = 0.0;
+  double tolerance = 0.0;
 
-  void Observe(double delta) {
+  enum class Category {
+    kReceiverRaw,
+    kReceiverCompensated,
+    kSParameter,
+  };
+
+  void Observe(double delta, Category category) {
     sampleCount += 1;
+    if (category == Category::kReceiverRaw) {
+      receiverRawSamples += 1;
+    } else if (category == Category::kReceiverCompensated) {
+      receiverCompSamples += 1;
+    } else {
+      sParameterSamples += 1;
+    }
     maxComponentDelta = std::max(maxComponentDelta, delta);
     sumSquareDelta += delta * delta;
   }
@@ -50,7 +72,11 @@ struct ComparisonStats {
     const double rmsDelta = sampleCount == 0
                                 ? 0.0
                                 : std::sqrt(sumSquareDelta / static_cast<double>(sampleCount));
-    stream << "samples=" << sampleCount
+        stream << "tolerance=" << tolerance
+          << ", samples=" << sampleCount
+          << ", receiver_raw_samples=" << receiverRawSamples
+          << ", receiver_comp_samples=" << receiverCompSamples
+          << ", sparameter_samples=" << sParameterSamples
            << ", max_component_delta=" << maxComponentDelta
            << ", rms_component_delta=" << rmsDelta;
     return stream.str();
@@ -70,6 +96,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                                                    double tolerance,
                                                    std::string* diffMessage) {
   ComparisonStats stats;
+  stats.tolerance = tolerance;
   if (tolerance <= 0.0) {
     return Fail(diffMessage, "invalid tolerance");
   }
@@ -104,6 +131,12 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       if (lhsChannel.clipped != rhsChannel.clipped) {
         return Fail(diffMessage, "receiverRaw clipped mismatch");
       }
+      if (!IsFiniteComplex(lhsChannel.iq) || !IsFiniteComplex(rhsChannel.iq)) {
+        std::ostringstream message;
+        message << "receiverRaw iq non-finite at point=" << pointIndex
+                << ", channel=" << channelIndex;
+        return FailWithStats(diffMessage, message.str(), stats);
+      }
       double delta = 0.0;
       if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance, &delta)) {
         std::ostringstream message;
@@ -112,7 +145,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta);
+      stats.Observe(delta, ComparisonStats::Category::kReceiverRaw);
     }
   }
 
@@ -142,6 +175,12 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       if (lhsChannel.clipped != rhsChannel.clipped) {
         return Fail(diffMessage, "receiverCompensated clipped mismatch");
       }
+      if (!IsFiniteComplex(lhsChannel.iq) || !IsFiniteComplex(rhsChannel.iq)) {
+        std::ostringstream message;
+        message << "receiverCompensated iq non-finite at point=" << pointIndex
+                << ", channel=" << channelIndex;
+        return FailWithStats(diffMessage, message.str(), stats);
+      }
       double delta = 0.0;
       if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance, &delta)) {
         std::ostringstream message;
@@ -150,7 +189,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta);
+      stats.Observe(delta, ComparisonStats::Category::kReceiverCompensated);
     }
   }
 
@@ -175,6 +214,12 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     }
 
     for (std::size_t valueIndex = 0; valueIndex < lhsPoint.matrix.size(); ++valueIndex) {
+      if (!IsFiniteComplex(lhsPoint.matrix[valueIndex]) || !IsFiniteComplex(rhsPoint.matrix[valueIndex])) {
+        std::ostringstream message;
+        message << "sParameter matrix non-finite at point=" << pointIndex
+                << ", value=" << valueIndex;
+        return FailWithStats(diffMessage, message.str(), stats);
+      }
       double delta = 0.0;
       if (!CompareComplex(lhsPoint.matrix[valueIndex], rhsPoint.matrix[valueIndex], tolerance, &delta)) {
         std::ostringstream message;
@@ -183,7 +228,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
                 << ", delta=" << std::setprecision(6) << std::scientific << delta;
         return FailWithStats(diffMessage, message.str(), stats);
       }
-      stats.Observe(delta);
+      stats.Observe(delta, ComparisonStats::Category::kSParameter);
     }
   }
 

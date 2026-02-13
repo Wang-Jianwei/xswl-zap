@@ -1,4 +1,5 @@
 #include <cassert>
+#include <limits>
 
 #include "core/acquisition_comparator.h"
 
@@ -53,6 +54,10 @@ int main() {
   std::string diff;
   assert(vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, same, 1e-9, &diff));
   assert(diff.find("COMPARE_MATCHED:") == 0);
+  assert(diff.find("tolerance=") != std::string::npos);
+  assert(diff.find("receiver_raw_samples=") != std::string::npos);
+  assert(diff.find("receiver_comp_samples=") != std::string::npos);
+  assert(diff.find("sparameter_samples=") != std::string::npos);
   assert(diff.find("max_component_delta=") != std::string::npos);
   assert(diff.find("rms_component_delta=") != std::string::npos);
 
@@ -61,6 +66,12 @@ int main() {
   assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, mismatch, 1e-9, &diff));
   assert(diff.find("sParameter matrix value mismatch") != std::string::npos);
   assert(diff.find("delta=") != std::string::npos);
+
+  vna::core::AcquisitionResult nonFinite = BuildResult();
+  nonFinite.receiverRaw.points[0].channels[0].iq =
+      std::complex<double>(std::numeric_limits<double>::quiet_NaN(), 0.0);
+  assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, nonFinite, 1e-9, &diff));
+  assert(diff.find("non-finite") != std::string::npos);
 
   return 0;
 }

@@ -257,7 +257,7 @@ core::Status VnaControlService::CompareImportedAcquisition(const std::string& js
       imported, current, tolerance, &mismatch);
   if (!same) {
     if (diffMessage != nullptr) {
-      *diffMessage = "COMPARE_MISMATCH: " + mismatch;
+      *diffMessage = mismatch.find("COMPARE_MISMATCH:") == 0 ? mismatch : "COMPARE_MISMATCH: " + mismatch;
     }
     return core::Status::kInvalidArgument;
   }

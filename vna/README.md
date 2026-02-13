@@ -150,6 +150,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU91 进展）：后端 core 回放比对能力增强，`AcquisitionComparator` 增加 `max/rms` 误差统计与精确 mismatch 上下文（point/channel/value + delta），并贯通到 service/gRPC compare detail。
 
+补充（WU92~WU97 进展）：后端 compare 诊断继续增强，新增 tolerance/分组样本计数摘要、非有限值检测（NaN/Inf），并在 core/service 测试中覆盖成功与异常路径。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

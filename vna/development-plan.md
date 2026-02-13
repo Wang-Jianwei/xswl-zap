@@ -2601,6 +2601,91 @@ WU-MAINLINE-091: 后端回放比对诊断增强（core + service + gRPC）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.74 已完成 Work Unit
+
+WU-MAINLINE-092: compare 详情包含 tolerance
+
+- Objective: 提升 compare 结果可解释性。
+- Scope (in/out):
+  - in: compare 详情输出 tolerance。
+  - out: tolerance 动态策略。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.75 已完成 Work Unit
+
+WU-MAINLINE-093: compare 详情包含分组样本计数
+
+- Objective: 提供 receiver/sparameter 维度可观测性。
+- Scope (in/out):
+  - in: detail 输出 receiver_raw/receiver_comp/sparameter sample 计数。
+  - out: 更细分通道级统计。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.76 已完成 Work Unit
+
+WU-MAINLINE-094: compare 增加 non-finite 值检测
+
+- Objective: 避免 NaN/Inf 被静默比较导致误判。
+- Scope (in/out):
+  - in: IQ 与 S 参数复数值 non-finite 检测并返回定位信息。
+  - out: 自动修复非有限值。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.77 已完成 Work Unit
+
+WU-MAINLINE-095: mismatch 上下文精细化
+
+- Objective: 缩短故障定位路径。
+- Scope (in/out):
+  - in: mismatch detail 输出 point/channel/value + delta。
+  - out: 二进制诊断附件。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.78 已完成 Work Unit
+
+WU-MAINLINE-096: service compare detail 透传增强
+
+- Objective: 保持 core 诊断信息在 service 层完整可见。
+- Scope (in/out):
+  - in: 成功/失败 detail 均透传增强文本。
+  - out: 新增 proto 结构化字段。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.79 已完成 Work Unit
+
+WU-MAINLINE-097: core/service 回归测试扩展
+
+- Objective: 为诊断增强建立可持续回归保障。
+- Scope (in/out):
+  - in: comparator 与 control service 测试覆盖 tolerance/计数/non-finite/delta。
+  - out: e2e 大规模回放数据集。
+- Status: ✅ Completed (2026-02-13)
+
+- Files to change (WU092~097):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无 proto 变更（复用 `detail` 文本承载增强诊断）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU091 诊断粒度。
+- Risks: detail 文本长度增加；对契约兼容性影响低。
+- Acceptance criteria:
+  - compare 详情含 tolerance/分组计数。
+  - non-finite 值可被检测并返回定位信息。
+  - core/service 定向测试通过。
+
+- Validation result (WU092~097 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
