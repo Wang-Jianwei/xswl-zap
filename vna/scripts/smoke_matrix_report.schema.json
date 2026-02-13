@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xswl-zap/vna/smoke_matrix_report.schema.json",
+  "title": "Smoke Matrix Report",
+  "type": "object",
+  "required": [
+    "reportVersion",
+    "timestampUtc",
+    "status",
+    "overallPassed",
+    "caseCount",
+    "reportDigest",
+    "failureSummary",
+    "executionOptions",
+    "cases"
+  ],
+  "properties": {
+    "reportVersion": { "type": "string" },
+    "timestampUtc": { "type": "string" },
+    "status": { "type": "string", "enum": ["PASS", "FAIL"] },
+    "overallPassed": { "type": "boolean" },
+    "caseCount": { "type": "integer", "minimum": 0 },
+    "reportDigest": { "type": "string" },
+    "failedCaseNames": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "noiseSuppressedTotal": { "type": "integer", "minimum": 0 },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "count", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "count": { "type": "integer", "minimum": 0 },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "executionOptions": {
+      "type": "object",
+      "required": [
+        "skipBuild",
+        "failOnUnknownStderr",
+        "smokeTimeoutSec",
+        "endpoint",
+        "configPath",
+        "configHashSha256",
+        "reportJsonPathTemplate",
+        "reportJsonPathResolved"
+      ],
+      "properties": {
+        "skipBuild": { "type": "boolean" },
+        "failOnUnknownStderr": { "type": "boolean" },
+        "smokeTimeoutSec": { "type": "integer", "minimum": 1 },
+        "endpoint": { "type": "string" },
+        "configPath": { "type": "string" },
+        "configHashSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "reportJsonPathTemplate": { "type": "string" },
+        "reportJsonPathResolved": { "type": "string" }
+      }
+    },
+    "failureSummary": {
+      "type": "object",
+      "required": [
+        "totalFailedCases",
+        "exitCode",
+        "timeout",
+        "unknownStderr",
+        "failureRate",
+        "exitCodeRate",
+        "timeoutRate",
+        "unknownStderrRate",
+        "failedCaseNamesByReason"
+      ],
+      "properties": {
+        "totalFailedCases": { "type": "integer", "minimum": 0 },
+        "exitCode": { "type": "integer", "minimum": 0 },
+        "timeout": { "type": "integer", "minimum": 0 },
+        "unknownStderr": { "type": "integer", "minimum": 0 },
+        "failureRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "exitCodeRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "timeoutRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "unknownStderrRate": { "type": "number", "minimum": 0, "maximum": 1 },
+        "failedCaseNamesByReason": {
+          "type": "object",
+          "required": ["exitCode", "timeout", "unknownStderr"],
+          "properties": {
+            "exitCode": { "type": "array", "items": { "type": "string" } },
+            "timeout": { "type": "array", "items": { "type": "string" } },
+            "unknownStderr": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "caseIndex",
+          "name",
+          "durationMs",
+          "unaryExitCode",
+          "streamExitCode",
+          "failureReason",
+          "resultDigest",
+          "passed"
+        ],
+        "properties": {
+          "caseIndex": { "type": "integer", "minimum": 1 },
+          "name": { "type": "string" },
+          "durationMs": { "type": "integer", "minimum": 0 },
+          "unaryExitCode": { "type": ["integer", "null"] },
+          "streamExitCode": { "type": ["integer", "null"] },
+          "failureReason": { "type": "string" },
+          "resultDigest": { "type": "string" },
+          "passed": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

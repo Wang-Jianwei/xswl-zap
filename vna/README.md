@@ -284,6 +284,18 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'
 ```
 
+校验报告字段与结构快照（含 schema 必填项 + snapshot key-set）：
+
+```powershell
+.\scripts\validate_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v16.json -SchemaPath .\scripts\smoke_matrix_report.schema.json -Snapshot
+```
+
+CI 门禁一键执行（生成报告 + 校验报告）：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild
+```
+
 ## VS Code 插件联调快速开始
 
 在使用 `vna/tools/vscode-extension` 命令前，先确保 gRPC 后端已在 `vna` 目录启动：

@@ -1,0 +1,42 @@
+param(
+  [switch]$SkipBuild,
+  [switch]$FailOnUnknownStderr,
+  [int]$SmokeTimeoutSec = 20,
+  [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json"
+)
+
+$ErrorActionPreference = "Stop"
+
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+$matrixScript = Join-Path $scriptDir "run_grpc_smoke_matrix.ps1"
+$validatorScript = Join-Path $scriptDir "validate_smoke_matrix_report.ps1"
+$schemaPath = Join-Path $scriptDir "smoke_matrix_report.schema.json"
+
+if (-not (Test-Path $matrixScript)) { throw "Missing script: $matrixScript" }
+if (-not (Test-Path $validatorScript)) { throw "Missing script: $validatorScript" }
+if (-not (Test-Path $schemaPath)) { throw "Missing schema: $schemaPath" }
+
+Write-Host "[GATE] running smoke matrix..."
+& $matrixScript -SkipBuild:$SkipBuild -FailOnUnknownStderr:$FailOnUnknownStderr -SmokeTimeoutSec $SmokeTimeoutSec -ReportJsonPath $ReportPath
+
+if ($LASTEXITCODE -ne 0) {
+  throw "Smoke matrix failed with exit code: $LASTEXITCODE"
+}
+
+$resolvedReportPath = $ReportPath
+if ($resolvedReportPath.Contains("{timestamp}") -or $resolvedReportPath.Contains("{timestampUtc}") -or $resolvedReportPath.Contains("{timestampLocal}")) {
+  $latest = Get-ChildItem -Path (Join-Path $projectRoot "build-grpc") -Filter "smoke-matrix-gate-*.json" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  if (-not $latest) { throw "Could not locate generated gate report under build-grpc" }
+  $resolvedReportPath = $latest.FullName
+}
+
+Write-Host "[GATE] validating report: $resolvedReportPath"
+& $validatorScript -ReportPath $resolvedReportPath -SchemaPath $schemaPath -Snapshot
+
+if ($LASTEXITCODE -ne 0) {
+  throw "Report validation failed with exit code: $LASTEXITCODE"
+}
+
+Write-Host "[GATE][PASS] smoke report gate passed"
+exit 0

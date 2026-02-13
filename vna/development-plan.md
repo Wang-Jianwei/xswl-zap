@@ -953,6 +953,66 @@ WU-MAINLINE-029: 单 case 增加摘要字符串
   - 报告包含 `reportVersion=1.6`、`failureSummary.failedCaseNamesByReason`、`cases[*].resultDigest`
   - 验证后已恢复 `config/service.yaml` 原值
 
+### 8.21 已完成 Work Unit（批量）
+
+WU-MAINLINE-030: CI 报告门禁脚本
+
+- Objective: 提供一条可直接用于 CI 的“生成+校验”门禁命令。
+- Scope (in/out):
+  - in: 新增 `run_smoke_report_gate.ps1`。
+  - out: CI 平台流水线模板。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚门禁脚本与 README 对应说明。
+- Risks: 报告路径模板变更需同步门禁脚本定位策略。
+- Acceptance criteria:
+  - 一条命令可完成 smoke 报告生成并执行校验。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-031: smoke 报告 JSON Schema 固化
+
+- Objective: 固化报告字段契约，降低后续演进漂移风险。
+- Scope (in/out):
+  - in: 新增 `smoke_matrix_report.schema.json`。
+  - out: 引入第三方 JSON Schema 引擎。
+- Files to change:
+  - `vna/scripts/smoke_matrix_report.schema.json`
+  - `vna/README.md`
+- Contract impact: 无（内部质量约束）。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 schema 文件与文档说明。
+- Risks: 字段升级时需同步维护 schema。
+- Acceptance criteria:
+  - schema 覆盖报告关键字段与核心嵌套结构。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-032: 报告结构快照校验脚本
+
+- Objective: 增加结构快照检查，防止关键 key-set 漂移。
+- Scope (in/out):
+  - in: 新增 `validate_smoke_matrix_report.ps1`（required + snapshot 校验）。
+  - out: 基于测试框架的单元测试套件。
+- Files to change:
+  - `vna/scripts/validate_smoke_matrix_report.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚校验脚本并移除门禁中的校验调用。
+- Risks: 报告新增字段时需同步更新 snapshot 预期键集。
+- Acceptance criteria:
+  - 校验脚本可检查必填字段与关键快照结构。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild` 通过
+  - 输出含 `[REPORT][PASS] validation ok` 与 `[GATE][PASS]`，门禁链路闭环
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
