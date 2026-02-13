@@ -54,6 +54,10 @@ class VnaControlService {
                                        const std::string& jsonPath,
                                        std::string* errorMessage = nullptr);
 
+  core::Status ImportAcquisitionResult(const std::string& jsonPath,
+                                       core::AcquisitionResult& out,
+                                       std::string* errorMessage = nullptr);
+
   std::size_t InstanceCount() const;
   std::size_t ActiveLeaseCount() const;
 

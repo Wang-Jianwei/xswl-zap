@@ -91,6 +91,15 @@ int main() {
     assert(touchstoneFile.good());
         assert(jsonFile.good());
 
+    vna::core::AcquisitionResult imported;
+    std::string importError;
+    assert(service.ImportAcquisitionResult(jsonPath, imported, &importError) == vna::core::Status::kOk);
+    assert(importError.empty());
+    assert(imported.instanceId == result.instanceId);
+    assert(imported.timestampNs == result.timestampNs);
+    assert(imported.receiverRaw.points.size() == result.receiverRaw.points.size());
+    assert(imported.sParameters.points.size() == result.sParameters.points.size());
+
     std::string exportError;
     const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(
       result,
@@ -105,6 +114,12 @@ int main() {
     const bool csvDirFailed =
       exportError.find("failed to create csv output directory") != std::string::npos;
     assert(csvOpenFailed || csvDirFailed);
+
+    std::string missingImportError;
+    vna::core::AcquisitionResult missingImported;
+    assert(service.ImportAcquisitionResult("", missingImported, &missingImportError) ==
+           vna::core::Status::kInvalidArgument);
+    assert(missingImportError == "import requires non-empty json path");
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

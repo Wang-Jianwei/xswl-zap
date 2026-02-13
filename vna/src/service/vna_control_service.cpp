@@ -151,6 +151,19 @@ core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionR
   return core::Status::kOk;
 }
 
+core::Status VnaControlService::ImportAcquisitionResult(const std::string& jsonPath,
+                                                       core::AcquisitionResult& out,
+                                                       std::string* errorMessage) {
+  if (jsonPath.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "import requires non-empty json path";
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  return core::MeasurementExporter::ImportJson(jsonPath, out, errorMessage);
+}
+
 std::size_t VnaControlService::InstanceCount() const {
   return runtime_.InstanceCount();
 }

@@ -1527,6 +1527,38 @@ WU-MAINLINE-050: JSON 导入（导入回放基础能力）
   - `vna/build/easy_measurement_exporter_test.exe` 通过（含 JSON round-trip 断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.33 已完成 Work Unit
+
+WU-MAINLINE-051: Service 层导入入口接线
+
+- Objective: 在业务服务层暴露 JSON 导入能力，统一导入调用与错误语义。
+- Scope (in/out):
+  - in: `VnaControlService` 新增 `ImportAcquisitionResult` 并接入 core importer；补充服务层回归测试。
+  - out: gRPC 导入 RPC、导入结果缓存与回放调度。
+- Files to change:
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚 service 导入方法与相关测试，保留 core 层导入能力。
+- Risks: 目前导入入口仅支持 JSON 文件路径，后续扩展到其他格式时需补统一策略。
+- Acceptance criteria:
+  - service 可通过 JSON 路径导入 `AcquisitionResult`。
+  - 导入成功与空路径失败场景均有可验证断言。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含 service 导入 round-trip 与错误路径断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
