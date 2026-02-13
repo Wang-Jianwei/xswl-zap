@@ -732,6 +732,49 @@ WU-MAINLINE-019: 报告增加执行参数快照
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v12.json'` 通过
   - 报告包含 `failureSummary.*Rate` 与 `executionOptions.*` 字段
 
+### 8.16 已完成 Work Unit（批量）
+
+WU-MAINLINE-020: 报告增加 endpoint 快照
+
+- Objective: 记录本次 smoke 连接端点，便于跨环境排障。
+- Scope (in/out):
+  - in: `executionOptions.endpoint` 字段。
+  - out: 动态 endpoint 发现机制。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增 endpoint 字段。
+- Risks: 若后续支持多 endpoint，需要扩展字段结构。
+- Acceptance criteria:
+  - 报告包含 `executionOptions.endpoint`。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-021: 报告增加 config 哈希快照
+
+- Objective: 为配置可追溯性提供稳定指纹，便于复现。
+- Scope (in/out):
+  - in: `executionOptions.configPath/configHashSha256` 字段。
+  - out: 配置差异比对工具。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增配置快照字段。
+- Risks: 哈希仅反映原始配置内容，不反映运行期临时改写。
+- Acceptance criteria:
+  - 报告包含 `executionOptions.configPath` 与 `executionOptions.configHashSha256`。
+  - `reportVersion` 更新为 `1.2`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v13.json'` 通过
+  - 报告包含 `reportVersion=1.2`、`executionOptions.endpoint`、`executionOptions.configHashSha256`
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

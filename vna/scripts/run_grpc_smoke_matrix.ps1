@@ -14,6 +14,7 @@ $configPath = Join-Path $projectRoot "config\service.yaml"
 $serverExe = Join-Path $projectRoot "build-grpc\easy_grpc_server.exe"
 $unarySmokeExe = Join-Path $projectRoot "build-grpc\easy_grpc_client_smoke.exe"
 $streamSmokeExe = Join-Path $projectRoot "build-grpc\easy_grpc_stream_smoke.exe"
+$smokeEndpoint = "127.0.0.1:50051"
 
 $cases = @(
   @{ Name = "no-throttle"; Every = 1; Ms = 0; Frames = 5 },
@@ -53,6 +54,22 @@ function Resolve-ReportPath {
   $resolved = $resolved.Replace("{timestampLocal}", $localNow.ToString("yyyyMMdd-HHmmss"))
 
   return $resolved
+}
+
+function Get-StringSha256 {
+  param(
+    [string]$Text
+  )
+
+  $sha256 = [System.Security.Cryptography.SHA256]::Create()
+  try {
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+    $hashBytes = $sha256.ComputeHash($bytes)
+    return ([System.BitConverter]::ToString($hashBytes) -replace "-", "").ToLowerInvariant()
+  }
+  finally {
+    $sha256.Dispose()
+  }
 }
 
 function Invoke-SmokeCommand {
@@ -198,6 +215,7 @@ if (-not (Test-Path $serverExe) -or -not (Test-Path $unarySmokeExe) -or -not (Te
 }
 
 $originalConfig = Get-Content -Path $configPath -Raw
+$configHashSha256 = Get-StringSha256 -Text $originalConfig
 $hasFailure = $false
 $matrixResults = @()
 $matrixStartedAt = Get-Date
@@ -228,13 +246,13 @@ try {
 
       $unaryResult = Invoke-SmokeCommand `
         -Executable $unarySmokeExe `
-        -Arguments @("127.0.0.1:50051") `
+        -Arguments @($smokeEndpoint) `
         -TimeoutSec $SmokeTimeoutSec `
         -ExpectedSuccessPattern "grpc smoke client success" | Select-Object -Last 1
 
       $streamResult = Invoke-SmokeCommand `
         -Executable $streamSmokeExe `
-        -Arguments @("127.0.0.1:50051", ([string]$case.Frames)) `
+        -Arguments @($smokeEndpoint, ([string]$case.Frames)) `
         -TimeoutSec $SmokeTimeoutSec `
         -ExpectedSuccessPattern "grpc stream smoke success" | Select-Object -Last 1
 
@@ -314,12 +332,15 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     skipBuild = [bool]$SkipBuild
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
+    endpoint = $smokeEndpoint
+    configPath = $configPath
+    configHashSha256 = $configHashSha256
     reportJsonPathTemplate = $ReportJsonPath
     reportJsonPathResolved = $resolvedReportPath
   }
 
   $report = [PSCustomObject]@{
-    reportVersion = "1.1"
+    reportVersion = "1.2"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     strictMode = [bool]$FailOnUnknownStderr
