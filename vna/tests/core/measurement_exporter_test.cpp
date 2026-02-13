@@ -78,6 +78,19 @@ int main() {
   assert(jsonText.find("\"receiver_compensated_points\"") != std::string::npos);
   assert(jsonText.find("\"s_parameter_points\"") != std::string::npos);
 
+    vna::core::AcquisitionResult imported;
+    std::string importError;
+    assert(vna::core::MeasurementExporter::ImportJson(jsonPath, imported, &importError) ==
+      vna::core::Status::kOk);
+    assert(importError.empty());
+    assert(imported.instanceId == result.instanceId);
+    assert(imported.timestampNs == result.timestampNs);
+    assert(imported.receiverRaw.points.size() == result.receiverRaw.points.size());
+    assert(imported.receiverCompensated.points.size() == result.receiverCompensated.points.size());
+    assert(imported.sParameters.points.size() == result.sParameters.points.size());
+    assert(!imported.sParameters.points.empty());
+    assert(imported.sParameters.points[0].portCount == result.sParameters.points[0].portCount);
+
   std::ifstream nestedCsvFile(nestedCsvPath.c_str());
   std::ifstream nestedTouchstoneFile(nestedTouchstonePath.c_str());
   std::ifstream nestedJsonFile(nestedJsonPath.c_str());

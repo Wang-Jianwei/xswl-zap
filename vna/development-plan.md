@@ -1495,6 +1495,38 @@ WU-MAINLINE-049: JSON 导出能力与 Acquire 一体化触发
   - `vna/build/easy_vna_control_service_test.exe` 通过（含服务侧 JSON 导出断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.32 已完成 Work Unit
+
+WU-MAINLINE-050: JSON 导入（导入回放基础能力）
+
+- Objective: 为已导出的 JSON 测量结果提供回读能力，建立导入回放的 core 层基础。
+- Scope (in/out):
+  - in: `MeasurementExporter` 新增 `ImportJson`，支持回读 receiver raw/compensated 与 s-parameter 点集；补充 round-trip 单测。
+  - out: gRPC 导入接口、UI 回放流程、MAT 导入。
+- Files to change:
+  - `vna/include/core/measurement_exporter.h`
+  - `vna/src/core/measurement_exporter.cpp`
+  - `vna/tests/core/measurement_exporter_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test`
+  - `vna/build/easy_measurement_exporter_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚 `ImportJson` 与新增单测，保持仅导出能力。
+- Risks: 当前解析器按项目导出 JSON 结构实现，若外部 JSON 结构差异较大将返回解析错误。
+- Acceptance criteria:
+  - 导出的 JSON 可成功回读为 `AcquisitionResult`。
+  - round-trip 测试覆盖实例标识、时间戳与主要点集数量。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test` 通过
+  - `vna/build/easy_measurement_exporter_test.exe` 通过（含 JSON round-trip 断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

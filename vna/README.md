@@ -98,6 +98,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU49 进展）：已新增 JSON 导出能力（包含 receiver raw/compensated 与 s-parameter 点集），并支持通过 `AcquireRequest.export_json_path` 一体化触发导出。
 
+补充（WU50 进展）：已新增 `MeasurementExporter::ImportJson`，可将 JSON 导出结果回读为 `AcquisitionResult`（导入回放基础能力，当前为 core 层 MVP）。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

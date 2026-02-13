@@ -16,6 +16,9 @@ class MeasurementExporter {
     static Status ExportJson(const AcquisitionResult& result,
                                                      const std::string& outputPath,
                                                      std::string* errorMessage = nullptr);
+    static Status ImportJson(const std::string& inputPath,
+                                                     AcquisitionResult& out,
+                                                     std::string* errorMessage = nullptr);
   static Status ExportTouchstone(const AcquisitionResult& result,
                                  const std::string& outputPath,
                                  std::string* errorMessage = nullptr);

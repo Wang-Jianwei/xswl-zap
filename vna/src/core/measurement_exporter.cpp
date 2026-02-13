@@ -1,8 +1,10 @@
 #include "core/measurement_exporter.h"
 
 #include <cerrno>
+#include <cctype>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -65,6 +67,434 @@ std::string EscapeJsonString(const std::string& value) {
     }
   }
   return escaped;
+}
+
+void SkipWhitespace(const std::string& text, std::size_t& index) {
+  while (index < text.size() && std::isspace(static_cast<unsigned char>(text[index])) != 0) {
+    ++index;
+  }
+}
+
+bool ConsumeChar(const std::string& text, std::size_t& index, char expected) {
+  SkipWhitespace(text, index);
+  if (index >= text.size() || text[index] != expected) {
+    return false;
+  }
+  ++index;
+  return true;
+}
+
+bool ParseJsonString(const std::string& text, std::size_t& index, std::string& out) {
+  SkipWhitespace(text, index);
+  if (index >= text.size() || text[index] != '"') {
+    return false;
+  }
+
+  ++index;
+  std::string value;
+  while (index < text.size()) {
+    const char c = text[index++];
+    if (c == '"') {
+      out = value;
+      return true;
+    }
+    if (c != '\\') {
+      value += c;
+      continue;
+    }
+
+    if (index >= text.size()) {
+      return false;
+    }
+    const char escaped = text[index++];
+    switch (escaped) {
+      case '"':
+        value += '"';
+        break;
+      case '\\':
+        value += '\\';
+        break;
+      case '/':
+        value += '/';
+        break;
+      case 'b':
+        value += '\b';
+        break;
+      case 'f':
+        value += '\f';
+        break;
+      case 'n':
+        value += '\n';
+        break;
+      case 'r':
+        value += '\r';
+        break;
+      case 't':
+        value += '\t';
+        break;
+      default:
+        return false;
+    }
+  }
+
+  return false;
+}
+
+bool ParseJsonNumber(const std::string& text, std::size_t& index, double& out) {
+  SkipWhitespace(text, index);
+  if (index >= text.size()) {
+    return false;
+  }
+
+  std::size_t end = index;
+  if (text[end] == '+' || text[end] == '-') {
+    ++end;
+  }
+  bool hasDigits = false;
+  while (end < text.size() && std::isdigit(static_cast<unsigned char>(text[end])) != 0) {
+    hasDigits = true;
+    ++end;
+  }
+  if (end < text.size() && text[end] == '.') {
+    ++end;
+    while (end < text.size() && std::isdigit(static_cast<unsigned char>(text[end])) != 0) {
+      hasDigits = true;
+      ++end;
+    }
+  }
+  if (!hasDigits) {
+    return false;
+  }
+  if (end < text.size() && (text[end] == 'e' || text[end] == 'E')) {
+    ++end;
+    if (end < text.size() && (text[end] == '+' || text[end] == '-')) {
+      ++end;
+    }
+    bool expDigits = false;
+    while (end < text.size() && std::isdigit(static_cast<unsigned char>(text[end])) != 0) {
+      expDigits = true;
+      ++end;
+    }
+    if (!expDigits) {
+      return false;
+    }
+  }
+
+  out = std::strtod(text.substr(index, end - index).c_str(), nullptr);
+  index = end;
+  return true;
+}
+
+bool ParseJsonUInt64(const std::string& text, std::size_t& index, std::uint64_t& out) {
+  double parsed = 0.0;
+  if (!ParseJsonNumber(text, index, parsed) || parsed < 0.0) {
+    return false;
+  }
+  out = static_cast<std::uint64_t>(parsed);
+  return true;
+}
+
+bool ParseJsonUInt32(const std::string& text, std::size_t& index, std::uint32_t& out) {
+  double parsed = 0.0;
+  if (!ParseJsonNumber(text, index, parsed) || parsed < 0.0) {
+    return false;
+  }
+  out = static_cast<std::uint32_t>(parsed);
+  return true;
+}
+
+bool ParseJsonBool(const std::string& text, std::size_t& index, bool& out) {
+  SkipWhitespace(text, index);
+  if (text.compare(index, 4, "true") == 0) {
+    out = true;
+    index += 4;
+    return true;
+  }
+  if (text.compare(index, 5, "false") == 0) {
+    out = false;
+    index += 5;
+    return true;
+  }
+  return false;
+}
+
+bool ParseKeyValueSeparator(const std::string& text, std::size_t& index) {
+  return ConsumeChar(text, index, ':');
+}
+
+bool ParseReceiverChannels(const std::string& text,
+                           std::size_t& index,
+                           std::vector<ReceiverChannelSample>& channels) {
+  if (!ConsumeChar(text, index, '[')) {
+    return false;
+  }
+
+  SkipWhitespace(text, index);
+  if (ConsumeChar(text, index, ']')) {
+    return true;
+  }
+
+  while (true) {
+    if (!ConsumeChar(text, index, '{')) {
+      return false;
+    }
+
+    ReceiverChannelSample sample;
+    bool hasChannelId = false;
+    bool hasReal = false;
+    bool hasImag = false;
+    bool hasClipped = false;
+    double real = 0.0;
+    double imag = 0.0;
+
+    while (true) {
+      std::string key;
+      if (!ParseJsonString(text, index, key) || !ParseKeyValueSeparator(text, index)) {
+        return false;
+      }
+
+      if (key == "channel_id") {
+        hasChannelId = ParseJsonString(text, index, sample.channelId);
+      } else if (key == "real") {
+        hasReal = ParseJsonNumber(text, index, real);
+      } else if (key == "imag") {
+        hasImag = ParseJsonNumber(text, index, imag);
+      } else if (key == "clipped") {
+        hasClipped = ParseJsonBool(text, index, sample.clipped);
+      } else {
+        return false;
+      }
+
+      SkipWhitespace(text, index);
+      if (ConsumeChar(text, index, '}')) {
+        break;
+      }
+      if (!ConsumeChar(text, index, ',')) {
+        return false;
+      }
+    }
+
+    if (!hasChannelId || !hasReal || !hasImag || !hasClipped) {
+      return false;
+    }
+    sample.iq = std::complex<double>(real, imag);
+    channels.push_back(sample);
+
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, ']')) {
+      return true;
+    }
+    if (!ConsumeChar(text, index, ',')) {
+      return false;
+    }
+  }
+}
+
+bool ParseReceiverPoints(const std::string& text,
+                        std::size_t& index,
+                        ReceiverData& receiverData) {
+  if (!ConsumeChar(text, index, '[')) {
+    return false;
+  }
+
+  SkipWhitespace(text, index);
+  if (ConsumeChar(text, index, ']')) {
+    return true;
+  }
+
+  while (true) {
+    if (!ConsumeChar(text, index, '{')) {
+      return false;
+    }
+
+    ReceiverFrequencyPoint point;
+    bool hasFrequency = false;
+    bool hasTimestamp = false;
+    bool hasChannels = false;
+
+    while (true) {
+      std::string key;
+      if (!ParseJsonString(text, index, key) || !ParseKeyValueSeparator(text, index)) {
+        return false;
+      }
+
+      if (key == "frequency_hz") {
+        hasFrequency = ParseJsonNumber(text, index, point.frequencyHz);
+      } else if (key == "timestamp_ns") {
+        hasTimestamp = ParseJsonUInt64(text, index, point.timestampNs);
+      } else if (key == "channels") {
+        hasChannels = ParseReceiverChannels(text, index, point.channels);
+      } else {
+        return false;
+      }
+
+      SkipWhitespace(text, index);
+      if (ConsumeChar(text, index, '}')) {
+        break;
+      }
+      if (!ConsumeChar(text, index, ',')) {
+        return false;
+      }
+    }
+
+    if (!hasFrequency || !hasTimestamp || !hasChannels) {
+      return false;
+    }
+    receiverData.points.push_back(point);
+
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, ']')) {
+      return true;
+    }
+    if (!ConsumeChar(text, index, ',')) {
+      return false;
+    }
+  }
+}
+
+bool ParseSParameterEntries(const std::string& text,
+                            std::size_t& index,
+                            SParameterFrequencyPoint& point) {
+  if (!ConsumeChar(text, index, '[')) {
+    return false;
+  }
+
+  SkipWhitespace(text, index);
+  if (ConsumeChar(text, index, ']')) {
+    return true;
+  }
+
+  while (true) {
+    if (!ConsumeChar(text, index, '{')) {
+      return false;
+    }
+
+    std::uint32_t rowPort = 0;
+    std::uint32_t colPort = 0;
+    double real = 0.0;
+    double imag = 0.0;
+    bool hasRow = false;
+    bool hasCol = false;
+    bool hasReal = false;
+    bool hasImag = false;
+
+    while (true) {
+      std::string key;
+      if (!ParseJsonString(text, index, key) || !ParseKeyValueSeparator(text, index)) {
+        return false;
+      }
+
+      if (key == "row_port") {
+        hasRow = ParseJsonUInt32(text, index, rowPort);
+      } else if (key == "col_port") {
+        hasCol = ParseJsonUInt32(text, index, colPort);
+      } else if (key == "real") {
+        hasReal = ParseJsonNumber(text, index, real);
+      } else if (key == "imag") {
+        hasImag = ParseJsonNumber(text, index, imag);
+      } else {
+        return false;
+      }
+
+      SkipWhitespace(text, index);
+      if (ConsumeChar(text, index, '}')) {
+        break;
+      }
+      if (!ConsumeChar(text, index, ',')) {
+        return false;
+      }
+    }
+
+    if (!hasRow || !hasCol || !hasReal || !hasImag || rowPort == 0 || colPort == 0 ||
+        rowPort > point.portCount || colPort > point.portCount) {
+      return false;
+    }
+
+    const std::size_t n = static_cast<std::size_t>(point.portCount);
+    const std::size_t matrixIndex = static_cast<std::size_t>(rowPort - 1) * n +
+                                    static_cast<std::size_t>(colPort - 1);
+    if (matrixIndex >= point.matrix.size()) {
+      return false;
+    }
+    point.matrix[matrixIndex] = std::complex<double>(real, imag);
+
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, ']')) {
+      return true;
+    }
+    if (!ConsumeChar(text, index, ',')) {
+      return false;
+    }
+  }
+}
+
+bool ParseSParameterPoints(const std::string& text,
+                           std::size_t& index,
+                           SParameterData& sParameterData) {
+  if (!ConsumeChar(text, index, '[')) {
+    return false;
+  }
+
+  SkipWhitespace(text, index);
+  if (ConsumeChar(text, index, ']')) {
+    return true;
+  }
+
+  while (true) {
+    if (!ConsumeChar(text, index, '{')) {
+      return false;
+    }
+
+    SParameterFrequencyPoint point;
+    bool hasFrequency = false;
+    bool hasPortCount = false;
+    bool hasPoints = false;
+
+    while (true) {
+      std::string key;
+      if (!ParseJsonString(text, index, key) || !ParseKeyValueSeparator(text, index)) {
+        return false;
+      }
+
+      if (key == "frequency_hz") {
+        hasFrequency = ParseJsonNumber(text, index, point.frequencyHz);
+      } else if (key == "port_count") {
+        hasPortCount = ParseJsonUInt32(text, index, point.portCount);
+        if (hasPortCount && point.portCount > 0) {
+          const std::size_t n = static_cast<std::size_t>(point.portCount);
+          point.matrix.assign(n * n, std::complex<double>(0.0, 0.0));
+        }
+      } else if (key == "points") {
+        if (point.portCount == 0) {
+          return false;
+        }
+        hasPoints = ParseSParameterEntries(text, index, point);
+      } else {
+        return false;
+      }
+
+      SkipWhitespace(text, index);
+      if (ConsumeChar(text, index, '}')) {
+        break;
+      }
+      if (!ConsumeChar(text, index, ',')) {
+        return false;
+      }
+    }
+
+    if (!hasFrequency || !hasPortCount || !hasPoints) {
+      return false;
+    }
+    sParameterData.points.push_back(point);
+
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, ']')) {
+      return true;
+    }
+    if (!ConsumeChar(text, index, ',')) {
+      return false;
+    }
+  }
 }
 
 std::string GetParentPath(const std::string& path) {
@@ -361,6 +791,112 @@ Status MeasurementExporter::ExportJson(const AcquisitionResult& result,
     return Status::kInternalError;
   }
 
+  if (errorMessage != nullptr) {
+    errorMessage->clear();
+  }
+  return Status::kOk;
+}
+
+Status MeasurementExporter::ImportJson(const std::string& inputPath,
+                                       AcquisitionResult& out,
+                                       std::string* errorMessage) {
+  if (inputPath.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "json import path is empty";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  std::ifstream in(inputPath.c_str(), std::ios::in);
+  if (!in.is_open()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to open json input path: " + inputPath;
+    }
+    return Status::kInvalidArgument;
+  }
+
+  std::stringstream buffer;
+  buffer << in.rdbuf();
+  const std::string text = buffer.str();
+  std::size_t index = 0;
+
+  if (!ConsumeChar(text, index, '{')) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "invalid json content";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  AcquisitionResult parsed;
+  parsed.dataType = AcquisitionDataType::kFrequencyDomain;
+  bool hasInstanceId = false;
+  bool hasTimestamp = false;
+  bool hasReceiverRaw = false;
+  bool hasReceiverCompensated = false;
+  bool hasSParameters = false;
+
+  while (true) {
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, '}')) {
+      break;
+    }
+
+    std::string key;
+    if (!ParseJsonString(text, index, key) || !ParseKeyValueSeparator(text, index)) {
+      if (errorMessage != nullptr) {
+        *errorMessage = "invalid json object key/value";
+      }
+      return Status::kInvalidArgument;
+    }
+
+    if (key == "instance_id") {
+      hasInstanceId = ParseJsonString(text, index, parsed.instanceId);
+    } else if (key == "timestamp_ns") {
+      hasTimestamp = ParseJsonUInt64(text, index, parsed.timestampNs);
+    } else if (key == "receiver_raw_points") {
+      hasReceiverRaw = ParseReceiverPoints(text, index, parsed.receiverRaw);
+    } else if (key == "receiver_compensated_points") {
+      hasReceiverCompensated = ParseReceiverPoints(text, index, parsed.receiverCompensated);
+    } else if (key == "s_parameter_points") {
+      hasSParameters = ParseSParameterPoints(text, index, parsed.sParameters);
+    } else {
+      if (errorMessage != nullptr) {
+        *errorMessage = "unknown json field: " + key;
+      }
+      return Status::kInvalidArgument;
+    }
+
+    if ((!hasInstanceId && key == "instance_id") || (!hasTimestamp && key == "timestamp_ns") ||
+        (!hasReceiverRaw && key == "receiver_raw_points") ||
+        (!hasReceiverCompensated && key == "receiver_compensated_points") ||
+        (!hasSParameters && key == "s_parameter_points")) {
+      if (errorMessage != nullptr) {
+        *errorMessage = "invalid json field value: " + key;
+      }
+      return Status::kInvalidArgument;
+    }
+
+    SkipWhitespace(text, index);
+    if (ConsumeChar(text, index, '}')) {
+      break;
+    }
+    if (!ConsumeChar(text, index, ',')) {
+      if (errorMessage != nullptr) {
+        *errorMessage = "invalid json object separator";
+      }
+      return Status::kInvalidArgument;
+    }
+  }
+
+  if (!hasInstanceId || !hasTimestamp || !hasReceiverRaw || !hasReceiverCompensated ||
+      !hasSParameters) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "json import missing required fields";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  out = parsed;
   if (errorMessage != nullptr) {
     errorMessage->clear();
   }
