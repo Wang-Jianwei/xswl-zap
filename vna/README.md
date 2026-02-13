@@ -120,6 +120,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU60 进展）：插件频域接收机曲线新增 `channel index` 选择能力（适用于 `receiverRaw` / `receiverCompensated` / `all`），可按通道查看原始/补偿波形，提升多通道调试效率。
 
+补充（WU61 进展）：插件在 `all` 模式新增曲线显隐选择，可按需勾选 `frame/receiverRaw/receiverCompensated/s11`，减少同屏噪声并聚焦目标数据。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

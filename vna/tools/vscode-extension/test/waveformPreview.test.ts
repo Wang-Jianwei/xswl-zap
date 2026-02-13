@@ -62,6 +62,15 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert.equal(allTraceData.traceSource, "all");
   assert(buildWaveformPreviewHtml(allTraceData).includes("legend="));
 
+  const filteredAllData = buildWaveformPreviewData(frequencyPayload, "all", 0, ["frame", "s11"]);
+  assert.equal(filteredAllData.traces.length, 2);
+  assert.equal(filteredAllData.traces[0].id, "frame");
+  assert.equal(filteredAllData.traces[1].id, "s11");
+  assert.equal(filteredAllData.visibleTraceIds.join(","), "frame,s11");
+  const filteredHtml = buildWaveformPreviewHtml(filteredAllData);
+  assert(filteredHtml.includes("visible=frame,s11"));
+  assert(filteredHtml.includes("legend=frame:#4ec9b0 | s-parameter s11:#c586c0"));
+
   const s11Data = buildWaveformPreviewData(frequencyPayload, "sParameterS11");
   assert.equal(s11Data.traces.length, 1);
   assert.equal(s11Data.traces[0].id, "s11");

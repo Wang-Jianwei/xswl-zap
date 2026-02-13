@@ -109,6 +109,7 @@ flowchart LR
 - 性能保护：图形点数上限与刷新节流，避免插件端渲染卡顿。
 - 频域 trace source 可选：`frame` / `receiver raw` / `receiver compensated` / `s11` / `all` 叠加。
 - 接收机相关 trace 支持 `channel index` 选择（`receiver raw` / `receiver compensated` / `all`）。
+- `all` 模式支持可见曲线勾选（trace 显隐控制）。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---

@@ -306,6 +306,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const waveformMode = modeSelection.label as "frequency" | "time";
     let traceSource: WaveformTraceSource = "frame";
     let channelIndex = 0;
+    let visibleTraceIds: string[] = [];
     if (waveformMode === "frequency") {
       const traceSelection = await vscode.window.showQuickPick(
         [
@@ -346,6 +347,26 @@ export function activate(context: vscode.ExtensionContext): void {
           return;
         }
         channelIndex = Number(channelInput);
+      }
+
+      if (traceSource === "all") {
+        const visibilitySelection = await vscode.window.showQuickPick(
+          [
+            { label: "frame", picked: true },
+            { label: "receiverRaw", picked: true },
+            { label: "receiverCompensated", picked: true },
+            { label: "s11", picked: true },
+          ],
+          {
+            title: "Visible traces (all mode)",
+            ignoreFocusOut: true,
+            canPickMany: true,
+          },
+        );
+        if (!visibilitySelection || visibilitySelection.length === 0) {
+          return;
+        }
+        visibleTraceIds = visibilitySelection.map((item) => item.label);
       }
     }
     const previewTypeSelection = await vscode.window.showQuickPick(
@@ -401,11 +422,12 @@ export function activate(context: vscode.ExtensionContext): void {
           waveformMode,
           traceSource,
           channelIndex,
+          visibleTraceIds,
         );
         panel.webview.html = buildWaveformPreviewHtml(waveform);
 
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, traces=${waveform.traces.length}, points=${waveform.points.length}`,
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, visible=${visibleTraceIds.join(",") || "all"}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, traces=${waveform.traces.length}, points=${waveform.points.length}`,
           `markers=${waveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
         ]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);
@@ -431,6 +453,7 @@ export function activate(context: vscode.ExtensionContext): void {
               waveformMode,
               traceSource,
               channelIndex,
+              visibleTraceIds,
               liveMaxFrames,
               (waveform, frameCount) => {
                 if (frameCount === 1 || frameCount % 3 === 0 || frameCount === liveMaxFrames) {
@@ -444,7 +467,7 @@ export function activate(context: vscode.ExtensionContext): void {
         );
 
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, visible=${visibleTraceIds.join(",") || "all"}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
           `markers=${finalWaveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
         ]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);

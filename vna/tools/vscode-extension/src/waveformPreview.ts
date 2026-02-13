@@ -125,7 +125,7 @@ function buildReceiverTrace(
   if (points.length === 0) {
     return null;
   }
-  return makeTrace(`${id}Ch${channelIndex}`, `${label} ch${channelIndex}`, color, points);
+  return makeTrace(id, `${label} ch${channelIndex}`, color, points);
 }
 
 function buildS11Trace(response: Record<string, unknown>): WaveformTrace | null {
@@ -168,6 +168,7 @@ export function buildWaveformPreviewData(
   response: Record<string, unknown>,
   traceSource: WaveformTraceSource = "frame",
   channelIndex = 0,
+  visibleTraceIds: string[] = [],
 ): WaveformPreviewData {
   const frequencyFrame = response.frequencyFrame as Record<string, unknown> | undefined;
   const timeFrame = response.timeFrame as Record<string, unknown> | undefined;
@@ -195,15 +196,25 @@ export function buildWaveformPreviewData(
 
     let traces: WaveformTrace[] = [];
     if (traceSource === "all") {
-      traces = [frameTrace, receiverRawTrace, receiverCompTrace, s11Trace].filter(
+      const allTraces = [frameTrace, receiverRawTrace, receiverCompTrace, s11Trace].filter(
         (trace): trace is WaveformTrace => trace !== null,
       );
+      const selected = new Set(visibleTraceIds);
+      traces =
+        selected.size === 0
+          ? allTraces
+          : allTraces.filter((trace) => selected.has(trace.id));
+      if (traces.length === 0) {
+        traces = allTraces;
+      }
     } else {
       const selected = sourceMap[traceSource] ?? frameTrace;
       traces = selected ? [selected] : [frameTrace];
     }
 
     const primary = traces[0] ?? frameTrace;
+    const normalizedVisibleTraceIds =
+      traceSource === "all" ? traces.map((trace) => trace.id) : [primary.id];
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
@@ -212,6 +223,7 @@ export function buildWaveformPreviewData(
       yLabel: "magnitude",
       traceSource,
       channelIndex,
+      visibleTraceIds: normalizedVisibleTraceIds,
       traces,
       points: primary.points,
       markers: primary.markers,
@@ -228,6 +240,7 @@ export function buildWaveformPreviewData(
       yLabel: "magnitude",
       traceSource: "frame",
       channelIndex,
+      visibleTraceIds: [trace.id],
       traces: [trace],
       points: trace.points,
       markers: trace.markers,
@@ -242,6 +255,7 @@ export function buildWaveformPreviewData(
     yLabel: "y",
     traceSource,
     channelIndex,
+    visibleTraceIds: [],
     traces: [],
     points: [],
     markers: [],
@@ -366,7 +380,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   </style>
 </head>
 <body>
-  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
+  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | visible=${data.visibleTraceIds.join(",") || "all"} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="marker">markers=${markerText || "none"}</div>

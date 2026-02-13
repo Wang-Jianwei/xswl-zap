@@ -1888,6 +1888,39 @@ WU-MAINLINE-060: 插件频域接收机通道选择（channel index）
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.43 已完成 Work Unit
+
+WU-MAINLINE-061: 插件 `all` 模式曲线显隐控制
+
+- Objective: 提升 VS Code 插件端多曲线可读性，在 `all` 叠加模式下支持按曲线开关可见性。
+- Scope (in/out):
+  - in: `Preview Waveform` 在 `trace source=all` 时增加可见曲线勾选；渲染层按选中集合过滤 trace；测试与文档更新。
+  - out: 图内交互式图例点击开关、每实例显隐配置持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto，仅插件侧交互和渲染过滤逻辑）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 `all` 模式显隐选择与 trace 过滤逻辑，恢复默认全量叠加。
+- Risks: 可见集合配置不当可能误以为数据缺失（通过 meta/legend 显示当前可见列表）。
+- Acceptance criteria:
+  - `all` 模式可勾选要显示的曲线。
+  - 预览图与图例仅展示选中曲线。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

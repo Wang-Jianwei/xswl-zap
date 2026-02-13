@@ -186,6 +186,7 @@ export class ServiceClient {
     mode: WaveformMode,
     traceSource: WaveformTraceSource,
     channelIndex: number,
+    visibleTraceIds: string[],
   ): Promise<WaveformPreviewData> {
     const deadline = new Date(Date.now() + this.deadlineMs);
     return new Promise<WaveformPreviewData>((resolve, reject) => {
@@ -232,7 +233,7 @@ export class ServiceClient {
             return;
           }
 
-          resolve(buildWaveformPreviewData(response, traceSource, channelIndex));
+          resolve(buildWaveformPreviewData(response, traceSource, channelIndex, visibleTraceIds));
         },
       );
     });
@@ -244,6 +245,7 @@ export class ServiceClient {
     mode: WaveformMode,
     traceSource: WaveformTraceSource,
     channelIndex: number,
+    visibleTraceIds: string[],
     maxFrames: number,
     onFrame?: (data: WaveformPreviewData, frameCount: number) => void,
     abortSignal?: AbortSignal,
@@ -299,6 +301,7 @@ export class ServiceClient {
         yLabel: "y",
         traceSource,
         channelIndex,
+        visibleTraceIds,
         traces: [],
         points: [],
         markers: [],
@@ -314,7 +317,7 @@ export class ServiceClient {
 
       call.on("data", (response) => {
         frameCount += 1;
-        latest = buildWaveformPreviewData(response, traceSource, channelIndex);
+        latest = buildWaveformPreviewData(response, traceSource, channelIndex, visibleTraceIds);
         onFrame?.(latest, frameCount);
         if (frameCount >= maxFrames) {
           call.cancel();
