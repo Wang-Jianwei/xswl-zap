@@ -2327,6 +2327,87 @@ WU-MAINLINE-075: 复制文本附带时间戳
 - Validation result (WU073~075 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.58 已完成 Work Unit
+
+WU-MAINLINE-076: 复制状态附带本地时间戳
+
+- Objective: 增强状态消息可追踪性，便于区分连续多次复制结果。
+- Scope (in/out):
+  - in: 成功/失败状态文案追加本地时间戳。
+  - out: 可配置时间格式。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚时间戳附加逻辑。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 状态文案包含本地时间信息。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.59 已完成 Work Unit
+
+WU-MAINLINE-077: `Esc` 快速清除复制状态
+
+- Objective: 提供快速收敛噪声提示的键盘交互能力。
+- Scope (in/out):
+  - in: 按 `Esc` 立即清除页面状态条。
+  - out: 通用热键配置系统。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 `Esc` 清理监听逻辑。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - `Esc` 可即时清除状态条。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.60 已完成 Work Unit
+
+WU-MAINLINE-078: 复制按钮字符数 tooltip
+
+- Objective: 让用户复制前可预估文本长度。
+- Scope (in/out):
+  - in: tooltip 显示复制内容字符数。
+  - out: 内容分级预警。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚字符数 tooltip 拼接逻辑。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - tooltip 展示字符数。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result (WU076~078 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

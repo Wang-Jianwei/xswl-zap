@@ -22,6 +22,8 @@
   - 支持快捷键 `Ctrl+C` / `Cmd+C` 触发主曲线 marker 复制（无输入焦点时）
   - 复制文本包含 `timestampNs`，并在按钮旁显示快捷键提示
   - 无可复制主曲线时按钮置灰并给出原因提示
+  - 复制状态文案附带本地时间戳，按 `Esc` 可立即清除状态提示
+  - 复制按钮 tooltip 显示字符数（便于预估粘贴体积）
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

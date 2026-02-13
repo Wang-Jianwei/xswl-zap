@@ -441,6 +441,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
         .join("; ")}`
     : "";
+  const copyTitle = primaryMarkerCopyText
+    ? `Copy primary marker to clipboard (${primaryMarkerCopyText.length} chars)`
+    : "No primary marker available";
   const markerEntries = data.traces
     .map((trace) => {
       const text = trace.markers
@@ -554,7 +557,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="actions">
-    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${primaryMarkerCopyText ? "Copy primary marker to clipboard" : "No primary marker available"}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
+    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
     <span class="shortcut-hint">Ctrl/Cmd + C</span>
   </div>
   <div id="copyStatus" class="copy-status"></div>
@@ -576,23 +579,27 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const copyButton = document.getElementById("copyPrimaryMarker");
       const copyStatus = document.getElementById("copyStatus");
       let statusTimer = undefined;
-      const updateCopyStatus = (ok, message) => {
+      const clearCopyStatus = () => {
         if (!(copyStatus instanceof HTMLElement)) {
           return;
         }
         copyStatus.classList.remove("is-success", "is-error");
+        copyStatus.textContent = "";
+        copyStatus.style.display = "";
+      };
+      const updateCopyStatus = (ok, message) => {
+        if (!(copyStatus instanceof HTMLElement)) {
+          return;
+        }
+        const timeText = new Date().toLocaleTimeString();
+        copyStatus.classList.remove("is-success", "is-error");
         copyStatus.classList.add(ok ? "is-success" : "is-error");
-        copyStatus.textContent = message;
+        copyStatus.textContent = message + " (" + timeText + ")";
         if (statusTimer) {
           clearTimeout(statusTimer);
         }
         statusTimer = setTimeout(() => {
-          if (!(copyStatus instanceof HTMLElement)) {
-            return;
-          }
-          copyStatus.classList.remove("is-success", "is-error");
-          copyStatus.textContent = "";
-          copyStatus.style.display = "";
+          clearCopyStatus();
         }, 2000);
       };
 
@@ -643,6 +650,10 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       }
 
       document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          clearCopyStatus();
+          return;
+        }
         const isCopyHotkey = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c";
         if (!isCopyHotkey) {
           return;
