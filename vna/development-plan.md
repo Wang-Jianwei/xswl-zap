@@ -1855,6 +1855,39 @@ WU-MAINLINE-059: 插件频域波形多 trace 选择与叠加预览
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.42 已完成 Work Unit
+
+WU-MAINLINE-060: 插件频域接收机通道选择（channel index）
+
+- Objective: 提升 VS Code 插件端多通道可观测性，在频域下支持按接收机通道索引查看曲线。
+- Scope (in/out):
+  - in: `Preview Waveform` 在 `receiverRaw` / `receiverCompensated` / `all` 场景新增 `channel index` 输入；渲染按指定通道提取数据；测试与文档更新。
+  - out: 自动探测后端最大通道数、通道命名别名管理、跨会话记忆上次通道。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto；仅扩展插件端参数与映射）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 channel index 输入与通道映射逻辑，恢复首通道固定策略。
+- Risks: 用户输入超出实际通道范围时可能导致接收机 trace 为空（已通过输入校验与现有空数据兜底处理）。
+- Acceptance criteria:
+  - 频域 `receiverRaw` / `receiverCompensated` / `all` 支持输入 channel index。
+  - 接收机曲线按指定 channel 展示。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

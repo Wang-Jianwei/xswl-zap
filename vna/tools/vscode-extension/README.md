@@ -8,6 +8,7 @@
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
 - Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 会短时自动刷新）
   - 频域下支持 trace source 选择：`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`
+  - 选择 `receiverRaw` / `receiverCompensated` / `all` 时可输入 `channel index`（默认 0）
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

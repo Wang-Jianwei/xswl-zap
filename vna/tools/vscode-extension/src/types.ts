@@ -78,6 +78,7 @@ export interface WaveformPreviewData {
   xLabel: string;
   yLabel: string;
   traceSource: WaveformTraceSource;
+  channelIndex: number;
   traces: WaveformTrace[];
   points: WaveformPoint[];
   markers: WaveformMarker[];

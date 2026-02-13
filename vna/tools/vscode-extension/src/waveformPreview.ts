@@ -93,7 +93,14 @@ function makeTrace(id: string, label: string, color: string, points: WaveformPoi
   };
 }
 
-function buildReceiverTrace(response: Record<string, unknown>, key: string, id: string, label: string, color: string): WaveformTrace | null {
+function buildReceiverTrace(
+  response: Record<string, unknown>,
+  key: string,
+  id: string,
+  label: string,
+  color: string,
+  channelIndex: number,
+): WaveformTrace | null {
   const raw = response[key];
   if (!Array.isArray(raw)) {
     return null;
@@ -103,10 +110,10 @@ function buildReceiverTrace(response: Record<string, unknown>, key: string, id: 
   for (const entry of raw) {
     const row = entry as Record<string, unknown>;
     const channels = row.channels;
-    if (!Array.isArray(channels) || channels.length === 0) {
+    if (!Array.isArray(channels) || channels.length <= channelIndex) {
       continue;
     }
-    const channel = channels[0] as Record<string, unknown>;
+    const channel = channels[channelIndex] as Record<string, unknown>;
     const real = toNumber(channel.real);
     const imag = toNumber(channel.imag);
     points.push({
@@ -118,7 +125,7 @@ function buildReceiverTrace(response: Record<string, unknown>, key: string, id: 
   if (points.length === 0) {
     return null;
   }
-  return makeTrace(id, label, color, points);
+  return makeTrace(`${id}Ch${channelIndex}`, `${label} ch${channelIndex}`, color, points);
 }
 
 function buildS11Trace(response: Record<string, unknown>): WaveformTrace | null {
@@ -160,6 +167,7 @@ function buildS11Trace(response: Record<string, unknown>): WaveformTrace | null 
 export function buildWaveformPreviewData(
   response: Record<string, unknown>,
   traceSource: WaveformTraceSource = "frame",
+  channelIndex = 0,
 ): WaveformPreviewData {
   const frequencyFrame = response.frequencyFrame as Record<string, unknown> | undefined;
   const timeFrame = response.timeFrame as Record<string, unknown> | undefined;
@@ -167,13 +175,14 @@ export function buildWaveformPreviewData(
   if (frequencyFrame) {
     const frameTrace = makeTrace("frame", "frame", "#4ec9b0", buildFrequencyPoints(frequencyFrame));
     const receiverRawTrace =
-      buildReceiverTrace(response, "receiverRawPoints", "receiverRaw", "receiver raw", "#569cd6");
+      buildReceiverTrace(response, "receiverRawPoints", "receiverRaw", "receiver raw", "#569cd6", channelIndex);
     const receiverCompTrace = buildReceiverTrace(
       response,
       "receiverCompensatedPoints",
       "receiverCompensated",
       "receiver compensated",
       "#dcdcaa",
+      channelIndex,
     );
     const s11Trace = buildS11Trace(response);
 
@@ -202,6 +211,7 @@ export function buildWaveformPreviewData(
       xLabel: "frequency_hz",
       yLabel: "magnitude",
       traceSource,
+      channelIndex,
       traces,
       points: primary.points,
       markers: primary.markers,
@@ -217,6 +227,7 @@ export function buildWaveformPreviewData(
       xLabel: "time_ns",
       yLabel: "magnitude",
       traceSource: "frame",
+      channelIndex,
       traces: [trace],
       points: trace.points,
       markers: trace.markers,
@@ -230,6 +241,7 @@ export function buildWaveformPreviewData(
     xLabel: "x",
     yLabel: "y",
     traceSource,
+    channelIndex,
     traces: [],
     points: [],
     markers: [],
@@ -354,7 +366,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   </style>
 </head>
 <body>
-  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
+  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="marker">markers=${markerText || "none"}</div>

@@ -305,12 +305,13 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const waveformMode = modeSelection.label as "frequency" | "time";
     let traceSource: WaveformTraceSource = "frame";
+    let channelIndex = 0;
     if (waveformMode === "frequency") {
       const traceSelection = await vscode.window.showQuickPick(
         [
           { label: "frame", description: "频域帧主曲线" },
-          { label: "receiverRaw", description: "接收机原始通道（首通道）" },
-          { label: "receiverCompensated", description: "接收机补偿通道（首通道）" },
+          { label: "receiverRaw", description: "接收机原始通道（可选 channel）" },
+          { label: "receiverCompensated", description: "接收机补偿通道（可选 channel）" },
           { label: "sParameterS11", description: "S 参数 S11" },
           { label: "all", description: "叠加显示 frame/raw/comp/s11" },
         ],
@@ -323,6 +324,29 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
       traceSource = traceSelection.label as WaveformTraceSource;
+
+      if (
+        traceSource === "receiverRaw" ||
+        traceSource === "receiverCompensated" ||
+        traceSource === "all"
+      ) {
+        const channelInput = await vscode.window.showInputBox({
+          prompt: "Receiver channel index",
+          value: "0",
+          ignoreFocusOut: true,
+          validateInput: (value) => {
+            const parsed = Number(value);
+            if (!Number.isInteger(parsed) || parsed < 0 || parsed > 31) {
+              return "Channel index must be an integer between 0 and 31.";
+            }
+            return undefined;
+          },
+        });
+        if (!channelInput) {
+          return;
+        }
+        channelIndex = Number(channelInput);
+      }
     }
     const previewTypeSelection = await vscode.window.showQuickPick(
       [
@@ -371,11 +395,17 @@ export function activate(context: vscode.ExtensionContext): void {
       );
 
       if (previewTypeSelection.label === "snapshot") {
-        const waveform = await client.acquireWaveform(instanceIdInput, sampleCount, waveformMode, traceSource);
+        const waveform = await client.acquireWaveform(
+          instanceIdInput,
+          sampleCount,
+          waveformMode,
+          traceSource,
+          channelIndex,
+        );
         panel.webview.html = buildWaveformPreviewHtml(waveform);
 
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, traces=${waveform.traces.length}, points=${waveform.points.length}`,
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, traces=${waveform.traces.length}, points=${waveform.points.length}`,
           `markers=${waveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
         ]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);
@@ -400,6 +430,7 @@ export function activate(context: vscode.ExtensionContext): void {
               sampleCount,
               waveformMode,
               traceSource,
+              channelIndex,
               liveMaxFrames,
               (waveform, frameCount) => {
                 if (frameCount === 1 || frameCount % 3 === 0 || frameCount === liveMaxFrames) {
@@ -413,7 +444,7 @@ export function activate(context: vscode.ExtensionContext): void {
         );
 
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
           `markers=${finalWaveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
         ]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);

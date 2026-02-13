@@ -14,21 +14,21 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
     receiverRawPoints: [
       {
         frequencyHz: 1.0e9,
-        channels: [{ real: 1, imag: 0 }],
+        channels: [{ real: 1, imag: 0 }, { real: 3, imag: 4 }],
       },
       {
         frequencyHz: 1.1e9,
-        channels: [{ real: 0, imag: 1 }],
+        channels: [{ real: 0, imag: 1 }, { real: 0, imag: 2 }],
       },
     ],
     receiverCompensatedPoints: [
       {
         frequencyHz: 1.0e9,
-        channels: [{ real: 2, imag: 0 }],
+        channels: [{ real: 2, imag: 0 }, { real: 0, imag: 3 }],
       },
       {
         frequencyHz: 1.1e9,
-        channels: [{ real: 0, imag: 2 }],
+        channels: [{ real: 0, imag: 2 }, { real: 4, imag: 0 }],
       },
     ],
     sParameterPoints: [
@@ -66,6 +66,11 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert.equal(s11Data.traces.length, 1);
   assert.equal(s11Data.traces[0].id, "s11");
 
+  const receiverCh1Data = buildWaveformPreviewData(frequencyPayload, "receiverRaw", 1);
+  assert.equal(receiverCh1Data.channelIndex, 1);
+  assert.equal(receiverCh1Data.points[0].y, 5);
+  assert.equal(receiverCh1Data.traces[0].label, "receiver raw ch1");
+
   const singlePointPayload = {
     instanceId: "inst-single",
     timestampNs: 1,
@@ -82,6 +87,7 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("polyline"));
   assert(html.includes("markers=frame["));
   assert(html.includes("axis-line"));
+  assert(html.includes("channel=0"));
 
   const timePayload = {
     instanceId: "inst1",
