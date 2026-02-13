@@ -817,6 +817,49 @@ WU-MAINLINE-023: 报告增加结构化 warnings 摘要
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v14.json'` 通过
   - 报告包含 `reportVersion=1.3`、`noiseSuppressedTotal`、`warnings[]`
 
+### 8.18 已完成 Work Unit（批量）
+
+WU-MAINLINE-024: 报告增加稳定 case 序号
+
+- Objective: 提供稳定的 case 顺序索引，便于下游比对。
+- Scope (in/out):
+  - in: 增加 `cases[*].caseIndex`。
+  - out: 外部排序策略定制。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增 caseIndex 字段。
+- Risks: case 定义顺序变更会同步影响序号。
+- Acceptance criteria:
+  - 报告中每个 case 带 `caseIndex` 且从 `1` 递增。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-025: 报告增加顶层摘要字符串
+
+- Objective: 提供可直接展示的单行摘要信息，便于日志快速阅读。
+- Scope (in/out):
+  - in: 增加 `reportDigest` 顶层字段。
+  - out: 复杂模板化报表输出。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增摘要字段。
+- Risks: 摘要格式变更需保持向后兼容约定。
+- Acceptance criteria:
+  - 报告包含 `reportDigest`，覆盖通过/失败/噪声/告警计数。
+  - `reportVersion` 更新为 `1.4`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v15.json'` 通过
+  - 报告包含 `reportVersion=1.4`、`reportDigest`、`cases[*].caseIndex`
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

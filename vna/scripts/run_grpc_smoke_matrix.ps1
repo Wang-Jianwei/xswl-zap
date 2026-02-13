@@ -229,7 +229,9 @@ if ($SmokeTimeoutSec -le 0) {
 }
 
 try {
+  $caseIndex = 0
   foreach ($case in $cases) {
+    $caseIndex += 1
     $caseStartedAt = Get-Date
     Write-Host "[MATRIX] case=$($case.Name) every=$($case.Every) ms=$($case.Ms) frames=$($case.Frames)"
 
@@ -283,6 +285,7 @@ try {
       }
 
       $matrixResults += [PSCustomObject]@{
+        caseIndex = $caseIndex
         name = $case.Name
         throttleEveryFrames = $case.Every
         throttleMs = $case.Ms
@@ -364,14 +367,21 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     }
   }
 
+  $warnings = @($warnings | Sort-Object code)
+
+  $passedCases = @($matrixResults | Where-Object { $_.passed }).Count
+  $failedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
+  $reportDigest = "passed=$passedCases/$($matrixResults.Count);failed=$failedCases;noise=$noiseSuppressedTotal;warnings=$($warnings.Count)"
+
   $report = [PSCustomObject]@{
-    reportVersion = "1.3"
+    reportVersion = "1.4"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     strictMode = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
+    reportDigest = $reportDigest
     failedCaseNames = $failedCaseNames
     noiseSuppressedTotal = [int]$noiseSuppressedTotal
     warnings = $warnings

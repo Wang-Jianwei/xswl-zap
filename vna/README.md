@@ -257,13 +257,15 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 
 报告还包含以下元数据：
 
-- `reportVersion`：报告结构版本（当前 `1.3`）
+- `reportVersion`：报告结构版本（当前 `1.4`）
 - `durationMs`：整次矩阵执行耗时（毫秒）
+- `reportDigest`：顶层摘要字符串（通过/失败/噪声/告警计数）
 - `failedCaseNames`：失败 case 名称列表
 - `noiseSuppressedTotal`：本次执行被抑制的已知噪声总条数
 - `warnings[]`：结构化告警摘要（如噪声抑制、非严格模式下未知 stderr）
 - `executionOptions`：本次执行参数快照（`skipBuild/failOnUnknownStderr/smokeTimeoutSec/endpoint/configPath/configHashSha256/reportJsonPath*`）
 - `cases[*].durationMs`：单个 case 执行耗时（毫秒）
+- `cases[*].caseIndex`：case 在矩阵中的稳定序号（从 1 开始）
 
 `ReportJsonPath` 支持时间戳占位符：`{timestamp}` / `{timestampUtc}` / `{timestampLocal}`。
 
