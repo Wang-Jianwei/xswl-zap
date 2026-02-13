@@ -1013,6 +1013,66 @@ WU-MAINLINE-032: 报告结构快照校验脚本
   - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild` 通过
   - 输出含 `[REPORT][PASS] validation ok` 与 `[GATE][PASS]`，门禁链路闭环
 
+### 8.22 已完成 Work Unit（批量）
+
+WU-MAINLINE-033: Gate 告警升级失败策略
+
+- Objective: 支持按告警码将报告告警升级为门禁失败。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 增加 `FailOnWarningCodes` 参数。
+  - out: 外部告警平台策略联动。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚告警升级策略逻辑与参数。
+- Risks: 告警码误配置可能导致非预期失败。
+- Acceptance criteria:
+  - 可配置指定告警码触发 gate 失败。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-034: 报告摘要消费工具
+
+- Objective: 提供一条可读摘要输出，方便 CI 日志展示。
+- Scope (in/out):
+  - in: 新增 `summarize_smoke_matrix_report.ps1`。
+  - out: 富文本报表渲染。
+- Files to change:
+  - `vna/scripts/summarize_smoke_matrix_report.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚摘要脚本。
+- Risks: 摘要字段变更需同步脚本输出格式。
+- Acceptance criteria:
+  - 脚本可输出单行摘要与 digest。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-035: 报告演进策略文档化
+
+- Objective: 固化报告版本升级与维护流程，减少后续漂移。
+- Scope (in/out):
+  - in: README 增加“报告演进策略”章节。
+  - out: 组织级规范文档。
+- Files to change:
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 文档变更通过脚本命令可执行性验证。
+- Rollback plan: 回滚策略章节。
+- Risks: 策略未同步脚本实现会造成文档偏差。
+- Acceptance criteria:
+  - README 明确版本升级、schema/snapshot 同步要求与 gate 建议用法。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v18.json'` 通过
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v18-warning.json' -FailOnWarningCodes known_noise_suppressed` 按策略失败（exit 1）
+  - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v18.json'` 成功输出摘要
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

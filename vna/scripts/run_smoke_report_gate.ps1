@@ -2,7 +2,8 @@ param(
   [switch]$SkipBuild,
   [switch]$FailOnUnknownStderr,
   [int]$SmokeTimeoutSec = 20,
-  [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json"
+  [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
+  [string[]]$FailOnWarningCodes = @()
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,6 +37,15 @@ Write-Host "[GATE] validating report: $resolvedReportPath"
 
 if ($LASTEXITCODE -ne 0) {
   throw "Report validation failed with exit code: $LASTEXITCODE"
+}
+
+if ($FailOnWarningCodes.Count -gt 0) {
+  $report = Get-Content -Path $resolvedReportPath -Raw | ConvertFrom-Json
+  $warningCodes = @($report.warnings | ForEach-Object { $_.code })
+  $matchedCodes = @($warningCodes | Where-Object { $FailOnWarningCodes -contains $_ } | Select-Object -Unique)
+  if ($matchedCodes.Count -gt 0) {
+    throw "Gate failed due to warning policy. Matched warning codes: $($matchedCodes -join ', ')"
+  }
 }
 
 Write-Host "[GATE][PASS] smoke report gate passed"

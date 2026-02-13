@@ -296,6 +296,28 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild
 ```
 
+如需在门禁中把特定告警码升级为失败（例如已知噪声也视为失败）：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild -FailOnWarningCodes known_noise_suppressed
+```
+
+输出报告摘要（适合 CI 日志单行展示）：
+
+```powershell
+.\scripts\summarize_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v17-fail.json
+```
+
+## 报告演进策略
+
+- 报告字段采用“新增优先，不破坏旧字段”的演进方式。
+- 每次新增顶层或关键嵌套字段时递增 `reportVersion`。
+- 变更后必须同步更新：
+   - `scripts/smoke_matrix_report.schema.json`
+   - `scripts/validate_smoke_matrix_report.ps1` 的 snapshot key-set
+   - README 报告字段说明与示例命令
+- CI 建议固定使用 `run_smoke_report_gate.ps1`，避免脚本与校验规则脱节。
+
 ## VS Code 插件联调快速开始
 
 在使用 `vna/tools/vscode-extension` 命令前，先确保 gRPC 后端已在 `vna` 目录启动：
