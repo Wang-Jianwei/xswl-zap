@@ -148,6 +148,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU85~WU90 进展）：复制交互再增强，新增 `Clear Status`、`Alt + C` 快捷键、字符数回显和无 Clipboard API 显式提示。
 
+补充（WU91 进展）：后端 core 回放比对能力增强，`AcquisitionComparator` 增加 `max/rms` 误差统计与精确 mismatch 上下文（point/channel/value + delta），并贯通到 service/gRPC compare detail。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

@@ -263,7 +263,7 @@ core::Status VnaControlService::CompareImportedAcquisition(const std::string& js
   }
 
   if (diffMessage != nullptr) {
-    diffMessage->clear();
+    *diffMessage = mismatch.empty() ? "COMPARE_MATCHED" : mismatch;
   }
   return core::Status::kOk;
 }

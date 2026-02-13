@@ -2566,6 +2566,41 @@ WU-MAINLINE-090: 批次收敛与统一验证
 - Validation result (WU085~090 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.73 已完成 Work Unit
+
+WU-MAINLINE-091: 后端回放比对诊断增强（core + service + gRPC）
+
+- Objective: 将回放比对从“是否匹配”提升到“可诊断可定位”，支撑后端主线可验证能力。
+- Scope (in/out):
+  - in: `AcquisitionComparator` 输出 `max/rms` 误差统计；mismatch 输出 point/channel/value + delta 上下文；service/gRPC 透传 compare detail；补 core/service 测试。
+  - out: 变更 compare RPC 契约字段（保持现有 `detail` 文本承载）。
+- Files to change:
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无 proto 变更（沿用 `CompareImportedAcquisitionResponse.detail` 文本扩展诊断信息）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚 comparator 诊断扩展与 service/grpc detail 透传，恢复原有简化 compare detail。
+- Risks: detail 文本更长可能影响上层日志长度；当前未改 proto 字段结构，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功返回包含 `max/rms` 统计信息。
+  - compare 不匹配返回可定位上下文与 delta。
+  - core/service 定向测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

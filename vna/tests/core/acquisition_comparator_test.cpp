@@ -52,12 +52,15 @@ int main() {
 
   std::string diff;
   assert(vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, same, 1e-9, &diff));
-  assert(diff.empty());
+  assert(diff.find("COMPARE_MATCHED:") == 0);
+  assert(diff.find("max_component_delta=") != std::string::npos);
+  assert(diff.find("rms_component_delta=") != std::string::npos);
 
   vna::core::AcquisitionResult mismatch = BuildResult();
   mismatch.sParameters.points[0].matrix[0] = std::complex<double>(9.9, 9.9);
   assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, mismatch, 1e-9, &diff));
-  assert(!diff.empty());
+  assert(diff.find("sParameter matrix value mismatch") != std::string::npos);
+  assert(diff.find("delta=") != std::string::npos);
 
   return 0;
 }

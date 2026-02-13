@@ -103,13 +103,15 @@ int main() {
         std::string compareDiff;
         assert(service.CompareImportedAcquisition(jsonPath, result, 1e-9, &compareDiff) ==
           vna::core::Status::kOk);
-        assert(compareDiff.empty());
+        assert(compareDiff.find("COMPARE_MATCHED:") == 0);
+        assert(compareDiff.find("max_component_delta=") != std::string::npos);
 
         vna::core::AcquisitionResult altered = result;
         altered.sParameters.points[0].matrix[0] = std::complex<double>(123.0, 456.0);
         assert(service.CompareImportedAcquisition(jsonPath, altered, 1e-9, &compareDiff) ==
           vna::core::Status::kInvalidArgument);
         assert(compareDiff.find("COMPARE_MISMATCH:") != std::string::npos);
+        assert(compareDiff.find("delta=") != std::string::npos);
 
     std::string exportError;
     const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <complex>
+#include <iomanip>
 #include <sstream>
 
 namespace vna {
@@ -15,9 +16,14 @@ bool AlmostEqual(double lhs, double rhs, double tolerance) {
 
 bool CompareComplex(const std::complex<double>& lhs,
                     const std::complex<double>& rhs,
-                    double tolerance) {
-  return AlmostEqual(lhs.real(), rhs.real(), tolerance) &&
-         AlmostEqual(lhs.imag(), rhs.imag(), tolerance);
+                    double tolerance,
+                    double* maxComponentDelta = nullptr) {
+  const double realDelta = std::fabs(lhs.real() - rhs.real());
+  const double imagDelta = std::fabs(lhs.imag() - rhs.imag());
+  if (maxComponentDelta != nullptr) {
+    *maxComponentDelta = std::max(realDelta, imagDelta);
+  }
+  return realDelta <= tolerance && imagDelta <= tolerance;
 }
 
 bool Fail(std::string* diffMessage, const std::string& message) {
@@ -27,12 +33,43 @@ bool Fail(std::string* diffMessage, const std::string& message) {
   return false;
 }
 
+struct ComparisonStats {
+  std::size_t sampleCount = 0;
+  double maxComponentDelta = 0.0;
+  double sumSquareDelta = 0.0;
+
+  void Observe(double delta) {
+    sampleCount += 1;
+    maxComponentDelta = std::max(maxComponentDelta, delta);
+    sumSquareDelta += delta * delta;
+  }
+
+  std::string BuildSummary() const {
+    std::ostringstream stream;
+    stream << std::setprecision(6) << std::scientific;
+    const double rmsDelta = sampleCount == 0
+                                ? 0.0
+                                : std::sqrt(sumSquareDelta / static_cast<double>(sampleCount));
+    stream << "samples=" << sampleCount
+           << ", max_component_delta=" << maxComponentDelta
+           << ", rms_component_delta=" << rmsDelta;
+    return stream.str();
+  }
+};
+
+bool FailWithStats(std::string* diffMessage,
+                   const std::string& message,
+                   const ComparisonStats& stats) {
+  return Fail(diffMessage, message + " | " + stats.BuildSummary());
+}
+
 }  // namespace
 
 bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& baseline,
                                                    const AcquisitionResult& current,
                                                    double tolerance,
                                                    std::string* diffMessage) {
+  ComparisonStats stats;
   if (tolerance <= 0.0) {
     return Fail(diffMessage, "invalid tolerance");
   }
@@ -67,9 +104,15 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       if (lhsChannel.clipped != rhsChannel.clipped) {
         return Fail(diffMessage, "receiverRaw clipped mismatch");
       }
-      if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance)) {
-        return Fail(diffMessage, "receiverRaw iq mismatch");
+      double delta = 0.0;
+      if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance, &delta)) {
+        std::ostringstream message;
+        message << "receiverRaw iq mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ", delta=" << std::setprecision(6) << std::scientific << delta;
+        return FailWithStats(diffMessage, message.str(), stats);
       }
+      stats.Observe(delta);
     }
   }
 
@@ -99,9 +142,15 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       if (lhsChannel.clipped != rhsChannel.clipped) {
         return Fail(diffMessage, "receiverCompensated clipped mismatch");
       }
-      if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance)) {
-        return Fail(diffMessage, "receiverCompensated iq mismatch");
+      double delta = 0.0;
+      if (!CompareComplex(lhsChannel.iq, rhsChannel.iq, tolerance, &delta)) {
+        std::ostringstream message;
+        message << "receiverCompensated iq mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ", delta=" << std::setprecision(6) << std::scientific << delta;
+        return FailWithStats(diffMessage, message.str(), stats);
       }
+      stats.Observe(delta);
     }
   }
 
@@ -126,14 +175,20 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     }
 
     for (std::size_t valueIndex = 0; valueIndex < lhsPoint.matrix.size(); ++valueIndex) {
-      if (!CompareComplex(lhsPoint.matrix[valueIndex], rhsPoint.matrix[valueIndex], tolerance)) {
-        return Fail(diffMessage, "sParameter matrix value mismatch");
+      double delta = 0.0;
+      if (!CompareComplex(lhsPoint.matrix[valueIndex], rhsPoint.matrix[valueIndex], tolerance, &delta)) {
+        std::ostringstream message;
+        message << "sParameter matrix value mismatch at point=" << pointIndex
+                << ", value=" << valueIndex
+                << ", delta=" << std::setprecision(6) << std::scientific << delta;
+        return FailWithStats(diffMessage, message.str(), stats);
       }
+      stats.Observe(delta);
     }
   }
 
   if (diffMessage != nullptr) {
-    diffMessage->clear();
+    *diffMessage = "COMPARE_MATCHED: " + stats.BuildSummary();
   }
   return true;
 }

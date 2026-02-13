@@ -334,7 +334,7 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
       request->json_path(), current, request->tolerance(), &diff);
   if (compareStatus == ::vna::core::Status::kOk) {
     response->set_matched(true);
-    response->set_detail("COMPARE_MATCHED");
+    response->set_detail(diff.empty() ? "COMPARE_MATCHED" : diff);
     return ::grpc::Status::OK;
   }
 
