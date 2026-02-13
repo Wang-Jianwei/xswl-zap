@@ -124,6 +124,17 @@ export interface ImportAcquisitionRequest {
   jsonPath: string;
 }
 
+export interface CompareImportedAcquisitionRequest {
+  jsonPath: string;
+  currentRequest: AcquisitionRequest | undefined;
+  tolerance: number;
+}
+
+export interface CompareImportedAcquisitionResponse {
+  matched: boolean;
+  detail: string;
+}
+
 export interface FrequencyDomainPoint {
   frequencyHz: number;
   real: number;
@@ -1278,6 +1289,192 @@ export const ImportAcquisitionRequest: MessageFns<ImportAcquisitionRequest> = {
   fromPartial<I extends Exact<DeepPartial<ImportAcquisitionRequest>, I>>(object: I): ImportAcquisitionRequest {
     const message = createBaseImportAcquisitionRequest();
     message.jsonPath = object.jsonPath ?? "";
+    return message;
+  },
+};
+
+function createBaseCompareImportedAcquisitionRequest(): CompareImportedAcquisitionRequest {
+  return { jsonPath: "", currentRequest: undefined, tolerance: 0 };
+}
+
+export const CompareImportedAcquisitionRequest: MessageFns<CompareImportedAcquisitionRequest> = {
+  encode(message: CompareImportedAcquisitionRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.jsonPath !== "") {
+      writer.uint32(10).string(message.jsonPath);
+    }
+    if (message.currentRequest !== undefined) {
+      AcquisitionRequest.encode(message.currentRequest, writer.uint32(18).fork()).join();
+    }
+    if (message.tolerance !== 0) {
+      writer.uint32(25).double(message.tolerance);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CompareImportedAcquisitionRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCompareImportedAcquisitionRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.jsonPath = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.currentRequest = AcquisitionRequest.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 25) {
+            break;
+          }
+
+          message.tolerance = reader.double();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CompareImportedAcquisitionRequest {
+    return {
+      jsonPath: isSet(object.jsonPath)
+        ? globalThis.String(object.jsonPath)
+        : isSet(object.json_path)
+        ? globalThis.String(object.json_path)
+        : "",
+      currentRequest: isSet(object.currentRequest)
+        ? AcquisitionRequest.fromJSON(object.currentRequest)
+        : isSet(object.current_request)
+        ? AcquisitionRequest.fromJSON(object.current_request)
+        : undefined,
+      tolerance: isSet(object.tolerance) ? globalThis.Number(object.tolerance) : 0,
+    };
+  },
+
+  toJSON(message: CompareImportedAcquisitionRequest): unknown {
+    const obj: any = {};
+    if (message.jsonPath !== "") {
+      obj.jsonPath = message.jsonPath;
+    }
+    if (message.currentRequest !== undefined) {
+      obj.currentRequest = AcquisitionRequest.toJSON(message.currentRequest);
+    }
+    if (message.tolerance !== 0) {
+      obj.tolerance = message.tolerance;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CompareImportedAcquisitionRequest>, I>>(
+    base?: I,
+  ): CompareImportedAcquisitionRequest {
+    return CompareImportedAcquisitionRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CompareImportedAcquisitionRequest>, I>>(
+    object: I,
+  ): CompareImportedAcquisitionRequest {
+    const message = createBaseCompareImportedAcquisitionRequest();
+    message.jsonPath = object.jsonPath ?? "";
+    message.currentRequest = (object.currentRequest !== undefined && object.currentRequest !== null)
+      ? AcquisitionRequest.fromPartial(object.currentRequest)
+      : undefined;
+    message.tolerance = object.tolerance ?? 0;
+    return message;
+  },
+};
+
+function createBaseCompareImportedAcquisitionResponse(): CompareImportedAcquisitionResponse {
+  return { matched: false, detail: "" };
+}
+
+export const CompareImportedAcquisitionResponse: MessageFns<CompareImportedAcquisitionResponse> = {
+  encode(message: CompareImportedAcquisitionResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.matched !== false) {
+      writer.uint32(8).bool(message.matched);
+    }
+    if (message.detail !== "") {
+      writer.uint32(18).string(message.detail);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CompareImportedAcquisitionResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCompareImportedAcquisitionResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.matched = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.detail = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CompareImportedAcquisitionResponse {
+    return {
+      matched: isSet(object.matched) ? globalThis.Boolean(object.matched) : false,
+      detail: isSet(object.detail) ? globalThis.String(object.detail) : "",
+    };
+  },
+
+  toJSON(message: CompareImportedAcquisitionResponse): unknown {
+    const obj: any = {};
+    if (message.matched !== false) {
+      obj.matched = message.matched;
+    }
+    if (message.detail !== "") {
+      obj.detail = message.detail;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CompareImportedAcquisitionResponse>, I>>(
+    base?: I,
+  ): CompareImportedAcquisitionResponse {
+    return CompareImportedAcquisitionResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CompareImportedAcquisitionResponse>, I>>(
+    object: I,
+  ): CompareImportedAcquisitionResponse {
+    const message = createBaseCompareImportedAcquisitionResponse();
+    message.matched = object.matched ?? false;
+    message.detail = object.detail ?? "";
     return message;
   },
 };
@@ -2791,6 +2988,19 @@ export const VnaControlService = {
     responseSerialize: (value: AcquisitionResult): Buffer => Buffer.from(AcquisitionResult.encode(value).finish()),
     responseDeserialize: (value: Buffer): AcquisitionResult => AcquisitionResult.decode(value),
   },
+  compareImportedAcquisition: {
+    path: "/vna.VnaControl/CompareImportedAcquisition",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: CompareImportedAcquisitionRequest): Buffer =>
+      Buffer.from(CompareImportedAcquisitionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): CompareImportedAcquisitionRequest =>
+      CompareImportedAcquisitionRequest.decode(value),
+    responseSerialize: (value: CompareImportedAcquisitionResponse): Buffer =>
+      Buffer.from(CompareImportedAcquisitionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): CompareImportedAcquisitionResponse =>
+      CompareImportedAcquisitionResponse.decode(value),
+  },
   streamAcquisition: {
     path: "/vna.VnaControl/StreamAcquisition",
     requestStream: false,
@@ -2807,6 +3017,7 @@ export interface VnaControlServer extends UntypedServiceImplementation {
   getServiceStatus: handleUnaryCall<Empty, ServiceStatus>;
   acquire: handleUnaryCall<AcquisitionRequest, AcquisitionResult>;
   importAcquisition: handleUnaryCall<ImportAcquisitionRequest, AcquisitionResult>;
+  compareImportedAcquisition: handleUnaryCall<CompareImportedAcquisitionRequest, CompareImportedAcquisitionResponse>;
   streamAcquisition: handleServerStreamingCall<AcquisitionRequest, AcquisitionResult>;
 }
 
@@ -2870,6 +3081,21 @@ export interface VnaControlClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: AcquisitionResult) => void,
+  ): ClientUnaryCall;
+  compareImportedAcquisition(
+    request: CompareImportedAcquisitionRequest,
+    callback: (error: ServiceError | null, response: CompareImportedAcquisitionResponse) => void,
+  ): ClientUnaryCall;
+  compareImportedAcquisition(
+    request: CompareImportedAcquisitionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: CompareImportedAcquisitionResponse) => void,
+  ): ClientUnaryCall;
+  compareImportedAcquisition(
+    request: CompareImportedAcquisitionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: CompareImportedAcquisitionResponse) => void,
   ): ClientUnaryCall;
   streamAcquisition(
     request: AcquisitionRequest,

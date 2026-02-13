@@ -35,6 +35,11 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
                                    const ::vna::ImportAcquisitionRequest* request,
                                    ::vna::AcquisitionResult* response) override;
 
+  ::grpc::Status CompareImportedAcquisition(
+      ::grpc::ServerContext* context,
+      const ::vna::CompareImportedAcquisitionRequest* request,
+      ::vna::CompareImportedAcquisitionResponse* response) override;
+
   ::grpc::Status StreamAcquisition(::grpc::ServerContext* context,
                                    const ::vna::AcquisitionRequest* request,
                                    ::grpc::ServerWriter<::vna::AcquisitionResult>* writer) override;

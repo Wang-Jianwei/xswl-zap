@@ -64,6 +64,13 @@ class VnaControl final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::AcquisitionResult>> PrepareAsyncImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::AcquisitionResult>>(PrepareAsyncImportAcquisitionRaw(context, request, cq));
     }
+    virtual ::grpc::Status CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::vna::CompareImportedAcquisitionResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>> AsyncCompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>>(AsyncCompareImportedAcquisitionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>> PrepareAsyncCompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>>(PrepareAsyncCompareImportedAcquisitionRaw(context, request, cq));
+    }
     std::unique_ptr< ::grpc::ClientReaderInterface< ::vna::AcquisitionResult>> StreamAcquisition(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request) {
       return std::unique_ptr< ::grpc::ClientReaderInterface< ::vna::AcquisitionResult>>(StreamAcquisitionRaw(context, request));
     }
@@ -84,6 +91,8 @@ class VnaControl final {
       virtual void Acquire(::grpc::ClientContext* context, const ::vna::AcquisitionRequest* request, ::vna::AcquisitionResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void StreamAcquisition(::grpc::ClientContext* context, const ::vna::AcquisitionRequest* request, ::grpc::ClientReadReactor< ::vna::AcquisitionResult>* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
@@ -98,6 +107,8 @@ class VnaControl final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::AcquisitionResult>* PrepareAsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::AcquisitionResult>* AsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::AcquisitionResult>* PrepareAsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>* AsyncCompareImportedAcquisitionRaw(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::CompareImportedAcquisitionResponse>* PrepareAsyncCompareImportedAcquisitionRaw(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientReaderInterface< ::vna::AcquisitionResult>* StreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::vna::AcquisitionResult>* AsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
     virtual ::grpc::ClientAsyncReaderInterface< ::vna::AcquisitionResult>* PrepareAsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -133,6 +144,13 @@ class VnaControl final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>> PrepareAsyncImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>>(PrepareAsyncImportAcquisitionRaw(context, request, cq));
     }
+    ::grpc::Status CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::vna::CompareImportedAcquisitionResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>> AsyncCompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>>(AsyncCompareImportedAcquisitionRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>> PrepareAsyncCompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>>(PrepareAsyncCompareImportedAcquisitionRaw(context, request, cq));
+    }
     std::unique_ptr< ::grpc::ClientReader< ::vna::AcquisitionResult>> StreamAcquisition(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request) {
       return std::unique_ptr< ::grpc::ClientReader< ::vna::AcquisitionResult>>(StreamAcquisitionRaw(context, request));
     }
@@ -153,6 +171,8 @@ class VnaControl final {
       void Acquire(::grpc::ClientContext* context, const ::vna::AcquisitionRequest* request, ::vna::AcquisitionResult* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, std::function<void(::grpc::Status)>) override;
       void ImportAcquisition(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response, std::function<void(::grpc::Status)>) override;
+      void CompareImportedAcquisition(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void StreamAcquisition(::grpc::ClientContext* context, const ::vna::AcquisitionRequest* request, ::grpc::ClientReadReactor< ::vna::AcquisitionResult>* reactor) override;
      private:
       friend class Stub;
@@ -173,6 +193,8 @@ class VnaControl final {
     ::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>* PrepareAsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>* AsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::AcquisitionResult>* PrepareAsyncImportAcquisitionRaw(::grpc::ClientContext* context, const ::vna::ImportAcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>* AsyncCompareImportedAcquisitionRaw(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::CompareImportedAcquisitionResponse>* PrepareAsyncCompareImportedAcquisitionRaw(::grpc::ClientContext* context, const ::vna::CompareImportedAcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientReader< ::vna::AcquisitionResult>* StreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request) override;
     ::grpc::ClientAsyncReader< ::vna::AcquisitionResult>* AsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::vna::AcquisitionResult>* PrepareAsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -180,6 +202,7 @@ class VnaControl final {
     const ::grpc::internal::RpcMethod rpcmethod_GetServiceStatus_;
     const ::grpc::internal::RpcMethod rpcmethod_Acquire_;
     const ::grpc::internal::RpcMethod rpcmethod_ImportAcquisition_;
+    const ::grpc::internal::RpcMethod rpcmethod_CompareImportedAcquisition_;
     const ::grpc::internal::RpcMethod rpcmethod_StreamAcquisition_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
@@ -192,6 +215,7 @@ class VnaControl final {
     virtual ::grpc::Status GetServiceStatus(::grpc::ServerContext* context, const ::vna::Empty* request, ::vna::ServiceStatus* response);
     virtual ::grpc::Status Acquire(::grpc::ServerContext* context, const ::vna::AcquisitionRequest* request, ::vna::AcquisitionResult* response);
     virtual ::grpc::Status ImportAcquisition(::grpc::ServerContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response);
+    virtual ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response);
     virtual ::grpc::Status StreamAcquisition(::grpc::ServerContext* context, const ::vna::AcquisitionRequest* request, ::grpc::ServerWriter< ::vna::AcquisitionResult>* writer);
   };
   template <class BaseClass>
@@ -275,12 +299,32 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodAsync(4);
+    }
+    ~WithAsyncMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCompareImportedAcquisition(::grpc::ServerContext* context, ::vna::CompareImportedAcquisitionRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::CompareImportedAcquisitionResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -291,10 +335,10 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStreamAcquisition(::grpc::ServerContext* context, ::vna::AcquisitionRequest* request, ::grpc::ServerAsyncWriter< ::vna::AcquisitionResult>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(4, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(5, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_ValidateTopology<WithAsyncMethod_GetServiceStatus<WithAsyncMethod_Acquire<WithAsyncMethod_ImportAcquisition<WithAsyncMethod_StreamAcquisition<Service > > > > > AsyncService;
+  typedef WithAsyncMethod_ValidateTopology<WithAsyncMethod_GetServiceStatus<WithAsyncMethod_Acquire<WithAsyncMethod_ImportAcquisition<WithAsyncMethod_CompareImportedAcquisition<WithAsyncMethod_StreamAcquisition<Service > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_ValidateTopology : public BaseClass {
    private:
@@ -404,12 +448,39 @@ class VnaControl final {
       ::grpc::CallbackServerContext* /*context*/, const ::vna::ImportAcquisitionRequest* /*request*/, ::vna::AcquisitionResult* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response) { return this->CompareImportedAcquisition(context, request, response); }));}
+    void SetMessageAllocatorFor_CompareImportedAcquisition(
+        ::grpc::MessageAllocator< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CompareImportedAcquisition(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackServerStreamingHandler< ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::AcquisitionRequest* request) { return this->StreamAcquisition(context, request); }));
@@ -425,7 +496,7 @@ class VnaControl final {
     virtual ::grpc::ServerWriteReactor< ::vna::AcquisitionResult>* StreamAcquisition(
       ::grpc::CallbackServerContext* /*context*/, const ::vna::AcquisitionRequest* /*request*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_ValidateTopology<WithCallbackMethod_GetServiceStatus<WithCallbackMethod_Acquire<WithCallbackMethod_ImportAcquisition<WithCallbackMethod_StreamAcquisition<Service > > > > > CallbackService;
+  typedef WithCallbackMethod_ValidateTopology<WithCallbackMethod_GetServiceStatus<WithCallbackMethod_Acquire<WithCallbackMethod_ImportAcquisition<WithCallbackMethod_CompareImportedAcquisition<WithCallbackMethod_StreamAcquisition<Service > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_ValidateTopology : public BaseClass {
@@ -496,12 +567,29 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodGeneric(4);
+    }
+    ~WithGenericMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -593,12 +681,32 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodRaw(4);
+    }
+    ~WithRawMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestCompareImportedAcquisition(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -609,7 +717,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStreamAcquisition(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(4, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(5, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -701,12 +809,34 @@ class VnaControl final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodRawCallback(4,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->CompareImportedAcquisition(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* CompareImportedAcquisition(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->StreamAcquisition(context, request); }));
@@ -830,14 +960,41 @@ class VnaControl final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedImportAcquisition(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::ImportAcquisitionRequest,::vna::AcquisitionResult>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<Service > > > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_CompareImportedAcquisition : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_CompareImportedAcquisition() {
+      ::grpc::Service::MarkMethodStreamed(4,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>* streamer) {
+                       return this->StreamedCompareImportedAcquisition(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_CompareImportedAcquisition() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status CompareImportedAcquisition(::grpc::ServerContext* /*context*/, const ::vna::CompareImportedAcquisitionRequest* /*request*/, ::vna::CompareImportedAcquisitionResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedCompareImportedAcquisition(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::CompareImportedAcquisitionRequest,::vna::CompareImportedAcquisitionResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<Service > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::SplitServerStreamingHandler<
           ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](::grpc::ServerContext* context,
@@ -859,7 +1016,7 @@ class VnaControl final {
     virtual ::grpc::Status StreamedStreamAcquisition(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::vna::AcquisitionRequest,::vna::AcquisitionResult>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_StreamAcquisition<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithSplitStreamingMethod_StreamAcquisition<Service > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<WithSplitStreamingMethod_StreamAcquisition<Service > > > > > > StreamedService;
 };
 
 class ResourceBroker final {

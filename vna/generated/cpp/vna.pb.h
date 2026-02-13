@@ -65,6 +65,14 @@ class AcquisitionResult;
 struct AcquisitionResultDefaultTypeInternal;
 extern AcquisitionResultDefaultTypeInternal _AcquisitionResult_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull AcquisitionResult_class_data_;
+class CompareImportedAcquisitionRequest;
+struct CompareImportedAcquisitionRequestDefaultTypeInternal;
+extern CompareImportedAcquisitionRequestDefaultTypeInternal _CompareImportedAcquisitionRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionRequest_class_data_;
+class CompareImportedAcquisitionResponse;
+struct CompareImportedAcquisitionResponseDefaultTypeInternal;
+extern CompareImportedAcquisitionResponseDefaultTypeInternal _CompareImportedAcquisitionResponse_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionResponse_class_data_;
 class CwExcitation;
 struct CwExcitationDefaultTypeInternal;
 extern CwExcitationDefaultTypeInternal _CwExcitation_default_instance_;
@@ -690,7 +698,7 @@ class TimeDomainPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const TimeDomainPoint*>(
         &_TimeDomainPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 10;
+  static constexpr int kIndexInFileMessages = 12;
   friend void swap(TimeDomainPoint& a, TimeDomainPoint& b) { a.Swap(&b); }
   inline void Swap(TimeDomainPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -904,7 +912,7 @@ class ServiceStatus final : public ::google::protobuf::Message
     return *reinterpret_cast<const ServiceStatus*>(
         &_ServiceStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 20;
+  static constexpr int kIndexInFileMessages = 22;
   friend void swap(ServiceStatus& a, ServiceStatus& b) { a.Swap(&b); }
   inline void Swap(ServiceStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1256,7 +1264,7 @@ class SParameterPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const SParameterPoint*>(
         &_SParameterPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 13;
+  static constexpr int kIndexInFileMessages = 15;
   friend void swap(SParameterPoint& a, SParameterPoint& b) { a.Swap(&b); }
   inline void Swap(SParameterPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1482,7 +1490,7 @@ class ResourceRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ResourceRequest*>(
         &_ResourceRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 18;
+  static constexpr int kIndexInFileMessages = 20;
   friend void swap(ResourceRequest& a, ResourceRequest& b) { a.Swap(&b); }
   inline void Swap(ResourceRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1718,7 +1726,7 @@ class ReceiverChannelSample final : public ::google::protobuf::Message
     return *reinterpret_cast<const ReceiverChannelSample*>(
         &_ReceiverChannelSample_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 11;
+  static constexpr int kIndexInFileMessages = 13;
   friend void swap(ReceiverChannelSample& a, ReceiverChannelSample& b) { a.Swap(&b); }
   inline void Swap(ReceiverChannelSample* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2187,7 +2195,7 @@ class LeaseInfo final : public ::google::protobuf::Message
     return *reinterpret_cast<const LeaseInfo*>(
         &_LeaseInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 19;
+  static constexpr int kIndexInFileMessages = 21;
   friend void swap(LeaseInfo& a, LeaseInfo& b) { a.Swap(&b); }
   inline void Swap(LeaseInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2606,7 +2614,7 @@ class FrequencyDomainPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const FrequencyDomainPoint*>(
         &_FrequencyDomainPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 9;
+  static constexpr int kIndexInFileMessages = 11;
   friend void swap(FrequencyDomainPoint& a, FrequencyDomainPoint& b) { a.Swap(&b); }
   inline void Swap(FrequencyDomainPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3185,6 +3193,213 @@ class CwExcitation final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull CwExcitation_class_data_;
 // -------------------------------------------------------------------
 
+class CompareImportedAcquisitionResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.CompareImportedAcquisitionResponse) */ {
+ public:
+  inline CompareImportedAcquisitionResponse() : CompareImportedAcquisitionResponse(nullptr) {}
+  ~CompareImportedAcquisitionResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(CompareImportedAcquisitionResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(CompareImportedAcquisitionResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR CompareImportedAcquisitionResponse(::google::protobuf::internal::ConstantInitialized);
+
+  inline CompareImportedAcquisitionResponse(const CompareImportedAcquisitionResponse& from) : CompareImportedAcquisitionResponse(nullptr, from) {}
+  inline CompareImportedAcquisitionResponse(CompareImportedAcquisitionResponse&& from) noexcept
+      : CompareImportedAcquisitionResponse(nullptr, ::std::move(from)) {}
+  inline CompareImportedAcquisitionResponse& operator=(const CompareImportedAcquisitionResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CompareImportedAcquisitionResponse& operator=(CompareImportedAcquisitionResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CompareImportedAcquisitionResponse& default_instance() {
+    return *reinterpret_cast<const CompareImportedAcquisitionResponse*>(
+        &_CompareImportedAcquisitionResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 10;
+  friend void swap(CompareImportedAcquisitionResponse& a, CompareImportedAcquisitionResponse& b) { a.Swap(&b); }
+  inline void Swap(CompareImportedAcquisitionResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CompareImportedAcquisitionResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CompareImportedAcquisitionResponse* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<CompareImportedAcquisitionResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const CompareImportedAcquisitionResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const CompareImportedAcquisitionResponse& from) { CompareImportedAcquisitionResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(CompareImportedAcquisitionResponse* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.CompareImportedAcquisitionResponse"; }
+
+  explicit CompareImportedAcquisitionResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  CompareImportedAcquisitionResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const CompareImportedAcquisitionResponse& from);
+  CompareImportedAcquisitionResponse(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, CompareImportedAcquisitionResponse&& from) noexcept
+      : CompareImportedAcquisitionResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kDetailFieldNumber = 2,
+    kMatchedFieldNumber = 1,
+  };
+  // string detail = 2;
+  void clear_detail() ;
+  const ::std::string& detail() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_detail(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_detail();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_detail();
+  void set_allocated_detail(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_detail() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_detail(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_detail();
+
+  public:
+  // bool matched = 1;
+  void clear_matched() ;
+  bool matched() const;
+  void set_matched(bool value);
+
+  private:
+  bool _internal_matched() const;
+  void _internal_set_matched(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.CompareImportedAcquisitionResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2,
+                                   0, 53,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const CompareImportedAcquisitionResponse& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr detail_;
+    bool matched_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionResponse_class_data_;
+// -------------------------------------------------------------------
+
 class ValidationResult final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.ValidationResult) */ {
  public:
@@ -3473,7 +3688,7 @@ class TimeDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const TimeDomainFrame*>(
         &_TimeDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 17;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(TimeDomainFrame& a, TimeDomainFrame& b) { a.Swap(&b); }
   inline void Swap(TimeDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3682,7 +3897,7 @@ class SParameterFrequencyPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const SParameterFrequencyPoint*>(
         &_SParameterFrequencyPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 14;
+  static constexpr int kIndexInFileMessages = 16;
   friend void swap(SParameterFrequencyPoint& a, SParameterFrequencyPoint& b) { a.Swap(&b); }
   inline void Swap(SParameterFrequencyPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3903,7 +4118,7 @@ class ReceiverFrequencyPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const ReceiverFrequencyPoint*>(
         &_ReceiverFrequencyPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 12;
+  static constexpr int kIndexInFileMessages = 14;
   friend void swap(ReceiverFrequencyPoint& a, ReceiverFrequencyPoint& b) { a.Swap(&b); }
   inline void Swap(ReceiverFrequencyPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4124,7 +4339,7 @@ class FrequencyDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const FrequencyDomainFrame*>(
         &_FrequencyDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 16;
+  static constexpr int kIndexInFileMessages = 18;
   friend void swap(FrequencyDomainFrame& a, FrequencyDomainFrame& b) { a.Swap(&b); }
   inline void Swap(FrequencyDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4598,7 +4813,7 @@ class AcquisitionResult final : public ::google::protobuf::Message
     kTimeFrame = 11,
     DATA_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 15;
+  static constexpr int kIndexInFileMessages = 17;
   friend void swap(AcquisitionResult& a, AcquisitionResult& b) { a.Swap(&b); }
   inline void Swap(AcquisitionResult* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5145,6 +5360,230 @@ class AcquisitionRequest final : public ::google::protobuf::Message
 };
 
 extern const ::google::protobuf::internal::ClassDataFull AcquisitionRequest_class_data_;
+// -------------------------------------------------------------------
+
+class CompareImportedAcquisitionRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.CompareImportedAcquisitionRequest) */ {
+ public:
+  inline CompareImportedAcquisitionRequest() : CompareImportedAcquisitionRequest(nullptr) {}
+  ~CompareImportedAcquisitionRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(CompareImportedAcquisitionRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(CompareImportedAcquisitionRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR CompareImportedAcquisitionRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline CompareImportedAcquisitionRequest(const CompareImportedAcquisitionRequest& from) : CompareImportedAcquisitionRequest(nullptr, from) {}
+  inline CompareImportedAcquisitionRequest(CompareImportedAcquisitionRequest&& from) noexcept
+      : CompareImportedAcquisitionRequest(nullptr, ::std::move(from)) {}
+  inline CompareImportedAcquisitionRequest& operator=(const CompareImportedAcquisitionRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CompareImportedAcquisitionRequest& operator=(CompareImportedAcquisitionRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CompareImportedAcquisitionRequest& default_instance() {
+    return *reinterpret_cast<const CompareImportedAcquisitionRequest*>(
+        &_CompareImportedAcquisitionRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 9;
+  friend void swap(CompareImportedAcquisitionRequest& a, CompareImportedAcquisitionRequest& b) { a.Swap(&b); }
+  inline void Swap(CompareImportedAcquisitionRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CompareImportedAcquisitionRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CompareImportedAcquisitionRequest* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<CompareImportedAcquisitionRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const CompareImportedAcquisitionRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const CompareImportedAcquisitionRequest& from) { CompareImportedAcquisitionRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(CompareImportedAcquisitionRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.CompareImportedAcquisitionRequest"; }
+
+  explicit CompareImportedAcquisitionRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  CompareImportedAcquisitionRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const CompareImportedAcquisitionRequest& from);
+  CompareImportedAcquisitionRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, CompareImportedAcquisitionRequest&& from) noexcept
+      : CompareImportedAcquisitionRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kJsonPathFieldNumber = 1,
+    kCurrentRequestFieldNumber = 2,
+    kToleranceFieldNumber = 3,
+  };
+  // string json_path = 1;
+  void clear_json_path() ;
+  const ::std::string& json_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_json_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_json_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_json_path();
+  void set_allocated_json_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_json_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_json_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_json_path();
+
+  public:
+  // .vna.AcquisitionRequest current_request = 2;
+  bool has_current_request() const;
+  void clear_current_request() ;
+  const ::vna::AcquisitionRequest& current_request() const;
+  [[nodiscard]] ::vna::AcquisitionRequest* PROTOBUF_NULLABLE release_current_request();
+  ::vna::AcquisitionRequest* PROTOBUF_NONNULL mutable_current_request();
+  void set_allocated_current_request(::vna::AcquisitionRequest* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_current_request(::vna::AcquisitionRequest* PROTOBUF_NULLABLE value);
+  ::vna::AcquisitionRequest* PROTOBUF_NULLABLE unsafe_arena_release_current_request();
+
+  private:
+  const ::vna::AcquisitionRequest& _internal_current_request() const;
+  ::vna::AcquisitionRequest* PROTOBUF_NONNULL _internal_mutable_current_request();
+
+  public:
+  // double tolerance = 3;
+  void clear_tolerance() ;
+  double tolerance() const;
+  void set_tolerance(double value);
+
+  private:
+  double _internal_tolerance() const;
+  void _internal_set_tolerance(double value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.CompareImportedAcquisitionRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3,
+                                   1, 55,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const CompareImportedAcquisitionRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr json_path_;
+    ::vna::AcquisitionRequest* PROTOBUF_NULLABLE current_request_;
+    double tolerance_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionRequest_class_data_;
 
 // ===================================================================
 
@@ -6742,6 +7181,293 @@ inline void ImportAcquisitionRequest::set_allocated_json_path(::std::string* PRO
     _impl_.json_path_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:vna.ImportAcquisitionRequest.json_path)
+}
+
+// -------------------------------------------------------------------
+
+// CompareImportedAcquisitionRequest
+
+// string json_path = 1;
+inline void CompareImportedAcquisitionRequest::clear_json_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.json_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& CompareImportedAcquisitionRequest::json_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.CompareImportedAcquisitionRequest.json_path)
+  return _internal_json_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void CompareImportedAcquisitionRequest::set_json_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.json_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.CompareImportedAcquisitionRequest.json_path)
+}
+inline ::std::string* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::mutable_json_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_json_path();
+  // @@protoc_insertion_point(field_mutable:vna.CompareImportedAcquisitionRequest.json_path)
+  return _s;
+}
+inline const ::std::string& CompareImportedAcquisitionRequest::_internal_json_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.json_path_.Get();
+}
+inline void CompareImportedAcquisitionRequest::_internal_set_json_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.json_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::_internal_mutable_json_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.json_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE CompareImportedAcquisitionRequest::release_json_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.CompareImportedAcquisitionRequest.json_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.json_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.json_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void CompareImportedAcquisitionRequest::set_allocated_json_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.json_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.json_path_.IsDefault()) {
+    _impl_.json_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.CompareImportedAcquisitionRequest.json_path)
+}
+
+// .vna.AcquisitionRequest current_request = 2;
+inline bool CompareImportedAcquisitionRequest::has_current_request() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
+  PROTOBUF_ASSUME(!value || _impl_.current_request_ != nullptr);
+  return value;
+}
+inline void CompareImportedAcquisitionRequest::clear_current_request() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.current_request_ != nullptr) _impl_.current_request_->Clear();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::vna::AcquisitionRequest& CompareImportedAcquisitionRequest::_internal_current_request() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::vna::AcquisitionRequest* p = _impl_.current_request_;
+  return p != nullptr ? *p : reinterpret_cast<const ::vna::AcquisitionRequest&>(::vna::_AcquisitionRequest_default_instance_);
+}
+inline const ::vna::AcquisitionRequest& CompareImportedAcquisitionRequest::current_request() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.CompareImportedAcquisitionRequest.current_request)
+  return _internal_current_request();
+}
+inline void CompareImportedAcquisitionRequest::unsafe_arena_set_allocated_current_request(
+    ::vna::AcquisitionRequest* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.current_request_);
+  }
+  _impl_.current_request_ = reinterpret_cast<::vna::AcquisitionRequest*>(value);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:vna.CompareImportedAcquisitionRequest.current_request)
+}
+inline ::vna::AcquisitionRequest* PROTOBUF_NULLABLE CompareImportedAcquisitionRequest::release_current_request() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::AcquisitionRequest* released = _impl_.current_request_;
+  _impl_.current_request_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::vna::AcquisitionRequest* PROTOBUF_NULLABLE CompareImportedAcquisitionRequest::unsafe_arena_release_current_request() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.CompareImportedAcquisitionRequest.current_request)
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::AcquisitionRequest* temp = _impl_.current_request_;
+  _impl_.current_request_ = nullptr;
+  return temp;
+}
+inline ::vna::AcquisitionRequest* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::_internal_mutable_current_request() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.current_request_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::vna::AcquisitionRequest>(GetArena());
+    _impl_.current_request_ = reinterpret_cast<::vna::AcquisitionRequest*>(p);
+  }
+  return _impl_.current_request_;
+}
+inline ::vna::AcquisitionRequest* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::mutable_current_request()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::AcquisitionRequest* _msg = _internal_mutable_current_request();
+  // @@protoc_insertion_point(field_mutable:vna.CompareImportedAcquisitionRequest.current_request)
+  return _msg;
+}
+inline void CompareImportedAcquisitionRequest::set_allocated_current_request(::vna::AcquisitionRequest* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.current_request_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+
+  _impl_.current_request_ = reinterpret_cast<::vna::AcquisitionRequest*>(value);
+  // @@protoc_insertion_point(field_set_allocated:vna.CompareImportedAcquisitionRequest.current_request)
+}
+
+// double tolerance = 3;
+inline void CompareImportedAcquisitionRequest::clear_tolerance() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.tolerance_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline double CompareImportedAcquisitionRequest::tolerance() const {
+  // @@protoc_insertion_point(field_get:vna.CompareImportedAcquisitionRequest.tolerance)
+  return _internal_tolerance();
+}
+inline void CompareImportedAcquisitionRequest::set_tolerance(double value) {
+  _internal_set_tolerance(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.CompareImportedAcquisitionRequest.tolerance)
+}
+inline double CompareImportedAcquisitionRequest::_internal_tolerance() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.tolerance_;
+}
+inline void CompareImportedAcquisitionRequest::_internal_set_tolerance(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.tolerance_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// CompareImportedAcquisitionResponse
+
+// bool matched = 1;
+inline void CompareImportedAcquisitionResponse::clear_matched() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.matched_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline bool CompareImportedAcquisitionResponse::matched() const {
+  // @@protoc_insertion_point(field_get:vna.CompareImportedAcquisitionResponse.matched)
+  return _internal_matched();
+}
+inline void CompareImportedAcquisitionResponse::set_matched(bool value) {
+  _internal_set_matched(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.CompareImportedAcquisitionResponse.matched)
+}
+inline bool CompareImportedAcquisitionResponse::_internal_matched() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.matched_;
+}
+inline void CompareImportedAcquisitionResponse::_internal_set_matched(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.matched_ = value;
+}
+
+// string detail = 2;
+inline void CompareImportedAcquisitionResponse::clear_detail() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.detail_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& CompareImportedAcquisitionResponse::detail() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.CompareImportedAcquisitionResponse.detail)
+  return _internal_detail();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void CompareImportedAcquisitionResponse::set_detail(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.detail_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.CompareImportedAcquisitionResponse.detail)
+}
+inline ::std::string* PROTOBUF_NONNULL CompareImportedAcquisitionResponse::mutable_detail()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_detail();
+  // @@protoc_insertion_point(field_mutable:vna.CompareImportedAcquisitionResponse.detail)
+  return _s;
+}
+inline const ::std::string& CompareImportedAcquisitionResponse::_internal_detail() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.detail_.Get();
+}
+inline void CompareImportedAcquisitionResponse::_internal_set_detail(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.detail_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL CompareImportedAcquisitionResponse::_internal_mutable_detail() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.detail_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE CompareImportedAcquisitionResponse::release_detail() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.CompareImportedAcquisitionResponse.detail)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.detail_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.detail_.Set("", GetArena());
+  }
+  return released;
+}
+inline void CompareImportedAcquisitionResponse::set_allocated_detail(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.detail_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.detail_.IsDefault()) {
+    _impl_.detail_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.CompareImportedAcquisitionResponse.detail)
 }
 
 // -------------------------------------------------------------------

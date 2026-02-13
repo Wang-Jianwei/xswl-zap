@@ -174,6 +174,41 @@ int main(int argc, char** argv) {
     }
   }
 
+  {
+    grpc::ClientContext context;
+    vna::CompareImportedAcquisitionRequest request;
+    vna::CompareImportedAcquisitionResponse response;
+
+    request.set_json_path("build-grpc/grpc-acquire-export.json");
+    request.set_tolerance(1e-6);
+    request.mutable_current_request()->set_instance_id("inst0");
+    request.mutable_current_request()->set_sample_count(16);
+    request.mutable_current_request()->set_timeout_ms(1000);
+    request.mutable_current_request()->mutable_excitation()->set_mode(
+        vna::ExcitationMode::EXCITATION_MODE_CW);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_frequency_hz(1.0e9);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_start_frequency_hz(1.0e9);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_stop_frequency_hz(1.1e9);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_sweep_point_count(3);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_if_bandwidth_hz(1.0e3);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_port_count(4);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_excitation_port(2);
+    request.mutable_current_request()->mutable_excitation()->mutable_cw()->set_power_dbm(-10.0);
+
+    const grpc::Status status = stub->CompareImportedAcquisition(&context, request, &response);
+    if (!status.ok()) {
+      std::cout << "CompareImportedAcquisition RPC failed: code=" << status.error_code()
+                << " message=" << status.error_message() << "\n";
+      return 14;
+    }
+
+    if (!response.matched()) {
+      std::cout << "CompareImportedAcquisition validation failed: expected matched=true detail="
+                << response.detail() << "\n";
+      return 15;
+    }
+  }
+
   std::cout << "grpc smoke client success" << "\n";
   return 0;
 }

@@ -46,6 +46,9 @@ vna::core::AcquisitionResult BuildResult() {
 int main() {
   const vna::core::AcquisitionResult baseline = BuildResult();
   vna::core::AcquisitionResult same = BuildResult();
+  same.timestampNs += 12345;
+  same.receiverRaw.points[0].timestampNs += 111;
+  same.receiverCompensated.points[0].timestampNs += 222;
 
   std::string diff;
   assert(vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, same, 1e-9, &diff));

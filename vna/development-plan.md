@@ -1674,6 +1674,54 @@ WU-MAINLINE-054: 导入结果与当前采集最小比对能力
   - `vna/build/easy_vna_control_service_test.exe` 通过（含 compare 成功/失败断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.37 已完成 Work Unit
+
+WU-MAINLINE-055: gRPC 回放比对 RPC（CompareImportedAcquisition）
+
+- Objective: 将“导入 vs 当前采集”的比对能力对外暴露为 gRPC RPC，支持远程调用。
+- Scope (in/out):
+  - in: proto 新增 Compare 请求/响应；gRPC service 实现 compare 流程；smoke 客户端覆盖 compare RPC；比对逻辑忽略时间戳元数据以适配跨次采集。
+  - out: 比对报告持久化与多维统计摘要。
+- Files to change:
+  - `vna/proto/vna.proto`
+  - `vna/generated/cpp/vna.pb.h`
+  - `vna/generated/cpp/vna.pb.cc`
+  - `vna/generated/cpp/vna.grpc.pb.h`
+  - `vna/generated/cpp/vna.grpc.pb.cc`
+  - `vna/generated/ts/vna.ts`
+  - `vna/include/service/grpc/vna_control_grpc_service.h`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 是（`VnaControl` 新增 `CompareImportedAcquisition` RPC）。
+- Test plan:
+  - `vna/scripts/generate_proto.ps1`
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu55.json'`
+  - `cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `vna/build/easy_acquisition_comparator_test.exe`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚 compare RPC 契约与 gRPC 分支，保留本地 compare 能力。
+- Risks: compare 结果受容差参数影响；容差过小可能导致误判不匹配。
+- Acceptance criteria:
+  - gRPC Compare RPC 可返回 `matched=true/false` 与 detail 信息。
+  - compare 失败（不匹配）走业务结果返回，不作为 RPC 传输层错误。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `vna/scripts/generate_proto.ps1` 通过
+  - `vna/scripts/build_grpc_adapter.ps1` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu55.json'` 通过
+  - `cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `vna/build/easy_acquisition_comparator_test.exe` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

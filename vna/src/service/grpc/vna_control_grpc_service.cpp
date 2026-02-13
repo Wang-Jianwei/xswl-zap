@@ -291,6 +291,64 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   return ::grpc::Status::OK;
 }
 
+::grpc::Status VnaControlGrpcService::CompareImportedAcquisition(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::CompareImportedAcquisitionRequest* request,
+    ::vna::CompareImportedAcquisitionResponse* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->json_path().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "json_path is required");
+  }
+
+  if (request->current_request().instance_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "current_request.instance_id is required");
+  }
+
+  if (request->current_request().excitation().mode() ==
+      ::vna::ExcitationMode::EXCITATION_MODE_UNSPECIFIED) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT,
+                          "current_request.excitation.mode is required");
+  }
+
+  if (request->tolerance() <= 0.0) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "tolerance must be > 0");
+  }
+
+  const ::vna::core::ExcitationConfig excitation = BuildCoreExcitation(request->current_request());
+  ::vna::core::AcquisitionResult current;
+  const ::vna::core::Status acquireStatus = controlService_->AcquireOnce(
+      request->current_request().instance_id(),
+      excitation,
+      request->current_request().sample_count(),
+      request->current_request().timeout_ms(),
+      current);
+  if (acquireStatus != ::vna::core::Status::kOk) {
+    return ToGrpcStatus(acquireStatus, "compare acquire failed");
+  }
+
+  std::string diff;
+  const ::vna::core::Status compareStatus = controlService_->CompareImportedAcquisition(
+      request->json_path(), current, request->tolerance(), &diff);
+  if (compareStatus == ::vna::core::Status::kOk) {
+    response->set_matched(true);
+    response->set_detail("COMPARE_MATCHED");
+    return ::grpc::Status::OK;
+  }
+
+  if (compareStatus == ::vna::core::Status::kInvalidArgument &&
+      diff.find("COMPARE_MISMATCH:") == 0) {
+    response->set_matched(false);
+    response->set_detail(diff);
+    return ::grpc::Status::OK;
+  }
+
+  const std::string message = diff.empty() ? "compare failed" : "compare failed: " + diff;
+  return ToGrpcStatus(compareStatus, message);
+}
+
 ::grpc::Status VnaControlGrpcService::StreamAcquisition(
     ::grpc::ServerContext* context,
     const ::vna::AcquisitionRequest* request,

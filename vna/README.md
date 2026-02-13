@@ -108,6 +108,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU54 进展）：新增最小“导入 vs 当前采集”比对能力（receiver/s-parameter 数据产品），支持容差比较并输出 `COMPARE_*` 诊断前缀。
 
+补充（WU55 进展）：已新增 gRPC `CompareImportedAcquisition` RPC（导入文件 + 当前采集参数 + 容差），支持返回 `matched` 与对比详情，用于远程回放比对。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

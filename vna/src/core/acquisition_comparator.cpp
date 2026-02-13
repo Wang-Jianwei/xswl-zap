@@ -41,10 +41,6 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     return Fail(diffMessage, "instanceId mismatch");
   }
 
-  if (baseline.timestampNs != current.timestampNs) {
-    return Fail(diffMessage, "timestampNs mismatch");
-  }
-
   if (baseline.receiverRaw.points.size() != current.receiverRaw.points.size()) {
     return Fail(diffMessage, "receiverRaw point count mismatch");
   }
@@ -55,10 +51,6 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
 
     if (!AlmostEqual(lhsPoint.frequencyHz, rhsPoint.frequencyHz, tolerance)) {
       return Fail(diffMessage, "receiverRaw frequency mismatch");
-    }
-
-    if (lhsPoint.timestampNs != rhsPoint.timestampNs) {
-      return Fail(diffMessage, "receiverRaw timestamp mismatch");
     }
 
     if (lhsPoint.channels.size() != rhsPoint.channels.size()) {
@@ -91,10 +83,6 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
 
     if (!AlmostEqual(lhsPoint.frequencyHz, rhsPoint.frequencyHz, tolerance)) {
       return Fail(diffMessage, "receiverCompensated frequency mismatch");
-    }
-
-    if (lhsPoint.timestampNs != rhsPoint.timestampNs) {
-      return Fail(diffMessage, "receiverCompensated timestamp mismatch");
     }
 
     if (lhsPoint.channels.size() != rhsPoint.channels.size()) {

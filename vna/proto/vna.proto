@@ -72,6 +72,17 @@ message ImportAcquisitionRequest {
   string json_path = 1;
 }
 
+message CompareImportedAcquisitionRequest {
+  string json_path = 1;
+  AcquisitionRequest current_request = 2;
+  double tolerance = 3;
+}
+
+message CompareImportedAcquisitionResponse {
+  bool matched = 1;
+  string detail = 2;
+}
+
 message FrequencyDomainPoint {
   double frequency_hz = 1;
   double real = 2;
@@ -166,6 +177,7 @@ service VnaControl {
   rpc GetServiceStatus(Empty) returns (ServiceStatus);
   rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
   rpc ImportAcquisition(ImportAcquisitionRequest) returns (AcquisitionResult);
+  rpc CompareImportedAcquisition(CompareImportedAcquisitionRequest) returns (CompareImportedAcquisitionResponse);
   rpc StreamAcquisition(AcquisitionRequest) returns (stream AcquisitionResult);
 }
 

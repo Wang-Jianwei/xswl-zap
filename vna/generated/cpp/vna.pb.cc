@@ -419,6 +419,34 @@ struct CwExcitationDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CwExcitationDefaultTypeInternal _CwExcitation_default_instance_;
 
+inline constexpr CompareImportedAcquisitionResponse::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        detail_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        matched_{false} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR CompareImportedAcquisitionResponse::CompareImportedAcquisitionResponse(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(CompareImportedAcquisitionResponse_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct CompareImportedAcquisitionResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CompareImportedAcquisitionResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CompareImportedAcquisitionResponseDefaultTypeInternal() {}
+  union {
+    CompareImportedAcquisitionResponse _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CompareImportedAcquisitionResponseDefaultTypeInternal _CompareImportedAcquisitionResponse_default_instance_;
+
 inline constexpr ValidationResult::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -651,6 +679,35 @@ struct AcquisitionRequestDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AcquisitionRequestDefaultTypeInternal _AcquisitionRequest_default_instance_;
+
+inline constexpr CompareImportedAcquisitionRequest::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        json_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        current_request_{nullptr},
+        tolerance_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR CompareImportedAcquisitionRequest::CompareImportedAcquisitionRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(CompareImportedAcquisitionRequest_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct CompareImportedAcquisitionRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CompareImportedAcquisitionRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CompareImportedAcquisitionRequestDefaultTypeInternal() {}
+  union {
+    CompareImportedAcquisitionRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CompareImportedAcquisitionRequestDefaultTypeInternal _CompareImportedAcquisitionRequest_default_instance_;
 }  // namespace vna
 static const ::_pb::EnumDescriptor* PROTOBUF_NONNULL
     file_level_enum_descriptors_vna_2eproto[1];
@@ -755,6 +812,22 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::vna::ImportAcquisitionRequest, _impl_._has_bits_),
         4, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::ImportAcquisitionRequest, _impl_.json_path_),
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionRequest, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionRequest, _impl_.json_path_),
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionRequest, _impl_.current_request_),
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionRequest, _impl_.tolerance_),
+        0,
+        1,
+        2,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionResponse, _impl_._has_bits_),
+        5, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionResponse, _impl_.matched_),
+        PROTOBUF_FIELD_OFFSET(::vna::CompareImportedAcquisitionResponse, _impl_.detail_),
+        1,
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::FrequencyDomainPoint, _impl_._has_bits_),
@@ -905,18 +978,20 @@ static const ::_pbi::MigrationSchema
         {60, sizeof(::vna::ExcitationConfig)},
         {75, sizeof(::vna::AcquisitionRequest)},
         {92, sizeof(::vna::ImportAcquisitionRequest)},
-        {97, sizeof(::vna::FrequencyDomainPoint)},
-        {106, sizeof(::vna::TimeDomainPoint)},
-        {115, sizeof(::vna::ReceiverChannelSample)},
-        {126, sizeof(::vna::ReceiverFrequencyPoint)},
-        {135, sizeof(::vna::SParameterPoint)},
-        {146, sizeof(::vna::SParameterFrequencyPoint)},
-        {155, sizeof(::vna::AcquisitionResult)},
-        {174, sizeof(::vna::FrequencyDomainFrame)},
-        {179, sizeof(::vna::TimeDomainFrame)},
-        {186, sizeof(::vna::ResourceRequest)},
-        {197, sizeof(::vna::LeaseInfo)},
-        {206, sizeof(::vna::ServiceStatus)},
+        {97, sizeof(::vna::CompareImportedAcquisitionRequest)},
+        {106, sizeof(::vna::CompareImportedAcquisitionResponse)},
+        {113, sizeof(::vna::FrequencyDomainPoint)},
+        {122, sizeof(::vna::TimeDomainPoint)},
+        {131, sizeof(::vna::ReceiverChannelSample)},
+        {142, sizeof(::vna::ReceiverFrequencyPoint)},
+        {151, sizeof(::vna::SParameterPoint)},
+        {162, sizeof(::vna::SParameterFrequencyPoint)},
+        {171, sizeof(::vna::AcquisitionResult)},
+        {190, sizeof(::vna::FrequencyDomainFrame)},
+        {195, sizeof(::vna::TimeDomainFrame)},
+        {202, sizeof(::vna::ResourceRequest)},
+        {213, sizeof(::vna::LeaseInfo)},
+        {222, sizeof(::vna::ServiceStatus)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_Empty_default_instance_._instance,
@@ -928,6 +1003,8 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_ExcitationConfig_default_instance_._instance,
     &::vna::_AcquisitionRequest_default_instance_._instance,
     &::vna::_ImportAcquisitionRequest_default_instance_._instance,
+    &::vna::_CompareImportedAcquisitionRequest_default_instance_._instance,
+    &::vna::_CompareImportedAcquisitionResponse_default_instance_._instance,
     &::vna::_FrequencyDomainPoint_default_instance_._instance,
     &::vna::_TimeDomainPoint_default_instance_._instance,
     &::vna::_ReceiverChannelSample_default_instance_._instance,
@@ -969,71 +1046,79 @@ const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "\001(\r\022\027\n\017export_csv_path\030\005 \001(\t\022\036\n\026export_t"
     "ouchstone_path\030\006 \001(\t\022\030\n\020export_json_path"
     "\030\007 \001(\t\"-\n\030ImportAcquisitionRequest\022\021\n\tjs"
-    "on_path\030\001 \001(\t\"H\n\024FrequencyDomainPoint\022\024\n"
-    "\014frequency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004ima"
-    "g\030\003 \001(\001\"D\n\017TimeDomainPoint\022\017\n\007time_ns\030\001 "
-    "\001(\001\022\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"X\n"
-    "\025ReceiverChannelSample\022\022\n\nchannel_id\030\001 \001"
-    "(\t\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007clippe"
-    "d\030\004 \001(\010\"r\n\026ReceiverFrequencyPoint\022\024\n\014fre"
-    "quency_hz\030\001 \001(\001\022\024\n\014timestamp_ns\030\002 \001(\004\022,\n"
-    "\010channels\030\003 \003(\0132\032.vna.ReceiverChannelSam"
-    "ple\"Q\n\017SParameterPoint\022\020\n\010row_port\030\001 \001(\r"
-    "\022\020\n\010col_port\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004imag"
-    "\030\004 \001(\001\"j\n\030SParameterFrequencyPoint\022\024\n\014fr"
-    "equency_hz\030\001 \001(\001\022\022\n\nport_count\030\002 \001(\r\022$\n\006"
-    "points\030\003 \003(\0132\024.vna.SParameterPoint\"\337\002\n\021A"
-    "cquisitionResult\022\023\n\013instance_id\030\001 \001(\t\022\024\n"
-    "\014timestamp_ns\030\002 \001(\004\0224\n\017frequency_frame\030\n"
-    " \001(\0132\031.vna.FrequencyDomainFrameH\000\022*\n\ntim"
-    "e_frame\030\013 \001(\0132\024.vna.TimeDomainFrameH\000\0228\n"
-    "\023receiver_raw_points\030\024 \003(\0132\033.vna.Receive"
-    "rFrequencyPoint\022@\n\033receiver_compensated_"
-    "points\030\025 \003(\0132\033.vna.ReceiverFrequencyPoin"
-    "t\0229\n\022s_parameter_points\030\026 \003(\0132\035.vna.SPar"
-    "ameterFrequencyPointB\006\n\004data\"A\n\024Frequenc"
-    "yDomainFrame\022)\n\006points\030\001 \003(\0132\031.vna.Frequ"
-    "encyDomainPoint\"P\n\017TimeDomainFrame\022$\n\006po"
-    "ints\030\001 \003(\0132\024.vna.TimeDomainPoint\022\027\n\017samp"
-    "le_rate_ghz\030\002 \001(\001\"c\n\017ResourceRequest\022\023\n\013"
-    "resource_id\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022"
-    "\021\n\texclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G"
-    "\n\tLeaseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resourc"
-    "e_id\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\376\001\n\rServ"
-    "iceStatus\022\r\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022"
-    "\017\n\007message\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014b"
-    "ind_address\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_e"
-    "nabled\030\007 \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016insta"
-    "nce_count\030\t \001(\r\022\032\n\022active_lease_count\030\n "
-    "\001(\r\022\026\n\016bootstrap_mode\030\013 \001(\t\022\023\n\013config_pa"
-    "th\030\014 \001(\t*d\n\016ExcitationMode\022\037\n\033EXCITATION"
-    "_MODE_UNSPECIFIED\020\000\022\026\n\022EXCITATION_MODE_C"
-    "W\020\001\022\031\n\025EXCITATION_MODE_PULSE\020\0022\312\002\n\nVnaCo"
-    "ntrol\0228\n\020ValidateTopology\022\r.vna.Topology"
-    "\032\025.vna.ValidationResult\0222\n\020GetServiceSta"
-    "tus\022\n.vna.Empty\032\022.vna.ServiceStatus\022:\n\007A"
-    "cquire\022\027.vna.AcquisitionRequest\032\026.vna.Ac"
-    "quisitionResult\022J\n\021ImportAcquisition\022\035.v"
-    "na.ImportAcquisitionRequest\032\026.vna.Acquis"
-    "itionResult\022F\n\021StreamAcquisition\022\027.vna.A"
-    "cquisitionRequest\032\026.vna.AcquisitionResul"
-    "t0\0012\243\001\n\016ResourceBroker\022/\n\007Acquire\022\024.vna."
-    "ResourceRequest\032\016.vna.LeaseInfo\022.\n\005Renew"
-    "\022\016.vna.LeaseInfo\032\025.vna.ValidationResult\022"
-    "0\n\007Release\022\016.vna.LeaseInfo\032\025.vna.Validat"
-    "ionResultb\006proto3"
+    "on_path\030\001 \001(\t\"{\n!CompareImportedAcquisit"
+    "ionRequest\022\021\n\tjson_path\030\001 \001(\t\0220\n\017current"
+    "_request\030\002 \001(\0132\027.vna.AcquisitionRequest\022"
+    "\021\n\ttolerance\030\003 \001(\001\"E\n\"CompareImportedAcq"
+    "uisitionResponse\022\017\n\007matched\030\001 \001(\010\022\016\n\006det"
+    "ail\030\002 \001(\t\"H\n\024FrequencyDomainPoint\022\024\n\014fre"
+    "quency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 "
+    "\001(\001\"D\n\017TimeDomainPoint\022\017\n\007time_ns\030\001 \001(\001\022"
+    "\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"X\n\025Rec"
+    "eiverChannelSample\022\022\n\nchannel_id\030\001 \001(\t\022\014"
+    "\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007clipped\030\004 "
+    "\001(\010\"r\n\026ReceiverFrequencyPoint\022\024\n\014frequen"
+    "cy_hz\030\001 \001(\001\022\024\n\014timestamp_ns\030\002 \001(\004\022,\n\010cha"
+    "nnels\030\003 \003(\0132\032.vna.ReceiverChannelSample\""
+    "Q\n\017SParameterPoint\022\020\n\010row_port\030\001 \001(\r\022\020\n\010"
+    "col_port\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004imag\030\004 \001"
+    "(\001\"j\n\030SParameterFrequencyPoint\022\024\n\014freque"
+    "ncy_hz\030\001 \001(\001\022\022\n\nport_count\030\002 \001(\r\022$\n\006poin"
+    "ts\030\003 \003(\0132\024.vna.SParameterPoint\"\337\002\n\021Acqui"
+    "sitionResult\022\023\n\013instance_id\030\001 \001(\t\022\024\n\014tim"
+    "estamp_ns\030\002 \001(\004\0224\n\017frequency_frame\030\n \001(\013"
+    "2\031.vna.FrequencyDomainFrameH\000\022*\n\ntime_fr"
+    "ame\030\013 \001(\0132\024.vna.TimeDomainFrameH\000\0228\n\023rec"
+    "eiver_raw_points\030\024 \003(\0132\033.vna.ReceiverFre"
+    "quencyPoint\022@\n\033receiver_compensated_poin"
+    "ts\030\025 \003(\0132\033.vna.ReceiverFrequencyPoint\0229\n"
+    "\022s_parameter_points\030\026 \003(\0132\035.vna.SParamet"
+    "erFrequencyPointB\006\n\004data\"A\n\024FrequencyDom"
+    "ainFrame\022)\n\006points\030\001 \003(\0132\031.vna.Frequency"
+    "DomainPoint\"P\n\017TimeDomainFrame\022$\n\006points"
+    "\030\001 \003(\0132\024.vna.TimeDomainPoint\022\027\n\017sample_r"
+    "ate_ghz\030\002 \001(\001\"c\n\017ResourceRequest\022\023\n\013reso"
+    "urce_id\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022\021\n\te"
+    "xclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G\n\tLe"
+    "aseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resource_id"
+    "\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\376\001\n\rServiceS"
+    "tatus\022\r\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007m"
+    "essage\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_"
+    "address\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabl"
+    "ed\030\007 \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016instance_"
+    "count\030\t \001(\r\022\032\n\022active_lease_count\030\n \001(\r\022"
+    "\026\n\016bootstrap_mode\030\013 \001(\t\022\023\n\013config_path\030\014"
+    " \001(\t*d\n\016ExcitationMode\022\037\n\033EXCITATION_MOD"
+    "E_UNSPECIFIED\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022"
+    "\031\n\025EXCITATION_MODE_PULSE\020\0022\271\003\n\nVnaContro"
+    "l\0228\n\020ValidateTopology\022\r.vna.Topology\032\025.v"
+    "na.ValidationResult\0222\n\020GetServiceStatus\022"
+    "\n.vna.Empty\032\022.vna.ServiceStatus\022:\n\007Acqui"
+    "re\022\027.vna.AcquisitionRequest\032\026.vna.Acquis"
+    "itionResult\022J\n\021ImportAcquisition\022\035.vna.I"
+    "mportAcquisitionRequest\032\026.vna.Acquisitio"
+    "nResult\022m\n\032CompareImportedAcquisition\022&."
+    "vna.CompareImportedAcquisitionRequest\032\'."
+    "vna.CompareImportedAcquisitionResponse\022F"
+    "\n\021StreamAcquisition\022\027.vna.AcquisitionReq"
+    "uest\032\026.vna.AcquisitionResult0\0012\243\001\n\016Resou"
+    "rceBroker\022/\n\007Acquire\022\024.vna.ResourceReque"
+    "st\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vna.LeaseI"
+    "nfo\032\025.vna.ValidationResult\0220\n\007Release\022\016."
+    "vna.LeaseInfo\032\025.vna.ValidationResultb\006pr"
+    "oto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    3137,
+    3444,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
     nullptr,
     0,
-    21,
+    23,
     schemas,
     file_default_instances,
     TableStruct_vna_2eproto::offsets,
@@ -4339,6 +4424,673 @@ void ImportAcquisitionRequest::InternalSwap(ImportAcquisitionRequest* PROTOBUF_R
 }
 
 ::google::protobuf::Metadata ImportAcquisitionRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class CompareImportedAcquisitionRequest::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<CompareImportedAcquisitionRequest>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_._has_bits_);
+};
+
+CompareImportedAcquisitionRequest::CompareImportedAcquisitionRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CompareImportedAcquisitionRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.CompareImportedAcquisitionRequest)
+}
+PROTOBUF_NDEBUG_INLINE CompareImportedAcquisitionRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::CompareImportedAcquisitionRequest& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        json_path_(arena, from.json_path_) {}
+
+CompareImportedAcquisitionRequest::CompareImportedAcquisitionRequest(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const CompareImportedAcquisitionRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CompareImportedAcquisitionRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  CompareImportedAcquisitionRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.current_request_ = (CheckHasBit(cached_has_bits, 0x00000002U))
+                ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.current_request_)
+                : nullptr;
+  _impl_.tolerance_ = from._impl_.tolerance_;
+
+  // @@protoc_insertion_point(copy_constructor:vna.CompareImportedAcquisitionRequest)
+}
+PROTOBUF_NDEBUG_INLINE CompareImportedAcquisitionRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        json_path_(arena) {}
+
+inline void CompareImportedAcquisitionRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, current_request_),
+           0,
+           offsetof(Impl_, tolerance_) -
+               offsetof(Impl_, current_request_) +
+               sizeof(Impl_::tolerance_));
+}
+CompareImportedAcquisitionRequest::~CompareImportedAcquisitionRequest() {
+  // @@protoc_insertion_point(destructor:vna.CompareImportedAcquisitionRequest)
+  SharedDtor(*this);
+}
+inline void CompareImportedAcquisitionRequest::SharedDtor(MessageLite& self) {
+  CompareImportedAcquisitionRequest& this_ = static_cast<CompareImportedAcquisitionRequest&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.json_path_.Destroy();
+  delete this_._impl_.current_request_;
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) CompareImportedAcquisitionRequest(arena);
+}
+constexpr auto CompareImportedAcquisitionRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(CompareImportedAcquisitionRequest),
+                                            alignof(CompareImportedAcquisitionRequest));
+}
+constexpr auto CompareImportedAcquisitionRequest::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_CompareImportedAcquisitionRequest_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &CompareImportedAcquisitionRequest::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<CompareImportedAcquisitionRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &CompareImportedAcquisitionRequest::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<CompareImportedAcquisitionRequest>(), &CompareImportedAcquisitionRequest::ByteSizeLong,
+              &CompareImportedAcquisitionRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_._cached_size_),
+          false,
+      },
+      &CompareImportedAcquisitionRequest::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionRequest_class_data_ =
+        CompareImportedAcquisitionRequest::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+CompareImportedAcquisitionRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&CompareImportedAcquisitionRequest_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(CompareImportedAcquisitionRequest_class_data_.tc_table);
+  return CompareImportedAcquisitionRequest_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 1, 55, 2>
+CompareImportedAcquisitionRequest::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    CompareImportedAcquisitionRequest_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::CompareImportedAcquisitionRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string json_path = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.json_path_)}},
+    // .vna.AcquisitionRequest current_request = 2;
+    {::_pbi::TcParser::FastMtS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.current_request_)}},
+    // double tolerance = 3;
+    {::_pbi::TcParser::FastF64S1,
+     {25, 2, 0,
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.tolerance_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string json_path = 1;
+    {PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.json_path_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // .vna.AcquisitionRequest current_request = 2;
+    {PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.current_request_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // double tolerance = 3;
+    {PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.tolerance_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::AcquisitionRequest>()},
+  }},
+  {{
+    "\45\11\0\0\0\0\0\0"
+    "vna.CompareImportedAcquisitionRequest"
+    "json_path"
+  }},
+};
+PROTOBUF_NOINLINE void CompareImportedAcquisitionRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.CompareImportedAcquisitionRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.json_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(_impl_.current_request_ != nullptr);
+      _impl_.current_request_->Clear();
+    }
+  }
+  _impl_.tolerance_ = 0;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const CompareImportedAcquisitionRequest& this_ = static_cast<const CompareImportedAcquisitionRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL CompareImportedAcquisitionRequest::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const CompareImportedAcquisitionRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.CompareImportedAcquisitionRequest)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string json_path = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_json_path().empty()) {
+      const ::std::string& _s = this_._internal_json_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.CompareImportedAcquisitionRequest.json_path");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // .vna.AcquisitionRequest current_request = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        2, *this_._impl_.current_request_, this_._impl_.current_request_->GetCachedSize(), target,
+        stream);
+  }
+
+  // double tolerance = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_tolerance()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          3, this_._internal_tolerance(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.CompareImportedAcquisitionRequest)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t CompareImportedAcquisitionRequest::ByteSizeLong(const MessageLite& base) {
+  const CompareImportedAcquisitionRequest& this_ = static_cast<const CompareImportedAcquisitionRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t CompareImportedAcquisitionRequest::ByteSizeLong() const {
+  const CompareImportedAcquisitionRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.CompareImportedAcquisitionRequest)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // string json_path = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_json_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_json_path());
+      }
+    }
+    // .vna.AcquisitionRequest current_request = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.current_request_);
+    }
+    // double tolerance = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_tolerance()) != 0) {
+        total_size += 9;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void CompareImportedAcquisitionRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<CompareImportedAcquisitionRequest*>(&to_msg);
+  auto& from = static_cast<const CompareImportedAcquisitionRequest&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.CompareImportedAcquisitionRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_json_path().empty()) {
+        _this->_internal_set_json_path(from._internal_json_path());
+      } else {
+        if (_this->_impl_.json_path_.IsDefault()) {
+          _this->_internal_set_json_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(from._impl_.current_request_ != nullptr);
+      if (_this->_impl_.current_request_ == nullptr) {
+        _this->_impl_.current_request_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.current_request_);
+      } else {
+        _this->_impl_.current_request_->MergeFrom(*from._impl_.current_request_);
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_tolerance()) != 0) {
+        _this->_impl_.tolerance_ = from._impl_.tolerance_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void CompareImportedAcquisitionRequest::CopyFrom(const CompareImportedAcquisitionRequest& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.CompareImportedAcquisitionRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void CompareImportedAcquisitionRequest::InternalSwap(CompareImportedAcquisitionRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.json_path_, &other->_impl_.json_path_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.tolerance_)
+      + sizeof(CompareImportedAcquisitionRequest::_impl_.tolerance_)
+      - PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionRequest, _impl_.current_request_)>(
+          reinterpret_cast<char*>(&_impl_.current_request_),
+          reinterpret_cast<char*>(&other->_impl_.current_request_));
+}
+
+::google::protobuf::Metadata CompareImportedAcquisitionRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class CompareImportedAcquisitionResponse::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<CompareImportedAcquisitionResponse>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_._has_bits_);
+};
+
+CompareImportedAcquisitionResponse::CompareImportedAcquisitionResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CompareImportedAcquisitionResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.CompareImportedAcquisitionResponse)
+}
+PROTOBUF_NDEBUG_INLINE CompareImportedAcquisitionResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::CompareImportedAcquisitionResponse& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        detail_(arena, from.detail_) {}
+
+CompareImportedAcquisitionResponse::CompareImportedAcquisitionResponse(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const CompareImportedAcquisitionResponse& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, CompareImportedAcquisitionResponse_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  CompareImportedAcquisitionResponse* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.matched_ = from._impl_.matched_;
+
+  // @@protoc_insertion_point(copy_constructor:vna.CompareImportedAcquisitionResponse)
+}
+PROTOBUF_NDEBUG_INLINE CompareImportedAcquisitionResponse::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        detail_(arena) {}
+
+inline void CompareImportedAcquisitionResponse::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.matched_ = {};
+}
+CompareImportedAcquisitionResponse::~CompareImportedAcquisitionResponse() {
+  // @@protoc_insertion_point(destructor:vna.CompareImportedAcquisitionResponse)
+  SharedDtor(*this);
+}
+inline void CompareImportedAcquisitionResponse::SharedDtor(MessageLite& self) {
+  CompareImportedAcquisitionResponse& this_ = static_cast<CompareImportedAcquisitionResponse&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.detail_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL CompareImportedAcquisitionResponse::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) CompareImportedAcquisitionResponse(arena);
+}
+constexpr auto CompareImportedAcquisitionResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(CompareImportedAcquisitionResponse),
+                                            alignof(CompareImportedAcquisitionResponse));
+}
+constexpr auto CompareImportedAcquisitionResponse::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_CompareImportedAcquisitionResponse_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &CompareImportedAcquisitionResponse::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<CompareImportedAcquisitionResponse>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &CompareImportedAcquisitionResponse::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<CompareImportedAcquisitionResponse>(), &CompareImportedAcquisitionResponse::ByteSizeLong,
+              &CompareImportedAcquisitionResponse::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_._cached_size_),
+          false,
+      },
+      &CompareImportedAcquisitionResponse::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionResponse_class_data_ =
+        CompareImportedAcquisitionResponse::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+CompareImportedAcquisitionResponse::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&CompareImportedAcquisitionResponse_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(CompareImportedAcquisitionResponse_class_data_.tc_table);
+  return CompareImportedAcquisitionResponse_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<1, 2, 0, 53, 2>
+CompareImportedAcquisitionResponse::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_._has_bits_),
+    0, // no _extensions_
+    2, 8,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967292,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    2,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    CompareImportedAcquisitionResponse_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::CompareImportedAcquisitionResponse>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string detail = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 0, 0,
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_.detail_)}},
+    // bool matched = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(CompareImportedAcquisitionResponse, _impl_.matched_), 1>(),
+     {8, 1, 0,
+      PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_.matched_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bool matched = 1;
+    {PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_.matched_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // string detail = 2;
+    {PROTOBUF_FIELD_OFFSET(CompareImportedAcquisitionResponse, _impl_.detail_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\46\0\6\0\0\0\0\0"
+    "vna.CompareImportedAcquisitionResponse"
+    "detail"
+  }},
+};
+PROTOBUF_NOINLINE void CompareImportedAcquisitionResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.CompareImportedAcquisitionResponse)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.detail_.ClearNonDefaultToEmpty();
+  }
+  _impl_.matched_ = false;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL CompareImportedAcquisitionResponse::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const CompareImportedAcquisitionResponse& this_ = static_cast<const CompareImportedAcquisitionResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL CompareImportedAcquisitionResponse::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const CompareImportedAcquisitionResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.CompareImportedAcquisitionResponse)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // bool matched = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (this_._internal_matched() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          1, this_._internal_matched(), target);
+    }
+  }
+
+  // string detail = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_detail().empty()) {
+      const ::std::string& _s = this_._internal_detail();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.CompareImportedAcquisitionResponse.detail");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.CompareImportedAcquisitionResponse)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t CompareImportedAcquisitionResponse::ByteSizeLong(const MessageLite& base) {
+  const CompareImportedAcquisitionResponse& this_ = static_cast<const CompareImportedAcquisitionResponse&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t CompareImportedAcquisitionResponse::ByteSizeLong() const {
+  const CompareImportedAcquisitionResponse& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.CompareImportedAcquisitionResponse)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    // string detail = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_detail().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_detail());
+      }
+    }
+    // bool matched = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (this_._internal_matched() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void CompareImportedAcquisitionResponse::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<CompareImportedAcquisitionResponse*>(&to_msg);
+  auto& from = static_cast<const CompareImportedAcquisitionResponse&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.CompareImportedAcquisitionResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_detail().empty()) {
+        _this->_internal_set_detail(from._internal_detail());
+      } else {
+        if (_this->_impl_.detail_.IsDefault()) {
+          _this->_internal_set_detail("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (from._internal_matched() != 0) {
+        _this->_impl_.matched_ = from._impl_.matched_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void CompareImportedAcquisitionResponse::CopyFrom(const CompareImportedAcquisitionResponse& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.CompareImportedAcquisitionResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void CompareImportedAcquisitionResponse::InternalSwap(CompareImportedAcquisitionResponse* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.detail_, &other->_impl_.detail_, arena);
+  swap(_impl_.matched_, other->_impl_.matched_);
+}
+
+::google::protobuf::Metadata CompareImportedAcquisitionResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
