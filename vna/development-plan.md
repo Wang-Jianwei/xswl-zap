@@ -47,71 +47,43 @@
 **目标**：搭建可并行开发基础，打通最小链路。
 
 | 任务ID | 内容 | 产出 |
-|--------|------|------|
-| P0.1 | 定义 `proto/vna.proto`（含时域与激励） | `proto/vna.proto` |
 | P0.2 | 生成 C++/TS stub | `generated/cpp`, `generated/ts` |
 | P0.3 | 建立 mock service（含时域 mock） | `src/service/mock_server.cpp` |
-| P0.4 | 定义 `ExcitationConfig` / `AcquisitionResult` | `include/core/excitation_mode.h`, `include/core/measurement_data.h` |
 | P0.5 | 硬件抽象接口与驱动工厂 | `include/core/hardware_driver.h`, `src/core/hardware_driver_factory.*` |
 | P0.6 | PXI/USB mock driver | `src/drivers/pxi_driver.*`, `src/drivers/usb_vna_driver.*` |
-| P0.7 | TimeDomainProcessor stub | `src/core/processors/time_domain_processor.*` |
-| P0.8 | TriggerChainValidator 接口 | `include/core/trigger_chain_validator.h` |
 
-**里程碑 M0**：前端可调用 mock 服务，覆盖 `ValidateTopology` 与流式数据接口。
-
----
 
 ### Phase 1（4-6 周）— Core 能力稳定
 
 **目标**：形成可测试、可复用的 `vna-core-lib`。
-
-| 任务ID | 内容 | 产出 |
 |--------|------|------|
 | P1.1 | TopologyManager 实现与验证 | `src/core/topology_manager.*` |
 | P1.2 | HardwareCoordinator（基于 driver 抽象） | `src/core/hardware_coordinator.*` |
 | P1.3 | MeasurementPipeline（频域+时域路由） | `src/core/measurement_pipeline.*` |
 | P1.4 | CalibrationSession 与 CalibrationDB | `src/core/calibration_session.*` |
 | P1.5 | PluginManager（依赖解析/生命周期） | `src/core/plugin_manager.*` |
-| P1.6 | ResourceManager（租约/冲突/回收） | `src/core/resource_manager.*` |
-| P1.7 | Core 单元测试与覆盖率提升 | `tests/core/*` |
 
 **里程碑 M1**：`vna-core-lib` 稳定，单测覆盖率 ≥ 80%。
-
 ---
-
-### Phase 2（2 周）— Service 化与集成
 
 **目标**：形成可部署后端服务。
 
-| 任务ID | 内容 | 产出 |
-|--------|------|------|
-| P2.1 | VnaControlService | `src/service/vna_control_service.*` |
 | P2.2 | ResourceBrokerService | `src/service/resource_broker_service.*` |
 | P2.3 | 进程管理与健康检查 | `src/service/process_manager.*` |
 | P2.4 | 配置加载（端口/TLS/日志） | `config/service.yaml` |
 | P2.5 | 集成测试（协议与资源流） | `tests/integration/*` |
-
-**里程碑 M2**：`vna-core-service` 可独立运行，主接口可通过自动化测试。
 
 ---
 
 ### Phase 3A（4-6 周）— Qt 客户端闭环
 
 **目标**：完成操作员向 UI 的完整流程。
-
-- MainWindow / Workspace / Topology / Measurement / Plot / Calibration / Diagnostics
 - 与 gRPC 后端联调
 - UI 回归测试
-
 **里程碑 M3A**：Qt UI 可完成“拓扑配置 → 测量 → 结果显示 → 保存”。
-
----
 
 ### Phase 3B（4-6 周）— VS Code 扩展闭环
 
-**目标**：完成开发者向工作流（脚本/自动化）。
-
-- Extension Core / grpc-web client / webviews
 - 与 Envoy + gRPC 后端联调
 - Extension 测试与打包
 
@@ -508,7 +480,7 @@ WU-MAINLINE-009: gRPC 日志噪声分级治理（smoke 可读性）
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild` 通过（all cases passed）
   - 已知重复噪声按模式抑制并输出计数（`[MATRIX][NOISE] suppressed ...`）
 
-### 8.9 当前 Work Unit
+### 8.9 已完成 Work Unit
 
 WU-MAINLINE-010: gRPC smoke 严格模式（未知 stderr 失败）
 
@@ -614,6 +586,28 @@ WU-MAINLINE-013: smoke 报告路径时间戳占位符
 - Validation result:
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'` 通过
   - 已生成示例文件：`build-grpc/smoke-matrix-20260213-060232.json`
+
+### 8.13 当前 Work Unit
+
+WU-MAINLINE-014: smoke 报告失败原因分类统计
+
+- Objective: 在 JSON 报告中增加失败原因分类统计，便于 CI 快速识别失败类型（退出码、超时、未知 stderr）。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 报告汇总字段扩展；README 报告字段说明。
+  - out: 引入外部告警平台、修改 smoke 可执行程序返回内容。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'`
+- Rollback plan: 回滚新增汇总字段与 README 说明，恢复当前报告结构。
+- Risks: 分类规则定义不清会导致统计与真实失败原因不一致。
+- Acceptance criteria:
+  - 报告新增 `failureSummary`（按类型计数）并保持向后兼容。
+  - 默认成功场景统计为 0，失败场景能体现主因分类。
+  - 现有矩阵通过/失败判定逻辑不变。
 
 ---
 
