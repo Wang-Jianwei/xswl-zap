@@ -116,6 +116,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU58 进展）：插件波形预览新增 `live` 短时自动刷新模式，并加入性能保护（渲染点下采样 + 刷新节流），提升连续观察可用性。
 
+补充（WU59 进展）：插件频域波形预览新增 trace source 选择（`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`），其中 `all` 支持多曲线叠加与图例展示，便于同屏对比数据产品。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

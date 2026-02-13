@@ -11,6 +11,42 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
         { frequencyHz: 1.1e9, real: 0, imag: 2 },
       ],
     },
+    receiverRawPoints: [
+      {
+        frequencyHz: 1.0e9,
+        channels: [{ real: 1, imag: 0 }],
+      },
+      {
+        frequencyHz: 1.1e9,
+        channels: [{ real: 0, imag: 1 }],
+      },
+    ],
+    receiverCompensatedPoints: [
+      {
+        frequencyHz: 1.0e9,
+        channels: [{ real: 2, imag: 0 }],
+      },
+      {
+        frequencyHz: 1.1e9,
+        channels: [{ real: 0, imag: 2 }],
+      },
+    ],
+    sParameterPoints: [
+      {
+        frequencyHz: 1.0e9,
+        points: [
+          { rowPort: 1, colPort: 1, real: 3, imag: 4 },
+          { rowPort: 1, colPort: 2, real: 0, imag: 0 },
+        ],
+      },
+      {
+        frequencyHz: 1.1e9,
+        points: [
+          { rowPort: 1, colPort: 1, real: 0, imag: 5 },
+          { rowPort: 1, colPort: 2, real: 0, imag: 0 },
+        ],
+      },
+    ],
   } as Record<string, unknown>;
 
   const frequencyData = buildWaveformPreviewData(frequencyPayload);
@@ -19,11 +55,21 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert.equal(frequencyData.points.length, 2);
   assert.equal(frequencyData.points[0].y, 5);
   assert.equal(frequencyData.markers.length, 2);
+  assert.equal(frequencyData.traces.length, 1);
+
+  const allTraceData = buildWaveformPreviewData(frequencyPayload, "all");
+  assert.equal(allTraceData.traces.length, 4);
+  assert.equal(allTraceData.traceSource, "all");
+  assert(buildWaveformPreviewHtml(allTraceData).includes("legend="));
+
+  const s11Data = buildWaveformPreviewData(frequencyPayload, "sParameterS11");
+  assert.equal(s11Data.traces.length, 1);
+  assert.equal(s11Data.traces[0].id, "s11");
 
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
-  assert(html.includes("markers=min"));
+  assert(html.includes("markers=frame["));
 
   const timePayload = {
     instanceId: "inst1",

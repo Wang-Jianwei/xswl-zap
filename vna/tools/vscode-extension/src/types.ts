@@ -50,10 +50,25 @@ export interface WaveformPoint {
 
 export type WaveformMode = "frequency" | "time";
 
+export type WaveformTraceSource =
+  | "frame"
+  | "receiverRaw"
+  | "receiverCompensated"
+  | "sParameterS11"
+  | "all";
+
 export interface WaveformMarker {
   label: string;
   x: number;
   y: number;
+}
+
+export interface WaveformTrace {
+  id: string;
+  label: string;
+  color: string;
+  points: WaveformPoint[];
+  markers: WaveformMarker[];
 }
 
 export interface WaveformPreviewData {
@@ -62,6 +77,8 @@ export interface WaveformPreviewData {
   frameType: "frequency" | "time" | "unknown";
   xLabel: string;
   yLabel: string;
+  traceSource: WaveformTraceSource;
+  traces: WaveformTrace[];
   points: WaveformPoint[];
   markers: WaveformMarker[];
 }

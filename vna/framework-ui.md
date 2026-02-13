@@ -107,6 +107,7 @@ flowchart LR
   - 时域帧：`magnitude` 作为纵轴，`time_ns` 作为横轴。
 - 提供基础 marker：自动展示 `min` / `max` 两个点坐标。
 - 性能保护：图形点数上限与刷新节流，避免插件端渲染卡顿。
+- 频域 trace source 可选：`frame` / `receiver raw` / `receiver compensated` / `s11` / `all` 叠加。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---

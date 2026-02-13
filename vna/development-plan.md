@@ -1822,6 +1822,39 @@ WU-MAINLINE-058: 插件波形 live 自动刷新与性能保护
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.41 已完成 Work Unit
+
+WU-MAINLINE-059: 插件频域波形多 trace 选择与叠加预览
+
+- Objective: 在 VS Code 插件端提升频域分析能力，支持按数据产品选择波形来源并进行同屏对比。
+- Scope (in/out):
+  - in: `Preview Waveform` 频域模式新增 trace source 选择（`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`）；Webview 支持多曲线叠加与图例；测试补齐。
+  - out: 通道级筛选、交互式多 marker、曲线开关持久化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用既有 Acquire/StreamAcquisition 返回字段，仅扩展插件端映射与渲染）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 trace source 选择与多曲线渲染逻辑，恢复 WU058 的单曲线预览。
+- Risks: `all` 模式多曲线叠加会增加 Webview 绘制负担，已沿用下采样与刷新节流策略缓解。
+- Acceptance criteria:
+  - 频域预览可选择 trace source。
+  - `all` 模式可同屏展示多曲线并显示图例。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

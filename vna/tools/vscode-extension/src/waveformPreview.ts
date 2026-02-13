@@ -1,4 +1,10 @@
-import type { WaveformMarker, WaveformPoint, WaveformPreviewData } from "./types";
+import type {
+  WaveformMarker,
+  WaveformPoint,
+  WaveformPreviewData,
+  WaveformTrace,
+  WaveformTraceSource,
+} from "./types";
 
 const kMaxRenderPoints = 512;
 
@@ -76,33 +82,144 @@ function downsample(points: WaveformPoint[], maxPoints = kMaxRenderPoints): Wave
   return sampled;
 }
 
-export function buildWaveformPreviewData(response: Record<string, unknown>): WaveformPreviewData {
+function makeTrace(id: string, label: string, color: string, points: WaveformPoint[]): WaveformTrace {
+  const normalized = downsample(points);
+  return {
+    id,
+    label,
+    color,
+    points: normalized,
+    markers: buildMarkers(normalized),
+  };
+}
+
+function buildReceiverTrace(response: Record<string, unknown>, key: string, id: string, label: string, color: string): WaveformTrace | null {
+  const raw = response[key];
+  if (!Array.isArray(raw)) {
+    return null;
+  }
+
+  const points: WaveformPoint[] = [];
+  for (const entry of raw) {
+    const row = entry as Record<string, unknown>;
+    const channels = row.channels;
+    if (!Array.isArray(channels) || channels.length === 0) {
+      continue;
+    }
+    const channel = channels[0] as Record<string, unknown>;
+    const real = toNumber(channel.real);
+    const imag = toNumber(channel.imag);
+    points.push({
+      x: toNumber(row.frequencyHz),
+      y: Math.sqrt(real * real + imag * imag),
+    });
+  }
+
+  if (points.length === 0) {
+    return null;
+  }
+  return makeTrace(id, label, color, points);
+}
+
+function buildS11Trace(response: Record<string, unknown>): WaveformTrace | null {
+  const raw = response.sParameterPoints;
+  if (!Array.isArray(raw)) {
+    return null;
+  }
+
+  const points: WaveformPoint[] = [];
+  for (const entry of raw) {
+    const row = entry as Record<string, unknown>;
+    const matrixPoints = row.points;
+    if (!Array.isArray(matrixPoints)) {
+      continue;
+    }
+    const s11 = matrixPoints.find((item) => {
+      const value = item as Record<string, unknown>;
+      return toNumber(value.rowPort) === 1 && toNumber(value.colPort) === 1;
+    }) as Record<string, unknown> | undefined;
+
+    if (!s11) {
+      continue;
+    }
+
+    const real = toNumber(s11.real);
+    const imag = toNumber(s11.imag);
+    points.push({
+      x: toNumber(row.frequencyHz),
+      y: Math.sqrt(real * real + imag * imag),
+    });
+  }
+
+  if (points.length === 0) {
+    return null;
+  }
+  return makeTrace("s11", "s-parameter s11", "#c586c0", points);
+}
+
+export function buildWaveformPreviewData(
+  response: Record<string, unknown>,
+  traceSource: WaveformTraceSource = "frame",
+): WaveformPreviewData {
   const frequencyFrame = response.frequencyFrame as Record<string, unknown> | undefined;
   const timeFrame = response.timeFrame as Record<string, unknown> | undefined;
 
   if (frequencyFrame) {
-    const points = downsample(buildFrequencyPoints(frequencyFrame));
+    const frameTrace = makeTrace("frame", "frame", "#4ec9b0", buildFrequencyPoints(frequencyFrame));
+    const receiverRawTrace =
+      buildReceiverTrace(response, "receiverRawPoints", "receiverRaw", "receiver raw", "#569cd6");
+    const receiverCompTrace = buildReceiverTrace(
+      response,
+      "receiverCompensatedPoints",
+      "receiverCompensated",
+      "receiver compensated",
+      "#dcdcaa",
+    );
+    const s11Trace = buildS11Trace(response);
+
+    const sourceMap: Record<string, WaveformTrace | null> = {
+      frame: frameTrace,
+      receiverRaw: receiverRawTrace,
+      receiverCompensated: receiverCompTrace,
+      sParameterS11: s11Trace,
+    };
+
+    let traces: WaveformTrace[] = [];
+    if (traceSource === "all") {
+      traces = [frameTrace, receiverRawTrace, receiverCompTrace, s11Trace].filter(
+        (trace): trace is WaveformTrace => trace !== null,
+      );
+    } else {
+      const selected = sourceMap[traceSource] ?? frameTrace;
+      traces = selected ? [selected] : [frameTrace];
+    }
+
+    const primary = traces[0] ?? frameTrace;
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
       frameType: "frequency",
       xLabel: "frequency_hz",
       yLabel: "magnitude",
-      points,
-      markers: buildMarkers(points),
+      traceSource,
+      traces,
+      points: primary.points,
+      markers: primary.markers,
     };
   }
 
   if (timeFrame) {
-    const points = downsample(buildTimePoints(timeFrame));
+    const trace = makeTrace("time", "time frame", "#4ec9b0", buildTimePoints(timeFrame));
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
       frameType: "time",
       xLabel: "time_ns",
       yLabel: "magnitude",
-      points,
-      markers: buildMarkers(points),
+      traceSource: "frame",
+      traces: [trace],
+      points: trace.points,
+      markers: trace.markers,
     };
   }
 
@@ -112,6 +229,8 @@ export function buildWaveformPreviewData(response: Record<string, unknown>): Wav
     frameType: "unknown",
     xLabel: "x",
     yLabel: "y",
+    traceSource,
+    traces: [],
     points: [],
     markers: [],
   };
@@ -145,10 +264,15 @@ function toPolyline(points: WaveformPoint[], width: number, height: number): str
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
-  const polyline = toPolyline(data.points, width, height);
-  const markerText = data.markers
-    .map((marker) => `${marker.label}: (${marker.x.toFixed(4)}, ${marker.y.toFixed(4)})`)
+  const markerText = data.traces
+    .map((trace) => {
+      const text = trace.markers
+        .map((marker) => `${marker.label}=(${marker.x.toFixed(4)}, ${marker.y.toFixed(4)})`)
+        .join(", ");
+      return `${trace.label}[${text}]`;
+    })
     .join(" | ");
+  const legendText = data.traces.map((trace) => `${trace.label}:${trace.color}`).join(" | ");
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -167,14 +291,20 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   </style>
 </head>
 <body>
-  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
+  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
+  <div class="axis">legend=${legendText || "none"}</div>
   <div class="marker">markers=${markerText || "none"}</div>
   ${
-    data.points.length === 0
+    data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-           <polyline fill="none" stroke="var(--vscode-charts-blue)" stroke-width="2" points="${polyline}" />
+           ${data.traces
+             .map((trace) => {
+               const points = toPolyline(trace.points, width, height);
+               return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
+             })
+             .join("\n")}
          </svg>`
   }
 </body>

@@ -10,6 +10,7 @@ import type {
   TopologyErrorDetail,
   WaveformMode,
   WaveformPreviewData,
+  WaveformTraceSource,
 } from "./types";
 import { buildWaveformPreviewData } from "./waveformPreview";
 
@@ -179,7 +180,12 @@ export class ServiceClient {
     });
   }
 
-  acquireWaveform(instanceId: string, sampleCount: number, mode: WaveformMode): Promise<WaveformPreviewData> {
+  acquireWaveform(
+    instanceId: string,
+    sampleCount: number,
+    mode: WaveformMode,
+    traceSource: WaveformTraceSource,
+  ): Promise<WaveformPreviewData> {
     const deadline = new Date(Date.now() + this.deadlineMs);
     return new Promise<WaveformPreviewData>((resolve, reject) => {
       (this.client as unknown as {
@@ -225,7 +231,7 @@ export class ServiceClient {
             return;
           }
 
-          resolve(buildWaveformPreviewData(response));
+          resolve(buildWaveformPreviewData(response, traceSource));
         },
       );
     });
@@ -235,6 +241,7 @@ export class ServiceClient {
     instanceId: string,
     sampleCount: number,
     mode: WaveformMode,
+    traceSource: WaveformTraceSource,
     maxFrames: number,
     onFrame?: (data: WaveformPreviewData, frameCount: number) => void,
     abortSignal?: AbortSignal,
@@ -288,6 +295,8 @@ export class ServiceClient {
         frameType: "unknown",
         xLabel: "x",
         yLabel: "y",
+        traceSource,
+        traces: [],
         points: [],
         markers: [],
       };
@@ -302,7 +311,7 @@ export class ServiceClient {
 
       call.on("data", (response) => {
         frameCount += 1;
-        latest = buildWaveformPreviewData(response);
+        latest = buildWaveformPreviewData(response, traceSource);
         onFrame?.(latest, frameCount);
         if (frameCount >= maxFrames) {
           call.cancel();
