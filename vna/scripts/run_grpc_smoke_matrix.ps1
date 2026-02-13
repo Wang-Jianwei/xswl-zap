@@ -15,6 +15,7 @@ $serverExe = Join-Path $projectRoot "build-grpc\easy_grpc_server.exe"
 $unarySmokeExe = Join-Path $projectRoot "build-grpc\easy_grpc_client_smoke.exe"
 $streamSmokeExe = Join-Path $projectRoot "build-grpc\easy_grpc_stream_smoke.exe"
 $smokeEndpoint = "127.0.0.1:50051"
+$scriptName = "run_grpc_smoke_matrix.ps1"
 
 $cases = @(
   @{ Name = "no-throttle"; Every = 1; Ms = 0; Frames = 5 },
@@ -372,16 +373,23 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   $passedCases = @($matrixResults | Where-Object { $_.passed }).Count
   $failedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
   $reportDigest = "passed=$passedCases/$($matrixResults.Count);failed=$failedCases;noise=$noiseSuppressedTotal;warnings=$($warnings.Count)"
+  $reportStatus = if ($hasFailure) { "FAIL" } else { "PASS" }
+  $generatedBy = [PSCustomObject]@{
+    script = $scriptName
+    runtime = "powershell"
+  }
 
   $report = [PSCustomObject]@{
-    reportVersion = "1.4"
+    reportVersion = "1.5"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
+    status = $reportStatus
     strictMode = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
     reportDigest = $reportDigest
+    generatedBy = $generatedBy
     failedCaseNames = $failedCaseNames
     noiseSuppressedTotal = [int]$noiseSuppressedTotal
     warnings = $warnings

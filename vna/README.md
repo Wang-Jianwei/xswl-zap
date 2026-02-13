@@ -257,9 +257,11 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 
 报告还包含以下元数据：
 
-- `reportVersion`：报告结构版本（当前 `1.4`）
+- `reportVersion`：报告结构版本（当前 `1.5`）
 - `durationMs`：整次矩阵执行耗时（毫秒）
+- `status`：本次矩阵结果状态（`PASS`/`FAIL`）
 - `reportDigest`：顶层摘要字符串（通过/失败/噪声/告警计数）
+- `generatedBy`：报告生成器信息（脚本名与运行时）
 - `failedCaseNames`：失败 case 名称列表
 - `noiseSuppressedTotal`：本次执行被抑制的已知噪声总条数
 - `warnings[]`：结构化告警摘要（如噪声抑制、非严格模式下未知 stderr）

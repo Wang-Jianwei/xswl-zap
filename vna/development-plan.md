@@ -860,6 +860,49 @@ WU-MAINLINE-025: 报告增加顶层摘要字符串
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v15.json'` 通过
   - 报告包含 `reportVersion=1.4`、`reportDigest`、`cases[*].caseIndex`
 
+### 8.19 已完成 Work Unit（批量）
+
+WU-MAINLINE-026: 报告增加顶层状态字段
+
+- Objective: 提供机器可读的顶层结果状态（PASS/FAIL）。
+- Scope (in/out):
+  - in: 新增 `status` 字段。
+  - out: 细粒度状态机定义。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 `status` 字段。
+- Risks: 状态语义扩展时需保持兼容。
+- Acceptance criteria:
+  - 报告包含 `status` 且与 `overallPassed` 一致。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-027: 报告增加生成器元数据
+
+- Objective: 明确报告来源脚本与运行时，提升追溯性。
+- Scope (in/out):
+  - in: 新增 `generatedBy` 字段。
+  - out: 完整构建环境指纹。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 `generatedBy` 字段。
+- Risks: 运行时命名约定调整需同步文档。
+- Acceptance criteria:
+  - 报告包含 `generatedBy.script/runtime`。
+  - `reportVersion` 更新为 `1.5`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v16.json'` 通过
+  - 报告包含 `reportVersion=1.5`、`status`、`generatedBy`
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
