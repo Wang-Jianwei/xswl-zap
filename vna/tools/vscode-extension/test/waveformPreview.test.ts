@@ -106,6 +106,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("y="));
   assert(html.includes("id=\"copyPrimaryMarker\""));
   assert(html.includes("copy-primary-marker"));
+  assert(html.includes("timestampNs=123"));
+  assert(html.includes("Ctrl/Cmd + C"));
+  assert(html.includes("No primary marker available") || html.includes("Copy primary marker to clipboard"));
   assert(html.includes("id=\"copyStatus\""));
   assert(html.includes("copy-primary-marker-result"));
   assert(html.includes("Copying..."));

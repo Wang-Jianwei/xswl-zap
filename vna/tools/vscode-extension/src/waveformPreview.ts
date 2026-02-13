@@ -437,7 +437,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const primaryTraceId = data.traces[0]?.id ?? "";
   const primaryTrace = data.traces[0];
   const primaryMarkerCopyText = primaryTrace
-    ? `${primaryTrace.label} | ${primaryTrace.markers
+    ? `timestampNs=${data.timestampNs} | ${primaryTrace.label} | ${primaryTrace.markers
         .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
         .join("; ")}`
     : "";
@@ -524,6 +524,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       font-size: 12px;
     }
     .action-btn[disabled] { opacity: 0.5; cursor: default; }
+    .shortcut-hint { font-size: 11px; opacity: 0.75; margin-left: 2px; }
     .legend-item {
       border: 1px solid var(--vscode-editorWidget-border);
       background: var(--vscode-editor-background);
@@ -553,7 +554,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
   <div class="axis">legend=${legendText || "none"}</div>
   <div class="actions">
-    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
+    <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${primaryMarkerCopyText ? "Copy primary marker to clipboard" : "No primary marker available"}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
+    <span class="shortcut-hint">Ctrl/Cmd + C</span>
   </div>
   <div id="copyStatus" class="copy-status"></div>
   <div class="legend" id="legend">${legendItems}</div>

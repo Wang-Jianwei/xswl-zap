@@ -2246,6 +2246,87 @@ WU-MAINLINE-072: 快捷键复制主曲线 marker
 - Validation result (WU070~072 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.55 已完成 Work Unit
+
+WU-MAINLINE-073: 复制按钮快捷键提示
+
+- Objective: 降低学习成本，让用户在页面内可见快捷操作路径。
+- Scope (in/out):
+  - in: 在复制按钮旁显示 `Ctrl/Cmd + C` 提示。
+  - out: 按键自定义。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚快捷键提示文本。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 页面可见快捷键提示。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.56 已完成 Work Unit
+
+WU-MAINLINE-074: 无主曲线时复制按钮禁用原因提示
+
+- Objective: 在不可复制场景给出明确反馈，减少误操作疑惑。
+- Scope (in/out):
+  - in: 无主曲线时按钮置灰并显示原因 tooltip。
+  - out: 复杂错误码体系。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚按钮禁用提示文案。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 无主曲线时按钮不可用且有原因提示。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+### 8.57 已完成 Work Unit
+
+WU-MAINLINE-075: 复制文本附带时间戳
+
+- Objective: 提升复制数据可追溯性，便于日志和报告回查。
+- Scope (in/out):
+  - in: 复制文本前置 `timestampNs` 字段。
+  - out: 时间格式本地化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚时间戳拼接逻辑。
+- Risks: 无关键风险。
+- Acceptance criteria:
+  - 复制文本包含 `timestampNs`。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result (WU073~075 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
