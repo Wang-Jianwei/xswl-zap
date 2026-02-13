@@ -67,6 +67,22 @@ int main() {
   assert(diff.find("sParameter matrix value mismatch") != std::string::npos);
   assert(diff.find("delta=") != std::string::npos);
 
+    vna::core::AcquisitionResult mismatchInstance = BuildResult();
+    mismatchInstance.instanceId = "inst-x";
+    assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(
+      baseline, mismatchInstance, 1e-9, &diff));
+    assert(diff.find("instanceId mismatch") != std::string::npos);
+    assert(diff.find("expected='inst0'") != std::string::npos);
+    assert(diff.find("actual='inst-x'") != std::string::npos);
+
+    vna::core::AcquisitionResult mismatchCount = BuildResult();
+    mismatchCount.receiverRaw.points.clear();
+    assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(
+      baseline, mismatchCount, 1e-9, &diff));
+    assert(diff.find("receiverRaw point count mismatch") != std::string::npos);
+    assert(diff.find("expected=1") != std::string::npos);
+    assert(diff.find("actual=0") != std::string::npos);
+
   vna::core::AcquisitionResult nonFinite = BuildResult();
   nonFinite.receiverRaw.points[0].channels[0].iq =
       std::complex<double>(std::numeric_limits<double>::quiet_NaN(), 0.0);

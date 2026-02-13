@@ -2686,6 +2686,87 @@ WU-MAINLINE-097: core/service 回归测试扩展
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.80 已完成 Work Unit
+
+WU-MAINLINE-098: instanceId mismatch 详情增强
+
+- Objective: 明确实例不匹配的 expected/actual。
+- Scope (in/out):
+  - in: instanceId mismatch 输出 expected/actual。
+  - out: 多实例自动映射修复。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.81 已完成 Work Unit
+
+WU-MAINLINE-099: 点数/通道数 mismatch 详情增强
+
+- Objective: 快速识别结构规模差异。
+- Scope (in/out):
+  - in: point/channel/matrix size mismatch 输出 expected/actual 与 point index。
+  - out: 自动裁剪对齐。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.82 已完成 Work Unit
+
+WU-MAINLINE-100: 频点 mismatch 上下文增强
+
+- Objective: 提升频点差异定位效率。
+- Scope (in/out):
+  - in: frequency mismatch 输出 point index + expected/actual + tolerance。
+  - out: 频率重采样容错。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.83 已完成 Work Unit
+
+WU-MAINLINE-101: 端口计数 mismatch 上下文增强
+
+- Objective: 明确 n-port 结构差异。
+- Scope (in/out):
+  - in: portCount mismatch 输出 point index + expected/actual。
+  - out: 动态端口映射。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.84 已完成 Work Unit
+
+WU-MAINLINE-102: channelId/clipped mismatch 上下文增强
+
+- Objective: 定位通道元数据不一致问题。
+- Scope (in/out):
+  - in: channelId/clipped mismatch 输出 point/channel 索引与 expected/actual。
+  - out: 通道重命名策略。
+- Status: ✅ Completed (2026-02-13)
+
+### 8.85 已完成 Work Unit
+
+WU-MAINLINE-103: comparator 回归断言扩展
+
+- Objective: 固化新增 mismatch detail 语义，避免回归。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 instanceId/pointCount/non-finite 详情断言。
+  - out: 大规模随机数据 fuzz。
+- Status: ✅ Completed (2026-02-13)
+
+- Files to change (WU098~103):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU097 诊断粒度。
+- Risks: detail 文本更长但仍在单字段内，兼容性影响低。
+- Acceptance criteria:
+  - mismatch detail 包含 expected/actual 与定位索引。
+  - core/service 定向测试通过。
+
+- Validation result (WU098~103 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

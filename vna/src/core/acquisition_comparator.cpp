@@ -102,11 +102,17 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
   }
 
   if (baseline.instanceId != current.instanceId) {
-    return Fail(diffMessage, "instanceId mismatch");
+    std::ostringstream message;
+    message << "instanceId mismatch: expected='" << baseline.instanceId
+            << "', actual='" << current.instanceId << "'";
+    return Fail(diffMessage, message.str());
   }
 
   if (baseline.receiverRaw.points.size() != current.receiverRaw.points.size()) {
-    return Fail(diffMessage, "receiverRaw point count mismatch");
+    std::ostringstream message;
+    message << "receiverRaw point count mismatch: expected=" << baseline.receiverRaw.points.size()
+            << ", actual=" << current.receiverRaw.points.size();
+    return Fail(diffMessage, message.str());
   }
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.receiverRaw.points.size(); ++pointIndex) {
@@ -114,11 +120,20 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     const ReceiverFrequencyPoint& rhsPoint = current.receiverRaw.points[pointIndex];
 
     if (!AlmostEqual(lhsPoint.frequencyHz, rhsPoint.frequencyHz, tolerance)) {
-      return Fail(diffMessage, "receiverRaw frequency mismatch");
+      std::ostringstream message;
+      message << "receiverRaw frequency mismatch at point=" << pointIndex
+              << ": expected=" << std::setprecision(6) << std::scientific << lhsPoint.frequencyHz
+              << ", actual=" << rhsPoint.frequencyHz
+              << ", tolerance=" << tolerance;
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     if (lhsPoint.channels.size() != rhsPoint.channels.size()) {
-      return Fail(diffMessage, "receiverRaw channel count mismatch");
+      std::ostringstream message;
+      message << "receiverRaw channel count mismatch at point=" << pointIndex
+              << ": expected=" << lhsPoint.channels.size()
+              << ", actual=" << rhsPoint.channels.size();
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     for (std::size_t channelIndex = 0; channelIndex < lhsPoint.channels.size(); ++channelIndex) {
@@ -126,10 +141,20 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       const ReceiverChannelSample& rhsChannel = rhsPoint.channels[channelIndex];
 
       if (lhsChannel.channelId != rhsChannel.channelId) {
-        return Fail(diffMessage, "receiverRaw channelId mismatch");
+        std::ostringstream message;
+        message << "receiverRaw channelId mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ": expected='" << lhsChannel.channelId
+                << "', actual='" << rhsChannel.channelId << "'";
+        return FailWithStats(diffMessage, message.str(), stats);
       }
       if (lhsChannel.clipped != rhsChannel.clipped) {
-        return Fail(diffMessage, "receiverRaw clipped mismatch");
+        std::ostringstream message;
+        message << "receiverRaw clipped mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ": expected=" << (lhsChannel.clipped ? "true" : "false")
+                << ", actual=" << (rhsChannel.clipped ? "true" : "false");
+        return FailWithStats(diffMessage, message.str(), stats);
       }
       if (!IsFiniteComplex(lhsChannel.iq) || !IsFiniteComplex(rhsChannel.iq)) {
         std::ostringstream message;
@@ -150,7 +175,11 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
   }
 
   if (baseline.receiverCompensated.points.size() != current.receiverCompensated.points.size()) {
-    return Fail(diffMessage, "receiverCompensated point count mismatch");
+    std::ostringstream message;
+    message << "receiverCompensated point count mismatch: expected="
+            << baseline.receiverCompensated.points.size()
+            << ", actual=" << current.receiverCompensated.points.size();
+    return Fail(diffMessage, message.str());
   }
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.receiverCompensated.points.size(); ++pointIndex) {
@@ -158,11 +187,20 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     const ReceiverFrequencyPoint& rhsPoint = current.receiverCompensated.points[pointIndex];
 
     if (!AlmostEqual(lhsPoint.frequencyHz, rhsPoint.frequencyHz, tolerance)) {
-      return Fail(diffMessage, "receiverCompensated frequency mismatch");
+      std::ostringstream message;
+      message << "receiverCompensated frequency mismatch at point=" << pointIndex
+              << ": expected=" << std::setprecision(6) << std::scientific << lhsPoint.frequencyHz
+              << ", actual=" << rhsPoint.frequencyHz
+              << ", tolerance=" << tolerance;
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     if (lhsPoint.channels.size() != rhsPoint.channels.size()) {
-      return Fail(diffMessage, "receiverCompensated channel count mismatch");
+      std::ostringstream message;
+      message << "receiverCompensated channel count mismatch at point=" << pointIndex
+              << ": expected=" << lhsPoint.channels.size()
+              << ", actual=" << rhsPoint.channels.size();
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     for (std::size_t channelIndex = 0; channelIndex < lhsPoint.channels.size(); ++channelIndex) {
@@ -170,10 +208,20 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
       const ReceiverChannelSample& rhsChannel = rhsPoint.channels[channelIndex];
 
       if (lhsChannel.channelId != rhsChannel.channelId) {
-        return Fail(diffMessage, "receiverCompensated channelId mismatch");
+        std::ostringstream message;
+        message << "receiverCompensated channelId mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ": expected='" << lhsChannel.channelId
+                << "', actual='" << rhsChannel.channelId << "'";
+        return FailWithStats(diffMessage, message.str(), stats);
       }
       if (lhsChannel.clipped != rhsChannel.clipped) {
-        return Fail(diffMessage, "receiverCompensated clipped mismatch");
+        std::ostringstream message;
+        message << "receiverCompensated clipped mismatch at point=" << pointIndex
+                << ", channel=" << channelIndex
+                << ": expected=" << (lhsChannel.clipped ? "true" : "false")
+                << ", actual=" << (rhsChannel.clipped ? "true" : "false");
+        return FailWithStats(diffMessage, message.str(), stats);
       }
       if (!IsFiniteComplex(lhsChannel.iq) || !IsFiniteComplex(rhsChannel.iq)) {
         std::ostringstream message;
@@ -194,7 +242,10 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
   }
 
   if (baseline.sParameters.points.size() != current.sParameters.points.size()) {
-    return Fail(diffMessage, "sParameter point count mismatch");
+    std::ostringstream message;
+    message << "sParameter point count mismatch: expected=" << baseline.sParameters.points.size()
+            << ", actual=" << current.sParameters.points.size();
+    return Fail(diffMessage, message.str());
   }
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.sParameters.points.size(); ++pointIndex) {
@@ -202,15 +253,28 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
     const SParameterFrequencyPoint& rhsPoint = current.sParameters.points[pointIndex];
 
     if (!AlmostEqual(lhsPoint.frequencyHz, rhsPoint.frequencyHz, tolerance)) {
-      return Fail(diffMessage, "sParameter frequency mismatch");
+      std::ostringstream message;
+      message << "sParameter frequency mismatch at point=" << pointIndex
+              << ": expected=" << std::setprecision(6) << std::scientific << lhsPoint.frequencyHz
+              << ", actual=" << rhsPoint.frequencyHz
+              << ", tolerance=" << tolerance;
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     if (lhsPoint.portCount != rhsPoint.portCount) {
-      return Fail(diffMessage, "sParameter portCount mismatch");
+      std::ostringstream message;
+      message << "sParameter portCount mismatch at point=" << pointIndex
+              << ": expected=" << lhsPoint.portCount
+              << ", actual=" << rhsPoint.portCount;
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     if (lhsPoint.matrix.size() != rhsPoint.matrix.size()) {
-      return Fail(diffMessage, "sParameter matrix size mismatch");
+      std::ostringstream message;
+      message << "sParameter matrix size mismatch at point=" << pointIndex
+              << ": expected=" << lhsPoint.matrix.size()
+              << ", actual=" << rhsPoint.matrix.size();
+      return FailWithStats(diffMessage, message.str(), stats);
     }
 
     for (std::size_t valueIndex = 0; valueIndex < lhsPoint.matrix.size(); ++valueIndex) {

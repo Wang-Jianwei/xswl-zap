@@ -152,6 +152,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU92~WU97 进展）：后端 compare 诊断继续增强，新增 tolerance/分组样本计数摘要、非有限值检测（NaN/Inf），并在 core/service 测试中覆盖成功与异常路径。
 
+补充（WU98~WU103 进展）：后端 compare mismatch detail 进一步细化，新增 expected/actual、索引位置与容差上下文，覆盖 instanceId/计数/频点/端口等关键差异定位。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置
