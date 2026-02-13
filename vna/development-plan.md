@@ -1182,9 +1182,10 @@ WU-MAINLINE-040: 摘要 JSON 压缩输出与落盘
 
 WU-MAINLINE-041: 基本测量参数模型与 S 参数扫描 MVP
 
-- Objective: 将“频率/点数/功率/IFBW”参数接入测量主流程，形成最小可验收 S 参数扫描链路。
+- Objective: 将“频率/点数/功率/IFBW”参数接入测量主流程，并先打通接收机数值采集链路（I/Q 复数采样）后形成最小可验收 S 参数扫描链路。
+- Data product policy: `S 参数`只是标准输出之一；接收机原始/补偿后数据同样属于一等数据产品，需支持独立查看与输出。
 - Scope (in/out):
-  - in: 参数模型、服务层接入、最小回归测试。
+  - in: 参数模型、接收机采样帧模型（R/A/B 或等价参考/测量通道）、服务层接入、最小回归测试。
   - out: 高阶测量算法优化与性能调优。
 - Files to change:
   - `vna/include/core/measurement_pipeline.h`
@@ -1199,8 +1200,12 @@ WU-MAINLINE-041: 基本测量参数模型与 S 参数扫描 MVP
 - Rollback plan: 回滚参数扩展与服务映射改动，保留现有最小 Acquire/Stream 路径。
 - Risks: 参数语义定义不完整会导致前后端行为不一致。
 - Acceptance criteria:
-  - 可配置并生效最小测量参数集合。
-  - 回归测试覆盖关键参数有效/无效路径。
+  - 可配置并生效最小测量参数集合（频率范围、点数、功率、IFBW）。
+  - 每个频点可获得结构化接收机复数采样结果（含参考与测量通道）。
+  - 采样链路包含最小可观测字段：通道标识、时间戳、I/Q 数值、过载/裁剪标记（若触发）。
+  - 单次采集至少可输出两类结果：`receiver`（接收机数据）与 `s-parameter`（S 参数），二者可独立消费。
+  - 数据处理链路保持分层：`raw receiver -> factory compensation -> optional user calibration -> s-parameter -> derived views`。
+  - 回归测试覆盖关键参数有效/无效路径，以及接收机数值采集的稳定输出路径。
 
 - Status: 🟡 Planned
 
