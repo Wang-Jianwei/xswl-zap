@@ -111,6 +111,7 @@ flowchart LR
 - 接收机相关 trace 支持 `channel index` 选择（`receiver raw` / `receiver compensated` / `all`）。
 - `all` 模式支持可见曲线勾选（trace 显隐控制）。
 - 图例支持点击临时显隐曲线（无需重新发起采集命令）。
+- 坐标轴显示基础刻度文本（x/y min/max），便于快速读数。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---

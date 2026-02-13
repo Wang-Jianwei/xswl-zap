@@ -99,6 +99,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("polyline"));
   assert(html.includes("markers=frame["));
   assert(html.includes("axis-line"));
+  assert(html.includes("axis-tick"));
+  assert(html.includes("xMin="));
+  assert(html.includes("yMax="));
   assert(html.includes("channel=0"));
 
   const timePayload = {

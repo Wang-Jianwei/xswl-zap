@@ -324,7 +324,44 @@ function renderTrace(trace: WaveformTrace, width: number, height: number): strin
   return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
 }
 
-function renderAxes(width: number, height: number): string {
+function formatTick(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "0";
+  }
+
+  const abs = Math.abs(value);
+  if (abs >= 1.0e6 || (abs > 0 && abs < 1.0e-3)) {
+    return value.toExponential(3);
+  }
+  return value.toFixed(3);
+}
+
+function getTraceBounds(traces: WaveformTrace[]): { minX: number; maxX: number; minY: number; maxY: number } {
+  const points = traces.flatMap((trace) => trace.points);
+  if (points.length === 0) {
+    return {
+      minX: 0,
+      maxX: 1,
+      minY: 0,
+      maxY: 1,
+    };
+  }
+
+  const xValues = points.map((point) => point.x);
+  const yValues = points.map((point) => point.y);
+  return {
+    minX: Math.min(...xValues),
+    maxX: Math.max(...xValues),
+    minY: Math.min(...yValues),
+    maxY: Math.max(...yValues),
+  };
+}
+
+function renderAxes(
+  width: number,
+  height: number,
+  bounds: { minX: number; maxX: number; minY: number; maxY: number },
+): string {
   const padding = 10;
   const left = padding;
   const right = width - padding;
@@ -345,7 +382,12 @@ function renderAxes(width: number, height: number): string {
   const axes = `<line class="axis-line" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />
 <line class="axis-line" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" />`;
 
-  return `${horizontal}\n${vertical}\n${axes}`;
+  const ticks = `<text class="axis-tick" x="${left}" y="${height - 2}" text-anchor="start">xMin=${formatTick(bounds.minX)}</text>
+<text class="axis-tick" x="${right}" y="${height - 2}" text-anchor="end">xMax=${formatTick(bounds.maxX)}</text>
+<text class="axis-tick" x="${left + 2}" y="${top + 12}" text-anchor="start">yMax=${formatTick(bounds.maxY)}</text>
+<text class="axis-tick" x="${left + 2}" y="${bottom - 4}" text-anchor="start">yMin=${formatTick(bounds.minY)}</text>`;
+
+  return `${horizontal}\n${vertical}\n${axes}\n${ticks}`;
 }
 
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
@@ -396,6 +438,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
     .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
     .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
+    .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
     .empty { opacity: 0.8; }
   </style>
 </head>
@@ -409,7 +452,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-         ${renderAxes(width, height)}
+         ${renderAxes(width, height, getTraceBounds(data.traces))}
            ${data.traces
              .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>`)
              .join("\n")}

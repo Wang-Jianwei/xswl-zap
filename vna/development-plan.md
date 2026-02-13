@@ -1952,6 +1952,36 @@ WU-MAINLINE-062: 插件图例点击显隐（运行中交互）
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.45 已完成 Work Unit
+
+WU-MAINLINE-063: 插件波形坐标轴刻度文本（x/y min/max）
+
+- Objective: 提升插件波形可读性，在图内直接显示基础坐标刻度信息。
+- Scope (in/out):
+  - in: 在 Webview 坐标轴增加 x/y 的 min/max 文本刻度；补测试与文档。
+  - out: 自适应多刻度分级、单位换算切换、缩放后动态坐标重排。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（纯前端渲染增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚轴刻度文本渲染，恢复仅轴线/网格展示。
+- Risks: 极端数值范围下刻度文本可能较长（已采用定点/科学计数法格式化）。
+- Acceptance criteria:
+  - 坐标轴显示 x/y min/max 文本。
+  - 与现有波形渲染、图例显隐兼容。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
