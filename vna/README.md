@@ -229,6 +229,26 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr
 ```
 
+如需限制单次 smoke 子进程最长执行时间（默认 `20` 秒）：
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 30
+```
+
+如需输出结构化回归结果（JSON）：
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath .\build-grpc\smoke-matrix-report.json
+```
+
+`ReportJsonPath` 支持时间戳占位符：`{timestamp}` / `{timestampUtc}` / `{timestampLocal}`。
+
+注意：在 PowerShell 中使用占位符时请给路径加引号，避免 `{}` 被表达式语法解析。
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'
+```
+
 ## VS Code 插件联调快速开始
 
 在使用 `vna/tools/vscode-extension` 命令前，先确保 gRPC 后端已在 `vna` 目录启动：

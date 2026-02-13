@@ -145,6 +145,20 @@ WU-<ID>: <Title>
 
 建议每个 WU 控制在 1~3 天内闭环。
 
+### 4.1 WU 完成收尾步骤（必须）
+
+每次 WU 达到 Acceptance criteria 后，必须在同一轮收尾中完成以下动作：
+
+1. 更新 `vna/development-plan.md` 中该 WU 的 `Status` 与 `Validation result`
+2. 提交一次对应的 Git 记录（一个 WU 对应一次独立 commit）
+3. 在最终说明中给出本次 commit hash 与测试结果摘要
+
+建议 commit 信息格式：
+
+- `feat(wu): complete WU-MAINLINE-013 smoke report timestamp placeholder`
+- `fix(wu): complete WU-MAINLINE-011 smoke timeout protection`
+- `docs(wu): complete WU-MAINLINE-012 json report output docs`
+
 ---
 
 ## 5. 质量门禁（CI + 人工审查）
@@ -520,6 +534,86 @@ WU-MAINLINE-010: gRPC smoke 严格模式（未知 stderr 失败）
 - Validation result:
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild` 通过（all cases passed）
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr` 通过（strict mode enabled）
+
+### 8.10 已完成 Work Unit
+
+WU-MAINLINE-011: gRPC smoke 超时保护（防卡死）
+
+- Objective: 为矩阵 smoke 子进程增加可配置超时，避免单个 case 卡死导致整批回归阻塞。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 增加 `SmokeTimeoutSec` 参数与超时失败判定，README 参数说明。
+  - out: 修改 gRPC 客户端实现、新增外部 watchdog 进程。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 30`
+- Rollback plan: 回滚脚本参数与超时判定分支，恢复当前执行逻辑。
+- Risks: 超时阈值设置过小可能产生误报，需要按环境负载调整。
+- Acceptance criteria:
+  - 默认行为不变。
+  - 超时时对应 case 明确失败并输出 TIMEOUT 标识。
+  - 配置恢复与脚本整体流程不受影响。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild` 通过（all cases passed）
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 30` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr -SmokeTimeoutSec 30` 通过
+
+### 8.11 已完成 Work Unit
+
+WU-MAINLINE-012: gRPC smoke 结构化报告输出（JSON）
+
+- Objective: 为矩阵 smoke 增加可选 JSON 报告输出，便于 CI 留档、对比与问题追溯。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 增加 `ReportJsonPath` 参数并输出每个 case 结果摘要；README 用法说明。
+  - out: 引入外部报表系统、修改 gRPC 客户端程序。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath .\build-grpc\smoke-matrix-report.json`
+- Rollback plan: 回滚脚本新增参数与 JSON 写出逻辑，恢复当前终端输出模式。
+- Risks: 报告路径无权限时可能写文件失败；需保持不影响核心回归判定。
+- Acceptance criteria:
+  - 默认行为不变。
+  - 指定 `ReportJsonPath` 时生成有效 JSON 文件。
+  - 报告包含整体结果与逐 case 关键字段（通过/失败、退出码、噪声统计）。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath .\build-grpc\smoke-matrix-report.json` 通过
+  - 报告文件已生成并包含 `overallPassed/cases/*` 关键字段
+
+### 8.12 已完成 Work Unit
+
+WU-MAINLINE-013: smoke 报告路径时间戳占位符
+
+- Objective: 让 `ReportJsonPath` 支持时间戳占位符，避免 CI 多次执行互相覆盖报告文件。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 增加路径模板解析（`{timestamp}` 等）；README 用法补充。
+  - out: 外部归档系统改造、历史报告清理策略。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'`
+- Rollback plan: 回滚路径模板解析逻辑与 README 说明，恢复固定路径模式。
+- Risks: 若占位符拼写错误将按字面写入文件名，可能不符合预期。
+- Acceptance criteria:
+  - 默认固定路径行为不变。
+  - 指定占位符时生成带时间戳的唯一报告文件。
+  - 回归结果判定逻辑不受影响。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-{timestamp}.json'` 通过
+  - 已生成示例文件：`build-grpc/smoke-matrix-20260213-060232.json`
 
 ---
 

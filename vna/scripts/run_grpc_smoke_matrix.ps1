@@ -1,6 +1,8 @@
 param(
   [switch]$SkipBuild,
-  [switch]$FailOnUnknownStderr
+  [switch]$FailOnUnknownStderr,
+  [int]$SmokeTimeoutSec = 20,
+  [string]$ReportJsonPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,23 +36,55 @@ function Set-ConfigValue([string]$content, [string]$key, [string]$value) {
   return $trimmed + "`r`n" + "${key}: $value" + "`r`n"
 }
 
+function Resolve-ReportPath {
+  param(
+    [string]$PathTemplate
+  )
+
+  if ([string]::IsNullOrWhiteSpace($PathTemplate)) {
+    return ""
+  }
+
+  $utcNow = (Get-Date).ToUniversalTime()
+  $localNow = Get-Date
+  $resolved = $PathTemplate
+  $resolved = $resolved.Replace("{timestamp}", $utcNow.ToString("yyyyMMdd-HHmmss"))
+  $resolved = $resolved.Replace("{timestampUtc}", $utcNow.ToString("yyyyMMdd-HHmmss"))
+  $resolved = $resolved.Replace("{timestampLocal}", $localNow.ToString("yyyyMMdd-HHmmss"))
+
+  return $resolved
+}
+
 function Invoke-SmokeCommand {
   param(
     [string]$Executable,
-    [string[]]$Arguments
+    [string[]]$Arguments,
+    [int]$TimeoutSec,
+    [string]$ExpectedSuccessPattern
   )
 
   $stdoutPath = [System.IO.Path]::GetTempFileName()
   $stderrPath = [System.IO.Path]::GetTempFileName()
 
   try {
-    $process = Start-Process -FilePath $Executable `
-      -ArgumentList $Arguments `
+    $argumentText = if ($Arguments -and $Arguments.Count -gt 0) { ($Arguments -join " ") } else { "" }
+    $cmdLine = if ([string]::IsNullOrWhiteSpace($argumentText)) { "`"$Executable`"" } else { "`"$Executable`" $argumentText" }
+
+    $process = Start-Process -FilePath "cmd.exe" `
+      -ArgumentList @("/c", $cmdLine) `
       -NoNewWindow `
-      -Wait `
       -PassThru `
       -RedirectStandardOutput $stdoutPath `
       -RedirectStandardError $stderrPath
+
+    $completed = $process.WaitForExit($TimeoutSec * 1000)
+    $timedOut = -not $completed
+    if ($timedOut -and -not $process.HasExited) {
+      [void](Stop-Process -Id $process.Id -Force)
+    }
+    if (-not $timedOut) {
+      [void]($process.WaitForExit())
+    }
 
     $stdoutLines = @()
     $stderrLines = @()
@@ -70,9 +104,10 @@ function Invoke-SmokeCommand {
     }
   }
 
-  $exitCode = $process.ExitCode
+  $exitCode = if ($timedOut) { 124 } else { $process.ExitCode }
   $suppressedCount = 0
   $unknownStderrCount = 0
+  $successMatched = $false
 
   foreach ($line in $stdoutLines) {
     $isKnownNoise = $false
@@ -86,6 +121,10 @@ function Invoke-SmokeCommand {
     if ($isKnownNoise) {
       $suppressedCount += 1
       continue
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedSuccessPattern) -and $line -match $ExpectedSuccessPattern) {
+      $successMatched = $true
     }
 
     Write-Host $line
@@ -105,6 +144,10 @@ function Invoke-SmokeCommand {
       continue
     }
 
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedSuccessPattern) -and $line -match $ExpectedSuccessPattern) {
+      $successMatched = $true
+    }
+
     Write-Host $line
     if (-not [string]::IsNullOrWhiteSpace($line)) {
       $unknownStderrCount += 1
@@ -115,11 +158,30 @@ function Invoke-SmokeCommand {
     Write-Host "[MATRIX][NOISE] suppressed known grpc warnings: $suppressedCount"
   }
 
-  return [PSCustomObject]@{
-    ExitCode = $exitCode
+  if ($timedOut) {
+    Write-Host "[MATRIX][TIMEOUT] executable=$Executable timeout_sec=$TimeoutSec"
+  }
+
+  $effectiveExitCode = $exitCode
+  if (-not $timedOut -and $null -eq $effectiveExitCode) {
+    if ($successMatched) {
+      $effectiveExitCode = 0
+    }
+    else {
+      $effectiveExitCode = 125
+    }
+  }
+  elseif (-not $timedOut -and -not [string]::IsNullOrWhiteSpace($ExpectedSuccessPattern) -and -not $successMatched -and $effectiveExitCode -eq 0) {
+    $effectiveExitCode = 125
+  }
+
+  return ,([PSCustomObject]@{
+    ExitCode = $effectiveExitCode
     SuppressedCount = $suppressedCount
     UnknownStderrCount = $unknownStderrCount
-  }
+    TimedOut = $timedOut
+    SuccessMatched = $successMatched
+  })
 }
 
 if (-not (Test-Path $configPath)) {
@@ -137,9 +199,14 @@ if (-not (Test-Path $serverExe) -or -not (Test-Path $unarySmokeExe) -or -not (Te
 
 $originalConfig = Get-Content -Path $configPath -Raw
 $hasFailure = $false
+$matrixResults = @()
 
 if ($FailOnUnknownStderr) {
   Write-Host "[MATRIX] strict mode enabled: unknown stderr will fail cases"
+}
+
+if ($SmokeTimeoutSec -le 0) {
+  throw "SmokeTimeoutSec must be > 0"
 }
 
 try {
@@ -157,12 +224,22 @@ try {
     try {
       Start-Sleep -Seconds 1
 
-      $unaryResult = Invoke-SmokeCommand -Executable $unarySmokeExe -Arguments @("127.0.0.1:50051")
-      $streamResult = Invoke-SmokeCommand -Executable $streamSmokeExe -Arguments @("127.0.0.1:50051", ([string]$case.Frames))
+      $unaryResult = Invoke-SmokeCommand `
+        -Executable $unarySmokeExe `
+        -Arguments @("127.0.0.1:50051") `
+        -TimeoutSec $SmokeTimeoutSec `
+        -ExpectedSuccessPattern "grpc smoke client success" | Select-Object -Last 1
+
+      $streamResult = Invoke-SmokeCommand `
+        -Executable $streamSmokeExe `
+        -Arguments @("127.0.0.1:50051", ([string]$case.Frames)) `
+        -TimeoutSec $SmokeTimeoutSec `
+        -ExpectedSuccessPattern "grpc stream smoke success" | Select-Object -Last 1
 
       $unaryExit = $unaryResult.ExitCode
       $streamExit = $streamResult.ExitCode
       $unknownStderrCount = $unaryResult.UnknownStderrCount + $streamResult.UnknownStderrCount
+      $casePassed = $false
 
       if ($unaryExit -ne 0 -or $streamExit -ne 0) {
         $hasFailure = $true
@@ -173,7 +250,22 @@ try {
         Write-Host "[MATRIX][FAIL] case=$($case.Name) unknown_stderr=$unknownStderrCount (strict mode)"
       }
       else {
+        $casePassed = $true
         Write-Host "[MATRIX][PASS] case=$($case.Name)"
+      }
+
+      $matrixResults += [PSCustomObject]@{
+        name = $case.Name
+        throttleEveryFrames = $case.Every
+        throttleMs = $case.Ms
+        streamFrames = $case.Frames
+        unaryExitCode = $unaryExit
+        streamExitCode = $streamExit
+        unaryTimedOut = $unaryResult.TimedOut
+        streamTimedOut = $streamResult.TimedOut
+        suppressedNoiseCount = $unaryResult.SuppressedCount + $streamResult.SuppressedCount
+        unknownStderrCount = $unknownStderrCount
+        passed = $casePassed
       }
     }
     finally {
@@ -186,6 +278,27 @@ try {
 }
 finally {
   Set-Content -Path $configPath -Value $originalConfig -Encoding UTF8
+}
+
+if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
+  $resolvedReportPath = Resolve-ReportPath -PathTemplate $ReportJsonPath
+
+  $report = [PSCustomObject]@{
+    timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
+    strictMode = [bool]$FailOnUnknownStderr
+    smokeTimeoutSec = $SmokeTimeoutSec
+    overallPassed = (-not $hasFailure)
+    caseCount = $matrixResults.Count
+    cases = $matrixResults
+  }
+
+  $reportDir = Split-Path -Parent $resolvedReportPath
+  if (-not [string]::IsNullOrWhiteSpace($reportDir) -and -not (Test-Path $reportDir)) {
+    New-Item -Path $reportDir -ItemType Directory -Force | Out-Null
+  }
+
+  $report | ConvertTo-Json -Depth 6 | Set-Content -Path $resolvedReportPath -Encoding UTF8
+  Write-Host "[MATRIX] report written: $resolvedReportPath"
 }
 
 if ($hasFailure) {
