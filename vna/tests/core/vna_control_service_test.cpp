@@ -100,6 +100,17 @@ int main() {
     assert(imported.receiverRaw.points.size() == result.receiverRaw.points.size());
     assert(imported.sParameters.points.size() == result.sParameters.points.size());
 
+        std::string compareDiff;
+        assert(service.CompareImportedAcquisition(jsonPath, result, 1e-9, &compareDiff) ==
+          vna::core::Status::kOk);
+        assert(compareDiff.empty());
+
+        vna::core::AcquisitionResult altered = result;
+        altered.sParameters.points[0].matrix[0] = std::complex<double>(123.0, 456.0);
+        assert(service.CompareImportedAcquisition(jsonPath, altered, 1e-9, &compareDiff) ==
+          vna::core::Status::kInvalidArgument);
+        assert(compareDiff.find("COMPARE_MISMATCH:") != std::string::npos);
+
     std::string exportError;
     const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(
       result,
@@ -137,6 +148,11 @@ int main() {
           vna::core::Status::kInvalidArgument);
         assert(traversalError ==
           "IMPORT_PATH_TRAVERSAL: parent traversal is not allowed in json_path");
+
+            std::string invalidTolerance;
+            assert(service.CompareImportedAcquisition(jsonPath, result, 0.0, &invalidTolerance) ==
+              vna::core::Status::kInvalidArgument);
+            assert(invalidTolerance == "COMPARE_TOLERANCE_INVALID: tolerance must be > 0");
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

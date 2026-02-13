@@ -58,6 +58,11 @@ class VnaControlService {
                                        core::AcquisitionResult& out,
                                        std::string* errorMessage = nullptr);
 
+  core::Status CompareImportedAcquisition(const std::string& jsonPath,
+                                          const core::AcquisitionResult& current,
+                                          double tolerance,
+                                          std::string* diffMessage = nullptr);
+
   std::size_t InstanceCount() const;
   std::size_t ActiveLeaseCount() const;
 

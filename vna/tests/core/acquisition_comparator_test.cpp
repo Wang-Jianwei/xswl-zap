@@ -1,0 +1,60 @@
+#include <cassert>
+
+#include "core/acquisition_comparator.h"
+
+namespace {
+
+vna::core::AcquisitionResult BuildResult() {
+  vna::core::AcquisitionResult result;
+  result.instanceId = "inst0";
+  result.timestampNs = 100;
+
+  vna::core::ReceiverFrequencyPoint rawPoint;
+  rawPoint.frequencyHz = 1.0e9;
+  rawPoint.timestampNs = 100;
+  vna::core::ReceiverChannelSample rawChannel;
+  rawChannel.channelId = "R1";
+  rawChannel.iq = std::complex<double>(1.0, 2.0);
+  rawChannel.clipped = false;
+  rawPoint.channels.push_back(rawChannel);
+  result.receiverRaw.points.push_back(rawPoint);
+
+  vna::core::ReceiverFrequencyPoint compPoint;
+  compPoint.frequencyHz = 1.0e9;
+  compPoint.timestampNs = 100;
+  vna::core::ReceiverChannelSample compChannel;
+  compChannel.channelId = "R1";
+  compChannel.iq = std::complex<double>(0.8, 1.6);
+  compChannel.clipped = false;
+  compPoint.channels.push_back(compChannel);
+  result.receiverCompensated.points.push_back(compPoint);
+
+  vna::core::SParameterFrequencyPoint sPoint;
+  sPoint.frequencyHz = 1.0e9;
+  sPoint.portCount = 2;
+  sPoint.matrix.push_back(std::complex<double>(0.1, 0.2));
+  sPoint.matrix.push_back(std::complex<double>(0.3, 0.4));
+  sPoint.matrix.push_back(std::complex<double>(0.5, 0.6));
+  sPoint.matrix.push_back(std::complex<double>(0.7, 0.8));
+  result.sParameters.points.push_back(sPoint);
+
+  return result;
+}
+
+}  // namespace
+
+int main() {
+  const vna::core::AcquisitionResult baseline = BuildResult();
+  vna::core::AcquisitionResult same = BuildResult();
+
+  std::string diff;
+  assert(vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, same, 1e-9, &diff));
+  assert(diff.empty());
+
+  vna::core::AcquisitionResult mismatch = BuildResult();
+  mismatch.sParameters.points[0].matrix[0] = std::complex<double>(9.9, 9.9);
+  assert(!vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, mismatch, 1e-9, &diff));
+  assert(!diff.empty());
+
+  return 0;
+}

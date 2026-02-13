@@ -3,6 +3,7 @@
 #include <cctype>
 #include <vector>
 
+#include "core/acquisition_comparator.h"
 #include "core/measurement_exporter.h"
 #include "core/topology_manager.h"
 
@@ -228,6 +229,43 @@ core::Status VnaControlService::ImportAcquisitionResult(const std::string& jsonP
   }
 
   return core::MeasurementExporter::ImportJson(jsonPath, out, errorMessage);
+}
+
+core::Status VnaControlService::CompareImportedAcquisition(const std::string& jsonPath,
+                                                          const core::AcquisitionResult& current,
+                                                          double tolerance,
+                                                          std::string* diffMessage) {
+  if (tolerance <= 0.0) {
+    if (diffMessage != nullptr) {
+      *diffMessage = "COMPARE_TOLERANCE_INVALID: tolerance must be > 0";
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  core::AcquisitionResult imported;
+  std::string importError;
+  const core::Status importStatus = ImportAcquisitionResult(jsonPath, imported, &importError);
+  if (importStatus != core::Status::kOk) {
+    if (diffMessage != nullptr) {
+      *diffMessage = importError;
+    }
+    return importStatus;
+  }
+
+  std::string mismatch;
+  const bool same = core::AcquisitionComparator::AreEquivalentForReplay(
+      imported, current, tolerance, &mismatch);
+  if (!same) {
+    if (diffMessage != nullptr) {
+      *diffMessage = "COMPARE_MISMATCH: " + mismatch;
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  if (diffMessage != nullptr) {
+    diffMessage->clear();
+  }
+  return core::Status::kOk;
 }
 
 std::size_t VnaControlService::InstanceCount() const {

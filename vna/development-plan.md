@@ -1635,6 +1635,45 @@ WU-MAINLINE-053: 导入路径约束与错误码细化
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu53.json'` 通过
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.36 已完成 Work Unit
+
+WU-MAINLINE-054: 导入结果与当前采集最小比对能力
+
+- Objective: 为导入回放场景提供最小可用比对能力，支持导入结果与当前采集结果的一致性检查。
+- Scope (in/out):
+  - in: 新增 core 比对器（receiver/s-parameter 数据产品 + 容差）；service 新增 `CompareImportedAcquisition`；新增 core/service 测试。
+  - out: 频域/时域 frame 全量波形比对、报告可视化。
+- Files to change:
+  - `vna/include/core/acquisition_comparator.h`
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/scripts/run_easy_tests.ps1`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `vna/build/easy_acquisition_comparator_test.exe`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚比对器与 service 比对入口，恢复仅导入不比对。
+- Risks: 当前比对范围聚焦 receiver/s-parameter，未覆盖全部 frame 维度。
+- Acceptance criteria:
+  - 导入结果可与当前采集结果按容差执行比对并返回一致/不一致结果。
+  - 不一致场景返回 `COMPARE_MISMATCH` 诊断前缀。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `vna/build/easy_acquisition_comparator_test.exe` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含 compare 成功/失败断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

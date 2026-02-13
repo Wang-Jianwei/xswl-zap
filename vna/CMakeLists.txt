@@ -20,6 +20,7 @@ target_include_directories(vna_contract INTERFACE
 )
 
 add_library(vna_core_bootstrap STATIC
+    src/core/acquisition_comparator.cpp
     src/core/built_in_drivers.cpp
     src/core/hardware_driver_factory.cpp
     src/core/hardware_coordinator.cpp
@@ -276,6 +277,12 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_measurement_exporter_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_measurement_exporter_test PROPERTIES OUTPUT_NAME "easy_measurement_exporter_test")
 
+    add_executable(vna_acquisition_comparator_test
+        tests/core/acquisition_comparator_test.cpp
+    )
+    target_link_libraries(vna_acquisition_comparator_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_acquisition_comparator_test PROPERTIES OUTPUT_NAME "easy_acquisition_comparator_test")
+
     add_executable(vna_s_parameter_math_test
         tests/core/s_parameter_math_test.cpp
     )
@@ -385,6 +392,7 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_usb_vna_driver_test COMMAND $<TARGET_FILE:vna_usb_vna_driver_test>)
     add_test(NAME vna_grpc_bootstrap_paths_test COMMAND $<TARGET_FILE:vna_grpc_bootstrap_paths_test>)
     add_test(NAME vna_measurement_pipeline_test COMMAND $<TARGET_FILE:vna_measurement_pipeline_test>)
+    add_test(NAME vna_acquisition_comparator_test COMMAND $<TARGET_FILE:vna_acquisition_comparator_test>)
     add_test(NAME vna_topology_manager_test COMMAND $<TARGET_FILE:vna_topology_manager_test>)
     add_test(NAME vna_resource_manager_test COMMAND $<TARGET_FILE:vna_resource_manager_test>)
     add_test(NAME vna_plugin_manager_test COMMAND $<TARGET_FILE:vna_plugin_manager_test>)
