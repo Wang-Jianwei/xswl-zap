@@ -6,7 +6,7 @@
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
-- Command: `XSWL: Preview Waveform` (opens a Webview line chart for acquired frequency/time frame)
+- Command: `XSWL: Preview Waveform` (选择频域/时域模式并在 Webview 渲染折线图，显示 min/max marker)
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

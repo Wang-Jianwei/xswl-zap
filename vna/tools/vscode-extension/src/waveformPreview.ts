@@ -1,4 +1,4 @@
-import type { WaveformPoint, WaveformPreviewData } from "./types";
+import type { WaveformMarker, WaveformPoint, WaveformPreviewData } from "./types";
 
 function toNumber(value: unknown, fallback = 0): number {
   const parsed = Number(value);
@@ -38,25 +38,55 @@ function buildTimePoints(frame: Record<string, unknown>): WaveformPoint[] {
   });
 }
 
+function buildMarkers(points: WaveformPoint[]): WaveformMarker[] {
+  if (points.length === 0) {
+    return [];
+  }
+
+  let minPoint = points[0];
+  let maxPoint = points[0];
+  for (const point of points) {
+    if (point.y < minPoint.y) {
+      minPoint = point;
+    }
+    if (point.y > maxPoint.y) {
+      maxPoint = point;
+    }
+  }
+
+  return [
+    { label: "min", x: minPoint.x, y: minPoint.y },
+    { label: "max", x: maxPoint.x, y: maxPoint.y },
+  ];
+}
+
 export function buildWaveformPreviewData(response: Record<string, unknown>): WaveformPreviewData {
   const frequencyFrame = response.frequencyFrame as Record<string, unknown> | undefined;
   const timeFrame = response.timeFrame as Record<string, unknown> | undefined;
 
   if (frequencyFrame) {
+    const points = buildFrequencyPoints(frequencyFrame);
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
       frameType: "frequency",
-      points: buildFrequencyPoints(frequencyFrame),
+      xLabel: "frequency_hz",
+      yLabel: "magnitude",
+      points,
+      markers: buildMarkers(points),
     };
   }
 
   if (timeFrame) {
+    const points = buildTimePoints(timeFrame);
     return {
       instanceId: String(response.instanceId ?? ""),
       timestampNs: toNumber(response.timestampNs),
       frameType: "time",
-      points: buildTimePoints(timeFrame),
+      xLabel: "time_ns",
+      yLabel: "magnitude",
+      points,
+      markers: buildMarkers(points),
     };
   }
 
@@ -64,7 +94,10 @@ export function buildWaveformPreviewData(response: Record<string, unknown>): Wav
     instanceId: String(response.instanceId ?? ""),
     timestampNs: toNumber(response.timestampNs),
     frameType: "unknown",
+    xLabel: "x",
+    yLabel: "y",
     points: [],
+    markers: [],
   };
 }
 
@@ -97,6 +130,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
   const polyline = toPolyline(data.points, width, height);
+  const markerText = data.markers
+    .map((marker) => `${marker.label}: (${marker.x.toFixed(4)}, ${marker.y.toFixed(4)})`)
+    .join(" | ");
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -108,12 +144,16 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <style>
     body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 12px; }
     .meta { margin-bottom: 10px; }
+    .axis { margin-bottom: 6px; opacity: 0.9; }
+    .marker { margin-bottom: 10px; opacity: 0.9; }
     .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
     .empty { opacity: 0.8; }
   </style>
 </head>
 <body>
   <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
+  <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
+  <div class="marker">markers=${markerText || "none"}</div>
   ${
     data.points.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"

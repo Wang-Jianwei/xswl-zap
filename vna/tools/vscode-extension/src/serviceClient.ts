@@ -8,6 +8,7 @@ import type {
   StreamPreviewSummary,
   ValidationResult,
   TopologyErrorDetail,
+  WaveformMode,
   WaveformPreviewData,
 } from "./types";
 import { buildWaveformPreviewData } from "./waveformPreview";
@@ -178,7 +179,7 @@ export class ServiceClient {
     });
   }
 
-  acquireWaveform(instanceId: string, sampleCount: number): Promise<WaveformPreviewData> {
+  acquireWaveform(instanceId: string, sampleCount: number, mode: WaveformMode): Promise<WaveformPreviewData> {
     const deadline = new Date(Date.now() + this.deadlineMs);
     return new Promise<WaveformPreviewData>((resolve, reject) => {
       (this.client as unknown as {
@@ -192,16 +193,30 @@ export class ServiceClient {
           instanceId,
           sampleCount,
           timeoutMs: Math.max(this.deadlineMs, 1000),
-          excitation: {
-            mode: 1,
-            settlingTimeMs: 0,
-            enableAutoTrigger: true,
-            cw: {
-              frequencyHz: 1.0e9,
-              powerDbm: -10,
-              dwellTimeMs: 1,
-            },
-          },
+          excitation:
+            mode === "time"
+              ? {
+                  mode: 2,
+                  settlingTimeMs: 0,
+                  enableAutoTrigger: true,
+                  pulse: {
+                    centerFrequencyHz: 1.0e9,
+                    pulseWidthNs: 200,
+                    pulsePeriodNs: 2000,
+                    powerDbm: -10,
+                    riseTimeNs: 20,
+                  },
+                }
+              : {
+                  mode: 1,
+                  settlingTimeMs: 0,
+                  enableAutoTrigger: true,
+                  cw: {
+                    frequencyHz: 1.0e9,
+                    powerDbm: -10,
+                    dwellTimeMs: 1,
+                  },
+                },
         },
         { deadline },
         (error, response) => {

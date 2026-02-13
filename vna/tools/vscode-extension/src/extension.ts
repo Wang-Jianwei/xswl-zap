@@ -288,12 +288,27 @@ export function activate(context: vscode.ExtensionContext): void {
     }
 
     const sampleCount = Number(sampleCountInput);
+    const modeSelection = await vscode.window.showQuickPick(
+      [
+        { label: "frequency", description: "CW 频域波形" },
+        { label: "time", description: "Pulse 时域波形" },
+      ],
+      {
+        title: "Waveform mode",
+        ignoreFocusOut: true,
+      },
+    );
+    if (!modeSelection) {
+      return;
+    }
+
+    const waveformMode = modeSelection.label as "frequency" | "time";
     const requestId = createRequestId();
     const { address, deadlineMs, autoOpenOutput } = readConfig();
     const client = new ServiceClient({ address, deadlineMs });
 
     try {
-      const waveform = await client.acquireWaveform(instanceIdInput, sampleCount);
+      const waveform = await client.acquireWaveform(instanceIdInput, sampleCount, waveformMode);
       const panel = vscode.window.createWebviewPanel(
         "xswlWaveformPreview",
         `XSWL Waveform: ${instanceIdInput}`,
@@ -303,7 +318,8 @@ export function activate(context: vscode.ExtensionContext): void {
       panel.webview.html = buildWaveformPreviewHtml(waveform);
 
       logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-        `instanceId=${instanceIdInput}, sampleCount=${sampleCount}, frame=${waveform.frameType}, points=${waveform.points.length}`,
+        `instanceId=${instanceIdInput}, mode=${waveformMode}, sampleCount=${sampleCount}, frame=${waveform.frameType}, points=${waveform.points.length}`,
+        `markers=${waveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
       ]);
       showOutputIfEnabled(outputChannel, autoOpenOutput);
       vscode.window.showInformationMessage(

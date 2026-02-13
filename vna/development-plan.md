@@ -1756,6 +1756,39 @@ WU-MAINLINE-056: VS Code 插件波形预览（MVP）
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.39 已完成 Work Unit
+
+WU-MAINLINE-057: 插件波形预览模式切换与基础 Marker
+
+- Objective: 提升 VS Code 插件端波形可用性，支持频域/时域切换并提供基础峰谷定位信息。
+- Scope (in/out):
+  - in: `Preview Waveform` 命令增加模式选择；波形页面增加 min/max marker 与轴标签；测试补齐。
+  - out: 交互式 marker 拖拽、多 marker 管理、频谱数学运算。
+- Files to change:
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用既有 Acquire 契约）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚模式选择与 marker 渲染，恢复单模式最小折线图。
+- Risks: Pulse 模式下回包形态受后端当前能力影响，可能仍返回频域帧。
+- Acceptance criteria:
+  - 预览命令可选择 `frequency/time` 模式。
+  - 预览页展示 `min/max` marker 坐标。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

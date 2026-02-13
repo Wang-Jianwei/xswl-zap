@@ -48,9 +48,20 @@ export interface WaveformPoint {
   y: number;
 }
 
+export type WaveformMode = "frequency" | "time";
+
+export interface WaveformMarker {
+  label: string;
+  x: number;
+  y: number;
+}
+
 export interface WaveformPreviewData {
   instanceId: string;
   timestampNs: number;
   frameType: "frequency" | "time" | "unknown";
+  xLabel: string;
+  yLabel: string;
   points: WaveformPoint[];
+  markers: WaveformMarker[];
 }

@@ -15,12 +15,30 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
 
   const frequencyData = buildWaveformPreviewData(frequencyPayload);
   assert.equal(frequencyData.frameType, "frequency");
+  assert.equal(frequencyData.xLabel, "frequency_hz");
   assert.equal(frequencyData.points.length, 2);
   assert.equal(frequencyData.points[0].y, 5);
+  assert.equal(frequencyData.markers.length, 2);
 
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
+  assert(html.includes("markers=min"));
+
+  const timePayload = {
+    instanceId: "inst1",
+    timestampNs: 999,
+    timeFrame: {
+      points: [
+        { timeNs: 0, magnitude: 0.1 },
+        { timeNs: 1, magnitude: 0.4 },
+      ],
+    },
+  } as Record<string, unknown>;
+  const timeData = buildWaveformPreviewData(timePayload);
+  assert.equal(timeData.frameType, "time");
+  assert.equal(timeData.xLabel, "time_ns");
+  assert.equal(timeData.points.length, 2);
 
   const emptyData = buildWaveformPreviewData({ instanceId: "x" } as Record<string, unknown>);
   assert.equal(emptyData.frameType, "unknown");

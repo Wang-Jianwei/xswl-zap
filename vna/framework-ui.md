@@ -100,9 +100,11 @@ flowchart LR
 ### 3.9 VS Code 插件波形预览（MVP）
 
 - 插件命令 `XSWL: Preview Waveform`：触发一次 `Acquire`，在 Webview 内展示最小折线图。
+- 支持采集模式选择：`frequency`（CW）/`time`（Pulse）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。
   - 时域帧：`magnitude` 作为纵轴，`time_ns` 作为横轴。
+- 提供基础 marker：自动展示 `min` / `max` 两个点坐标。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
 ---
