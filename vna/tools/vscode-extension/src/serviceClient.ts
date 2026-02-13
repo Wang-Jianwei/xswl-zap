@@ -59,6 +59,8 @@ export class ServiceClient {
             ready: Boolean(payload.ready),
             state: String(payload.state ?? ""),
             message: String(payload.message ?? ""),
+            bootstrapMode: String(payload.bootstrapMode ?? ""),
+            configPath: String(payload.configPath ?? ""),
             uptimeMs: Number(payload.uptimeMs ?? 0),
             bindAddress: String(payload.bindAddress ?? ""),
             port: Number(payload.port ?? 0),

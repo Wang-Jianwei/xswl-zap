@@ -148,6 +148,8 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   response->set_ready(mapped.ready);
   response->set_state(mapped.state);
   response->set_message(mapped.message);
+  response->set_bootstrap_mode(mapped.bootstrapMode);
+  response->set_config_path(mapped.configPath);
   response->set_uptime_ms(mapped.uptimeMs);
   response->set_bind_address(mapped.bindAddress);
   response->set_port(mapped.port);

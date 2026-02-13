@@ -1,5 +1,6 @@
 param(
-  [switch]$SkipBuild
+  [switch]$SkipBuild,
+  [switch]$FailOnUnknownStderr
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,6 +19,11 @@ $cases = @(
   @{ Name = "aggressive-throttle"; Every = 1; Ms = 20; Frames = 3 }
 )
 
+$knownNoisePatterns = @(
+  "All log messages before absl::InitializeLog\(\) is called",
+  "Metric with name 'grpc\.resource_quota\..*registered more than once\. Ignoring later registration\."
+)
+
 function Set-ConfigValue([string]$content, [string]$key, [string]$value) {
   $pattern = "(?m)^\s*" + [regex]::Escape($key) + "\s*:\s*.*$"
   if ([regex]::IsMatch($content, $pattern)) {
@@ -26,6 +32,94 @@ function Set-ConfigValue([string]$content, [string]$key, [string]$value) {
 
   $trimmed = $content.TrimEnd("`r", "`n")
   return $trimmed + "`r`n" + "${key}: $value" + "`r`n"
+}
+
+function Invoke-SmokeCommand {
+  param(
+    [string]$Executable,
+    [string[]]$Arguments
+  )
+
+  $stdoutPath = [System.IO.Path]::GetTempFileName()
+  $stderrPath = [System.IO.Path]::GetTempFileName()
+
+  try {
+    $process = Start-Process -FilePath $Executable `
+      -ArgumentList $Arguments `
+      -NoNewWindow `
+      -Wait `
+      -PassThru `
+      -RedirectStandardOutput $stdoutPath `
+      -RedirectStandardError $stderrPath
+
+    $stdoutLines = @()
+    $stderrLines = @()
+    if (Test-Path $stdoutPath) {
+      $stdoutLines += Get-Content -Path $stdoutPath
+    }
+    if (Test-Path $stderrPath) {
+      $stderrLines += Get-Content -Path $stderrPath
+    }
+  }
+  finally {
+    if (Test-Path $stdoutPath) {
+      Remove-Item -Path $stdoutPath -Force
+    }
+    if (Test-Path $stderrPath) {
+      Remove-Item -Path $stderrPath -Force
+    }
+  }
+
+  $exitCode = $process.ExitCode
+  $suppressedCount = 0
+  $unknownStderrCount = 0
+
+  foreach ($line in $stdoutLines) {
+    $isKnownNoise = $false
+    foreach ($pattern in $knownNoisePatterns) {
+      if ($line -match $pattern) {
+        $isKnownNoise = $true
+        break
+      }
+    }
+
+    if ($isKnownNoise) {
+      $suppressedCount += 1
+      continue
+    }
+
+    Write-Host $line
+  }
+
+  foreach ($line in $stderrLines) {
+    $isKnownNoise = $false
+    foreach ($pattern in $knownNoisePatterns) {
+      if ($line -match $pattern) {
+        $isKnownNoise = $true
+        break
+      }
+    }
+
+    if ($isKnownNoise) {
+      $suppressedCount += 1
+      continue
+    }
+
+    Write-Host $line
+    if (-not [string]::IsNullOrWhiteSpace($line)) {
+      $unknownStderrCount += 1
+    }
+  }
+
+  if ($suppressedCount -gt 0) {
+    Write-Host "[MATRIX][NOISE] suppressed known grpc warnings: $suppressedCount"
+  }
+
+  return [PSCustomObject]@{
+    ExitCode = $exitCode
+    SuppressedCount = $suppressedCount
+    UnknownStderrCount = $unknownStderrCount
+  }
 }
 
 if (-not (Test-Path $configPath)) {
@@ -44,6 +138,10 @@ if (-not (Test-Path $serverExe) -or -not (Test-Path $unarySmokeExe) -or -not (Te
 $originalConfig = Get-Content -Path $configPath -Raw
 $hasFailure = $false
 
+if ($FailOnUnknownStderr) {
+  Write-Host "[MATRIX] strict mode enabled: unknown stderr will fail cases"
+}
+
 try {
   foreach ($case in $cases) {
     Write-Host "[MATRIX] case=$($case.Name) every=$($case.Every) ms=$($case.Ms) frames=$($case.Frames)"
@@ -59,15 +157,20 @@ try {
     try {
       Start-Sleep -Seconds 1
 
-      & $unarySmokeExe "127.0.0.1:50051"
-      $unaryExit = $LASTEXITCODE
+      $unaryResult = Invoke-SmokeCommand -Executable $unarySmokeExe -Arguments @("127.0.0.1:50051")
+      $streamResult = Invoke-SmokeCommand -Executable $streamSmokeExe -Arguments @("127.0.0.1:50051", ([string]$case.Frames))
 
-      & $streamSmokeExe "127.0.0.1:50051" ([string]$case.Frames)
-      $streamExit = $LASTEXITCODE
+      $unaryExit = $unaryResult.ExitCode
+      $streamExit = $streamResult.ExitCode
+      $unknownStderrCount = $unaryResult.UnknownStderrCount + $streamResult.UnknownStderrCount
 
       if ($unaryExit -ne 0 -or $streamExit -ne 0) {
         $hasFailure = $true
         Write-Host "[MATRIX][FAIL] case=$($case.Name) unary=$unaryExit stream=$streamExit"
+      }
+      elseif ($FailOnUnknownStderr -and $unknownStderrCount -gt 0) {
+        $hasFailure = $true
+        Write-Host "[MATRIX][FAIL] case=$($case.Name) unknown_stderr=$unknownStderrCount (strict mode)"
       }
       else {
         Write-Host "[MATRIX][PASS] case=$($case.Name)"

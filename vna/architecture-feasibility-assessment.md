@@ -103,11 +103,13 @@
 | 谐波分量 | 🟠 有限 | 频率倍数检测，需谐波分离算法 |
 
 **潜在问题**：
+
 - 功率扫描的**嵌套循环**可能导致采集时间 2-3 倍增长（需进度条 UI 反馈）
 - 频谱分析需要**时域数据**（当前 MeasurementPipeline 以频域采集为主）
 - 谐波提取需要**高精度频率同步**
 
 **改进建议**：
+
 1. 在 Plugin 接口中定义 `LoopPlugin` 抽象类，支持嵌套扫描
 2. 扩展 MeasurementPipeline 支持时域数据路径（脉冲激励）
 3. 添加谐波检测容限参数到 SweepConfig
@@ -154,6 +156,7 @@ TDR 所需（时域）:
 | 多重反射识别 | 🟠 有限 | 需要信号处理算法 (小波变换?) |
 
 **潜在问题**：
+
 - **硬件层面**：当前架构假设 CW 激励为主，脉冲激励需硬件驱动层支持
   - PXI 卡是否有脉冲发生器？
   - USB VNA 是否支持？
@@ -162,6 +165,7 @@ TDR 所需（时域）:
 - **Align 与 Trigger**：多板卡 TDR 时，脉冲对齐更敏感
 
 **改进建议**：
+
 1. 在 HardwareCoordinator 中抽象 `ExcitationMode` 枚举和相关接口
 2. 扩展 MeasurementPipeline：添加 `TimeDomainProcessor` 分支
 3. 在 TopologyManager 中考虑脉冲同步的额外约束
@@ -170,6 +174,7 @@ TDR 所需（时域）:
 **总体评分**：**2.5/5** 🟠 **有限支持**
 
 **结论**：架构**框架可以支持**，但需要：
+
 - 与硬件厂商确认脉冲激励能力
 - 添加时域数据处理管道
 - 修改激励模式接口
@@ -216,12 +221,14 @@ IP3 测量:
 | 功率匹配效率 | ✅ 完全 | 反射功率计算 |
 
 **潜在问题**：
+
 - **双频源**：当前 HardwareCoordinator 以单频激励为主，IP3 测试需要同时发两个频率
   - 硬件限制？支持叠加吗？
 - **谐波/交调检测**：需要频谱分析能力（谐波提取）
 - **精度要求**：功率线性度测量对功率源稳定性要求高
 
 **改进建议**：
+
 1. 在 HardwareCoordinator 中支持 `MultiToneExcitation` 或修改现有频率设置接口
 2. 新增 `PowerCharacterizationPlugin` 整合 P1dB/IP3 算法
 3. 考虑功率源稳定性补偿机制
@@ -268,6 +275,7 @@ AM/AM, AM/PM:
 | 工作点分析 | 🟡 基本 | 数据可视化 |
 
 **潜在问题**：
+
 - **性能灾难**：X 参数需要 10×10×10 = 1000 个测点（频率×功率×相位）
   - 当前 HardwareCoordinator 处理单 loop 可能已有瓶颈
   - 1000 个测点 × 100ms/点 = 100 秒，用户体验差
@@ -275,6 +283,7 @@ AM/AM, AM/PM:
 - **温度/工艺偏差**：X 参数对工作点敏感，需温度补偿
 
 **改进建议**：
+
 1. 设计 `HierarchicalSweepPlugin` 支持多层嵌套，并提供进度反馈
 2. 在 MeasurementPipeline 中添加**并行采集优化**（多板卡可并行不同频率/功率点）
 3. 扩展 TopologyManager 支持**参数扫描坐标系**定义
@@ -282,6 +291,7 @@ AM/AM, AM/PM:
 **总体评分**：**2.5/5** 🟠 **有限支持**
 
 **结论**：架构可以支持，但性能需要优化。建议：
+
 - 与多板卡并行特性结合（不同板卡测不同工作点）
 - 考虑进度条和可中断机制
 - 属于高级功能，列入 Phase 3+
@@ -327,6 +337,7 @@ NF 测量:
 | 温度漂移预警 | ✅ 完全 | 传感器数据 + 阈值判断 |
 
 **潜在问题**：
+
 - **硬件依赖**：NF 测量需要外部噪声源（ENR 已知），温度扫描需温度控制器
   - 超出了基础 VNA 架构范围
   - 通常作为**外设扩展**存在
@@ -334,16 +345,20 @@ NF 测量:
 - **架构改动少**：主要是硬件接口 + 参数存储
 
 **改进建议**：
+
 1. 在 HardwareCoordinator 中添加可选接口：
+
    ```cpp
    optional<NoiseSourceInterface> noise_source;
    optional<TemperatureControllerInterface> temp_controller;
    ```
+
 2. 设计 `EnvironmentPlugin` 处理温度相关数据
 
 **总体评分**：**3/5** 🟡 **基本支持**
 
 **结论**：
+
 - 架构支持，但硬件依赖重
 - 温度扫描属于高级功能，需用户有额外硬件
 - 温度补偿（已有数据的后处理）完全可行
@@ -385,11 +400,13 @@ CalibrationSession.execute():
 | 不确定度计算 | ✅ 完全 | 插件可实现 |
 
 **潜在问题**：
+
 - **ECal 硬件接口**：需与 ECal 件厂商协议（通常是 USB/GPIB）
 - **多端口拓扑**：当前 framework 支持，但 UI/测试覆盖不足
 - **标准质量溯源**：需要外部集成
 
 **改进建议**：
+
 1. 设计 `CalibrationStandardDriver` 接口抽象 ECal/机械标准
 2. 扩展 CalibrationSession 支持 TRL 标准提取算法
 3. 在 CalibrationDB 中记录标准溯源信息
@@ -475,10 +492,12 @@ MeasurementPipeline 现有：
 | 频带宽度覆盖 | ✅ 完全 | 分段扫描支持 |
 
 **潜在问题**：
+
 - **治具标准化**：不同治具的 OSL/TRL 标准定义需要文档
 - **精度要求**：NRW 反演对低频特别敏感，需要高精度校准
 
 **改进建议**：
+
 1. 新增 `MaterialCharacterizationPlugin` 集成 NRW 等算法
 2. 在 CalibrationDB 中添加 `fixture_type` 字段
 3. 提供治具 YAML 配置模板库
@@ -532,11 +551,13 @@ On-Wafer 测量:
 | 阵列特性融合 | 🟡 基本 | 多实例数据聚合需 UI 支持 |
 
 **潜在问题**：
+
 - **探针接口标准化**：各厂商探针台协议不同，需要适配层
 - **高频测量稳定性**：77+ GHz 环境变化敏感，需要温度补偿
 - **多板卡时间对齐**：毫米波频率下，纳秒级 jitter 会引入相位误差
 
 **改进建议**：
+
 1. 设计 `ProbeStationDriver` 接口，支持主流厂商（Cascade, FormFactor 等）
 2. 在 HardwareCoordinator 中支持**高频片上标准**库
 3. 扩展 TopologyManager：支持 `PhaseAlignmentSpec` 约束
@@ -545,6 +566,7 @@ On-Wafer 测量:
 **总体评分**：**3.5/5** 🟡 **基本支持**
 
 **结论**：
+
 - 架构**完全可以支持** on-wafer 和多板卡同步
 - 但需要与探针台厂商、高频硬件厂商密切合作
 - 建议：Phase 3，需要详细的硬件集成规范
@@ -621,6 +643,7 @@ flowchart LR
 ### 5.1 MVP（Phase 0-2，4-6 个月）
 
 **功能清单**：
+
 - ✅ 基础 S 参数（S11, S21）
 - ✅ 分段扫描
 - ✅ SOLT/TRL 校准
@@ -633,6 +656,7 @@ flowchart LR
 **架构预期**：**完全就绪**（除了硬件集成验证）
 
 **关键工作**：
+
 1. ✅ 完成 proto 定义
 2. ✅ vna-core-lib 核心模块（TopologyManager, HardwareCoordinator, MeasurementPipeline）
 3. ✅ vna-core-service gRPC 包装
@@ -643,6 +667,7 @@ flowchart LR
 ### 5.2 Phase 2 功能扩展（6-9 个月）
 
 **新增功能**：
+
 - 🟡 功率扫描 (LoopPlugin)
 - 🟡 材料参数提取 (NRW 反演)
 - 🟠 TDR 时域分析 (需硬件脉冲支持)
@@ -650,6 +675,7 @@ flowchart LR
 - 🟡 ECal 支持 (如有硬件)
 
 **架构改动**：
+
 - 添加 `ExcitationMode` 和时域数据路径（低风险）
 - 设计 `LoopPlugin` 接口（中等风险）
 - 扩展 HardwareCoordinator 时域接口（中等风险）
@@ -657,12 +683,14 @@ flowchart LR
 ### 5.3 Phase 3 高级功能（9-12 个月+）
 
 **新增功能**：
+
 - 🟠 X 参数、IP3（需多频源和性能优化）
 - 🟠 噪声系数（需外部噪声源）
 - 🟠 毫米波 on-wafer（需探针台集成）
 - 🟡 高频阵列特性融合
 
 **架构改动**：
+
 - 设计 `HierarchicalSweepPlugin`（中等风险）
 - 多板卡并行优化（中等复杂度）
 - 外设驱动框架化（中等复杂度）
@@ -727,19 +755,19 @@ flowchart LR
 #### 中期（3-9 个月）
 
 1. **完成 Phase 1 核心库**：重点测试多实例场景
-   
+
 2. **性能分析与优化**：Profile 找瓶颈，准备 Phase 2 性能需求
-   
+
 3. **Plugin 示例实现**：MaterialPlugin, PowerSweepPlugin 等作为模板
-   
+
 4. **硬件集成验证**：实际 PXI 卡/USB VNA 的驱动适配
 
 #### 长期（9 个月+）
 
 1. **时域支持**：根据硬件能力决定是否投入
-   
+
 2. **外设生态**：建立 Probe/NoiseSource/TempControl 驱动框架
-   
+
 3. **性能规模化**：支持 8+ 个实例、16 个频段的并行测量
 
 ---
@@ -775,11 +803,11 @@ flowchart LR
 1. **确保 MVP 交付**（Phase 0-2）
    - 重点：硬件集成、多实例稳定性
    - 风险：硬件驱动、PXI 同步
-   
+
 2. **拓展基础功能**（Phase 2）
    - 重点：功率扫描、材料参数、数据处理
    - 工作量：中等，风险：低
-   
+
 3. **探索高级功能**（Phase 3+）
    - 重点：时域、非线性、外设生态
    - 工作量：高，风险：中-高

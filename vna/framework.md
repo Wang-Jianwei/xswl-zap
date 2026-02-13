@@ -9,12 +9,14 @@
 ## 1. 设计目标与原则
 
 ### 1.1 设计目标
+
 - 实现完整的矢量网络分析仪上位机功能
 - 支持控制真实 VNA 仪器与 PXI 板卡构建的虚拟 VNA 实例
 - 提供可扩展的插件化架构，支持选件与第三方扩展
 - 确保架构可实现、可维护、可测试
 
 ### 1.2 设计原则
+
 1. **模块化** — 功能按职责拆分为独立动态库
 2. **插件化** — 驱动、选件、硬件实现均可热插拔
 3. **实例隔离** — 多 VNA 实例独立运行、互不干扰
@@ -359,6 +361,7 @@ classDiagram
 #### 3.1.3 异构硬件混合与拓扑配置设计
 
 一个 VnaInstance 可由**异构硬件**组成，包括：
+
 - **PXI 板卡**（机箱内高速背板互连）
 - **USB/LAN 形态板卡**（通过 VISA 通信）
 - **其他 VnaInstance**（实例组合/级联）
@@ -367,6 +370,7 @@ classDiagram
 框架通过**拓扑配置**机制实现灵活组合：
 
 **拓扑配置层（Topology）**
+
 ```yaml
 topology:
   type: "composite"           # composite | pxi_only | instrument
@@ -393,6 +397,7 @@ topology:
 ```
 
 **拓扑管理器（TopologyManager）**
+
 - **拓扑解析与验证** — 检查节点类型兼容性、端口冲突、循环引用
 - **异构节点注册** — 统一管理 PXI / VISA / Instance 三类节点
 - **同步策略选择** — 根据节点类型组合选择同步方案（硬件/软件/混合）
@@ -443,6 +448,7 @@ graph TB
 ```
 
 **数据流层（异构多源聚合）**
+
 ```
 [PXI Board 0 - Port A] ──┐
 [PXI Board 1 - Port A] ──┤ (硬件同步)
@@ -450,6 +456,7 @@ graph TB
 [USB DAQ - Channel 0] ───┤ (软件触发)
 [Sub-Instance Port 1] ───┘ (逻辑级联)
 ```
+
 - **异构缓冲管理** — 每个节点独立缓冲（PXI环形缓冲 / VISA轮询缓冲）
 - **多级时间戳对齐** — 硬件同步优先，软件补偿备用
 - **数据格式适配** — 统一 IQ / S参数 / Raw 格式到内部表示
@@ -723,6 +730,7 @@ flowchart TD
 ### 4.4 核心非插件化功能
 
 以下功能必须在核心库，**不应插件化**：
+
 - 基础 S 参数测量（S11/S21/S12/S22）
 - 基本校准（SOLT/TRL）
 - 标准 Trace/Marker 功能
@@ -834,6 +842,7 @@ public:
 ```
 
 **关键特性：**
+
 - **异构节点抽象** — PXI/VISA/Instance 统一为 ITopologyNode 接口
 - **分层同步策略** — 硬件同步（PXI 背板）+ 软件触发（VISA）+ 逻辑级联（实例）
 - **拓扑感知调度** — 根据拓扑图确定采集顺序和数据流路由
@@ -947,6 +956,7 @@ sequenceDiagram
 ```
 
 关键步骤说明：
+
 - **预配置/上电**：先配置每块板卡的采集参数与触发模式，并将从卡设置为“armed/waiting”状态；同时检查 PLL/10MHz 参考已锁定（或等待锁定完成）。
 - **触发链连接**：物理连接应保证 TrigOut -> TrigIn 串联或通过 PXI 背板路由；推荐在 Topology 校验阶段验证触发线路拓扑。
 - **启动顺序**：先调用 `arm()` 或 `startAcquisition()` 使从卡处于就绪状态（不立即开始采集），再启动主卡（master）扫描；主卡在其预设时间点输出触发脉冲，沿触发链逐级唤醒下一级板卡开始采集。
@@ -958,6 +968,7 @@ sequenceDiagram
   - 报告并停止测量（严格模式下）
 
 实现建议与验证点：
+
 - 在 `TopologyManager.validateTopology()` 增加触发链完整性校验（检查 TrigOut->TrigIn 连通性）。
 - 在 `HardwareCoordinator` 提供 `ensurePllLocked()`、`arm()`、`startScan()`、`getTriggerPropagationDelay()` 等接口，并在采集前做延迟测量（可通过回环测试或自检帧）。
 - 记录触发 propagation delay 与 jitter 指标到诊断日志，供后续时间戳对齐与质量评估。
@@ -1188,6 +1199,7 @@ public:
 当应用支持 "多开"（多个进程/实例同时运行）时，必须避免设备资源竞争与不可预期的并发访问。设计中增加以下跨进程资源协商方案：
 
 1) 全局资源代理（推荐） — Global Resource Broker (daemon/service)
+
 - 全局单例进程，运行在本机（或局域网）中，负责维护硬件资源表（board_id / visa_addr / device_id 等）。
 - 客户端（每个应用进程）通过 IPC（本地 Unix domain socket / Windows Named Pipe / TCP loopback）向 Broker 发起资源查询、申请（acquire）、续租（renew）、释放（release）。
 - Broker 实现租约（lease）机制、心跳（heartbeat）检测与超时回收；支持独占（exclusive）和共享（shared）访问模式。例：
@@ -1201,35 +1213,42 @@ Client -> Broker: release(lease_id)
 
 - 优点：跨进程可集中管理并实现公平调度、优先级和审计日志；易于 UI 展示资源占用情况。
 
-2) 轻量替代（文件锁 / 命名互斥）
+1) 轻量替代（文件锁 / 命名互斥）
+
 - 使用 OS 提供的文件锁（flock/LockFileEx）或 Windows Named Mutex + 状态文件（JSON）实现资源登记与冲突检测。适合不希望引入守护进程的场景。
 
-3) 驱动/设备层互斥（依赖硬件/驱动）
+1) 驱动/设备层互斥（依赖硬件/驱动）
+
 - 对于 VISA/USB 设备，可使用设备驱动的独占打开特性（若支持）作为保护措施；仍建议结合全局 Broker 以统一视图与策略。
 
-4) 约定策略与 UI 体验
+1) 约定策略与 UI 体验
+
 - 在拓扑加载 & validate 阶段（TopologyManager.validateTopology）进行全局资源可用性检查（调用 Broker 或锁定检查）。
 - 若资源被占用：
   - 提示用户占用信息（占用进程/实例、占用时长、可释放时间）
   - 提供抢占（preempt）或排队（enqueue）选项（需谨慎，默认不自动抢占硬件）
   - 支持 "strict" 模式拒绝共享/抢占，仅允许独占成功时启动测量
 
-5) 租约与回收细则
+1) 租约与回收细则
+
 - 租约 TTL（例如 30s）与心跳机制：客户端必须在 TTL 前续租，否则 Broker 会回收资源并通知相关进程。  
 - 崩溃检测与回收：Broker 对失联客户端（心跳中断或进程不存在）进行强制回收，释放设备并记录事件。
 
-6) 安全与权限控制
+1) 安全与权限控制
+
 - Broker 应支持本地认证（可基于用户名/UID 或进程签名）并对敏感操作（抢占）做权限校验。  
 - 日志需要记录操作审计（谁在何时获取/释放了哪台设备）。
 
-7) 实现建议（优先级）
+1) 实现建议（优先级）
+
 - 首选：实现 Global Resource Broker（daemon + IPC）并在 ResourceManager 中对接；
 - 次选：实现基于 Windows NamedMutex / Unix flock 的本地锁 + 状态文件；
 - 兼容：尽量利用设备驱动的独占打开特性作为最后一道保护线。
 
-8) 测试与监控
+1) 测试与监控
+
 - 自动化集成测试：模拟多进程并发获取同一设备的场景，验证回退、排队、抢占和回收行为；
-- 监控：在 Broker 中导出指标（当前占用、等待队列长度、租约超时次数）供诊断。 
+- 监控：在 Broker 中导出指标（当前占用、等待队列长度、租约超时次数）供诊断。
 
 ---
 
@@ -1486,6 +1505,7 @@ xswl-zap-vna/
 ## 8. 实现路线图
 
 ### Phase 1: MVP
+
 - [ ] vna_core_base（配置/日志/错误）
 - [ ] vna_plugin_api（C ABI 接口）
 - [ ] vna_data（Touchstone I/O）
@@ -1495,6 +1515,7 @@ xswl-zap-vna/
 - [ ] vna_cli + 单元测试
 
 ### Phase 2: 核心功能
+
 - [ ] vna_core_runtime
 - [ ] vna_hw_abstraction + HardwareArbitrator
 - [ ] vna_instance_pxi
@@ -1502,6 +1523,7 @@ xswl-zap-vna/
 - [ ] vna_ui 基础版
 
 ### Phase 3: 完整功能
+
 - [ ] DomainConverter（时域/TDR）
 - [ ] FixtureSimulator / TimeGating
 - [ ] OptionManager + 选件框架
@@ -1509,6 +1531,7 @@ xswl-zap-vna/
 - [ ] 厂商驱动插件
 
 ### Phase 4: 生产优化
+
 - [ ] 性能优化
 - [ ] 选件插件（Pulse/NF/TDR）
 - [ ] 完整 UI
@@ -1547,67 +1570,83 @@ xswl-zap-vna/
 本设计已通过多轮评审与优化，但仍需在实现阶段注意以下风险点：
 
 ### 问题 1: 多板卡采集数据一致性
+
 **风险**: 不同板卡的采样时钟、采样延迟存在差异，可能导致时间戳对齐不准确。  
 **改进**: 在 HardwareCoordinator 中实现显式的时戳校准机制，记录每块板卡相对于 Master 的时序偏差，在数据聚合前进行补偿。
 
 ### 问题 2: 插件卸载时的引用安全
+
 **风险**: 选件插件卸载时，如果仍有实例在使用，可能导致悬垂引用。  
 **改进**: PluginManager 卸载前应检查引用计数，实例销毁时显式释放选件插件引用；考虑延迟卸载或禁止热卸载。
 
 ### 问题 3: 校准数据与硬件配置的版本绑定
+
 **风险**: 升级硬件驱动或更新板卡配置后，旧校准数据可能失效但无法检测。  
 **改进**: CalibrationDB 应记录校准时的硬件版本、IFBW、温度等上下文；恢复时校验一致性，失配时警告或禁用。
 
 ### 问题 4: 选件扩展点不够细粒度
+
 **风险**: 选件只能扩展 MeasurementCore，难以在校准、数据导出等流程中插入自定义逻辑。  
 **改进**: 在 CalibrationSession、DataIO、MeasurementPipeline 的关键节点定义钩子接口，允许选件注册回调。
 
 ### 问题 5: 多实例资源竞争的公平性
+
 **风险**: ResourceManager 的租约机制是先来先得，可能导致某些实例长期无法获得资源。  
 **改进**: 实现优先级队列和公平调度算法；提供超时重试和降级策略文档。
 
 ### 问题 6: 真实仪器驱动与 PXI 实例的接口差异
+
 **风险**: vna_driver_* 和 vna_instance_pxi 两种实现的硬件接口差异大，客户端代码难以统一。  
 **改进**: 在 vna_hw_abstraction 上再抽一层适配器（IVnaHardwareAdapter），屏蔽驱动与实例的差异。
 
 ### 问题 7: 日志与诊断的可观测性
+
 **风险**: 多实例+多板卡场景下，日志混乱难以追踪问题（如哪个板卡的触发线故障）。  
 **改进**: 在日志中加入 instance_id、board_id、port_id 等标签；支持按标签过滤输出。
 
 ### 问题 8: 性能瓶颈未提前规划
+
 **风险**: 多源缓冲、时戳对齐、S参数计算可能成为吞吐瓶颈，导致实时性下降。  
 **改进**: 在 Phase 2 中补充性能基准测试（throughput, latency, CPU/内存用量）；考虑 SIMD/多线程优化。
 
 ### 问题 9: 异构拓扑验证不足
+
 **风险**: 用户配置的拓扑可能存在循环依赖、类型不兼容（如 VISA 设备不支持硬件触发）、端口冲突等问题。  
 **改进**: TopologyManager.validateTopology() 应实现完整的静态检查（拓扑图环检测、节点能力校验、端口唯一性）；提供可视化工具辅助配置。
 
 ### 问题 10: 异构同步精度降级
+
 **风险**: PXI 硬件同步精度高（ns 级），VISA 软件触发精度低（ms 级），混合时可能导致测量误差。  
 **改进**: 在校准数据中记录同步精度等级；对低精度节点的数据标注误差范围；提供"严格同步"模式拒绝低精度节点。
 
 ### 问题 11: 实例嵌套的生命周期依赖
+
 **风险**: 父实例引用子实例时，子实例被提前销毁或重配置可能导致父实例失效。  
 **改进**: 实现引用计数或依赖追踪机制；禁止销毁被引用的子实例；提供拓扑依赖图显示工具。
 
 ### 问题 12: 跨进程设备资源冲突（多开场景）
+
 **风险**: 在支持多开（多个应用进程）时，多个进程同时争用仪器资源（PXI 板卡、VISA 设备）会导致访问冲突、不可预期的行为或数据损坏。  
 **改进**: 推荐实现 Global Resource Broker（本地守护进程）作为跨进程中央仲裁器；或采用系统级命名互斥/文件锁作为轻量替代。Broker 应支持租约/心跳、抢占策略、审计日志与权限控制；在 TopologyManager.validateTopology 阶段进行全局资源可用性检测，并在 UI 中显示占用信息与提供排队/抢占选项。
 
 ---
+
 ## 11. Workspace 工作区支持（隔离与资源协调）
 
 为保证多开应用之间测试和测量的独立性，应把 Workspace（工作区）作为一级隔离单元引入架构。下面把设计做成可实现的规范，包含元模型、生命周期、资源协调与接口。
 
 ### 11.1 目标
+
 - **隔离性**：配置、校准、测量结果和日志按 workspace 隔离存放。
 - **命名空间式资源分配**：设备租约、端口映射和触发线由 WorkspaceContext 管理并可向 Global Broker 注册。
 - **可复现性**：支持 workspace 快照（拓扑、校准、选件、采集参数）与恢复。
 - **可观测性与审计**：记录每个 workspace 的资源占用、租约事件与操作审计日志。
 
 ### 11.2 Workspace 元模型与目录
+
 - workspace_id: string, owner: user, policy: {strict|shared}
 - 每个 workspace 对应目录结构：
+
 ```
 workspaces/<workspace_id>/
   config.yaml        # 拓扑 + 配置
@@ -1640,11 +1679,13 @@ stateDiagram-v2
 ```
 
 ### 11.3 Workspace 内资源协调（机制与 API）
+
 - **Workspace-scoped ResourceManager / ResourceProxy**
   - 每个 workspace 持有一个 ResourceManager 实例，用于管理 workspace 内的硬件租约、端口映射与本地队列。
   - ResourceManager 与 Global Broker 协作：若 Broker 存在，workspace 的 ResourceManager 向 Broker 请求租约并同步状态；若无 Broker，则降级为本地命名互斥 + 状态文件。
 
 - **核心 API（建议）**
+
 ```cpp
 // workspace scope
 Lease acquireResource(ResourceId id, WorkspaceId wid, AccessMode mode, Duration timeout);
@@ -1686,17 +1727,20 @@ flowchart TD
 ```
 
 ### 11.4 冲突检测与策略
+
 - **即时拒绝**：严格模式（policy=strict）下，TopologyManager.validateTopology 在激活时拒绝资源有冲突的拓扑。  
 - **排队/抢占**：默认排队；管理员/有权限用户可选择抢占（Broker 协调并需审计）。
 - **降级策略**：若硬件同步链不可用，则尝试软件触发回退并标注 sync_quality 低。
 - **死锁预防**：按资源唯一 id 排序获取锁，若存在等待超时触发回滚并打日志告警。
 
 ### 11.5 测试 & 验收
+
 - 并发场景：多个实例在同一 workspace 并发申请同一端口，验证排队、超时、抢占行为。  
 - 崩溃与回收：模拟实例或客户端进程崩溃，验证租约 TTL 到期自动回收与审计记录。  
 - Snapshot/Restore：验证 Snapshot 恢复后拓扑、校准和选件状态一致且可继续测量。
 
 ### 11.6 UI/CLI 支持（建议）
+
 - CLI: `vna_cli workspace create/list/switch/snapshot/restore`。
 - UI: Workspace 下拉选择、资源视图（显示租约、占用者、等待队列）、快照按钮、严格模式开关。
 

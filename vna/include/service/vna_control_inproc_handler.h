@@ -13,6 +13,8 @@ struct ServiceStatusResponse {
   bool ready = false;
   std::string state;
   std::string message;
+  std::string bootstrapMode;
+  std::string configPath;
   std::uint64_t uptimeMs = 0;
   std::string bindAddress;
   std::uint32_t port = 0;

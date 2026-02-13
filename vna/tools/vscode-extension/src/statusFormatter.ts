@@ -7,14 +7,17 @@ import type {
 
 export function formatServiceStatus(status: ServiceStatus): string {
   let normalizedMessage = status.message;
-  let configPath = "";
+  let legacyConfigPath = "";
 
   const marker = " | config=";
   const markerIndex = status.message.indexOf(marker);
   if (markerIndex >= 0) {
     normalizedMessage = status.message.substring(0, markerIndex);
-    configPath = status.message.substring(markerIndex + marker.length);
+    legacyConfigPath = status.message.substring(markerIndex + marker.length);
   }
+
+  const configPath = status.configPath.length > 0 ? status.configPath : legacyConfigPath;
+  const bootstrapMode = status.bootstrapMode;
 
   const fields = [
     `state=${status.state}`,
@@ -30,6 +33,10 @@ export function formatServiceStatus(status: ServiceStatus): string {
 
   if (configPath.length > 0) {
     fields.push(`configPath=${configPath}`);
+  }
+
+  if (bootstrapMode.length > 0) {
+    fields.push(`bootstrapMode=${bootstrapMode}`);
   }
 
   return fields.join(" | ");

@@ -88,8 +88,9 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  processManager.SetReady("grpc bootstrap | config=" + selectedConfigPath);
+  processManager.SetReady("grpc bootstrap");
   statusService.UpdateConfig(config);
+  statusService.UpdateBootstrapContext("grpc", selectedConfigPath);
   statusService.UpdateHealth(processManager.GetHealth());
   statusService.UpdateRuntimeMetrics(controlService.InstanceCount(), controlService.ActiveLeaseCount());
 

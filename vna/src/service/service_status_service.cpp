@@ -28,6 +28,13 @@ void ServiceStatusService::UpdateRuntimeMetrics(std::size_t instanceCount,
   snapshot_.activeLeaseCount = activeLeaseCount;
 }
 
+void ServiceStatusService::UpdateBootstrapContext(const std::string& bootstrapMode,
+                                                  const std::string& configPath) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  snapshot_.bootstrapMode = bootstrapMode;
+  snapshot_.configPath = configPath;
+}
+
 ServiceStatusSnapshot ServiceStatusService::GetStatus() const {
   std::lock_guard<std::mutex> lock(mutex_);
   return snapshot_;

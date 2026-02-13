@@ -27,9 +27,21 @@ int main(int argc, char** argv) {
     std::cout << "GetServiceStatus ok"
               << " ready=" << (response.ready() ? "true" : "false")
               << " state=" << response.state()
+              << " bootstrap_mode=" << response.bootstrap_mode()
+              << " config_path=" << response.config_path()
               << " bind=" << response.bind_address() << ":" << response.port()
               << " instances=" << response.instance_count()
               << " leases=" << response.active_lease_count() << "\n";
+
+    if (response.bootstrap_mode().empty()) {
+      std::cout << "GetServiceStatus validation failed: bootstrap_mode is empty\n";
+      return 6;
+    }
+
+    if (response.config_path().empty()) {
+      std::cout << "GetServiceStatus validation failed: config_path is empty\n";
+      return 7;
+    }
   }
 
   {

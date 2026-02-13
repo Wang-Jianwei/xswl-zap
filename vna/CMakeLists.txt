@@ -159,6 +159,17 @@ if(XSWL_ENABLE_GRPC_CPP_ADAPTER)
         CXX_EXTENSIONS OFF
     )
     target_link_libraries(vna_grpc_stream_smoke PRIVATE vna_grpc_proto_contract)
+
+    add_executable(vna_grpc_service_status_mapping_test
+        tests/core/grpc_service_status_mapping_test.cpp
+    )
+    set_target_properties(vna_grpc_service_status_mapping_test PROPERTIES
+        OUTPUT_NAME "easy_grpc_service_status_mapping_test"
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+        CXX_EXTENSIONS OFF
+    )
+    target_link_libraries(vna_grpc_service_status_mapping_test PRIVATE vna_grpc_service_adapter)
 endif()
 
 if(XSWL_ENABLE_PROTO_GENERATION)

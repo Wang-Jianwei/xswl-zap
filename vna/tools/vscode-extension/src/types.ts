@@ -2,6 +2,8 @@ export interface ServiceStatus {
   ready: boolean;
   state: string;
   message: string;
+  bootstrapMode: string;
+  configPath: string;
   uptimeMs: number;
   bindAddress: string;
   port: number;

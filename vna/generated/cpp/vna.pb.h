@@ -975,6 +975,8 @@ class ServiceStatus final : public ::google::protobuf::Message
     kMessageFieldNumber = 3,
     kBindAddressFieldNumber = 5,
     kLogLevelFieldNumber = 8,
+    kBootstrapModeFieldNumber = 11,
+    kConfigPathFieldNumber = 12,
     kUptimeMsFieldNumber = 4,
     kReadyFieldNumber = 1,
     kTlsEnabledFieldNumber = 7,
@@ -1042,6 +1044,36 @@ class ServiceStatus final : public ::google::protobuf::Message
   ::std::string* PROTOBUF_NONNULL _internal_mutable_log_level();
 
   public:
+  // string bootstrap_mode = 11;
+  void clear_bootstrap_mode() ;
+  const ::std::string& bootstrap_mode() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_bootstrap_mode(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_bootstrap_mode();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_bootstrap_mode();
+  void set_allocated_bootstrap_mode(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_bootstrap_mode() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_bootstrap_mode(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_bootstrap_mode();
+
+  public:
+  // string config_path = 12;
+  void clear_config_path() ;
+  const ::std::string& config_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_config_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_config_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_config_path();
+  void set_allocated_config_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_config_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_config_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_config_path();
+
+  public:
   // uint64 uptime_ms = 4;
   void clear_uptime_ms() ;
   ::uint64_t uptime_ms() const;
@@ -1106,8 +1138,8 @@ class ServiceStatus final : public ::google::protobuf::Message
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<4, 10,
-                                   0, 67,
+  static const ::google::protobuf::internal::TcParseTable<4, 12,
+                                   0, 92,
                                    2>
       _table_;
 
@@ -1132,6 +1164,8 @@ class ServiceStatus final : public ::google::protobuf::Message
     ::google::protobuf::internal::ArenaStringPtr message_;
     ::google::protobuf::internal::ArenaStringPtr bind_address_;
     ::google::protobuf::internal::ArenaStringPtr log_level_;
+    ::google::protobuf::internal::ArenaStringPtr bootstrap_mode_;
+    ::google::protobuf::internal::ArenaStringPtr config_path_;
     ::uint64_t uptime_ms_;
     bool ready_;
     bool tls_enabled_;
@@ -5924,7 +5958,7 @@ inline void ServiceStatus::clear_ready() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.ready_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000020U);
+                  0x00000080U);
 }
 inline bool ServiceStatus::ready() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.ready)
@@ -5932,7 +5966,7 @@ inline bool ServiceStatus::ready() const {
 }
 inline void ServiceStatus::set_ready(bool value) {
   _internal_set_ready(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.ready)
 }
 inline bool ServiceStatus::_internal_ready() const {
@@ -6079,7 +6113,7 @@ inline void ServiceStatus::clear_uptime_ms() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.uptime_ms_ = ::uint64_t{0u};
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000010U);
+                  0x00000040U);
 }
 inline ::uint64_t ServiceStatus::uptime_ms() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.uptime_ms)
@@ -6087,7 +6121,7 @@ inline ::uint64_t ServiceStatus::uptime_ms() const {
 }
 inline void ServiceStatus::set_uptime_ms(::uint64_t value) {
   _internal_set_uptime_ms(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.uptime_ms)
 }
 inline ::uint64_t ServiceStatus::_internal_uptime_ms() const {
@@ -6169,7 +6203,7 @@ inline void ServiceStatus::clear_port() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.port_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000080U);
+                  0x00000200U);
 }
 inline ::uint32_t ServiceStatus::port() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.port)
@@ -6177,7 +6211,7 @@ inline ::uint32_t ServiceStatus::port() const {
 }
 inline void ServiceStatus::set_port(::uint32_t value) {
   _internal_set_port(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000080U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.port)
 }
 inline ::uint32_t ServiceStatus::_internal_port() const {
@@ -6194,7 +6228,7 @@ inline void ServiceStatus::clear_tls_enabled() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.tls_enabled_ = false;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000040U);
+                  0x00000100U);
 }
 inline bool ServiceStatus::tls_enabled() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.tls_enabled)
@@ -6202,7 +6236,7 @@ inline bool ServiceStatus::tls_enabled() const {
 }
 inline void ServiceStatus::set_tls_enabled(bool value) {
   _internal_set_tls_enabled(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000040U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.tls_enabled)
 }
 inline bool ServiceStatus::_internal_tls_enabled() const {
@@ -6284,7 +6318,7 @@ inline void ServiceStatus::clear_instance_count() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.instance_count_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000100U);
+                  0x00000400U);
 }
 inline ::uint32_t ServiceStatus::instance_count() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.instance_count)
@@ -6292,7 +6326,7 @@ inline ::uint32_t ServiceStatus::instance_count() const {
 }
 inline void ServiceStatus::set_instance_count(::uint32_t value) {
   _internal_set_instance_count(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000100U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000400U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.instance_count)
 }
 inline ::uint32_t ServiceStatus::_internal_instance_count() const {
@@ -6309,7 +6343,7 @@ inline void ServiceStatus::clear_active_lease_count() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.active_lease_count_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000200U);
+                  0x00000800U);
 }
 inline ::uint32_t ServiceStatus::active_lease_count() const {
   // @@protoc_insertion_point(field_get:vna.ServiceStatus.active_lease_count)
@@ -6317,7 +6351,7 @@ inline ::uint32_t ServiceStatus::active_lease_count() const {
 }
 inline void ServiceStatus::set_active_lease_count(::uint32_t value) {
   _internal_set_active_lease_count(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000200U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000800U);
   // @@protoc_insertion_point(field_set:vna.ServiceStatus.active_lease_count)
 }
 inline ::uint32_t ServiceStatus::_internal_active_lease_count() const {
@@ -6327,6 +6361,136 @@ inline ::uint32_t ServiceStatus::_internal_active_lease_count() const {
 inline void ServiceStatus::_internal_set_active_lease_count(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.active_lease_count_ = value;
+}
+
+// string bootstrap_mode = 11;
+inline void ServiceStatus::clear_bootstrap_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.bootstrap_mode_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline const ::std::string& ServiceStatus::bootstrap_mode() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ServiceStatus.bootstrap_mode)
+  return _internal_bootstrap_mode();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ServiceStatus::set_bootstrap_mode(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  _impl_.bootstrap_mode_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ServiceStatus.bootstrap_mode)
+}
+inline ::std::string* PROTOBUF_NONNULL ServiceStatus::mutable_bootstrap_mode()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  ::std::string* _s = _internal_mutable_bootstrap_mode();
+  // @@protoc_insertion_point(field_mutable:vna.ServiceStatus.bootstrap_mode)
+  return _s;
+}
+inline const ::std::string& ServiceStatus::_internal_bootstrap_mode() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.bootstrap_mode_.Get();
+}
+inline void ServiceStatus::_internal_set_bootstrap_mode(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.bootstrap_mode_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ServiceStatus::_internal_mutable_bootstrap_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.bootstrap_mode_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ServiceStatus::release_bootstrap_mode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ServiceStatus.bootstrap_mode)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000010U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  auto* released = _impl_.bootstrap_mode_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.bootstrap_mode_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ServiceStatus::set_allocated_bootstrap_mode(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000010U);
+  }
+  _impl_.bootstrap_mode_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.bootstrap_mode_.IsDefault()) {
+    _impl_.bootstrap_mode_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ServiceStatus.bootstrap_mode)
+}
+
+// string config_path = 12;
+inline void ServiceStatus::clear_config_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.config_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline const ::std::string& ServiceStatus::config_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ServiceStatus.config_path)
+  return _internal_config_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ServiceStatus::set_config_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  _impl_.config_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ServiceStatus.config_path)
+}
+inline ::std::string* PROTOBUF_NONNULL ServiceStatus::mutable_config_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  ::std::string* _s = _internal_mutable_config_path();
+  // @@protoc_insertion_point(field_mutable:vna.ServiceStatus.config_path)
+  return _s;
+}
+inline const ::std::string& ServiceStatus::_internal_config_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.config_path_.Get();
+}
+inline void ServiceStatus::_internal_set_config_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.config_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ServiceStatus::_internal_mutable_config_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.config_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ServiceStatus::release_config_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ServiceStatus.config_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000020U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+  auto* released = _impl_.config_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.config_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ServiceStatus::set_allocated_config_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000020U);
+  }
+  _impl_.config_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.config_path_.IsDefault()) {
+    _impl_.config_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ServiceStatus.config_path)
 }
 
 #ifdef __GNUC__

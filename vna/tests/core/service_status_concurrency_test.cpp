@@ -29,6 +29,7 @@ int main() {
       config.tlsEnabled = false;
       config.logLevel = "info";
       statusService.UpdateConfig(config);
+      statusService.UpdateBootstrapContext("grpc", "config/service.yaml");
 
       statusService.UpdateRuntimeMetrics(static_cast<std::size_t>(i % 4), static_cast<std::size_t>(i % 2));
     }
@@ -44,6 +45,7 @@ int main() {
       const vna::service::ServiceStatusSnapshot snapshot = statusService.GetStatus();
       assert(snapshot.state == "ready" || snapshot.state == "degraded");
       assert(snapshot.port >= 50051 && snapshot.port <= 50053);
+      assert(snapshot.bootstrapMode == "grpc");
     }
   });
 

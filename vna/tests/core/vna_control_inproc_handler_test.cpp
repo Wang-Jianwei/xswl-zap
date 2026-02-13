@@ -21,6 +21,8 @@ int main() {
   health.uptimeMs = 123;
   statusService.UpdateHealth(health);
 
+  statusService.UpdateBootstrapContext("grpc", "config/service.yaml");
+
   statusService.UpdateRuntimeMetrics(3, 2);
 
   vna::service::ServiceStatusResponse response;
@@ -29,7 +31,9 @@ int main() {
   assert(status == vna::core::Status::kOk);
   assert(response.ready);
   assert(response.state == "ready");
-  assert(response.message == "inproc");
+  assert(response.message == "inproc | config=config/service.yaml");
+  assert(response.bootstrapMode == "grpc");
+  assert(response.configPath == "config/service.yaml");
   assert(response.uptimeMs == 123);
   assert(response.bindAddress == "127.0.0.1");
   assert(response.port == 52000);
@@ -37,6 +41,34 @@ int main() {
   assert(response.logLevel == "warn");
   assert(response.instanceCount == 3);
   assert(response.activeLeaseCount == 2);
+
+  {
+    vna::service::HealthStatus legacyHealth;
+    legacyHealth.ready = true;
+    legacyHealth.state = "ready";
+    legacyHealth.message = "legacy-ready | config=old/path.yaml";
+    legacyHealth.uptimeMs = 456;
+    statusService.UpdateHealth(legacyHealth);
+    statusService.UpdateBootstrapContext("grpc", "config/new-path.yaml");
+
+    vna::service::ServiceStatusResponse legacyResponse;
+    const vna::core::Status legacyStatus = handler.GetServiceStatus(statusService, legacyResponse);
+    assert(legacyStatus == vna::core::Status::kOk);
+    assert(legacyResponse.message == "legacy-ready | config=config/new-path.yaml");
+    assert(legacyResponse.configPath == "config/new-path.yaml");
+    assert(legacyResponse.bootstrapMode == "grpc");
+  }
+
+  {
+    statusService.UpdateBootstrapContext("grpc", "");
+
+    vna::service::ServiceStatusResponse noConfigResponse;
+    const vna::core::Status noConfigStatus = handler.GetServiceStatus(statusService, noConfigResponse);
+    assert(noConfigStatus == vna::core::Status::kOk);
+    assert(noConfigResponse.message == "legacy-ready");
+    assert(noConfigResponse.configPath.empty());
+    assert(noConfigResponse.bootstrapMode == "grpc");
+  }
 
   return 0;
 }

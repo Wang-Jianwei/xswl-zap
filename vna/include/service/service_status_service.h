@@ -15,6 +15,8 @@ struct ServiceStatusSnapshot {
   bool ready = false;
   std::string state = "degraded";
   std::string message = "booting";
+  std::string bootstrapMode = "unknown";
+  std::string configPath;
   std::uint64_t uptimeMs = 0;
 
   std::string bindAddress = "0.0.0.0";
@@ -34,6 +36,7 @@ class ServiceStatusService {
   void UpdateConfig(const ServiceConfig& config);
   void UpdateHealth(const HealthStatus& health);
   void UpdateRuntimeMetrics(std::size_t instanceCount, std::size_t activeLeaseCount);
+  void UpdateBootstrapContext(const std::string& bootstrapMode, const std::string& configPath);
 
   ServiceStatusSnapshot GetStatus() const;
 

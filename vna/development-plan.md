@@ -20,6 +20,7 @@
 - **可执行文件命名**：当前环境要求所有编译生成的 `.exe` 必须以 `easy` 开头才能运行；因此本项目新增可执行目标时必须设置 `OUTPUT_NAME` 为 `easy_*`。
 
 关联文档：
+
 - `vna/ai-engineering-framework.md`
 - `vna/framework.md`
 - `vna/framework-ui.md`
@@ -215,8 +216,15 @@ WU-<ID>: <Title>
 - [x] 完成 VS Code 插件 MVP-3（命令：`XSWL: Stream Preview` + 可取消帧计数摘要）
 - [x] 完成 gRPC server 启动稳健性改进（配置路径候选加载 + 启动诊断增强）
 - [x] 完成服务状态并发安全改造（`ProcessManager/ServiceStatusService` 加锁 + 并发回归测试）
+- [x] 完成主线构建与回归验证（`cmake --build --preset ninja-mingw` + `scripts/run_easy_tests.ps1` 全通过）
+- [x] 完成 ServiceStatus 可观测性字段结构化增强（内部字段拆分 + 兼容 message 映射 + 回归通过）
+- [x] 完成 `GetServiceStatus` 契约结构化扩展（新增 `bootstrap_mode/config_path` + 插件优先读取 + 回归通过）
+- [x] 完成 gRPC smoke 对 `ServiceStatus` 新字段回归校验（矩阵场景全通过）
+- [x] 完成 `GetServiceStatus` 插件显示去歧义与回归（结构化优先 + legacy 兜底）
+- [x] 完成 `GetServiceStatus` 服务端行为契约化快照测试（组合映射断言 + 回归通过）
+- [x] 完成 gRPC `GetServiceStatus` 服务层映射单测（新增独立测试目标并通过）
 
-### 8.1 当前 Work Unit
+### 8.1 已完成 Work Unit（归档）
 
 WU-VSCODE-002: VS Code 插件 Acquire Once 命令
 
@@ -314,6 +322,204 @@ WU-MAINLINE-002: 服务状态并发安全改造
   - 状态更新/读取在并发执行时无数据竞争。
   - 新增并发回归测试可执行并纳入 easy tests。
   - 不改变现有服务状态字段语义。
+
+### 8.2 当前 Work Unit
+
+WU-MAINLINE-003: ServiceStatus 可观测性字段结构化增强（内部）
+
+- Objective: 在不修改 proto 契约前提下，提升服务内部状态快照的结构化可读性，减少通过 message 拼接解析带来的歧义。
+- Scope (in/out):
+  - in: `ServiceStatusSnapshot` 内部字段扩展（如启动来源/配置路径分离）、状态组装逻辑与单测更新。
+  - out: 修改 `proto/vna.proto`、变更现有 RPC 返回字段、插件 UI 改版。
+- Files to change:
+  - `vna/include/service/service_status_service.h`
+  - `vna/src/service/service_status_service.cpp`
+  - `vna/src/service/grpc/grpc_server_main.cpp`
+  - `vna/tests/core/service_status_service_test.cpp`
+  - `vna/tests/core/vna_control_inproc_handler_test.cpp`
+- Contract impact: 无（仅内部结构与组装逻辑调整，外部契约保持不变）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚上述文件并恢复 message 拼接方案。
+- Risks: 内部字段改名或映射不当可能导致状态文本回退或缺失。
+- Acceptance criteria:
+  - 不破坏现有 `GetServiceStatus` 对外字段语义。
+  - 状态信息来源清晰，减少 message 语义重载。
+  - 相关 easy 测试全部通过。
+
+### 8.3 已完成 Work Unit（最新）
+
+WU-MAINLINE-004: `GetServiceStatus` 契约结构化扩展（Pre-GA）
+
+- Objective: 将 `configPath/bootstrapMode` 从 message 字符串中解耦到明确 proto 字段，降低客户端解析歧义。
+- Scope (in/out):
+  - in: 更新 `proto/vna.proto`、服务端映射、插件客户端解析与最小回归测试。
+  - out: 大规模 UI 重构、历史兼容层双轨保留（遵循 Pre-GA 简化原则）。
+- Files to change:
+  - `vna/proto/vna.proto`
+  - `vna/src/service/vna_control_inproc_handler.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tests/core/vna_control_inproc_handler_test.cpp`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+- Contract impact: 有（新增 ServiceStatus 字段，需重新生成并同步 C++/TS stub）。
+- Test plan:
+  - `vna/scripts/generate_proto.ps1`
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚 proto 与映射改动，恢复 message 兼容解析路径。
+- Risks: proto 变更若未同步插件端，会导致字段读取回退或空值。
+- Acceptance criteria:
+  - `ServiceStatus` 返回包含结构化 `configPath/bootstrapMode`。
+  - 插件优先使用结构化字段，旧 message 解析仅作兜底。
+  - 主线 easy tests 与插件测试全部通过。
+
+### 8.4 已完成 Work Unit（最新）
+
+WU-MAINLINE-005: gRPC smoke 对 `ServiceStatus` 新字段回归校验
+
+- Objective: 在 smoke 验证链路中显式校验 `bootstrap_mode/config_path`，确保契约扩展在本地与 CI 中可见、可回归。
+- Scope (in/out):
+  - in: 更新 `easy_grpc_client_smoke` 输出与断言、脚本调用链回归。
+  - out: 新增复杂 E2E 测试框架、插件 UI 迭代。
+- Files to change:
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无（消费已新增字段，不再改 proto）。
+- Test plan:
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/build-grpc/easy_grpc_client_smoke.exe 127.0.0.1:50051`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild`
+- Rollback plan: 回滚 smoke 断言与脚本改动，恢复原输出。
+- Risks: 本地配置路径差异可能导致断言过严，需要采用“非空+格式”校验而非硬编码绝对路径。
+- Acceptance criteria:
+  - smoke 输出包含 `bootstrap_mode/config_path`。
+  - 当字段为空时 smoke 显式失败并返回非 0。
+  - 不影响现有 unary/stream smoke 路径。
+
+### 8.5 已完成 Work Unit（最新）
+
+WU-MAINLINE-006: `GetServiceStatus` 插件显示去歧义与回归
+
+- Objective: 清理插件状态展示中对 legacy `message | config=...` 的解析分支，统一以结构化字段为主，避免重复或冲突展示。
+- Scope (in/out):
+  - in: 插件 `statusFormatter` 展示规则收敛、测试补齐、README 行为说明补充。
+  - out: 新增 UI 组件、改造命令交互流程。
+- Files to change:
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+- Contract impact: 无（仅消费与展示逻辑调整）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚上述插件文件，恢复旧解析展示策略。
+- Risks: 若后端旧版本未带新字段，展示可能回退到 legacy message 解析路径。
+- Acceptance criteria:
+  - 新字段存在时仅展示结构化 `configPath/bootstrapMode`。
+  - 旧字段缺失时可继续兼容显示。
+  - 插件测试全部通过。
+
+### 8.6 已完成 Work Unit（最新）
+
+WU-MAINLINE-007: 服务端 `GetServiceStatus` 行为契约化快照测试
+
+- Objective: 为结构化扩展后的 `GetServiceStatus` 建立稳定快照测试，避免后续字段回退或 message 语义漂移。
+- Scope (in/out):
+  - in: 新增/更新 core 测试覆盖 message、bootstrap_mode、config_path 的映射组合。
+  - out: 新增集成环境依赖、改动插件逻辑。
+- Files to change:
+  - `vna/tests/core/vna_control_inproc_handler_test.cpp`
+  - `vna/tests/core/service_status_service_test.cpp`
+  - `vna/tests/core/service_status_concurrency_test.cpp`
+- Contract impact: 无（测试增强）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚新增断言与测试用例。
+- Risks: 断言过严可能在合法文案调整时引发误报，需要关注字段语义而非字面文本。
+- Acceptance criteria:
+  - 关键字段映射行为在测试中可重复验证。
+  - easy tests 全通过。
+  - 不引入 flaky 并发测试。
+
+### 8.7 已完成 Work Unit（最新）
+
+WU-MAINLINE-008: gRPC `GetServiceStatus` 单测覆盖（服务层）
+
+- Objective: 补齐 gRPC service 层对 `GetServiceStatus` 结构化字段映射的单测，避免仅依赖 inproc 测试覆盖。
+- Scope (in/out):
+  - in: 新增/扩展 gRPC service 测试，验证 `message/bootstrap_mode/config_path` 字段映射。
+  - out: 网络级集成测试框架、插件侧改造。
+- Files to change:
+  - `vna/tests/core/grpc_service_status_mapping_test.cpp`（新增）
+  - `vna/CMakeLists.txt`
+  - `vna/scripts/build_grpc_adapter.ps1`
+- Contract impact: 无（测试增强）。
+- Test plan:
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/build-grpc/easy_grpc_service_status_mapping_test.exe`
+- Rollback plan: 回滚新增测试目标与 gRPC 适配构建脚本接线。
+- Risks: 测试桩构造不当可能引入与真实服务不一致行为。
+- Acceptance criteria:
+  - 新增测试覆盖 `GetServiceStatus` 结构化字段映射。
+  - gRPC 适配构建链路可执行该测试并通过。
+
+### 8.8 已完成 Work Unit
+
+WU-MAINLINE-009: gRPC 日志噪声分级治理（smoke 可读性）
+
+- Objective: 降低 smoke 过程中的重复 gRPC 指标告警噪声，提升回归日志可读性与故障定位效率。
+- Scope (in/out):
+  - in: 评估并收敛 smoke 执行路径中的可控日志输出（脚本级过滤或分级输出）。
+  - out: 修改第三方 gRPC 库源码、引入外部日志框架。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild`
+- Rollback plan: 回滚脚本与文档改动，恢复原始输出。
+- Risks: 过滤策略过强可能掩盖真实错误，需要只处理已知重复噪声模式。
+- Acceptance criteria:
+  - smoke 输出保留关键通过/失败信息。
+  - 已知重复噪声显著减少。
+  - 矩阵脚本功能保持不变。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild` 通过（all cases passed）
+  - 已知重复噪声按模式抑制并输出计数（`[MATRIX][NOISE] suppressed ...`）
+
+### 8.9 当前 Work Unit
+
+WU-MAINLINE-010: gRPC smoke 严格模式（未知 stderr 失败）
+
+- Objective: 为矩阵 smoke 增加可选“严格 stderr 判失败”模式，提升 CI 场景对异常日志的敏感度。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 参数扩展与失败判定增强，README 用法说明。
+  - out: 修改 gRPC 可执行程序、引入新日志框架。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr`
+- Rollback plan: 回滚脚本参数与 README 说明，恢复当前默认行为。
+- Risks: 若外部依赖在 stderr 打印无害信息，严格模式可能出现误报。
+- Acceptance criteria:
+  - 默认模式行为不变。
+  - 严格模式下，未知 stderr 可导致对应 case 失败。
+  - 已知噪声过滤策略继续生效。
+
+- Status: ✅ Completed (2026-02-13)
+- Validation result:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild` 通过（all cases passed）
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr` 通过（strict mode enabled）
 
 ---
 

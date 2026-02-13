@@ -163,6 +163,8 @@ export interface ServiceStatus {
   logLevel: string;
   instanceCount: number;
   activeLeaseCount: number;
+  bootstrapMode: string;
+  configPath: string;
 }
 
 function createBaseEmpty(): Empty {
@@ -1676,6 +1678,8 @@ function createBaseServiceStatus(): ServiceStatus {
     logLevel: "",
     instanceCount: 0,
     activeLeaseCount: 0,
+    bootstrapMode: "",
+    configPath: "",
   };
 }
 
@@ -1710,6 +1714,12 @@ export const ServiceStatus: MessageFns<ServiceStatus> = {
     }
     if (message.activeLeaseCount !== 0) {
       writer.uint32(80).uint32(message.activeLeaseCount);
+    }
+    if (message.bootstrapMode !== "") {
+      writer.uint32(90).string(message.bootstrapMode);
+    }
+    if (message.configPath !== "") {
+      writer.uint32(98).string(message.configPath);
     }
     return writer;
   },
@@ -1801,6 +1811,22 @@ export const ServiceStatus: MessageFns<ServiceStatus> = {
           message.activeLeaseCount = reader.uint32();
           continue;
         }
+        case 11: {
+          if (tag !== 90) {
+            break;
+          }
+
+          message.bootstrapMode = reader.string();
+          continue;
+        }
+        case 12: {
+          if (tag !== 98) {
+            break;
+          }
+
+          message.configPath = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1846,6 +1872,16 @@ export const ServiceStatus: MessageFns<ServiceStatus> = {
         : isSet(object.active_lease_count)
         ? globalThis.Number(object.active_lease_count)
         : 0,
+      bootstrapMode: isSet(object.bootstrapMode)
+        ? globalThis.String(object.bootstrapMode)
+        : isSet(object.bootstrap_mode)
+        ? globalThis.String(object.bootstrap_mode)
+        : "",
+      configPath: isSet(object.configPath)
+        ? globalThis.String(object.configPath)
+        : isSet(object.config_path)
+        ? globalThis.String(object.config_path)
+        : "",
     };
   },
 
@@ -1881,6 +1917,12 @@ export const ServiceStatus: MessageFns<ServiceStatus> = {
     if (message.activeLeaseCount !== 0) {
       obj.activeLeaseCount = Math.round(message.activeLeaseCount);
     }
+    if (message.bootstrapMode !== "") {
+      obj.bootstrapMode = message.bootstrapMode;
+    }
+    if (message.configPath !== "") {
+      obj.configPath = message.configPath;
+    }
     return obj;
   },
 
@@ -1899,6 +1941,8 @@ export const ServiceStatus: MessageFns<ServiceStatus> = {
     message.logLevel = object.logLevel ?? "";
     message.instanceCount = object.instanceCount ?? 0;
     message.activeLeaseCount = object.activeLeaseCount ?? 0;
+    message.bootstrapMode = object.bootstrapMode ?? "";
+    message.configPath = object.configPath ?? "";
     return message;
   },
 };

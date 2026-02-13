@@ -114,6 +114,8 @@ message ServiceStatus {
   string log_level = 8;
   uint32 instance_count = 9;
   uint32 active_lease_count = 10;
+  string bootstrap_mode = 11;
+  string config_path = 12;
 }
 
 service VnaControl {

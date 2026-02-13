@@ -15,7 +15,7 @@ Write-Host "[GRPC] regenerate stubs using MSYS2 protoc"
 Write-Host "[GRPC] configure preset grpc-mingw64"
 cmake --preset grpc-mingw64
 
-Write-Host "[GRPC] build targets vna_grpc_service_adapter, vna_grpc_server, vna_grpc_client_smoke and vna_grpc_stream_smoke"
-cmake --build --preset grpc-mingw64 --target vna_grpc_service_adapter vna_grpc_server vna_grpc_client_smoke vna_grpc_stream_smoke
+Write-Host "[GRPC] build targets vna_grpc_service_adapter, vna_grpc_server, vna_grpc_client_smoke, vna_grpc_stream_smoke and vna_grpc_service_status_mapping_test"
+cmake --build --preset grpc-mingw64 --target vna_grpc_service_adapter vna_grpc_server vna_grpc_client_smoke vna_grpc_stream_smoke vna_grpc_service_status_mapping_test
 
 Write-Host "[GRPC] done"

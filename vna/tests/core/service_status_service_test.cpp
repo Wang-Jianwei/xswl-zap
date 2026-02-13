@@ -9,11 +9,16 @@ int main() {
     const vna::service::ServiceStatusSnapshot status = service.GetStatus();
     assert(!status.ready);
     assert(status.state == "degraded");
+    assert(status.bootstrapMode == "unknown");
+    assert(status.configPath.empty());
     assert(status.bindAddress == "0.0.0.0");
     assert(status.port == 50051);
     assert(status.instanceCount == 0);
     assert(status.activeLeaseCount == 0);
   }
+
+  service.UpdateBootstrapContext("grpc", "config/service.yaml");
+  service.UpdateBootstrapContext("grpc", "config/override.yaml");
 
   {
     vna::service::ServiceConfig config;
@@ -40,6 +45,8 @@ int main() {
     assert(status.ready);
     assert(status.state == "ready");
     assert(status.message == "running");
+    assert(status.bootstrapMode == "grpc");
+    assert(status.configPath == "config/override.yaml");
     assert(status.uptimeMs == 42);
 
     assert(status.bindAddress == "127.0.0.1");

@@ -5,6 +5,7 @@
 ---
 
 ## 1. 设计目标与原则 ✅
+
 - **清晰可见性**：实时显示实例状态、资源占用、同步健康（sync_quality）。
 - **实例与工作区优先**：以 Workspace 和 VnaInstance 为一等实体，支持多开隔离与切换。
 - **可操作性**：一键创建/启动/停止实例、可视化拓扑编辑与配置校验。
@@ -14,6 +15,7 @@
 ---
 
 ## 2. 总体布局（主窗口）
+
 - 左侧导航（Dock）: Workspaces / Instances / Plugins / Tests
 - 主区域（Tab）: Instance Tabs（每个 tab 对应一个 VnaInstance）
 - 顶部工具栏: 全局操作（新建 workspace/实例、加载拓扑、校准向导、开始/停止）
@@ -35,11 +37,13 @@ flowchart LR
 ## 3. 关键视图与交互
 
 ### 3.1 Dashboard / Workspace 列表
+
 - 展示所有 Workspace 的名称、owner、policy（strict/shared）、资源占用状态和 sync_health 汇总。
 - 支持快速切换、快照/恢复、克隆与删除。
 - 点击 Workspace 打开该工作区下的实例列表。
 
 ### 3.2 Instance View（主测量画布）
+
 - **Header**: Instance name, status badge (Idle/Measuring/Calibrating/Error), start/stop, enable option(s).
 - **Left Pane**: Topology (graph) + Port list (映射/占用/lock)
 - **Center**: Plot area（多个可停靠视图：Smith、Linear、Polar、Bode），Trace 列表（可隐藏/显示、数学运算）
@@ -47,10 +51,12 @@ flowchart LR
 - **Bottom**: Acquisition timeline + live log + progress bar
 
 交互示例：
+
 - 在 Topology 面板拖动端口到节点 -> 自动映射 -> TopologyManager.validateTopology() 校验 -> Highlight conflict
 - 点击 "Calibrate" -> 弹出 Calibration Wizard（step-by-step）
 
 ### 3.3 Topology Editor（图形化）
+
 - 基于 QGraphicsView（Qt）或同等控件实现节点/链接拖拽、选择、右键菜单（set master/role、set trigger lines）
 - 支持 validation 导出与模拟（模拟 trigger propagation、PLL lock）
 
@@ -63,24 +69,29 @@ flowchart LR
 ```
 
 ### 3.4 Calibration Wizard
+
 - 步骤化向导：选择校准类型（SOLT/TRL/ECal）→ 指示连接哪种标准 → 自动测量并计算误差项 → 保存到 CalibrationDB（Workspace-scoped）
 - 支持“半自动/全自动”两种模式（半自动：用户手动更换标准并点击确认；全自动：与 ECal 硬件交互）
 
 ### 3.5 Measurement Session Manager
+
 - 支持单次测量、批次（scripted runs）、定时/调度
 - Job Queue 面板显示进度、历史与重跑选项
 - 支持 Scripted API（Python/CLI）触发并显示返回状态
 
 ### 3.6 Plugin/Options 管理
+
 - Plugin Browser：显示插件类型、状态、版本、License 信息
 - Per-instance options 列表（enable/disable），带 license 状态与到期提醒
 
 ### 3.7 Diagnostics & Logs
+
 - 实时日志（支持 filter by instance_id/board_id/level）
 - Diagnostics 面板：PLL lock status, trigger delay measurements, CPU/Memory usage, Broker state
 - 支持导出诊断包（zip）用于问题回溯
 
 ### 3.8 时域 / 材料 / 毫米波 UI 支持 🔧
+
 - **TDR / 時域视图**：新增 TDR 控制面板（Pulse Width、PRF、Trigger、采样率），实时时域波形 (time-series) 显示与距离映射视图，支持反射点标注与多重反射检测结果高亮。
 - **材料测量面板**：材料治具选择（OSL/TRL/CPW/同轴探针）、NRW 反演结果（ε', ε'', μ', tanδ）曲线与导出，支持治具去嵌入配置与测量不确定度显示。
 - **毫米波 / On-Wafer 操作面板**：ProbeStation 控制（位置、接触/Lift）、片上标准选择、On-Wafer 校准辅助（pad map）、阵列合成视图（多实例相位/幅度合成、相位中心校正提示）。
@@ -89,6 +100,7 @@ flowchart LR
 ---
 
 ## 4. UX Patterns / Notifications
+
 - 非阻塞通知（toast）显示短时反馈；关键错误或严格模式冲突以 modal 显示并要求确认
 - 长运行任务（采集、校准）在后台运行并在 Job Queue 中显示进度
 - 所有可能导致资源冲突的操作都提示并列出占用者与等待队列
@@ -96,12 +108,14 @@ flowchart LR
 ---
 
 ## 5. Accessibility & Shortcuts
+
 - 支持键盘导航、全局快捷键（Start/Stop, Snapshot, Toggle Logs）
 - 高对比度模式、放大可用字体、可配置缩放
 
 ---
 
 ## 6. Backend API / Event Map (建议)
+
 - UI -> Backend (synchronous or async via IPC/HTTP/DBus):
   - create_instance(workspace_id, topology_config)
   - validate_topology(workspace_id, topology)
@@ -118,6 +132,7 @@ flowchart LR
   - plugin_loaded/failed
 
 示例 Qt mapping:
+
 - QMainWindow -> MainWindow
 - QDockWidget -> LeftNav / Inspector / BottomPanel
 - QTabWidget -> Instance Tabs
@@ -129,6 +144,7 @@ flowchart LR
 ## 7. Wireframes & Mermaid UI snippets
 
 **主界面高层示意**
+
 ```mermaid
 flowchart LR
   Main["Main Window"] --> LeftNav["Workspaces<br>Instances"]
@@ -138,6 +154,7 @@ flowchart LR
 ```
 
 **Topology 编辑器操作序列**
+
 ```mermaid
 sequenceDiagram
     participant User
@@ -152,6 +169,7 @@ sequenceDiagram
 ---
 
 ## 8. Acceptance Criteria & UX Tests ✅
+
 - 创建/切换 workspace/instance 无死锁、UI 响应 <200ms
 - Topology validation 能发现端口/trigger/PLL/role 不一致并显示原因
 - 校准向导在 95% 情况下自动完成（若 ECal 可用）
@@ -161,6 +179,7 @@ sequenceDiagram
 ---
 
 ## 9. Implementation Roadmap (UI)
+
 1. 快速原型：实现 MainWindow、LeftNav、Instance Tabs、Bottom Logs（2 weeks）
 2. Topology Editor 原型（拖拽 + validation）（3 weeks）
 3. Plot area 与 Measurement Pipeline 连接（3 weeks）
@@ -170,6 +189,7 @@ sequenceDiagram
 ---
 
 ## 10. Next steps
+
 - 生成 Qt 原型（QWidgets 或 QML）并与 backend stub 集成做 end-to-end demo
 - 写 UI 测试脚本（QtTest / Squish）并在 CI 中运行
 
@@ -182,6 +202,7 @@ sequenceDiagram
 ## 11. VS Code 插件集成架构（Adapter + Backend + gRPC）
 
 ### 11.1 概要
+
 - 目标：同时支持 **原生 Qt UI**（低延迟、原生控件）和 **VS Code 插件 UI**（Webview 快速分发、开发者友好），并复用相同的后端业务逻辑。  
 - 核心思想：把测量、硬件控制、插件加载与高吞吐数据处理放到一个可复用的本地后端（daemon / service），UI 与 VS Code 插件通过轻量 adapter/IPC 与之交互。
 
@@ -208,6 +229,7 @@ flowchart LR
 ```
 
 ### 11.2 gRPC / 协议草案（示例）
+
 - 推荐使用 **gRPC（proto3）** 做控制与流式数据传输（强类型、stream 支持）。下面给出一个最小 proto 草案用于控制、流式帧和租约管理。
 
 ```proto
@@ -264,12 +286,14 @@ message ResourceRequest {
 ```
 
 ### 11.3 实现要点与注意
+
 - 实时数据流使用 gRPC server-stream（binary frames），或在极端场景下使用共享内存 / mmap 以避免拷贝。  
 - Adapter 负责启动/监控 Backend（若 Backend 作为独立进程），并为 VS Code 插件桥接 WebSocket ↔ gRPC。  
 - 在本机部署时，优先限制接口为 loopback/UDS 并使用本地 token 授权；若支持远程则启用 TLS。  
 - 在 UI 端对数据做下采样/可视化友好化（Smith Chart 绘图可在 Webview/Qt 层实现，后端返回 S-params 或聚合帧）。
 
 ### 11.4 最小接口验收测试
+
 - ValidateTopology: 返回错误列表并在 UI 中高亮错误节点。  
 - StartAcquisition/StreamAlignedFrames: 启动后能在 VS Code Webview 或 Qt Plot 区看到对齐帧（mock 后端实现）。  
 - ResourceBroker: 在多进程模拟中验证租约/抢占/回收策略。
@@ -357,6 +381,7 @@ message ResourceRequest {
 **推荐方案：B - Qt Native + gRPC + vna-core-service**
 
 理由：
+
 1. **开发效率最优** - C++/Qt 同栈，团队学习曲线低
 2. **架构已解耦** - 服务化设计为未来扩展铺路
 3. **稳定性有保障** - 进程隔离，崩溃不影响硬件
@@ -385,6 +410,7 @@ flowchart TB
 **推荐方案：D - 追加 VS Code Extension (gRPC-Web 直连)**
 
 理由：
+
 1. **复用 vna-core-service** - 零后台改动
 2. **gRPC-Web 直连** - 比 Adapter 简单，延迟更低
 3. **覆盖开发者用户** - 脚本、Notebook、自动化
@@ -410,6 +436,7 @@ flowchart TB
 **推荐方案：E 变体 - 双 UI 共存，但共享测量逻辑**
 
 架构演进：
+
 - Qt UI → 渐进简化为「仪器控制台」（轻量、专业）
 - VS Code → 成为「开发者工作台」（脚本、分析、自动化）
 - 共享 vna-core-service → 状态同步、资源仲裁
@@ -446,6 +473,7 @@ flowchart TD
 | 扩展 | 高 - 服务化后可接任意前端 |
 
 **下一步行动建议：**
+
 1. 确定 vna-core-service 的 gRPC proto 接口（已有草稿，见 11.2）
 2. 搭建 Qt + gRPC 客户端脚手架
 3. 实现最小可用的 Topology + Measurement 界面

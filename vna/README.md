@@ -184,6 +184,8 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 .\build-grpc\easy_grpc_client_smoke.exe
 ```
 
+说明：`GetServiceStatus` 会额外校验 `bootstrap_mode` 与 `config_path` 为非空，若为空将返回非 0 退出码。
+
 如需指定地址：
 
 ```powershell
@@ -217,6 +219,14 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 
 ```powershell
 .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild
+```
+
+说明：矩阵脚本会自动抑制已知重复的 gRPC `resource_quota` 指标告警噪声，保留关键通过/失败输出。
+
+如需在 CI 中启用更严格检查（未知 stderr 直接判失败）：
+
+```powershell
+.\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -FailOnUnknownStderr
 ```
 
 ## VS Code 插件联调快速开始

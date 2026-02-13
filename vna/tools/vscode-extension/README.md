@@ -9,6 +9,7 @@
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation
+- Service status display prefers structured `configPath/bootstrapMode` fields; legacy `message | config=...` is fallback-only
 - Reads backend config from VS Code settings:
   - `xswlZapVna.grpcAddress` (default `127.0.0.1:50051`)
   - `xswlZapVna.grpcDeadlineMs` (default `2000`)

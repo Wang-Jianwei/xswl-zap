@@ -49,22 +49,27 @@ xswl-zap/
 ## 3. Agent 角色模型
 
 ### 3.1 架构 Agent
+
 - 维护 `framework.md`、`framework-ui.md`、ADR。
 - 约束：不能直接改业务代码，只输出接口与决策。
 
 ### 3.2 合约 Agent
+
 - 维护 `proto/*.proto`、配置 schema、C++ headers。
 - 约束：任何破坏兼容的改动必须新增版本字段或 V2 接口。
 
 ### 3.3 实现 Agent
+
 - 按合约实现 `core/service/drivers/plugins/apps`。
 - 约束：提交必须附对应测试。
 
 ### 3.4 测试 Agent
+
 - 负责单测/集成/E2E、基准与回归。
 - 约束：禁止修改业务逻辑（除修复明显测试夹具错误）。
 
 ### 3.5 文档 Agent
+
 - 同步更新变更文档、迁移指南、故障排查。
 - 约束：必须与代码版本一致。
 
@@ -97,16 +102,20 @@ WU-<ID>: <Title>
 ## 5. 分支与提交流程（适配 AI）
 
 ### 5.1 分支命名
+
 - `feature/<domain>-<capability>`
 - `fix/<domain>-<bug>`
 - `refactor/<domain>-<goal>`
 
 示例：
+
 - `feature/core-time-domain`
 - `feature/drivers-hardware-abstraction`
 
 ### 5.2 PR 结构
+
 每个 PR 必须包含：
+
 - 变更目的（1 段）
 - 契约变更（若有）
 - 风险与回滚
@@ -114,6 +123,7 @@ WU-<ID>: <Title>
 - 对应 Work Unit 列表
 
 ### 5.3 合并策略
+
 - Squash merge
 - 受保护分支：`main`
 - 必须通过 CI 全部门禁
@@ -123,17 +133,20 @@ WU-<ID>: <Title>
 ## 6. 质量门禁（Definition of Done）
 
 ### 6.1 代码层
+
 - 编译通过
 - 无新增 lint error
 - 有错误处理（输入校验、外设超时、资源释放）
 - 公共 API 带注释
 
 ### 6.2 测试层
+
 - 新能力至少 1 个单元测试
 - 关键路径至少 1 个集成测试
 - 高风险功能（多板卡/同步）需回归测试
 
 ### 6.3 文档层
+
 - 变更涉及架构必须更新 `framework.md`
 - 变更涉及 UI 必须更新 `framework-ui.md`
 - 变更涉及计划必须更新 `development-plan.md`
@@ -153,10 +166,12 @@ WU-<ID>: <Title>
 ## 8. 可观测性标准
 
 ### 8.1 日志
+
 - 统一字段：`timestamp, level, module, instance_id, workspace_id, message, error_code`
 - 错误日志必须包含根因与建议动作。
 
 ### 8.2 指标（最小集）
+
 - `acquisition_latency_ms`
 - `sync_skew_ns`
 - `trigger_jitter_ns`
@@ -164,6 +179,7 @@ WU-<ID>: <Title>
 - `plugin_exec_time_ms`
 
 ### 8.3 追踪
+
 - 关键链路：`UI/Extension -> gRPC -> pipeline -> driver`
 
 ---

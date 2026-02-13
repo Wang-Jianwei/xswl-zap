@@ -131,6 +131,12 @@ inline constexpr ServiceStatus::Impl_::Impl_(
         log_level_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        bootstrap_mode_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        config_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         uptime_ms_{::uint64_t{0u}},
         ready_{false},
         tls_enabled_{false},
@@ -635,7 +641,7 @@ const ::uint32_t
         2,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_._has_bits_),
-        13, // hasbit index offset
+        15, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.ready_),
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.state_),
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.message_),
@@ -646,16 +652,20 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.log_level_),
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.instance_count_),
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.active_lease_count_),
-        5,
+        PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.bootstrap_mode_),
+        PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.config_path_),
+        7,
         0,
         1,
-        4,
-        2,
-        7,
         6,
-        3,
-        8,
+        2,
         9,
+        8,
+        3,
+        10,
+        11,
+        4,
+        5,
 };
 
 static const ::_pbi::MigrationSchema
@@ -732,31 +742,32 @@ const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "kspace_id\030\002 \001(\t\022\021\n\texclusive\030\003 \001(\010\022\022\n\nti"
     "meout_ms\030\004 \001(\r\"G\n\tLeaseInfo\022\020\n\010lease_id\030"
     "\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022\023\n\013ttl_second"
-    "s\030\003 \001(\r\"\321\001\n\rServiceStatus\022\r\n\005ready\030\001 \001(\010"
+    "s\030\003 \001(\r\"\376\001\n\rServiceStatus\022\r\n\005ready\030\001 \001(\010"
     "\022\r\n\005state\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\021\n\tupti"
     "me_ms\030\004 \001(\004\022\024\n\014bind_address\030\005 \001(\t\022\014\n\004por"
     "t\030\006 \001(\r\022\023\n\013tls_enabled\030\007 \001(\010\022\021\n\tlog_leve"
     "l\030\010 \001(\t\022\026\n\016instance_count\030\t \001(\r\022\032\n\022activ"
-    "e_lease_count\030\n \001(\r*d\n\016ExcitationMode\022\037\n"
-    "\033EXCITATION_MODE_UNSPECIFIED\020\000\022\026\n\022EXCITA"
-    "TION_MODE_CW\020\001\022\031\n\025EXCITATION_MODE_PULSE\020"
-    "\0022\376\001\n\nVnaControl\0228\n\020ValidateTopology\022\r.v"
-    "na.Topology\032\025.vna.ValidationResult\0222\n\020Ge"
-    "tServiceStatus\022\n.vna.Empty\032\022.vna.Service"
-    "Status\022:\n\007Acquire\022\027.vna.AcquisitionReque"
-    "st\032\026.vna.AcquisitionResult\022F\n\021StreamAcqu"
-    "isition\022\027.vna.AcquisitionRequest\032\026.vna.A"
-    "cquisitionResult0\0012\243\001\n\016ResourceBroker\022/\n"
-    "\007Acquire\022\024.vna.ResourceRequest\032\016.vna.Lea"
-    "seInfo\022.\n\005Renew\022\016.vna.LeaseInfo\032\025.vna.Va"
-    "lidationResult\0220\n\007Release\022\016.vna.LeaseInf"
-    "o\032\025.vna.ValidationResultb\006proto3"
+    "e_lease_count\030\n \001(\r\022\026\n\016bootstrap_mode\030\013 "
+    "\001(\t\022\023\n\013config_path\030\014 \001(\t*d\n\016ExcitationMo"
+    "de\022\037\n\033EXCITATION_MODE_UNSPECIFIED\020\000\022\026\n\022E"
+    "XCITATION_MODE_CW\020\001\022\031\n\025EXCITATION_MODE_P"
+    "ULSE\020\0022\376\001\n\nVnaControl\0228\n\020ValidateTopolog"
+    "y\022\r.vna.Topology\032\025.vna.ValidationResult\022"
+    "2\n\020GetServiceStatus\022\n.vna.Empty\032\022.vna.Se"
+    "rviceStatus\022:\n\007Acquire\022\027.vna.Acquisition"
+    "Request\032\026.vna.AcquisitionResult\022F\n\021Strea"
+    "mAcquisition\022\027.vna.AcquisitionRequest\032\026."
+    "vna.AcquisitionResult0\0012\243\001\n\016ResourceBrok"
+    "er\022/\n\007Acquire\022\024.vna.ResourceRequest\032\016.vn"
+    "a.LeaseInfo\022.\n\005Renew\022\016.vna.LeaseInfo\032\025.v"
+    "na.ValidationResult\0220\n\007Release\022\016.vna.Lea"
+    "seInfo\032\025.vna.ValidationResultb\006proto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    2152,
+    2197,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
@@ -5977,7 +5988,9 @@ PROTOBUF_NDEBUG_INLINE ServiceStatus::Impl_::Impl_(
         state_(arena, from.state_),
         message_(arena, from.message_),
         bind_address_(arena, from.bind_address_),
-        log_level_(arena, from.log_level_) {}
+        log_level_(arena, from.log_level_),
+        bootstrap_mode_(arena, from.bootstrap_mode_),
+        config_path_(arena, from.config_path_) {}
 
 ServiceStatus::ServiceStatus(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -6009,7 +6022,9 @@ PROTOBUF_NDEBUG_INLINE ServiceStatus::Impl_::Impl_(
         state_(arena),
         message_(arena),
         bind_address_(arena),
-        log_level_(arena) {}
+        log_level_(arena),
+        bootstrap_mode_(arena),
+        config_path_(arena) {}
 
 inline void ServiceStatus::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -6035,6 +6050,8 @@ inline void ServiceStatus::SharedDtor(MessageLite& self) {
   this_._impl_.message_.Destroy();
   this_._impl_.bind_address_.Destroy();
   this_._impl_.log_level_.Destroy();
+  this_._impl_.bootstrap_mode_.Destroy();
+  this_._impl_.config_path_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -6081,16 +6098,16 @@ ServiceStatus::GetClassData() const {
   return ServiceStatus_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<4, 10, 0, 67, 2>
+const ::_pbi::TcParseTable<4, 12, 0, 92, 2>
 ServiceStatus::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_._has_bits_),
     0, // no _extensions_
-    10, 120,  // max_field_number, fast_idx_mask
+    12, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294966272,  // skipmap
+    4294963200,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    10,  // num_field_entries
+    12,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     ServiceStatus_class_data_.base(),
@@ -6102,8 +6119,8 @@ ServiceStatus::_table_ = {
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
     // bool ready = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ServiceStatus, _impl_.ready_), 5>(),
-     {8, 5, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ServiceStatus, _impl_.ready_), 7>(),
+     {8, 7, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.ready_)}},
     // string state = 2;
     {::_pbi::TcParser::FastUS1,
@@ -6114,35 +6131,41 @@ ServiceStatus::_table_ = {
      {26, 1, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.message_)}},
     // uint64 uptime_ms = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ServiceStatus, _impl_.uptime_ms_), 4>(),
-     {32, 4, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ServiceStatus, _impl_.uptime_ms_), 6>(),
+     {32, 6, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.uptime_ms_)}},
     // string bind_address = 5;
     {::_pbi::TcParser::FastUS1,
      {42, 2, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.bind_address_)}},
     // uint32 port = 6;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.port_), 7>(),
-     {48, 7, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.port_), 9>(),
+     {48, 9, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.port_)}},
     // bool tls_enabled = 7;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ServiceStatus, _impl_.tls_enabled_), 6>(),
-     {56, 6, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ServiceStatus, _impl_.tls_enabled_), 8>(),
+     {56, 8, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.tls_enabled_)}},
     // string log_level = 8;
     {::_pbi::TcParser::FastUS1,
      {66, 3, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.log_level_)}},
     // uint32 instance_count = 9;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.instance_count_), 8>(),
-     {72, 8, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.instance_count_), 10>(),
+     {72, 10, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.instance_count_)}},
     // uint32 active_lease_count = 10;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.active_lease_count_), 9>(),
-     {80, 9, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(ServiceStatus, _impl_.active_lease_count_), 11>(),
+     {80, 11, 0,
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.active_lease_count_)}},
-    {::_pbi::TcParser::MiniParse, {}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // string bootstrap_mode = 11;
+    {::_pbi::TcParser::FastUS1,
+     {90, 4, 0,
+      PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.bootstrap_mode_)}},
+    // string config_path = 12;
+    {::_pbi::TcParser::FastUS1,
+     {98, 5, 0,
+      PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.config_path_)}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
     {::_pbi::TcParser::MiniParse, {}},
@@ -6150,34 +6173,40 @@ ServiceStatus::_table_ = {
     65535, 65535
   }}, {{
     // bool ready = 1;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.ready_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.ready_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // string state = 2;
     {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.state_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string message = 3;
     {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.message_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // uint64 uptime_ms = 4;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.uptime_ms_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.uptime_ms_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
     // string bind_address = 5;
     {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.bind_address_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // uint32 port = 6;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.port_), _Internal::kHasBitsOffset + 7, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.port_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // bool tls_enabled = 7;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.tls_enabled_), _Internal::kHasBitsOffset + 6, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.tls_enabled_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // string log_level = 8;
     {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.log_level_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // uint32 instance_count = 9;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.instance_count_), _Internal::kHasBitsOffset + 8, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.instance_count_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // uint32 active_lease_count = 10;
-    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.active_lease_count_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.active_lease_count_), _Internal::kHasBitsOffset + 11, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // string bootstrap_mode = 11;
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.bootstrap_mode_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string config_path = 12;
+    {PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.config_path_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\21\0\5\7\0\14\0\0\11\0\0\0\0\0\0\0"
+    "\21\0\5\7\0\14\0\0\11\0\0\16\13\0\0\0"
     "vna.ServiceStatus"
     "state"
     "message"
     "bind_address"
     "log_level"
+    "bootstrap_mode"
+    "config_path"
   }},
 };
 PROTOBUF_NOINLINE void ServiceStatus::Clear() {
@@ -6188,7 +6217,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       _impl_.state_.ClearNonDefaultToEmpty();
     }
@@ -6201,16 +6230,22 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
     if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       _impl_.log_level_.ClearNonDefaultToEmpty();
     }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      _impl_.bootstrap_mode_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      _impl_.config_path_.ClearNonDefaultToEmpty();
+    }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x000000f0U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x000000c0U)) {
     ::memset(&_impl_.uptime_ms_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.port_) -
-        reinterpret_cast<char*>(&_impl_.uptime_ms_)) + sizeof(_impl_.port_));
+        reinterpret_cast<char*>(&_impl_.ready_) -
+        reinterpret_cast<char*>(&_impl_.uptime_ms_)) + sizeof(_impl_.ready_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000300U)) {
-    ::memset(&_impl_.instance_count_, 0, static_cast<::size_t>(
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
+    ::memset(&_impl_.tls_enabled_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.active_lease_count_) -
-        reinterpret_cast<char*>(&_impl_.instance_count_)) + sizeof(_impl_.active_lease_count_));
+        reinterpret_cast<char*>(&_impl_.tls_enabled_)) + sizeof(_impl_.active_lease_count_));
   }
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -6236,7 +6271,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
 
   cached_has_bits = this_._impl_._has_bits_[0];
   // bool ready = 1;
-  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
     if (this_._internal_ready() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
@@ -6265,7 +6300,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   }
 
   // uint64 uptime_ms = 4;
-  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
     if (this_._internal_uptime_ms() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
@@ -6284,7 +6319,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   }
 
   // uint32 port = 6;
-  if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
     if (this_._internal_port() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
@@ -6293,7 +6328,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   }
 
   // bool tls_enabled = 7;
-  if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
     if (this_._internal_tls_enabled() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteBoolToArray(
@@ -6312,7 +6347,7 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   }
 
   // uint32 instance_count = 9;
-  if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000400U)) {
     if (this_._internal_instance_count() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
@@ -6321,11 +6356,31 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
   }
 
   // uint32 active_lease_count = 10;
-  if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
     if (this_._internal_active_lease_count() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
           10, this_._internal_active_lease_count(), target);
+    }
+  }
+
+  // string bootstrap_mode = 11;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (!this_._internal_bootstrap_mode().empty()) {
+      const ::std::string& _s = this_._internal_bootstrap_mode();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.ServiceStatus.bootstrap_mode");
+      target = stream->WriteStringMaybeAliased(11, _s, target);
+    }
+  }
+
+  // string config_path = 12;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (!this_._internal_config_path().empty()) {
+      const ::std::string& _s = this_._internal_config_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.ServiceStatus.config_path");
+      target = stream->WriteStringMaybeAliased(12, _s, target);
     }
   }
 
@@ -6383,43 +6438,57 @@ PROTOBUF_NOINLINE void ServiceStatus::Clear() {
                                         this_._internal_log_level());
       }
     }
-    // uint64 uptime_ms = 4;
+    // string bootstrap_mode = 11;
     if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!this_._internal_bootstrap_mode().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_bootstrap_mode());
+      }
+    }
+    // string config_path = 12;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (!this_._internal_config_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_config_path());
+      }
+    }
+    // uint64 uptime_ms = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (this_._internal_uptime_ms() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
             this_._internal_uptime_ms());
       }
     }
     // bool ready = 1;
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
       if (this_._internal_ready() != 0) {
         total_size += 2;
       }
     }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
     // bool tls_enabled = 7;
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       if (this_._internal_tls_enabled() != 0) {
         total_size += 2;
       }
     }
     // uint32 port = 6;
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (this_._internal_port() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_port());
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000300U)) {
     // uint32 instance_count = 9;
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (this_._internal_instance_count() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_instance_count());
       }
     }
     // uint32 active_lease_count = 10;
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (this_._internal_active_lease_count() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_active_lease_count());
@@ -6482,33 +6551,51 @@ void ServiceStatus::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (!from._internal_bootstrap_mode().empty()) {
+        _this->_internal_set_bootstrap_mode(from._internal_bootstrap_mode());
+      } else {
+        if (_this->_impl_.bootstrap_mode_.IsDefault()) {
+          _this->_internal_set_bootstrap_mode("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (!from._internal_config_path().empty()) {
+        _this->_internal_set_config_path(from._internal_config_path());
+      } else {
+        if (_this->_impl_.config_path_.IsDefault()) {
+          _this->_internal_set_config_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
       if (from._internal_uptime_ms() != 0) {
         _this->_impl_.uptime_ms_ = from._impl_.uptime_ms_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
       if (from._internal_ready() != 0) {
         _this->_impl_.ready_ = from._impl_.ready_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000040U)) {
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       if (from._internal_tls_enabled() != 0) {
         _this->_impl_.tls_enabled_ = from._impl_.tls_enabled_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000080U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
       if (from._internal_port() != 0) {
         _this->_impl_.port_ = from._impl_.port_;
       }
     }
-  }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000300U)) {
-    if (CheckHasBit(cached_has_bits, 0x00000100U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       if (from._internal_instance_count() != 0) {
         _this->_impl_.instance_count_ = from._impl_.instance_count_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000200U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
       if (from._internal_active_lease_count() != 0) {
         _this->_impl_.active_lease_count_ = from._impl_.active_lease_count_;
       }
@@ -6537,6 +6624,8 @@ void ServiceStatus::InternalSwap(ServiceStatus* PROTOBUF_RESTRICT PROTOBUF_NONNU
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.message_, &other->_impl_.message_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.bind_address_, &other->_impl_.bind_address_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.log_level_, &other->_impl_.log_level_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.bootstrap_mode_, &other->_impl_.bootstrap_mode_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.config_path_, &other->_impl_.config_path_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ServiceStatus, _impl_.active_lease_count_)
       + sizeof(ServiceStatus::_impl_.active_lease_count_)
