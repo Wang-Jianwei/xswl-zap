@@ -298,6 +298,30 @@ function renderTrace(trace: WaveformTrace, width: number, height: number): strin
   return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
 }
 
+function renderAxes(width: number, height: number): string {
+  const padding = 10;
+  const left = padding;
+  const right = width - padding;
+  const top = padding;
+  const bottom = height - padding;
+  const divisions = 4;
+
+  const horizontal = Array.from({ length: divisions + 1 }, (_, idx) => {
+    const y = top + ((bottom - top) * idx) / divisions;
+    return `<line class="grid-line" x1="${left}" y1="${y.toFixed(2)}" x2="${right}" y2="${y.toFixed(2)}" />`;
+  }).join("\n");
+
+  const vertical = Array.from({ length: divisions + 1 }, (_, idx) => {
+    const x = left + ((right - left) * idx) / divisions;
+    return `<line class="grid-line" x1="${x.toFixed(2)}" y1="${top}" x2="${x.toFixed(2)}" y2="${bottom}" />`;
+  }).join("\n");
+
+  const axes = `<line class="axis-line" x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" />
+<line class="axis-line" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" />`;
+
+  return `${horizontal}\n${vertical}\n${axes}`;
+}
+
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
@@ -324,6 +348,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .axis { margin-bottom: 6px; opacity: 0.9; }
     .marker { margin-bottom: 10px; opacity: 0.9; }
     .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
+    .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
+    .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
     .empty { opacity: 0.8; }
   </style>
 </head>
@@ -335,7 +361,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   ${
     data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
-      : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+         ${renderAxes(width, height)}
            ${data.traces
              .map((trace) => renderTrace(trace, width, height))
              .join("\n")}
