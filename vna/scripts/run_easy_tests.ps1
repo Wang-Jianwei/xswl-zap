@@ -25,6 +25,7 @@ $tests = @(
   'easy_process_manager_test.exe',
   'easy_service_config_test.exe',
   'easy_service_flow_integration_test.exe',
+  'easy_multi_instance_parallel_integration_test.exe',
   'easy_service_status_service_test.exe',
   'easy_service_status_concurrency_test.exe',
   'easy_vna_control_inproc_handler_test.exe'

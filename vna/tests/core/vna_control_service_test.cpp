@@ -118,7 +118,7 @@ int main() {
         "    resource: dev0\n";
 
     assert(s3.ApplyTopology(topology, "ws0", 2) == vna::core::Status::kOk);
-    assert(s3.Start() != vna::core::Status::kOk);
+    assert(s3.Start() == vna::core::Status::kTimeout);
     assert(s3.ActiveLeaseCount() == 0);
 
     assert(s3.Stop() == vna::core::Status::kOk);

@@ -1277,7 +1277,18 @@ WU-MAINLINE-043: VNA 实例生命周期与多实例最小并发
   - 至少两个逻辑实例可并行执行最小测量且互不干扰。
   - 资源冲突时返回可诊断错误。
 
-- Status: 🟡 Planned
+- Status: ✅ Completed (2026-02-13)
+
+- Implementation notes:
+  - 为 `InstanceManager` 增加互斥锁保护，覆盖创建/启动/停止/采集/计数路径，支持并发采集安全访问。
+  - 新增双实例并行采集集成测试（`inst0` + `inst1` 同时 Acquire）。
+  - 资源冲突路径强化为可诊断状态断言：冲突启动返回 `Status::kTimeout`。
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_multi_instance_parallel_integration_test vna_vna_control_service_test` 通过
+  - `vna/build/easy_multi_instance_parallel_integration_test.exe` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过
+  - `vna/scripts/run_easy_tests.ps1` 全通过（包含新并行测试）
 
 ---
 

@@ -347,6 +347,12 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_service_flow_integration_test PRIVATE vna_service_bootstrap)
     set_target_properties(vna_service_flow_integration_test PROPERTIES OUTPUT_NAME "easy_service_flow_integration_test")
 
+    add_executable(vna_multi_instance_parallel_integration_test
+        tests/integration/multi_instance_parallel_integration_test.cpp
+    )
+    target_link_libraries(vna_multi_instance_parallel_integration_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_multi_instance_parallel_integration_test PROPERTIES OUTPUT_NAME "easy_multi_instance_parallel_integration_test")
+
     add_executable(vna_service_status_service_test
         tests/core/service_status_service_test.cpp
     )

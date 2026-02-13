@@ -14,6 +14,7 @@ InstanceManager::InstanceManager(ResourceManager* resourceManager)
 Status InstanceManager::CreateInstancesFromTopology(const Topology& topology,
                                                     const std::string& workspaceId,
                                                     std::uint32_t defaultLeaseTtlSeconds) {
+  std::lock_guard<std::mutex> lock(mutex_);
   TopologyManager topoManager;
   std::vector<InstanceConfig> configs;
   std::vector<std::string> errors;
@@ -38,6 +39,7 @@ Status InstanceManager::CreateInstancesFromTopology(const Topology& topology,
 }
 
 Status InstanceManager::CreateInstance(const InstanceConfig& config) {
+  std::lock_guard<std::mutex> lock(mutex_);
   if (config.instanceId.empty() || config.workspaceId.empty() || config.driverType.empty() ||
       config.deviceIdentifier.empty() || config.resourceId.empty() || config.leaseTtlSeconds == 0) {
     return Status::kInvalidArgument;
@@ -54,6 +56,7 @@ Status InstanceManager::CreateInstance(const InstanceConfig& config) {
 }
 
 Status InstanceManager::StartInstance(const std::string& instanceId) {
+  std::lock_guard<std::mutex> lock(mutex_);
   if (!resourceManager_) {
     return Status::kInternalError;
   }
@@ -113,6 +116,7 @@ Status InstanceManager::StartInstance(const std::string& instanceId) {
 }
 
 Status InstanceManager::StopInstance(const std::string& instanceId) {
+  std::lock_guard<std::mutex> lock(mutex_);
   if (!resourceManager_) {
     return Status::kInternalError;
   }
@@ -147,6 +151,7 @@ Status InstanceManager::AcquireOnce(const std::string& instanceId,
                                    std::uint32_t sampleCount,
                                    std::uint32_t timeoutMs,
                                    AcquisitionResult& out) {
+  std::lock_guard<std::mutex> lock(mutex_);
   std::map<std::string, InstanceEntry>::iterator it = instances_.find(instanceId);
   if (it == instances_.end()) {
     return Status::kInvalidArgument;
@@ -162,6 +167,7 @@ Status InstanceManager::AcquireOnce(const std::string& instanceId,
 }
 
 std::size_t InstanceManager::InstanceCount() const {
+  std::lock_guard<std::mutex> lock(mutex_);
   return instances_.size();
 }
 

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <map>
+#include <mutex>
 #include <memory>
 #include <string>
 
@@ -52,6 +53,7 @@ class InstanceManager {
   };
 
   ResourceManager* resourceManager_;
+  mutable std::mutex mutex_;
   std::map<std::string, InstanceEntry> instances_;
 };
 
