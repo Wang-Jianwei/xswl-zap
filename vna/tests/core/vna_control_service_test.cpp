@@ -1,5 +1,6 @@
 #include <cassert>
 #include <fstream>
+#include <string>
 
 #include "core/built_in_drivers.h"
 #include "service/vna_control_service.h"
@@ -85,6 +86,16 @@ int main() {
     std::ifstream touchstoneFile(touchstonePath.c_str());
     assert(csvFile.good());
     assert(touchstoneFile.good());
+
+    std::string exportError;
+    const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(
+      result,
+      "Z:/definitely-not-exist/wu46-invalid.csv",
+      "",
+      &exportError);
+    assert(invalidExportStatus == vna::core::Status::kInvalidArgument);
+    assert(!exportError.empty());
+    assert(exportError.find("failed to open csv output path") != std::string::npos);
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

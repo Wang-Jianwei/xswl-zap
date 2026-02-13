@@ -112,25 +112,33 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
 
 core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,
                                                        const std::string& csvPath,
-                                                       const std::string& touchstonePath) {
+                                                       const std::string& touchstonePath,
+                                                       std::string* errorMessage) {
   if (csvPath.empty() && touchstonePath.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "export requires at least one output path";
+    }
     return core::Status::kInvalidArgument;
   }
 
   if (!csvPath.empty()) {
-    const core::Status csvStatus = core::MeasurementExporter::ExportCsv(result, csvPath);
+    const core::Status csvStatus = core::MeasurementExporter::ExportCsv(result, csvPath, errorMessage);
     if (csvStatus != core::Status::kOk) {
       return csvStatus;
     }
   }
 
   if (!touchstonePath.empty()) {
-    const core::Status touchstoneStatus = core::MeasurementExporter::ExportTouchstone(result, touchstonePath);
+    const core::Status touchstoneStatus =
+        core::MeasurementExporter::ExportTouchstone(result, touchstonePath, errorMessage);
     if (touchstoneStatus != core::Status::kOk) {
       return touchstoneStatus;
     }
   }
 
+  if (errorMessage != nullptr) {
+    errorMessage->clear();
+  }
   return core::Status::kOk;
 }
 

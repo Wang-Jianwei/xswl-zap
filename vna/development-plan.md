@@ -1356,6 +1356,39 @@ WU-MAINLINE-045: Acquire 一体化导出触发（CSV/Touchstone）
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu45-v1.json'` 通过
   - 产物检查通过：`build-grpc/grpc-acquire-export.csv`、`build-grpc/grpc-acquire-export.s4p` 存在
 
+### 8.28 已完成 Work Unit
+
+WU-MAINLINE-046: 导出失败可诊断信息增强
+
+- Objective: 导出失败时返回明确原因，便于调用方快速定位路径/数据问题。
+- Scope (in/out):
+  - in: exporter/service/grpc 失败路径增加错误消息透传。
+  - out: 统一错误码体系重构。
+- Files to change:
+  - `vna/include/core/measurement_exporter.h`
+  - `vna/src/core/measurement_exporter.cpp`
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+- Contract impact: 无（不改动 proto 字段）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚错误消息参数与 gRPC 透传逻辑。
+- Risks: 错误文案变更可能影响日志关键字检索。
+- Acceptance criteria:
+  - 导出失败时可获取非空错误消息。
+  - gRPC `Acquire` 导出失败返回包含错误详情。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含无效导出路径错误消息断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

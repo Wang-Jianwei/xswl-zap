@@ -247,12 +247,15 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   }
 
   if (!request->export_csv_path().empty() || !request->export_touchstone_path().empty()) {
+    std::string exportError;
     const ::vna::core::Status exportStatus = controlService_->ExportAcquisitionResult(
         result,
         request->export_csv_path(),
-        request->export_touchstone_path());
+        request->export_touchstone_path(),
+        &exportError);
     if (exportStatus != ::vna::core::Status::kOk) {
-      return ToGrpcStatus(exportStatus, "export failed");
+      const std::string message = exportError.empty() ? "export failed" : "export failed: " + exportError;
+      return ToGrpcStatus(exportStatus, message);
     }
   }
 

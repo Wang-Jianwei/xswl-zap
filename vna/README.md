@@ -90,6 +90,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU45 进展）：`AcquireRequest` 新增可选导出路径字段：`export_csv_path`、`export_touchstone_path`；设置后由服务端在采集成功后直接落盘导出。
 
+补充（WU46 进展）：导出失败时会返回可诊断错误信息（例如输出路径不可写），并在 gRPC `Acquire` 错误消息中透传。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

@@ -36,13 +36,21 @@ std::complex<double> ReadMatrixPoint(const SParameterFrequencyPoint& point,
 
 }  // namespace
 
-Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std::string& outputPath) {
+Status MeasurementExporter::ExportCsv(const AcquisitionResult& result,
+                                      const std::string& outputPath,
+                                      std::string* errorMessage) {
   if (outputPath.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "csv export path is empty";
+    }
     return Status::kInvalidArgument;
   }
 
   std::ofstream out(outputPath.c_str(), std::ios::out | std::ios::trunc);
   if (!out.is_open()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to open csv output path: " + outputPath;
+    }
     return Status::kInvalidArgument;
   }
 
@@ -87,22 +95,44 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result, const std
     }
   }
 
-  return out.good() ? Status::kOk : Status::kInternalError;
+  if (!out.good()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to write csv output path: " + outputPath;
+    }
+    return Status::kInternalError;
+  }
+
+  if (errorMessage != nullptr) {
+    errorMessage->clear();
+  }
+  return Status::kOk;
 }
 
 Status MeasurementExporter::ExportTouchstone(const AcquisitionResult& result,
-                                             const std::string& outputPath) {
+                                             const std::string& outputPath,
+                                             std::string* errorMessage) {
   if (outputPath.empty() || result.sParameters.points.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = outputPath.empty()
+                          ? "touchstone export path is empty"
+                          : "touchstone export requires non-empty s-parameter points";
+    }
     return Status::kInvalidArgument;
   }
 
   const std::uint32_t portCount = result.sParameters.points.front().portCount;
   if (portCount == 0) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "touchstone export requires non-zero port count";
+    }
     return Status::kInvalidArgument;
   }
 
   std::ofstream out(outputPath.c_str(), std::ios::out | std::ios::trunc);
   if (!out.is_open()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to open touchstone output path: " + outputPath;
+    }
     return Status::kInvalidArgument;
   }
 
@@ -124,7 +154,17 @@ Status MeasurementExporter::ExportTouchstone(const AcquisitionResult& result,
     out << "\n";
   }
 
-  return out.good() ? Status::kOk : Status::kInternalError;
+  if (!out.good()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to write touchstone output path: " + outputPath;
+    }
+    return Status::kInternalError;
+  }
+
+  if (errorMessage != nullptr) {
+    errorMessage->clear();
+  }
+  return Status::kOk;
 }
 
 }  // namespace core

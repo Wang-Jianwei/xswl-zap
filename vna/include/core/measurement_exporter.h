@@ -10,8 +10,12 @@ namespace core {
 
 class MeasurementExporter {
  public:
-  static Status ExportCsv(const AcquisitionResult& result, const std::string& outputPath);
-  static Status ExportTouchstone(const AcquisitionResult& result, const std::string& outputPath);
+  static Status ExportCsv(const AcquisitionResult& result,
+                          const std::string& outputPath,
+                          std::string* errorMessage = nullptr);
+  static Status ExportTouchstone(const AcquisitionResult& result,
+                                 const std::string& outputPath,
+                                 std::string* errorMessage = nullptr);
 };
 
 }  // namespace core
