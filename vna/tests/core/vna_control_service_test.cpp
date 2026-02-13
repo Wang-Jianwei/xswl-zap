@@ -80,22 +80,31 @@ int main() {
 
     const std::string csvPath = "build/vna-control-service-export.csv";
     const std::string touchstonePath = "build/vna-control-service-export.s2p";
-    assert(service.ExportAcquisitionResult(result, csvPath, touchstonePath) == vna::core::Status::kOk);
+        const std::string jsonPath = "build/vna-control-service-export.json";
+        assert(service.ExportAcquisitionResult(result, csvPath, touchstonePath, jsonPath) ==
+          vna::core::Status::kOk);
 
     std::ifstream csvFile(csvPath.c_str());
     std::ifstream touchstoneFile(touchstonePath.c_str());
+        std::ifstream jsonFile(jsonPath.c_str());
     assert(csvFile.good());
     assert(touchstoneFile.good());
+        assert(jsonFile.good());
 
     std::string exportError;
     const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(
       result,
       "Z:/definitely-not-exist/wu46-invalid.csv",
       "",
+      "",
       &exportError);
     assert(invalidExportStatus == vna::core::Status::kInvalidArgument);
     assert(!exportError.empty());
-    assert(exportError.find("failed to open csv output path") != std::string::npos);
+    const bool csvOpenFailed =
+      exportError.find("failed to open csv output path") != std::string::npos;
+    const bool csvDirFailed =
+      exportError.find("failed to create csv output directory") != std::string::npos;
+    assert(csvOpenFailed || csvDirFailed);
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

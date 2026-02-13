@@ -65,6 +65,7 @@ message AcquisitionRequest {
   uint32 timeout_ms = 4;
   string export_csv_path = 5;
   string export_touchstone_path = 6;
+  string export_json_path = 7;
 }
 
 message FrequencyDomainPoint {

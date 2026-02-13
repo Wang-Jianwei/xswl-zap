@@ -1450,6 +1450,51 @@ WU-MAINLINE-048: 导出路径目录自动创建
   - `vna/build/easy_measurement_exporter_test.exe` 通过（含嵌套目录导出断言）
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.31 已完成 Work Unit
+
+WU-MAINLINE-049: JSON 导出能力与 Acquire 一体化触发
+
+- Objective: 为采集结果增加 JSON 导出能力，并支持在 `AcquireRequest` 中直接指定 JSON 导出路径。
+- Scope (in/out):
+  - in: `AcquisitionRequest` 新增 `export_json_path`；core/service/grpc 接入 JSON 导出；相关单测与 smoke 校验更新。
+  - out: MAT 格式导出与导入回放。
+- Files to change:
+  - `vna/proto/vna.proto`
+  - `vna/generated/cpp/vna.pb.h`
+  - `vna/generated/cpp/vna.pb.cc`
+  - `vna/generated/ts/vna.ts`
+  - `vna/include/core/measurement_exporter.h`
+  - `vna/src/core/measurement_exporter.cpp`
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/tests/core/measurement_exporter_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 是（`AcquisitionRequest` 新增字段 `export_json_path`）。
+- Test plan:
+  - `vna/scripts/generate_proto.ps1`
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test vna_vna_control_service_test`
+  - `vna/build/easy_measurement_exporter_test.exe`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚 proto 字段与 JSON 导出分支，恢复仅 CSV/Touchstone 导出。
+- Risks: JSON 文件体积可能较大；调用方如对字段结构有强依赖需同步适配。
+- Acceptance criteria:
+  - 采集结果可导出 JSON 文件并包含 receiver 与 s-parameter 数据。
+  - gRPC `Acquire` 在设置 `export_json_path` 时可成功生成 JSON 导出文件。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `vna/scripts/generate_proto.ps1` 通过
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test vna_vna_control_service_test` 通过
+  - `vna/build/easy_measurement_exporter_test.exe` 通过（含 JSON 导出与嵌套目录断言）
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含服务侧 JSON 导出断言）
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

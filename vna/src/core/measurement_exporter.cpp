@@ -2,6 +2,7 @@
 
 #include <cerrno>
 #include <cstddef>
+#include <cstdint>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -22,6 +23,48 @@ std::string FormatDouble(double value) {
   std::ostringstream stream;
   stream << std::setprecision(16) << value;
   return stream.str();
+}
+
+std::string EscapeJsonString(const std::string& value) {
+  std::string escaped;
+  escaped.reserve(value.size());
+  for (std::size_t i = 0; i < value.size(); ++i) {
+    const char c = value[i];
+    switch (c) {
+      case '"':
+        escaped += "\\\"";
+        break;
+      case '\\':
+        escaped += "\\\\";
+        break;
+      case '\b':
+        escaped += "\\b";
+        break;
+      case '\f':
+        escaped += "\\f";
+        break;
+      case '\n':
+        escaped += "\\n";
+        break;
+      case '\r':
+        escaped += "\\r";
+        break;
+      case '\t':
+        escaped += "\\t";
+        break;
+      default:
+        if (static_cast<unsigned char>(c) < 0x20) {
+          std::ostringstream unicode;
+          unicode << "\\u" << std::hex << std::setw(4) << std::setfill('0')
+                  << static_cast<int>(static_cast<unsigned char>(c));
+          escaped += unicode.str();
+        } else {
+          escaped += c;
+        }
+        break;
+    }
+  }
+  return escaped;
 }
 
 std::string GetParentPath(const std::string& path) {
@@ -191,6 +234,129 @@ Status MeasurementExporter::ExportCsv(const AcquisitionResult& result,
   if (!out.good()) {
     if (errorMessage != nullptr) {
       *errorMessage = "failed to write csv output path: " + outputPath;
+    }
+    return Status::kInternalError;
+  }
+
+  if (errorMessage != nullptr) {
+    errorMessage->clear();
+  }
+  return Status::kOk;
+}
+
+Status MeasurementExporter::ExportJson(const AcquisitionResult& result,
+                                       const std::string& outputPath,
+                                       std::string* errorMessage) {
+  if (outputPath.empty()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "json export path is empty";
+    }
+    return Status::kInvalidArgument;
+  }
+
+  const std::string parentPath = GetParentPath(outputPath);
+  if (!parentPath.empty() && !EnsureDirectoryRecursive(parentPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to create json output directory: " + parentPath;
+    }
+    return Status::kInvalidArgument;
+  }
+
+  std::ofstream out(outputPath.c_str(), std::ios::out | std::ios::trunc);
+  if (!out.is_open()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to open json output path: " + outputPath;
+    }
+    return Status::kInvalidArgument;
+  }
+
+  out << "{\n";
+  out << "  \"instance_id\": \"" << EscapeJsonString(result.instanceId) << "\",\n";
+  out << "  \"timestamp_ns\": " << result.timestampNs << ",\n";
+  out << "  \"receiver_raw_points\": [\n";
+
+  for (std::size_t i = 0; i < result.receiverRaw.points.size(); ++i) {
+    const ReceiverFrequencyPoint& point = result.receiverRaw.points[i];
+    out << "    {\"frequency_hz\": " << FormatDouble(point.frequencyHz)
+        << ", \"timestamp_ns\": " << point.timestampNs
+        << ", \"channels\": [";
+    for (std::size_t c = 0; c < point.channels.size(); ++c) {
+      const ReceiverChannelSample& channel = point.channels[c];
+      out << "{\"channel_id\": \"" << EscapeJsonString(channel.channelId)
+          << "\", \"real\": " << FormatDouble(channel.iq.real())
+          << ", \"imag\": " << FormatDouble(channel.iq.imag())
+          << ", \"clipped\": " << (channel.clipped ? "true" : "false") << "}";
+      if (c + 1 < point.channels.size()) {
+        out << ", ";
+      }
+    }
+    out << "]}";
+    if (i + 1 < result.receiverRaw.points.size()) {
+      out << ",";
+    }
+    out << "\n";
+  }
+
+  out << "  ],\n";
+  out << "  \"receiver_compensated_points\": [\n";
+  for (std::size_t i = 0; i < result.receiverCompensated.points.size(); ++i) {
+    const ReceiverFrequencyPoint& point = result.receiverCompensated.points[i];
+    out << "    {\"frequency_hz\": " << FormatDouble(point.frequencyHz)
+        << ", \"timestamp_ns\": " << point.timestampNs
+        << ", \"channels\": [";
+    for (std::size_t c = 0; c < point.channels.size(); ++c) {
+      const ReceiverChannelSample& channel = point.channels[c];
+      out << "{\"channel_id\": \"" << EscapeJsonString(channel.channelId)
+          << "\", \"real\": " << FormatDouble(channel.iq.real())
+          << ", \"imag\": " << FormatDouble(channel.iq.imag())
+          << ", \"clipped\": " << (channel.clipped ? "true" : "false") << "}";
+      if (c + 1 < point.channels.size()) {
+        out << ", ";
+      }
+    }
+    out << "]}";
+    if (i + 1 < result.receiverCompensated.points.size()) {
+      out << ",";
+    }
+    out << "\n";
+  }
+
+  out << "  ],\n";
+  out << "  \"s_parameter_points\": [\n";
+  for (std::size_t i = 0; i < result.sParameters.points.size(); ++i) {
+    const SParameterFrequencyPoint& point = result.sParameters.points[i];
+    const std::size_t n = static_cast<std::size_t>(point.portCount);
+    out << "    {\"frequency_hz\": " << FormatDouble(point.frequencyHz)
+        << ", \"port_count\": " << point.portCount
+        << ", \"points\": [";
+
+    bool first = true;
+    for (std::size_t row = 0; row < n; ++row) {
+      for (std::size_t col = 0; col < n; ++col) {
+        const std::complex<double> value = ReadMatrixPoint(point, row, col);
+        if (!first) {
+          out << ", ";
+        }
+        first = false;
+        out << "{\"row_port\": " << static_cast<std::uint32_t>(row + 1)
+            << ", \"col_port\": " << static_cast<std::uint32_t>(col + 1)
+            << ", \"real\": " << FormatDouble(value.real())
+            << ", \"imag\": " << FormatDouble(value.imag()) << "}";
+      }
+    }
+
+    out << "]}";
+    if (i + 1 < result.sParameters.points.size()) {
+      out << ",";
+    }
+    out << "\n";
+  }
+  out << "  ]\n";
+  out << "}\n";
+
+  if (!out.good()) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "failed to write json output path: " + outputPath;
     }
     return Status::kInternalError;
   }

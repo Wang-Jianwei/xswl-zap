@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
     request.mutable_excitation()->mutable_cw()->set_power_dbm(-10.0);
     request.set_export_csv_path("build-grpc/grpc-acquire-export.csv");
     request.set_export_touchstone_path("build-grpc/grpc-acquire-export.s4p");
+    request.set_export_json_path("build-grpc/grpc-acquire-export.json");
 
     const grpc::Status status = stub->Acquire(&context, request, &response);
     if (!status.ok()) {
@@ -126,7 +127,8 @@ int main(int argc, char** argv) {
 
     std::ifstream csvFile("build-grpc/grpc-acquire-export.csv");
     std::ifstream sNpFile("build-grpc/grpc-acquire-export.s4p");
-    if (!csvFile.good() || !sNpFile.good()) {
+    std::ifstream jsonFile("build-grpc/grpc-acquire-export.json");
+    if (!csvFile.good() || !sNpFile.good() || !jsonFile.good()) {
       std::cout << "Acquire validation failed: export files are missing\n";
       return 9;
     }

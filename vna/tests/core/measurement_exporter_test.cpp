@@ -48,13 +48,17 @@ int main() {
 
   const std::string csvPath = "build/measurement-exporter-test.csv";
   const std::string touchstonePath = "build/measurement-exporter-test.s4p";
+  const std::string jsonPath = "build/measurement-exporter-test.json";
   const std::string nestedCsvPath = "build/wu48/export/measurement-exporter-test.csv";
   const std::string nestedTouchstonePath = "build/wu48/export/measurement-exporter-test.s4p";
+  const std::string nestedJsonPath = "build/wu49/export/measurement-exporter-test.json";
 
   assert(vna::core::MeasurementExporter::ExportCsv(result, csvPath) == vna::core::Status::kOk);
+  assert(vna::core::MeasurementExporter::ExportJson(result, jsonPath) == vna::core::Status::kOk);
   assert(vna::core::MeasurementExporter::ExportTouchstone(result, touchstonePath) ==
          vna::core::Status::kOk);
     assert(vna::core::MeasurementExporter::ExportCsv(result, nestedCsvPath) == vna::core::Status::kOk);
+    assert(vna::core::MeasurementExporter::ExportJson(result, nestedJsonPath) == vna::core::Status::kOk);
     assert(vna::core::MeasurementExporter::ExportTouchstone(result, nestedTouchstonePath) ==
       vna::core::Status::kOk);
 
@@ -69,10 +73,17 @@ int main() {
   assert(touchstoneText.find("# Hz S RI R 50") != std::string::npos);
   assert(touchstoneText.find("1000000000") != std::string::npos);
 
+  const std::string jsonText = ReadAll(jsonPath);
+  assert(jsonText.find("\"receiver_raw_points\"") != std::string::npos);
+  assert(jsonText.find("\"receiver_compensated_points\"") != std::string::npos);
+  assert(jsonText.find("\"s_parameter_points\"") != std::string::npos);
+
   std::ifstream nestedCsvFile(nestedCsvPath.c_str());
   std::ifstream nestedTouchstoneFile(nestedTouchstonePath.c_str());
+  std::ifstream nestedJsonFile(nestedJsonPath.c_str());
   assert(nestedCsvFile.good());
   assert(nestedTouchstoneFile.good());
+  assert(nestedJsonFile.good());
 
   coordinator.Shutdown();
   return 0;

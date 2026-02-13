@@ -113,8 +113,9 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
 core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,
                                                        const std::string& csvPath,
                                                        const std::string& touchstonePath,
+                                                       const std::string& jsonPath,
                                                        std::string* errorMessage) {
-  if (csvPath.empty() && touchstonePath.empty()) {
+  if (csvPath.empty() && touchstonePath.empty() && jsonPath.empty()) {
     if (errorMessage != nullptr) {
       *errorMessage = "export requires at least one output path";
     }
@@ -133,6 +134,14 @@ core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionR
         core::MeasurementExporter::ExportTouchstone(result, touchstonePath, errorMessage);
     if (touchstoneStatus != core::Status::kOk) {
       return touchstoneStatus;
+    }
+  }
+
+  if (!jsonPath.empty()) {
+    const core::Status jsonStatus =
+        core::MeasurementExporter::ExportJson(result, jsonPath, errorMessage);
+    if (jsonStatus != core::Status::kOk) {
+      return jsonStatus;
     }
   }
 

@@ -13,6 +13,9 @@ class MeasurementExporter {
   static Status ExportCsv(const AcquisitionResult& result,
                           const std::string& outputPath,
                           std::string* errorMessage = nullptr);
+    static Status ExportJson(const AcquisitionResult& result,
+                                                     const std::string& outputPath,
+                                                     std::string* errorMessage = nullptr);
   static Status ExportTouchstone(const AcquisitionResult& result,
                                  const std::string& outputPath,
                                  std::string* errorMessage = nullptr);

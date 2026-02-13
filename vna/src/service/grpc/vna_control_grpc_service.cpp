@@ -246,12 +246,15 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     return ToGrpcStatus(status, "acquire failed");
   }
 
-  if (!request->export_csv_path().empty() || !request->export_touchstone_path().empty()) {
+  if (!request->export_csv_path().empty() ||
+      !request->export_touchstone_path().empty() ||
+      !request->export_json_path().empty()) {
     std::string exportError;
     const ::vna::core::Status exportStatus = controlService_->ExportAcquisitionResult(
         result,
         request->export_csv_path(),
         request->export_touchstone_path(),
+        request->export_json_path(),
         &exportError);
     if (exportStatus != ::vna::core::Status::kOk) {
       const std::string message = exportError.empty() ? "export failed" : "export failed: " + exportError;

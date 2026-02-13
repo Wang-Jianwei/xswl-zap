@@ -88,13 +88,15 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU44 进展）：CSV 导出已内置复数派生字段 `magnitude_db`、`phase_deg`，覆盖接收机数据与 S 参数数据行。
 
-补充（WU45 进展）：`AcquireRequest` 新增可选导出路径字段：`export_csv_path`、`export_touchstone_path`；设置后由服务端在采集成功后直接落盘导出。
+补充（WU45/WU49 进展）：`AcquireRequest` 支持可选导出路径字段：`export_csv_path`、`export_touchstone_path`、`export_json_path`；设置后由服务端在采集成功后直接落盘导出。
 
 补充（WU46 进展）：导出失败时会返回可诊断错误信息（例如输出路径不可写），并在 gRPC `Acquire` 错误消息中透传。
 
 补充（WU47 进展）：关键脚本已内置 MinGW 运行时自检与 PATH 自动注入（`C:\msys64\mingw64\bin`），用于降低终端环境漂移导致的构建/测试误失败。
 
 补充（WU48 进展）：CSV/Touchstone 导出已支持父目录自动创建（嵌套路径可直接使用），路径不可写时仍返回可诊断错误。
+
+补充（WU49 进展）：已新增 JSON 导出能力（包含 receiver raw/compensated 与 s-parameter 点集），并支持通过 `AcquireRequest.export_json_path` 一体化触发导出。
 
 ### 非功能需求（SHOULD/CAN）
 

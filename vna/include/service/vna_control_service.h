@@ -51,6 +51,7 @@ class VnaControlService {
   core::Status ExportAcquisitionResult(const core::AcquisitionResult& result,
                                        const std::string& csvPath,
                                        const std::string& touchstonePath,
+                                       const std::string& jsonPath,
                                        std::string* errorMessage = nullptr);
 
   std::size_t InstanceCount() const;
