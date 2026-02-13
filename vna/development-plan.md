@@ -1599,6 +1599,42 @@ WU-MAINLINE-052: gRPC 导入 RPC（ImportAcquisition）
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu52.json'` 通过
   - `vna/scripts/run_easy_tests.ps1` 全通过
 
+### 8.35 已完成 Work Unit
+
+WU-MAINLINE-053: 导入路径约束与错误码细化
+
+- Objective: 收敛导入路径风险并增强可诊断性，避免路径穿越和绝对路径误用。
+- Scope (in/out):
+  - in: service 导入路径校验（相对路径、`.json` 扩展名、禁止 `..`），错误消息统一 `IMPORT_PATH_*` 前缀；更新服务/烟测校验。
+  - out: 基于用户权限的文件系统沙箱。
+- Files to change:
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（不改动 proto）。
+- Test plan:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test`
+  - `vna/build/easy_vna_control_service_test.exe`
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu53.json'`
+  - `vna/scripts/run_easy_tests.ps1`
+- Rollback plan: 回滚路径校验逻辑与对应断言，恢复宽松导入路径策略。
+- Risks: 绝对路径导入将被拒绝；若外部调用依赖此行为需改为相对路径。
+- Acceptance criteria:
+  - 非 `.json`、绝对路径、`..` 穿越路径导入均返回 `kInvalidArgument` 且错误含 `IMPORT_PATH_*` 前缀。
+  - gRPC smoke 负场景可观测到 `IMPORT_PATH_TRAVERSAL`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_vna_control_service_test` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含路径约束断言）
+  - `vna/scripts/build_grpc_adapter.ps1` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu53.json'` 通过
+  - `vna/scripts/run_easy_tests.ps1` 全通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

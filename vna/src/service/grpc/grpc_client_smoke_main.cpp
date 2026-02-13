@@ -154,6 +154,26 @@ int main(int argc, char** argv) {
     }
   }
 
+  {
+    grpc::ClientContext context;
+    vna::ImportAcquisitionRequest request;
+    vna::AcquisitionResult response;
+
+    request.set_json_path("../outside/data.json");
+
+    const grpc::Status status = stub->ImportAcquisition(&context, request, &response);
+    if (status.ok()) {
+      std::cout << "ImportAcquisition validation failed: traversal path unexpectedly accepted\n";
+      return 12;
+    }
+
+    if (status.error_code() != grpc::StatusCode::INVALID_ARGUMENT ||
+        status.error_message().find("IMPORT_PATH_TRAVERSAL") == std::string::npos) {
+      std::cout << "ImportAcquisition validation failed: expected IMPORT_PATH_TRAVERSAL error\n";
+      return 13;
+    }
+  }
+
   std::cout << "grpc smoke client success" << "\n";
   return 0;
 }

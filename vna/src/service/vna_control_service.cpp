@@ -1,5 +1,6 @@
 #include "service/vna_control_service.h"
 
+#include <cctype>
 #include <vector>
 
 #include "core/measurement_exporter.h"
@@ -7,6 +8,50 @@
 
 namespace vna {
 namespace service {
+
+namespace {
+
+bool EndsWithJson(const std::string& path) {
+  if (path.size() < 5) {
+    return false;
+  }
+
+  const std::size_t offset = path.size() - 5;
+  return std::tolower(static_cast<unsigned char>(path[offset])) == '.' &&
+         std::tolower(static_cast<unsigned char>(path[offset + 1])) == 'j' &&
+         std::tolower(static_cast<unsigned char>(path[offset + 2])) == 's' &&
+         std::tolower(static_cast<unsigned char>(path[offset + 3])) == 'o' &&
+         std::tolower(static_cast<unsigned char>(path[offset + 4])) == 'n';
+}
+
+bool IsAbsolutePath(const std::string& path) {
+  if (path.empty()) {
+    return false;
+  }
+
+  if (path[0] == '/' || path[0] == '\\') {
+    return true;
+  }
+
+  return path.size() >= 2 && path[1] == ':';
+}
+
+bool HasParentTraversal(const std::string& path) {
+  if (path == "..") {
+    return true;
+  }
+
+  if (path.find("../") != std::string::npos ||
+      path.find("..\\") != std::string::npos ||
+      path.find("/..") != std::string::npos ||
+      path.find("\\..") != std::string::npos) {
+    return true;
+  }
+
+  return false;
+}
+
+}  // namespace
 
 VnaControlService::VnaControlService() : runtime_(), started_(false) {}
 
@@ -156,7 +201,28 @@ core::Status VnaControlService::ImportAcquisitionResult(const std::string& jsonP
                                                        std::string* errorMessage) {
   if (jsonPath.empty()) {
     if (errorMessage != nullptr) {
-      *errorMessage = "import requires non-empty json path";
+      *errorMessage = "IMPORT_PATH_EMPTY: import requires non-empty json path";
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  if (!EndsWithJson(jsonPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "IMPORT_PATH_EXTENSION: json_path must end with .json";
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  if (IsAbsolutePath(jsonPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "IMPORT_PATH_ABSOLUTE: only workspace-relative json_path is allowed";
+    }
+    return core::Status::kInvalidArgument;
+  }
+
+  if (HasParentTraversal(jsonPath)) {
+    if (errorMessage != nullptr) {
+      *errorMessage = "IMPORT_PATH_TRAVERSAL: parent traversal is not allowed in json_path";
     }
     return core::Status::kInvalidArgument;
   }

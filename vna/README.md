@@ -104,6 +104,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU52 进展）：已新增 gRPC `ImportAcquisition` RPC（输入 `json_path`，返回 `AcquisitionResult`），并纳入 gRPC smoke client 回归路径。
 
+补充（WU53 进展）：导入路径已增加安全约束（仅允许 workspace 相对路径、禁止 `..` 穿越、限定 `.json` 扩展名），错误信息使用 `IMPORT_PATH_*` 前缀，便于脚本与调用方分类处理。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

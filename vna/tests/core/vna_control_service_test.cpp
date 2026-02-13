@@ -119,7 +119,24 @@ int main() {
     vna::core::AcquisitionResult missingImported;
     assert(service.ImportAcquisitionResult("", missingImported, &missingImportError) ==
            vna::core::Status::kInvalidArgument);
-    assert(missingImportError == "import requires non-empty json path");
+        assert(missingImportError == "IMPORT_PATH_EMPTY: import requires non-empty json path");
+
+        std::string invalidExtError;
+        assert(service.ImportAcquisitionResult("build/not-json.txt", missingImported, &invalidExtError) ==
+          vna::core::Status::kInvalidArgument);
+        assert(invalidExtError == "IMPORT_PATH_EXTENSION: json_path must end with .json");
+
+        std::string absolutePathError;
+        assert(service.ImportAcquisitionResult("C:/tmp/data.json", missingImported, &absolutePathError) ==
+          vna::core::Status::kInvalidArgument);
+        assert(absolutePathError ==
+          "IMPORT_PATH_ABSOLUTE: only workspace-relative json_path is allowed");
+
+        std::string traversalError;
+        assert(service.ImportAcquisitionResult("../outside/data.json", missingImported, &traversalError) ==
+          vna::core::Status::kInvalidArgument);
+        assert(traversalError ==
+          "IMPORT_PATH_TRAVERSAL: parent traversal is not allowed in json_path");
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);
