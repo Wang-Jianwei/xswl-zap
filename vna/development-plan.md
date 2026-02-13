@@ -903,6 +903,50 @@ WU-MAINLINE-027: 报告增加生成器元数据
   - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v16.json'` 通过
   - 报告包含 `reportVersion=1.5`、`status`、`generatedBy`
 
+### 8.20 已完成 Work Unit（批量）
+
+WU-MAINLINE-028: failureSummary 增加按原因失败名单
+
+- Objective: 快速定位不同失败原因对应的 case 集合。
+- Scope (in/out):
+  - in: 增加 `failureSummary.failedCaseNamesByReason`。
+  - out: 外部统计报表联动。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增分组名单字段。
+- Risks: 原因分类扩展时需同步新增分组键。
+- Acceptance criteria:
+  - 报告包含 `failedCaseNamesByReason.exitCode/timeout/unknownStderr`。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-029: 单 case 增加摘要字符串
+
+- Objective: 为每个 case 提供快速阅读的一行摘要。
+- Scope (in/out):
+  - in: 增加 `cases[*].resultDigest`。
+  - out: 复杂模板渲染。
+- Files to change:
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 `resultDigest` 字段。
+- Risks: 摘要格式变更需保持兼容性。
+- Acceptance criteria:
+  - 报告中每个 case 包含 `resultDigest`。
+  - `reportVersion` 更新为 `1.6`。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - 受控失败验证（临时将 `config/service.yaml` 端口改为 `50052` 后执行）：`vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-summary-v17-fail.json'` 返回失败
+  - 报告包含 `reportVersion=1.6`、`failureSummary.failedCaseNamesByReason`、`cases[*].resultDigest`
+  - 验证后已恢复 `config/service.yaml` 原值
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

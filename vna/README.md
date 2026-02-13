@@ -255,9 +255,15 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 - `timeoutRate`
 - `unknownStderrRate`
 
+`failureSummary.failedCaseNamesByReason` 提供按失败原因分组的 case 名单：
+
+- `exitCode[]`
+- `timeout[]`
+- `unknownStderr[]`
+
 报告还包含以下元数据：
 
-- `reportVersion`：报告结构版本（当前 `1.5`）
+- `reportVersion`：报告结构版本（当前 `1.6`）
 - `durationMs`：整次矩阵执行耗时（毫秒）
 - `status`：本次矩阵结果状态（`PASS`/`FAIL`）
 - `reportDigest`：顶层摘要字符串（通过/失败/噪声/告警计数）
@@ -268,6 +274,7 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 - `executionOptions`：本次执行参数快照（`skipBuild/failOnUnknownStderr/smokeTimeoutSec/endpoint/configPath/configHashSha256/reportJsonPath*`）
 - `cases[*].durationMs`：单个 case 执行耗时（毫秒）
 - `cases[*].caseIndex`：case 在矩阵中的稳定序号（从 1 开始）
+- `cases[*].resultDigest`：单 case 摘要字符串（原因与关键计数）
 
 `ReportJsonPath` 支持时间戳占位符：`{timestamp}` / `{timestampUtc}` / `{timestampLocal}`。
 

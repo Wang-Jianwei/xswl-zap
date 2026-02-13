@@ -285,6 +285,8 @@ try {
         Write-Host "[MATRIX][PASS] case=$($case.Name)"
       }
 
+      $caseResultDigest = "reason=$failureReason;unary=$unaryExit;stream=$streamExit;unknownStderr=$unknownStderrCount"
+
       $matrixResults += [PSCustomObject]@{
         caseIndex = $caseIndex
         name = $case.Name
@@ -299,6 +301,7 @@ try {
         suppressedNoiseCount = $unaryResult.SuppressedCount + $streamResult.SuppressedCount
         unknownStderrCount = $unknownStderrCount
         failureReason = $failureReason
+        resultDigest = $caseResultDigest
         passed = $casePassed
       }
     }
@@ -332,6 +335,12 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     timeout = @($matrixResults | Where-Object { $_.failureReason -eq "timeout" }).Count
     unknownStderr = @($matrixResults | Where-Object { $_.failureReason -eq "unknown_stderr" }).Count
   }
+
+  $failureSummary | Add-Member -NotePropertyName failedCaseNamesByReason -NotePropertyValue ([PSCustomObject]@{
+    exitCode = @($matrixResults | Where-Object { $_.failureReason -eq "exit_code" } | ForEach-Object { $_.name })
+    timeout = @($matrixResults | Where-Object { $_.failureReason -eq "timeout" } | ForEach-Object { $_.name })
+    unknownStderr = @($matrixResults | Where-Object { $_.failureReason -eq "unknown_stderr" } | ForEach-Object { $_.name })
+  })
 
   $failedCount = [double]$failureSummary.totalFailedCases
   $caseCount = [double]$matrixResults.Count
@@ -380,7 +389,7 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   }
 
   $report = [PSCustomObject]@{
-    reportVersion = "1.5"
+    reportVersion = "1.6"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     status = $reportStatus
