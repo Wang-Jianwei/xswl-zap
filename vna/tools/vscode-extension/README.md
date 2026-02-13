@@ -14,6 +14,7 @@
   - 波形坐标轴显示基础刻度文本（x/y 的 min/max）
   - marker 以按曲线分组列表展示，并在图内绘制 min/max 标记点
   - marker 分组按 y 值优先级排序，当前主曲线（primary trace）高亮显示
+  - 主曲线 marker 标签增加背景框，提升复杂图面读数可见性
 - Command: `XSWL: Open Output` (focuses `XSWL VNA` output channel)
 - Command: `XSWL: Clear Output` (clears `XSWL VNA` output channel)
 - Output logs include timestamp + level + `requestId` for cross-command correlation

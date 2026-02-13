@@ -2043,6 +2043,36 @@ WU-MAINLINE-065: marker 分组排序与主曲线高亮
 - Validation result:
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.48 已完成 Work Unit
+
+WU-MAINLINE-066: 主曲线 marker 标签背景框
+
+- Objective: 提升复杂图面（网格/多曲线叠加）下主曲线 marker 标签可读性。
+- Scope (in/out):
+  - in: 主曲线 marker 文本增加背景框样式；补测试与文档。
+  - out: 自定义标签配色、字号偏好设置、标签避让布局优化。
+- Files to change:
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端样式与渲染增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚主曲线标签背景框渲染与样式，恢复纯文本标签。
+- Risks: 标签背景框尺寸估算基于字符宽度，极端字体下可能存在轻微偏差。
+- Acceptance criteria:
+  - 主曲线 marker 标签具有背景框。
+  - 与现有图例显隐、marker 分组排序兼容。
+  - 插件测试通过。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

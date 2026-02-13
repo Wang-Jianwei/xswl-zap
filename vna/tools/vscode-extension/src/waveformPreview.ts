@@ -337,7 +337,7 @@ function renderTrace(trace: WaveformTrace, width: number, height: number): strin
   return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
 }
 
-function renderTraceMarkers(trace: WaveformTrace, width: number, height: number): string {
+function renderTraceMarkers(trace: WaveformTrace, width: number, height: number, isPrimary: boolean): string {
   if (trace.points.length === 0 || trace.markers.length === 0) {
     return "";
   }
@@ -346,9 +346,18 @@ function renderTraceMarkers(trace: WaveformTrace, width: number, height: number)
   return trace.markers
     .map((marker) => {
       const normalized = normalizePoint({ x: marker.x, y: marker.y }, bounds, width, height);
+      const label = `${marker.label}`;
+      const textX = normalized.x + 6;
+      const textY = normalized.y - 6;
+      const labelWidth = Math.max(28, label.length * 7 + 8);
+      const labelHeight = 14;
+      const labelRect = isPrimary
+        ? `<rect class="marker-label-bg" x="${textX.toFixed(2)}" y="${(textY - 10).toFixed(2)}" width="${labelWidth.toFixed(2)}" height="${labelHeight}" rx="3" ry="3" />`
+        : "";
       return `<g class="marker-point" data-trace-id="${trace.id}">
   <circle cx="${normalized.x.toFixed(2)}" cy="${normalized.y.toFixed(2)}" r="3" fill="${trace.color}" stroke="var(--vscode-editor-background)" stroke-width="1.2" />
-  <text x="${(normalized.x + 6).toFixed(2)}" y="${(normalized.y - 6).toFixed(2)}">${marker.label}</text>
+  ${labelRect}
+  <text class="marker-label-text" x="${textX.toFixed(2)}" y="${textY.toFixed(2)}">${label}</text>
 </g>`;
     })
     .join("\n");
@@ -496,6 +505,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
     .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
     .chart .marker-point text { fill: var(--vscode-foreground); font-size: 10px; opacity: 0.95; }
+    .chart .marker-label-bg { fill: var(--vscode-editor-background); stroke: var(--vscode-focusBorder); stroke-width: 0.8; opacity: 0.95; }
+    .chart .marker-label-text { fill: var(--vscode-foreground); }
     .empty { opacity: 0.8; }
   </style>
 </head>
@@ -511,7 +522,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
          ${renderAxes(width, height, getTraceBounds(data.traces))}
            ${data.traces
-             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>\n${renderTraceMarkers(trace, width, height)}`)
+             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>\n${renderTraceMarkers(trace, width, height, trace.id === primaryTraceId)}`)
              .join("\n")}
          </svg>`
   }

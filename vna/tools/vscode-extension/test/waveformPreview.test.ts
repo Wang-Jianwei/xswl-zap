@@ -101,6 +101,7 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("class=\"marker-row is-primary\""));
   assert(html.includes("class=\"marker-name\""));
   assert(html.includes("class=\"marker-point\""));
+  assert(html.includes("class=\"marker-label-bg\""));
   assert(html.includes("axis-line"));
   assert(html.includes("axis-tick"));
   assert(html.includes("xMin="));
