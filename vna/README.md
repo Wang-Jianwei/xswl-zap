@@ -302,6 +302,23 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild -AsJson
 ```
 
+如需将 gate 结果 JSON 同步写入文件（支持 `{timestamp}` / `{timestampUtc}` / `{timestampLocal}` 占位符）：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild -AsJson -ResultJsonPath '.\build-grpc\gate-result-{timestamp}.json'
+```
+
+`run_smoke_report_gate.ps1` 的机器结果字段包含：
+
+- `status`（`PASS`/`FAIL`）
+- `exitCode`（`0`/`1`）
+- `durationMs`
+- `startedAtUtc` / `finishedAtUtc`
+- `reportPath` / `resultJsonPath`
+- `failOnUnknownStderr` / `smokeTimeoutSec`
+- `failOnWarningCodes` / `matchedWarningCodes`
+- `error`
+
 如需在门禁中把特定告警码升级为失败（例如已知噪声也视为失败）：
 
 ```powershell
@@ -318,6 +335,12 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 
 ```powershell
 .\scripts\summarize_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v17-fail.json -AsJson
+```
+
+输出压缩摘要 JSON 并写入文件：
+
+```powershell
+.\scripts\summarize_smoke_matrix_report.ps1 -ReportPath .\build-grpc\smoke-matrix-summary-v17-fail.json -AsJson -CompactJson -OutputJsonPath '.\build-grpc\smoke-summary-{timestamp}.json'
 ```
 
 ## 报告演进策略

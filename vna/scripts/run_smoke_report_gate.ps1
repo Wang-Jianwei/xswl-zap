@@ -4,7 +4,8 @@ param(
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
   [string[]]$FailOnWarningCodes = @(),
-  [switch]$AsJson
+  [switch]$AsJson,
+  [string]$ResultJsonPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,9 +20,43 @@ if (-not (Test-Path $matrixScript)) { throw "Missing script: $matrixScript" }
 if (-not (Test-Path $validatorScript)) { throw "Missing script: $validatorScript" }
 if (-not (Test-Path $schemaPath)) { throw "Missing schema: $schemaPath" }
 
+function Resolve-PathPlaceholders {
+  param([string]$PathValue)
+  if ([string]::IsNullOrWhiteSpace($PathValue)) { return "" }
+
+  $utcNow = [DateTime]::UtcNow
+  $localNow = [DateTime]::Now
+  $resolved = $PathValue
+  $resolved = $resolved.Replace("{timestamp}", $utcNow.ToString("yyyyMMdd-HHmmss"))
+  $resolved = $resolved.Replace("{timestampUtc}", $utcNow.ToString("yyyyMMdd-HHmmss"))
+  $resolved = $resolved.Replace("{timestampLocal}", $localNow.ToString("yyyyMMdd-HHmmss"))
+  return $resolved
+}
+
+function Write-ResultJsonIfNeeded {
+  param(
+    [Parameter(Mandatory = $true)]
+    [psobject]$Result,
+    [string]$OutputPath
+  )
+
+  if ([string]::IsNullOrWhiteSpace($OutputPath)) { return }
+
+  $parentDir = Split-Path -Parent $OutputPath
+  if (-not [string]::IsNullOrWhiteSpace($parentDir) -and -not (Test-Path $parentDir)) {
+    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+  }
+
+  $jsonText = $Result | ConvertTo-Json -Depth 6
+  Set-Content -Path $OutputPath -Value $jsonText -Encoding UTF8
+  Write-Host "[GATE] result json written: $OutputPath"
+}
+
 $resolvedReportPath = $ReportPath
 $matchedCodes = @()
 $failureMessage = ""
+$resolvedResultJsonPath = Resolve-PathPlaceholders $ResultJsonPath
+$startedAtUtc = [DateTime]::UtcNow
 
 try {
   Write-Host "[GATE] running smoke matrix..."
@@ -55,7 +90,12 @@ try {
 
   $gateResult = [PSCustomObject]@{
     status = "PASS"
+    exitCode = 0
+    durationMs = [int][Math]::Round(([DateTime]::UtcNow - $startedAtUtc).TotalMilliseconds)
+    startedAtUtc = $startedAtUtc.ToString("o")
+    finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
+    resultJsonPath = $resolvedResultJsonPath
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
@@ -63,8 +103,10 @@ try {
     error = ""
   }
 
+  Write-ResultJsonIfNeeded -Result $gateResult -OutputPath $resolvedResultJsonPath
+
   if ($AsJson) {
-    $gateResult | ConvertTo-Json -Depth 4
+    $gateResult | ConvertTo-Json -Depth 6
   }
   else {
     Write-Host "[GATE][RESULT] status=PASS reportPath=$resolvedReportPath failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec"
@@ -77,7 +119,12 @@ catch {
   $failureMessage = $_.Exception.Message
   $gateResult = [PSCustomObject]@{
     status = "FAIL"
+    exitCode = 1
+    durationMs = [int][Math]::Round(([DateTime]::UtcNow - $startedAtUtc).TotalMilliseconds)
+    startedAtUtc = $startedAtUtc.ToString("o")
+    finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
+    resultJsonPath = $resolvedResultJsonPath
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
@@ -85,8 +132,10 @@ catch {
     error = $failureMessage
   }
 
+  Write-ResultJsonIfNeeded -Result $gateResult -OutputPath $resolvedResultJsonPath
+
   if ($AsJson) {
-    $gateResult | ConvertTo-Json -Depth 4
+    $gateResult | ConvertTo-Json -Depth 6
   }
   else {
     Write-Host "[GATE][RESULT] status=FAIL reportPath=$resolvedReportPath failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec error=$failureMessage"

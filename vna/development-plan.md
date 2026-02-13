@@ -1117,6 +1117,67 @@ WU-MAINLINE-037: Gate 失败路径统一结构化输出
   - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v19-warning.json' -FailOnWarningCodes known_noise_suppressed -AsJson` 按策略失败并输出 FAIL JSON（exit 1）
   - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v19.json' -AsJson` 成功输出摘要 JSON
 
+### 8.24 已完成 Work Unit（批量）
+
+WU-MAINLINE-038: Gate 结果 JSON 落盘能力
+
+- Objective: 支持将 gate 结果对象写入指定文件，便于 CI 工件归档。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 增加 `ResultJsonPath` 参数与占位符解析。
+  - out: CI 工件上传模板。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚 `ResultJsonPath` 参数与落盘逻辑。
+- Risks: 结果文件路径配置错误会导致工件缺失。
+- Acceptance criteria:
+  - gate 结果可按指定路径落盘 JSON，支持时间戳占位符。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-039: Gate 结果执行元数据增强
+
+- Objective: 为 gate 机器结果增加可观测执行元数据。
+- Scope (in/out):
+  - in: 增加 `exitCode/durationMs/startedAtUtc/finishedAtUtc` 字段。
+  - out: 外部指标平台写入。
+- Files to change:
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚新增元数据字段。
+- Risks: 下游消费者若强依赖旧字段集合需同步更新解析逻辑。
+- Acceptance criteria:
+  - PASS/FAIL 两条路径均输出新增元数据字段。
+
+- Status: ✅ Completed (2026-02-13)
+
+WU-MAINLINE-040: 摘要 JSON 压缩输出与落盘
+
+- Objective: 支持摘要脚本输出压缩 JSON，并可写入文件。
+- Scope (in/out):
+  - in: `summarize_smoke_matrix_report.ps1` 增加 `CompactJson/OutputJsonPath`。
+  - out: 摘要聚合看板。
+- Files to change:
+  - `vna/scripts/summarize_smoke_matrix_report.ps1`
+  - `vna/README.md`
+- Contract impact: 无。
+- Test plan: 见本批量 WU 统一验证命令。
+- Rollback plan: 回滚压缩输出与落盘参数。
+- Risks: 压缩 JSON 可读性下降，需要配合工具消费。
+- Acceptance criteria:
+  - 摘要脚本支持压缩 JSON 控制台输出与文件落盘。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result（批量 WU 统一）:
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v20.json' -AsJson -ResultJsonPath '.\build-grpc\gate-result-v20-pass-{timestamp}.json'` 通过
+  - `vna/scripts/run_smoke_report_gate.ps1 -SkipBuild -ReportPath '.\build-grpc\smoke-matrix-gate-v20-warning.json' -FailOnWarningCodes known_noise_suppressed -AsJson -ResultJsonPath '.\build-grpc\gate-result-v20-fail-{timestamp}.json'` 按策略失败并输出 FAIL JSON（exit 1）
+  - `vna/scripts/summarize_smoke_matrix_report.ps1 -ReportPath '.\build-grpc\smoke-matrix-gate-v20.json' -AsJson -CompactJson -OutputJsonPath '.\build-grpc\smoke-summary-v20-{timestamp}.json'` 成功输出并落盘摘要 JSON
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
