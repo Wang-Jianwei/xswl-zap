@@ -24,6 +24,7 @@ add_library(vna_core_bootstrap STATIC
     src/core/hardware_driver_factory.cpp
     src/core/hardware_coordinator.cpp
     src/core/instance_manager.cpp
+    src/core/measurement_exporter.cpp
     src/core/measurement_pipeline.cpp
     src/core/plugin_manager.cpp
     src/core/plugin_registry.cpp
@@ -267,6 +268,12 @@ if(XSWL_BUILD_TESTS)
     )
     target_link_libraries(vna_measurement_pipeline_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_measurement_pipeline_test PROPERTIES OUTPUT_NAME "easy_measurement_pipeline_test")
+
+    add_executable(vna_measurement_exporter_test
+        tests/core/measurement_exporter_test.cpp
+    )
+    target_link_libraries(vna_measurement_exporter_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_measurement_exporter_test PROPERTIES OUTPUT_NAME "easy_measurement_exporter_test")
 
     add_executable(vna_topology_manager_test
         tests/core/topology_manager_test.cpp

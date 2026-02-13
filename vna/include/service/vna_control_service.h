@@ -48,6 +48,10 @@ class VnaControlService {
                           std::uint32_t timeoutMs,
                           core::AcquisitionResult& out);
 
+  core::Status ExportAcquisitionResult(const core::AcquisitionResult& result,
+                                       const std::string& csvPath,
+                                       const std::string& touchstonePath);
+
   std::size_t InstanceCount() const;
   std::size_t ActiveLeaseCount() const;
 

@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "core/measurement_exporter.h"
 #include "core/topology_manager.h"
 
 namespace vna {
@@ -107,6 +108,30 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
     return core::Status::kInvalidArgument;
   }
   return runtime_.AcquireOnce(instanceId, excitation, sampleCount, timeoutMs, out);
+}
+
+core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,
+                                                       const std::string& csvPath,
+                                                       const std::string& touchstonePath) {
+  if (csvPath.empty() && touchstonePath.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  if (!csvPath.empty()) {
+    const core::Status csvStatus = core::MeasurementExporter::ExportCsv(result, csvPath);
+    if (csvStatus != core::Status::kOk) {
+      return csvStatus;
+    }
+  }
+
+  if (!touchstonePath.empty()) {
+    const core::Status touchstoneStatus = core::MeasurementExporter::ExportTouchstone(result, touchstonePath);
+    if (touchstoneStatus != core::Status::kOk) {
+      return touchstoneStatus;
+    }
+  }
+
+  return core::Status::kOk;
 }
 
 std::size_t VnaControlService::InstanceCount() const {

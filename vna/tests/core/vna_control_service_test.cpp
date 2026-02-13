@@ -1,4 +1,5 @@
 #include <cassert>
+#include <fstream>
 
 #include "core/built_in_drivers.h"
 #include "service/vna_control_service.h"
@@ -75,6 +76,15 @@ int main() {
     vna::core::AcquisitionResult result;
     assert(service.AcquireOnce("inst0", excitation, 32, 1000, result) == vna::core::Status::kOk);
     assert(result.instanceId == "inst0");
+
+    const std::string csvPath = "build/vna-control-service-export.csv";
+    const std::string touchstonePath = "build/vna-control-service-export.s2p";
+    assert(service.ExportAcquisitionResult(result, csvPath, touchstonePath) == vna::core::Status::kOk);
+
+    std::ifstream csvFile(csvPath.c_str());
+    std::ifstream touchstoneFile(touchstonePath.c_str());
+    assert(csvFile.good());
+    assert(touchstoneFile.good());
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

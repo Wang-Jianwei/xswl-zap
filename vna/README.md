@@ -84,6 +84,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 结论：当前处于“主链路 MVP 可运行、应用级功能未全部完成”的阶段。
 
+补充（WU42 进展）：已具备基于 `AcquisitionResult` 的 Touchstone/CSV 最小导出能力（core + service），当前范围不含 MAT 与导入回放。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

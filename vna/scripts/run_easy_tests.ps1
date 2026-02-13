@@ -12,6 +12,7 @@ $tests = @(
   'easy_usb_vna_driver_test.exe',
   'easy_grpc_bootstrap_paths_test.exe',
   'easy_measurement_pipeline_test.exe',
+  'easy_measurement_exporter_test.exe',
   'easy_topology_manager_test.exe',
   'easy_resource_manager_test.exe',
   'easy_plugin_manager_test.exe',

@@ -1243,7 +1243,17 @@ WU-MAINLINE-042: 数据导出 MVP（Touchstone/CSV）
   - 能导出可被常见工具识别的 `.sNp` 与 `.csv` 文件。
   - 导出失败路径可给出结构化错误信息。
 
-- Status: 🟡 Planned
+- Status: ✅ Completed (2026-02-13)
+
+- Implementation notes:
+  - 新增 core 导出器：`MeasurementExporter::ExportCsv/ExportTouchstone`。
+  - 新增 service 封装：`VnaControlService::ExportAcquisitionResult`。
+  - 新增导出回归测试：`measurement_exporter_test`，并纳入 `run_easy_tests.ps1`。
+
+- Validation result:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_exporter_test vna_vna_control_service_test` 通过
+  - `vna/build/easy_measurement_exporter_test.exe` 通过
+  - `vna/build/easy_vna_control_service_test.exe` 通过（含导出文件存在性断言）
 
 WU-MAINLINE-043: VNA 实例生命周期与多实例最小并发
 
