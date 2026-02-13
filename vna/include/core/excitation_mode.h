@@ -15,6 +15,12 @@ struct CwExcitation {
   double frequencyHz = 0.0;
   double powerDbm = 0.0;
   std::uint32_t dwellTimeMs = 0;
+  double startFrequencyHz = 0.0;
+  double stopFrequencyHz = 0.0;
+  std::uint32_t sweepPointCount = 0;
+  double ifBandwidthHz = 0.0;
+  std::uint32_t portCount = 2;
+  std::uint32_t excitationPort = 1;
 };
 
 struct PulseExcitation {

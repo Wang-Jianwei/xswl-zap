@@ -1207,7 +1207,16 @@ WU-MAINLINE-041: 基本测量参数模型与 S 参数扫描 MVP
   - 数据处理链路保持分层：`raw receiver -> factory compensation -> optional user calibration -> s-parameter -> derived views`。
   - 回归测试覆盖关键参数有效/无效路径，以及接收机数值采集的稳定输出路径。
 
-- Status: 🟡 Planned
+- Status: 🔄 In Progress (2026-02-13)
+
+- Progress update:
+  - 已完成核心数据模型扩展：接收机原始/补偿后数据结构与 n 端口 S 参数矩阵结构。
+  - 已完成 CW 采集链路增强：支持最小扫频、多端口接收机通道输出与单激励列 S 参数求解。
+  - 已完成 `measurement_pipeline_test` 回归扩展并通过。
+
+- Validation result（阶段性）:
+  - `cmake --build --preset ninja-mingw --target vna_measurement_pipeline_test` 通过
+  - `vna/build/easy_measurement_pipeline_test.exe` 通过
 
 WU-MAINLINE-042: 数据导出 MVP（Touchstone/CSV）
 
