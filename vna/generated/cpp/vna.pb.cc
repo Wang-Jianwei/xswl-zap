@@ -592,6 +592,12 @@ inline constexpr AcquisitionRequest::Impl_::Impl_(
         instance_id_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        export_csv_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        export_touchstone_path_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
         excitation_{nullptr},
         sample_count_{0u},
         timeout_ms_{0u} {}
@@ -700,15 +706,19 @@ const ::uint32_t
         ~0u,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_._has_bits_),
-        7, // hasbit index offset
+        9, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.instance_id_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.excitation_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.sample_count_),
         PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.timeout_ms_),
+        PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.export_csv_path_),
+        PROTOBUF_FIELD_OFFSET(::vna::AcquisitionRequest, _impl_.export_touchstone_path_),
         0,
+        3,
+        4,
+        5,
         1,
         2,
-        3,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::FrequencyDomainPoint, _impl_._has_bits_),
         6, // hasbit index offset
@@ -857,18 +867,18 @@ static const ::_pbi::MigrationSchema
         {47, sizeof(::vna::PulseExcitation)},
         {60, sizeof(::vna::ExcitationConfig)},
         {75, sizeof(::vna::AcquisitionRequest)},
-        {86, sizeof(::vna::FrequencyDomainPoint)},
-        {95, sizeof(::vna::TimeDomainPoint)},
-        {104, sizeof(::vna::ReceiverChannelSample)},
-        {115, sizeof(::vna::ReceiverFrequencyPoint)},
-        {124, sizeof(::vna::SParameterPoint)},
-        {135, sizeof(::vna::SParameterFrequencyPoint)},
-        {144, sizeof(::vna::AcquisitionResult)},
-        {163, sizeof(::vna::FrequencyDomainFrame)},
-        {168, sizeof(::vna::TimeDomainFrame)},
-        {175, sizeof(::vna::ResourceRequest)},
-        {186, sizeof(::vna::LeaseInfo)},
-        {195, sizeof(::vna::ServiceStatus)},
+        {90, sizeof(::vna::FrequencyDomainPoint)},
+        {99, sizeof(::vna::TimeDomainPoint)},
+        {108, sizeof(::vna::ReceiverChannelSample)},
+        {119, sizeof(::vna::ReceiverFrequencyPoint)},
+        {128, sizeof(::vna::SParameterPoint)},
+        {139, sizeof(::vna::SParameterFrequencyPoint)},
+        {148, sizeof(::vna::AcquisitionResult)},
+        {167, sizeof(::vna::FrequencyDomainFrame)},
+        {172, sizeof(::vna::TimeDomainFrame)},
+        {179, sizeof(::vna::ResourceRequest)},
+        {190, sizeof(::vna::LeaseInfo)},
+        {199, sizeof(::vna::ServiceStatus)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_Empty_default_instance_._instance,
@@ -913,67 +923,68 @@ const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "na.ExcitationMode\022\030\n\020settling_time_ms\030\002 "
     "\001(\r\022\033\n\023enable_auto_trigger\030\003 \001(\010\022\037\n\002cw\030\n"
     " \001(\0132\021.vna.CwExcitationH\000\022%\n\005pulse\030\013 \001(\013"
-    "2\024.vna.PulseExcitationH\000B\010\n\006detail\"~\n\022Ac"
-    "quisitionRequest\022\023\n\013instance_id\030\001 \001(\t\022)\n"
-    "\nexcitation\030\002 \001(\0132\025.vna.ExcitationConfig"
-    "\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeout_ms\030\004 \001"
-    "(\r\"H\n\024FrequencyDomainPoint\022\024\n\014frequency_"
-    "hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\"D\n\017"
-    "TimeDomainPoint\022\017\n\007time_ns\030\001 \001(\001\022\021\n\tmagn"
-    "itude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"X\n\025ReceiverCh"
-    "annelSample\022\022\n\nchannel_id\030\001 \001(\t\022\014\n\004real\030"
-    "\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007clipped\030\004 \001(\010\"r\n\026"
-    "ReceiverFrequencyPoint\022\024\n\014frequency_hz\030\001"
-    " \001(\001\022\024\n\014timestamp_ns\030\002 \001(\004\022,\n\010channels\030\003"
-    " \003(\0132\032.vna.ReceiverChannelSample\"Q\n\017SPar"
-    "ameterPoint\022\020\n\010row_port\030\001 \001(\r\022\020\n\010col_por"
-    "t\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004imag\030\004 \001(\001\"j\n\030S"
-    "ParameterFrequencyPoint\022\024\n\014frequency_hz\030"
-    "\001 \001(\001\022\022\n\nport_count\030\002 \001(\r\022$\n\006points\030\003 \003("
-    "\0132\024.vna.SParameterPoint\"\337\002\n\021AcquisitionR"
-    "esult\022\023\n\013instance_id\030\001 \001(\t\022\024\n\014timestamp_"
-    "ns\030\002 \001(\004\0224\n\017frequency_frame\030\n \001(\0132\031.vna."
-    "FrequencyDomainFrameH\000\022*\n\ntime_frame\030\013 \001"
-    "(\0132\024.vna.TimeDomainFrameH\000\0228\n\023receiver_r"
-    "aw_points\030\024 \003(\0132\033.vna.ReceiverFrequencyP"
-    "oint\022@\n\033receiver_compensated_points\030\025 \003("
-    "\0132\033.vna.ReceiverFrequencyPoint\0229\n\022s_para"
-    "meter_points\030\026 \003(\0132\035.vna.SParameterFrequ"
-    "encyPointB\006\n\004data\"A\n\024FrequencyDomainFram"
-    "e\022)\n\006points\030\001 \003(\0132\031.vna.FrequencyDomainP"
-    "oint\"P\n\017TimeDomainFrame\022$\n\006points\030\001 \003(\0132"
-    "\024.vna.TimeDomainPoint\022\027\n\017sample_rate_ghz"
-    "\030\002 \001(\001\"c\n\017ResourceRequest\022\023\n\013resource_id"
-    "\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022\021\n\texclusiv"
-    "e\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G\n\tLeaseInfo"
-    "\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resource_id\030\002 \001(\t\022"
-    "\023\n\013ttl_seconds\030\003 \001(\r\"\376\001\n\rServiceStatus\022\r"
-    "\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007message\030"
-    "\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_address"
-    "\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabled\030\007 \001("
-    "\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016instance_count\030\t"
-    " \001(\r\022\032\n\022active_lease_count\030\n \001(\r\022\026\n\016boot"
-    "strap_mode\030\013 \001(\t\022\023\n\013config_path\030\014 \001(\t*d\n"
-    "\016ExcitationMode\022\037\n\033EXCITATION_MODE_UNSPE"
-    "CIFIED\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022\031\n\025EXCI"
-    "TATION_MODE_PULSE\020\0022\376\001\n\nVnaControl\0228\n\020Va"
-    "lidateTopology\022\r.vna.Topology\032\025.vna.Vali"
-    "dationResult\0222\n\020GetServiceStatus\022\n.vna.E"
-    "mpty\032\022.vna.ServiceStatus\022:\n\007Acquire\022\027.vn"
-    "a.AcquisitionRequest\032\026.vna.AcquisitionRe"
-    "sult\022F\n\021StreamAcquisition\022\027.vna.Acquisit"
-    "ionRequest\032\026.vna.AcquisitionResult0\0012\243\001\n"
-    "\016ResourceBroker\022/\n\007Acquire\022\024.vna.Resourc"
-    "eRequest\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vna."
-    "LeaseInfo\032\025.vna.ValidationResult\0220\n\007Rele"
-    "ase\022\016.vna.LeaseInfo\032\025.vna.ValidationResu"
-    "ltb\006proto3"
+    "2\024.vna.PulseExcitationH\000B\010\n\006detail\"\267\001\n\022A"
+    "cquisitionRequest\022\023\n\013instance_id\030\001 \001(\t\022)"
+    "\n\nexcitation\030\002 \001(\0132\025.vna.ExcitationConfi"
+    "g\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeout_ms\030\004 "
+    "\001(\r\022\027\n\017export_csv_path\030\005 \001(\t\022\036\n\026export_t"
+    "ouchstone_path\030\006 \001(\t\"H\n\024FrequencyDomainP"
+    "oint\022\024\n\014frequency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001"
+    "\022\014\n\004imag\030\003 \001(\001\"D\n\017TimeDomainPoint\022\017\n\007tim"
+    "e_ns\030\001 \001(\001\022\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003"
+    " \001(\001\"X\n\025ReceiverChannelSample\022\022\n\nchannel"
+    "_id\030\001 \001(\t\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n"
+    "\007clipped\030\004 \001(\010\"r\n\026ReceiverFrequencyPoint"
+    "\022\024\n\014frequency_hz\030\001 \001(\001\022\024\n\014timestamp_ns\030\002"
+    " \001(\004\022,\n\010channels\030\003 \003(\0132\032.vna.ReceiverCha"
+    "nnelSample\"Q\n\017SParameterPoint\022\020\n\010row_por"
+    "t\030\001 \001(\r\022\020\n\010col_port\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022"
+    "\014\n\004imag\030\004 \001(\001\"j\n\030SParameterFrequencyPoin"
+    "t\022\024\n\014frequency_hz\030\001 \001(\001\022\022\n\nport_count\030\002 "
+    "\001(\r\022$\n\006points\030\003 \003(\0132\024.vna.SParameterPoin"
+    "t\"\337\002\n\021AcquisitionResult\022\023\n\013instance_id\030\001"
+    " \001(\t\022\024\n\014timestamp_ns\030\002 \001(\004\0224\n\017frequency_"
+    "frame\030\n \001(\0132\031.vna.FrequencyDomainFrameH\000"
+    "\022*\n\ntime_frame\030\013 \001(\0132\024.vna.TimeDomainFra"
+    "meH\000\0228\n\023receiver_raw_points\030\024 \003(\0132\033.vna."
+    "ReceiverFrequencyPoint\022@\n\033receiver_compe"
+    "nsated_points\030\025 \003(\0132\033.vna.ReceiverFreque"
+    "ncyPoint\0229\n\022s_parameter_points\030\026 \003(\0132\035.v"
+    "na.SParameterFrequencyPointB\006\n\004data\"A\n\024F"
+    "requencyDomainFrame\022)\n\006points\030\001 \003(\0132\031.vn"
+    "a.FrequencyDomainPoint\"P\n\017TimeDomainFram"
+    "e\022$\n\006points\030\001 \003(\0132\024.vna.TimeDomainPoint\022"
+    "\027\n\017sample_rate_ghz\030\002 \001(\001\"c\n\017ResourceRequ"
+    "est\022\023\n\013resource_id\030\001 \001(\t\022\024\n\014workspace_id"
+    "\030\002 \001(\t\022\021\n\texclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030"
+    "\004 \001(\r\"G\n\tLeaseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013"
+    "resource_id\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\376"
+    "\001\n\rServiceStatus\022\r\n\005ready\030\001 \001(\010\022\r\n\005state"
+    "\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001"
+    "(\004\022\024\n\014bind_address\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023"
+    "\n\013tls_enabled\030\007 \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026"
+    "\n\016instance_count\030\t \001(\r\022\032\n\022active_lease_c"
+    "ount\030\n \001(\r\022\026\n\016bootstrap_mode\030\013 \001(\t\022\023\n\013co"
+    "nfig_path\030\014 \001(\t*d\n\016ExcitationMode\022\037\n\033EXC"
+    "ITATION_MODE_UNSPECIFIED\020\000\022\026\n\022EXCITATION"
+    "_MODE_CW\020\001\022\031\n\025EXCITATION_MODE_PULSE\020\0022\376\001"
+    "\n\nVnaControl\0228\n\020ValidateTopology\022\r.vna.T"
+    "opology\032\025.vna.ValidationResult\0222\n\020GetSer"
+    "viceStatus\022\n.vna.Empty\032\022.vna.ServiceStat"
+    "us\022:\n\007Acquire\022\027.vna.AcquisitionRequest\032\026"
+    ".vna.AcquisitionResult\022F\n\021StreamAcquisit"
+    "ion\022\027.vna.AcquisitionRequest\032\026.vna.Acqui"
+    "sitionResult0\0012\243\001\n\016ResourceBroker\022/\n\007Acq"
+    "uire\022\024.vna.ResourceRequest\032\016.vna.LeaseIn"
+    "fo\022.\n\005Renew\022\016.vna.LeaseInfo\032\025.vna.Valida"
+    "tionResult\0220\n\007Release\022\016.vna.LeaseInfo\032\025."
+    "vna.ValidationResultb\006proto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    2930,
+    2988,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
@@ -3520,7 +3531,9 @@ PROTOBUF_NDEBUG_INLINE AcquisitionRequest::Impl_::Impl_(
     [[maybe_unused]] const ::vna::AcquisitionRequest& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        instance_id_(arena, from.instance_id_) {}
+        instance_id_(arena, from.instance_id_),
+        export_csv_path_(arena, from.export_csv_path_),
+        export_touchstone_path_(arena, from.export_touchstone_path_) {}
 
 AcquisitionRequest::AcquisitionRequest(
     ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
@@ -3536,7 +3549,7 @@ AcquisitionRequest::AcquisitionRequest(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::uint32_t cached_has_bits = _impl_._has_bits_[0];
-  _impl_.excitation_ = (CheckHasBit(cached_has_bits, 0x00000002U))
+  _impl_.excitation_ = (CheckHasBit(cached_has_bits, 0x00000008U))
                 ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.excitation_)
                 : nullptr;
   ::memcpy(reinterpret_cast<char*>(&_impl_) +
@@ -3553,7 +3566,9 @@ PROTOBUF_NDEBUG_INLINE AcquisitionRequest::Impl_::Impl_(
     [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
     [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
       : _cached_size_{0},
-        instance_id_(arena) {}
+        instance_id_(arena),
+        export_csv_path_(arena),
+        export_touchstone_path_(arena) {}
 
 inline void AcquisitionRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -3576,6 +3591,8 @@ inline void AcquisitionRequest::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.instance_id_.Destroy();
+  this_._impl_.export_csv_path_.Destroy();
+  this_._impl_.export_touchstone_path_.Destroy();
   delete this_._impl_.excitation_;
   this_._impl_.~Impl_();
 }
@@ -3623,16 +3640,16 @@ AcquisitionRequest::GetClassData() const {
   return AcquisitionRequest_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 1, 42, 2>
+const ::_pbi::TcParseTable<3, 6, 1, 79, 2>
 AcquisitionRequest::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_._has_bits_),
     0, // no _extensions_
-    4, 24,  // max_field_number, fast_idx_mask
+    6, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967280,  // skipmap
+    4294967232,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    4,  // num_field_entries
+    6,  // num_field_entries
     1,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     AcquisitionRequest_class_data_.base(),
@@ -3642,41 +3659,57 @@ AcquisitionRequest::_table_ = {
     ::_pbi::TcParser::GetTable<::vna::AcquisitionRequest>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // uint32 timeout_ms = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AcquisitionRequest, _impl_.timeout_ms_), 3>(),
-     {32, 3, 0,
-      PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.timeout_ms_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // string instance_id = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 0, 0,
       PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.instance_id_)}},
     // .vna.ExcitationConfig excitation = 2;
     {::_pbi::TcParser::FastMtS1,
-     {18, 1, 0,
+     {18, 3, 0,
       PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.excitation_)}},
     // uint32 sample_count = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AcquisitionRequest, _impl_.sample_count_), 2>(),
-     {24, 2, 0,
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AcquisitionRequest, _impl_.sample_count_), 4>(),
+     {24, 4, 0,
       PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.sample_count_)}},
+    // uint32 timeout_ms = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AcquisitionRequest, _impl_.timeout_ms_), 5>(),
+     {32, 5, 0,
+      PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.timeout_ms_)}},
+    // string export_csv_path = 5;
+    {::_pbi::TcParser::FastUS1,
+     {42, 1, 0,
+      PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.export_csv_path_)}},
+    // string export_touchstone_path = 6;
+    {::_pbi::TcParser::FastUS1,
+     {50, 2, 0,
+      PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.export_touchstone_path_)}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
     // string instance_id = 1;
     {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.instance_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // .vna.ExcitationConfig excitation = 2;
-    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.excitation_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.excitation_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
     // uint32 sample_count = 3;
-    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.sample_count_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.sample_count_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
     // uint32 timeout_ms = 4;
-    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.timeout_ms_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.timeout_ms_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // string export_csv_path = 5;
+    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.export_csv_path_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string export_touchstone_path = 6;
+    {PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.export_touchstone_path_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::vna::ExcitationConfig>()},
   }},
   {{
-    "\26\13\0\0\0\0\0\0"
+    "\26\13\0\0\0\17\26\0"
     "vna.AcquisitionRequest"
     "instance_id"
+    "export_csv_path"
+    "export_touchstone_path"
   }},
 };
 PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
@@ -3687,16 +3720,22 @@ PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       _impl_.instance_id_.ClearNonDefaultToEmpty();
     }
     if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.export_csv_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      _impl_.export_touchstone_path_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       ABSL_DCHECK(_impl_.excitation_ != nullptr);
       _impl_.excitation_->Clear();
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000cU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00000030U)) {
     ::memset(&_impl_.sample_count_, 0, static_cast<::size_t>(
         reinterpret_cast<char*>(&_impl_.timeout_ms_) -
         reinterpret_cast<char*>(&_impl_.sample_count_)) + sizeof(_impl_.timeout_ms_));
@@ -3735,14 +3774,14 @@ PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
   }
 
   // .vna.ExcitationConfig excitation = 2;
-  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
     target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
         2, *this_._impl_.excitation_, this_._impl_.excitation_->GetCachedSize(), target,
         stream);
   }
 
   // uint32 sample_count = 3;
-  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
     if (this_._internal_sample_count() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
@@ -3751,11 +3790,31 @@ PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
   }
 
   // uint32 timeout_ms = 4;
-  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
     if (this_._internal_timeout_ms() != 0) {
       target = stream->EnsureSpace(target);
       target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
           4, this_._internal_timeout_ms(), target);
+    }
+  }
+
+  // string export_csv_path = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_export_csv_path().empty()) {
+      const ::std::string& _s = this_._internal_export_csv_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.AcquisitionRequest.export_csv_path");
+      target = stream->WriteStringMaybeAliased(5, _s, target);
+    }
+  }
+
+  // string export_touchstone_path = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (!this_._internal_export_touchstone_path().empty()) {
+      const ::std::string& _s = this_._internal_export_touchstone_path();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.AcquisitionRequest.export_touchstone_path");
+      target = stream->WriteStringMaybeAliased(6, _s, target);
     }
   }
 
@@ -3784,7 +3843,7 @@ PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     // string instance_id = 1;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (!this_._internal_instance_id().empty()) {
@@ -3792,20 +3851,34 @@ PROTOBUF_NOINLINE void AcquisitionRequest::Clear() {
                                         this_._internal_instance_id());
       }
     }
-    // .vna.ExcitationConfig excitation = 2;
+    // string export_csv_path = 5;
     if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_export_csv_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_export_csv_path());
+      }
+    }
+    // string export_touchstone_path = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!this_._internal_export_touchstone_path().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_export_touchstone_path());
+      }
+    }
+    // .vna.ExcitationConfig excitation = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       total_size += 1 +
                     ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.excitation_);
     }
     // uint32 sample_count = 3;
-    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (this_._internal_sample_count() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_sample_count());
       }
     }
     // uint32 timeout_ms = 4;
-    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
       if (this_._internal_timeout_ms() != 0) {
         total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
             this_._internal_timeout_ms());
@@ -3831,7 +3904,7 @@ void AcquisitionRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       if (!from._internal_instance_id().empty()) {
         _this->_internal_set_instance_id(from._internal_instance_id());
@@ -3842,6 +3915,24 @@ void AcquisitionRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
       }
     }
     if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_export_csv_path().empty()) {
+        _this->_internal_set_export_csv_path(from._internal_export_csv_path());
+      } else {
+        if (_this->_impl_.export_csv_path_.IsDefault()) {
+          _this->_internal_set_export_csv_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (!from._internal_export_touchstone_path().empty()) {
+        _this->_internal_set_export_touchstone_path(from._internal_export_touchstone_path());
+      } else {
+        if (_this->_impl_.export_touchstone_path_.IsDefault()) {
+          _this->_internal_set_export_touchstone_path("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       ABSL_DCHECK(from._impl_.excitation_ != nullptr);
       if (_this->_impl_.excitation_ == nullptr) {
         _this->_impl_.excitation_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.excitation_);
@@ -3849,12 +3940,12 @@ void AcquisitionRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
         _this->_impl_.excitation_->MergeFrom(*from._impl_.excitation_);
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
       if (from._internal_sample_count() != 0) {
         _this->_impl_.sample_count_ = from._impl_.sample_count_;
       }
     }
-    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
       if (from._internal_timeout_ms() != 0) {
         _this->_impl_.timeout_ms_ = from._impl_.timeout_ms_;
       }
@@ -3880,6 +3971,8 @@ void AcquisitionRequest::InternalSwap(AcquisitionRequest* PROTOBUF_RESTRICT PROT
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.export_csv_path_, &other->_impl_.export_csv_path_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.export_touchstone_path_, &other->_impl_.export_touchstone_path_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(AcquisitionRequest, _impl_.timeout_ms_)
       + sizeof(AcquisitionRequest::_impl_.timeout_ms_)

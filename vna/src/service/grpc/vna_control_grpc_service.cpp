@@ -246,6 +246,16 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     return ToGrpcStatus(status, "acquire failed");
   }
 
+  if (!request->export_csv_path().empty() || !request->export_touchstone_path().empty()) {
+    const ::vna::core::Status exportStatus = controlService_->ExportAcquisitionResult(
+        result,
+        request->export_csv_path(),
+        request->export_touchstone_path());
+    if (exportStatus != ::vna::core::Status::kOk) {
+      return ToGrpcStatus(exportStatus, "export failed");
+    }
+  }
+
   FillProtoFromCoreResult(result, response);
   return ::grpc::Status::OK;
 }

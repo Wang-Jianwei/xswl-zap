@@ -115,6 +115,8 @@ export interface AcquisitionRequest {
   excitation: ExcitationConfig | undefined;
   sampleCount: number;
   timeoutMs: number;
+  exportCsvPath: string;
+  exportTouchstonePath: string;
 }
 
 export interface FrequencyDomainPoint {
@@ -1022,7 +1024,14 @@ export const ExcitationConfig: MessageFns<ExcitationConfig> = {
 };
 
 function createBaseAcquisitionRequest(): AcquisitionRequest {
-  return { instanceId: "", excitation: undefined, sampleCount: 0, timeoutMs: 0 };
+  return {
+    instanceId: "",
+    excitation: undefined,
+    sampleCount: 0,
+    timeoutMs: 0,
+    exportCsvPath: "",
+    exportTouchstonePath: "",
+  };
 }
 
 export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
@@ -1038,6 +1047,12 @@ export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
     }
     if (message.timeoutMs !== 0) {
       writer.uint32(32).uint32(message.timeoutMs);
+    }
+    if (message.exportCsvPath !== "") {
+      writer.uint32(42).string(message.exportCsvPath);
+    }
+    if (message.exportTouchstonePath !== "") {
+      writer.uint32(50).string(message.exportTouchstonePath);
     }
     return writer;
   },
@@ -1081,6 +1096,22 @@ export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
           message.timeoutMs = reader.uint32();
           continue;
         }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.exportCsvPath = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.exportTouchstonePath = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1108,6 +1139,16 @@ export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
         : isSet(object.timeout_ms)
         ? globalThis.Number(object.timeout_ms)
         : 0,
+      exportCsvPath: isSet(object.exportCsvPath)
+        ? globalThis.String(object.exportCsvPath)
+        : isSet(object.export_csv_path)
+        ? globalThis.String(object.export_csv_path)
+        : "",
+      exportTouchstonePath: isSet(object.exportTouchstonePath)
+        ? globalThis.String(object.exportTouchstonePath)
+        : isSet(object.export_touchstone_path)
+        ? globalThis.String(object.export_touchstone_path)
+        : "",
     };
   },
 
@@ -1125,6 +1166,12 @@ export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
     if (message.timeoutMs !== 0) {
       obj.timeoutMs = Math.round(message.timeoutMs);
     }
+    if (message.exportCsvPath !== "") {
+      obj.exportCsvPath = message.exportCsvPath;
+    }
+    if (message.exportTouchstonePath !== "") {
+      obj.exportTouchstonePath = message.exportTouchstonePath;
+    }
     return obj;
   },
 
@@ -1139,6 +1186,8 @@ export const AcquisitionRequest: MessageFns<AcquisitionRequest> = {
       : undefined;
     message.sampleCount = object.sampleCount ?? 0;
     message.timeoutMs = object.timeoutMs ?? 0;
+    message.exportCsvPath = object.exportCsvPath ?? "";
+    message.exportTouchstonePath = object.exportTouchstonePath ?? "";
     return message;
   },
 };

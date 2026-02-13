@@ -4804,6 +4804,8 @@ class AcquisitionRequest final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kInstanceIdFieldNumber = 1,
+    kExportCsvPathFieldNumber = 5,
+    kExportTouchstonePathFieldNumber = 6,
     kExcitationFieldNumber = 2,
     kSampleCountFieldNumber = 3,
     kTimeoutMsFieldNumber = 4,
@@ -4821,6 +4823,36 @@ class AcquisitionRequest final : public ::google::protobuf::Message
   const ::std::string& _internal_instance_id() const;
   PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(const ::std::string& value);
   ::std::string* PROTOBUF_NONNULL _internal_mutable_instance_id();
+
+  public:
+  // string export_csv_path = 5;
+  void clear_export_csv_path() ;
+  const ::std::string& export_csv_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_export_csv_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_export_csv_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_export_csv_path();
+  void set_allocated_export_csv_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_export_csv_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_export_csv_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_export_csv_path();
+
+  public:
+  // string export_touchstone_path = 6;
+  void clear_export_touchstone_path() ;
+  const ::std::string& export_touchstone_path() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_export_touchstone_path(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_export_touchstone_path();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_export_touchstone_path();
+  void set_allocated_export_touchstone_path(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_export_touchstone_path() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_export_touchstone_path(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_export_touchstone_path();
 
   public:
   // .vna.ExcitationConfig excitation = 2;
@@ -4862,8 +4894,8 @@ class AcquisitionRequest final : public ::google::protobuf::Message
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 4,
-                                   1, 42,
+  static const ::google::protobuf::internal::TcParseTable<3, 6,
+                                   1, 79,
                                    2>
       _table_;
 
@@ -4885,6 +4917,8 @@ class AcquisitionRequest final : public ::google::protobuf::Message
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    ::google::protobuf::internal::ArenaStringPtr export_csv_path_;
+    ::google::protobuf::internal::ArenaStringPtr export_touchstone_path_;
     ::vna::ExcitationConfig* PROTOBUF_NULLABLE excitation_;
     ::uint32_t sample_count_;
     ::uint32_t timeout_ms_;
@@ -6083,7 +6117,7 @@ inline void AcquisitionRequest::set_allocated_instance_id(::std::string* PROTOBU
 
 // .vna.ExcitationConfig excitation = 2;
 inline bool AcquisitionRequest::has_excitation() const {
-  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000008U);
   PROTOBUF_ASSUME(!value || _impl_.excitation_ != nullptr);
   return value;
 }
@@ -6091,7 +6125,7 @@ inline void AcquisitionRequest::clear_excitation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.excitation_ != nullptr) _impl_.excitation_->Clear();
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000002U);
+                  0x00000008U);
 }
 inline const ::vna::ExcitationConfig& AcquisitionRequest::_internal_excitation() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
@@ -6110,16 +6144,16 @@ inline void AcquisitionRequest::unsafe_arena_set_allocated_excitation(
   }
   _impl_.excitation_ = reinterpret_cast<::vna::ExcitationConfig*>(value);
   if (value != nullptr) {
-    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:vna.AcquisitionRequest.excitation)
 }
 inline ::vna::ExcitationConfig* PROTOBUF_NULLABLE AcquisitionRequest::release_excitation() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
-  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   ::vna::ExcitationConfig* released = _impl_.excitation_;
   _impl_.excitation_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
@@ -6139,7 +6173,7 @@ inline ::vna::ExcitationConfig* PROTOBUF_NULLABLE AcquisitionRequest::unsafe_are
   ::google::protobuf::internal::TSanWrite(&_impl_);
   // @@protoc_insertion_point(field_release:vna.AcquisitionRequest.excitation)
 
-  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   ::vna::ExcitationConfig* temp = _impl_.excitation_;
   _impl_.excitation_ = nullptr;
   return temp;
@@ -6154,7 +6188,7 @@ inline ::vna::ExcitationConfig* PROTOBUF_NONNULL AcquisitionRequest::_internal_m
 }
 inline ::vna::ExcitationConfig* PROTOBUF_NONNULL AcquisitionRequest::mutable_excitation()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   ::vna::ExcitationConfig* _msg = _internal_mutable_excitation();
   // @@protoc_insertion_point(field_mutable:vna.AcquisitionRequest.excitation)
   return _msg;
@@ -6171,9 +6205,9 @@ inline void AcquisitionRequest::set_allocated_excitation(::vna::ExcitationConfig
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
-    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+    SetHasBit(_impl_._has_bits_[0], 0x00000008U);
   } else {
-    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+    ClearHasBit(_impl_._has_bits_[0], 0x00000008U);
   }
 
   _impl_.excitation_ = reinterpret_cast<::vna::ExcitationConfig*>(value);
@@ -6185,7 +6219,7 @@ inline void AcquisitionRequest::clear_sample_count() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.sample_count_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000004U);
+                  0x00000010U);
 }
 inline ::uint32_t AcquisitionRequest::sample_count() const {
   // @@protoc_insertion_point(field_get:vna.AcquisitionRequest.sample_count)
@@ -6193,7 +6227,7 @@ inline ::uint32_t AcquisitionRequest::sample_count() const {
 }
 inline void AcquisitionRequest::set_sample_count(::uint32_t value) {
   _internal_set_sample_count(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
   // @@protoc_insertion_point(field_set:vna.AcquisitionRequest.sample_count)
 }
 inline ::uint32_t AcquisitionRequest::_internal_sample_count() const {
@@ -6210,7 +6244,7 @@ inline void AcquisitionRequest::clear_timeout_ms() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.timeout_ms_ = 0u;
   ClearHasBit(_impl_._has_bits_[0],
-                  0x00000008U);
+                  0x00000020U);
 }
 inline ::uint32_t AcquisitionRequest::timeout_ms() const {
   // @@protoc_insertion_point(field_get:vna.AcquisitionRequest.timeout_ms)
@@ -6218,7 +6252,7 @@ inline ::uint32_t AcquisitionRequest::timeout_ms() const {
 }
 inline void AcquisitionRequest::set_timeout_ms(::uint32_t value) {
   _internal_set_timeout_ms(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
   // @@protoc_insertion_point(field_set:vna.AcquisitionRequest.timeout_ms)
 }
 inline ::uint32_t AcquisitionRequest::_internal_timeout_ms() const {
@@ -6228,6 +6262,136 @@ inline ::uint32_t AcquisitionRequest::_internal_timeout_ms() const {
 inline void AcquisitionRequest::_internal_set_timeout_ms(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.timeout_ms_ = value;
+}
+
+// string export_csv_path = 5;
+inline void AcquisitionRequest::clear_export_csv_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.export_csv_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& AcquisitionRequest::export_csv_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.AcquisitionRequest.export_csv_path)
+  return _internal_export_csv_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AcquisitionRequest::set_export_csv_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.export_csv_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.AcquisitionRequest.export_csv_path)
+}
+inline ::std::string* PROTOBUF_NONNULL AcquisitionRequest::mutable_export_csv_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_export_csv_path();
+  // @@protoc_insertion_point(field_mutable:vna.AcquisitionRequest.export_csv_path)
+  return _s;
+}
+inline const ::std::string& AcquisitionRequest::_internal_export_csv_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.export_csv_path_.Get();
+}
+inline void AcquisitionRequest::_internal_set_export_csv_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.export_csv_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AcquisitionRequest::_internal_mutable_export_csv_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.export_csv_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AcquisitionRequest::release_export_csv_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.AcquisitionRequest.export_csv_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.export_csv_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.export_csv_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AcquisitionRequest::set_allocated_export_csv_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.export_csv_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.export_csv_path_.IsDefault()) {
+    _impl_.export_csv_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.AcquisitionRequest.export_csv_path)
+}
+
+// string export_touchstone_path = 6;
+inline void AcquisitionRequest::clear_export_touchstone_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.export_touchstone_path_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline const ::std::string& AcquisitionRequest::export_touchstone_path() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.AcquisitionRequest.export_touchstone_path)
+  return _internal_export_touchstone_path();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void AcquisitionRequest::set_export_touchstone_path(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  _impl_.export_touchstone_path_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.AcquisitionRequest.export_touchstone_path)
+}
+inline ::std::string* PROTOBUF_NONNULL AcquisitionRequest::mutable_export_touchstone_path()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  ::std::string* _s = _internal_mutable_export_touchstone_path();
+  // @@protoc_insertion_point(field_mutable:vna.AcquisitionRequest.export_touchstone_path)
+  return _s;
+}
+inline const ::std::string& AcquisitionRequest::_internal_export_touchstone_path() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.export_touchstone_path_.Get();
+}
+inline void AcquisitionRequest::_internal_set_export_touchstone_path(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.export_touchstone_path_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL AcquisitionRequest::_internal_mutable_export_touchstone_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.export_touchstone_path_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE AcquisitionRequest::release_export_touchstone_path() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.AcquisitionRequest.export_touchstone_path)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000004U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  auto* released = _impl_.export_touchstone_path_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.export_touchstone_path_.Set("", GetArena());
+  }
+  return released;
+}
+inline void AcquisitionRequest::set_allocated_export_touchstone_path(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000004U);
+  }
+  _impl_.export_touchstone_path_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.export_touchstone_path_.IsDefault()) {
+    _impl_.export_touchstone_path_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.AcquisitionRequest.export_touchstone_path)
 }
 
 // -------------------------------------------------------------------

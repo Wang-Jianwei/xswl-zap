@@ -63,6 +63,8 @@ message AcquisitionRequest {
   ExcitationConfig excitation = 2;
   uint32 sample_count = 3;
   uint32 timeout_ms = 4;
+  string export_csv_path = 5;
+  string export_touchstone_path = 6;
 }
 
 message FrequencyDomainPoint {

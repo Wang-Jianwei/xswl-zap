@@ -1323,6 +1323,39 @@ WU-MAINLINE-044: 复数结果派生格式（幅度 dB / 相位 deg）
   - `vna/build/easy_measurement_exporter_test.exe` 通过
   - `vna/scripts/run_easy_tests.ps1` 全通过（包含 `easy_s_parameter_math_test.exe`）
 
+### 8.27 已完成 Work Unit
+
+WU-MAINLINE-045: Acquire 一体化导出触发（CSV/Touchstone）
+
+- Objective: 在采集 RPC 中增加可选导出触发，打通“采集即导出”的最小闭环。
+- Scope (in/out):
+  - in: `AcquisitionRequest` 增加导出路径字段；gRPC `Acquire` 成功后可触发导出。
+  - out: 导出任务队列与异步调度。
+- Files to change:
+  - `vna/proto/vna.proto`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/generated/cpp/*`
+  - `vna/generated/ts/*`
+- Contract impact: 是（`AcquisitionRequest` 新增字段 `export_csv_path`、`export_touchstone_path`）。
+- Test plan:
+  - `vna/scripts/generate_proto.ps1`
+  - `cmake --build --preset grpc-mingw64 --target vna_grpc_server vna_grpc_service_adapter vna_grpc_client_smoke`
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu45-v1.json'`
+- Rollback plan: 回滚 proto 新字段与 gRPC 导出触发逻辑。
+- Risks: 导出路径无效时 `Acquire` 会按错误返回，需要调用方显式处理。
+- Acceptance criteria:
+  - 不配置导出路径时行为与现有 Acquire 一致。
+  - 配置导出路径时采集成功后可生成 CSV/Touchstone 文件。
+
+- Status: ✅ Completed (2026-02-13)
+
+- Validation result:
+  - `vna/scripts/generate_proto.ps1` 通过
+  - `cmake --build --preset grpc-mingw64 --target vna_grpc_server vna_grpc_service_adapter vna_grpc_client_smoke` 通过
+  - `vna/scripts/run_grpc_smoke_matrix.ps1 -SkipBuild -ReportJsonPath '.\build-grpc\smoke-matrix-wu45-v1.json'` 通过
+  - 产物检查通过：`build-grpc/grpc-acquire-export.csv`、`build-grpc/grpc-acquire-export.s4p` 存在
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
