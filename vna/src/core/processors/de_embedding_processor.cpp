@@ -21,19 +21,53 @@ bool IsValidPortTransfer(const std::vector<std::complex<double> >& portTransfer,
   return true;
 }
 
-std::size_t FindNearestProfileIndex(
+bool BuildInterpolatedPortTransfer(
     double frequencyHz,
-    const std::vector<vna::core::processors::FrequencyPortTransferProfile>& profiles) {
-  std::size_t bestIndex = 0;
-  double bestDistance = std::fabs(profiles[0].frequencyHz - frequencyHz);
-  for (std::size_t i = 1; i < profiles.size(); ++i) {
-    const double distance = std::fabs(profiles[i].frequencyHz - frequencyHz);
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestIndex = i;
+    std::size_t portCount,
+    const std::vector<vna::core::processors::FrequencyPortTransferProfile>& profiles,
+    std::vector<std::complex<double> >& outTransfer) {
+  if (profiles.empty()) {
+    return false;
+  }
+
+  std::size_t lowerIndex = 0;
+  std::size_t upperIndex = profiles.size() - 1;
+
+  for (std::size_t i = 0; i < profiles.size(); ++i) {
+    if (profiles[i].frequencyHz <= frequencyHz) {
+      lowerIndex = i;
+    }
+    if (profiles[i].frequencyHz >= frequencyHz) {
+      upperIndex = i;
+      break;
     }
   }
-  return bestIndex;
+
+  const vna::core::processors::FrequencyPortTransferProfile& lower = profiles[lowerIndex];
+  const vna::core::processors::FrequencyPortTransferProfile& upper = profiles[upperIndex];
+
+  if (!IsValidPortTransfer(lower.portTransfer, portCount) ||
+      !IsValidPortTransfer(upper.portTransfer, portCount)) {
+    return false;
+  }
+
+  outTransfer.clear();
+  outTransfer.reserve(portCount);
+
+  const bool samePoint = std::fabs(upper.frequencyHz - lower.frequencyHz) <= 1e-15;
+  const double alpha = samePoint ? 0.0 :
+      (frequencyHz - lower.frequencyHz) / (upper.frequencyHz - lower.frequencyHz);
+
+  for (std::size_t i = 0; i < portCount; ++i) {
+    const std::complex<double> interpolated =
+        lower.portTransfer[i] + (upper.portTransfer[i] - lower.portTransfer[i]) * alpha;
+    if (std::abs(interpolated) <= 1e-15) {
+      return false;
+    }
+    outTransfer.push_back(interpolated);
+  }
+
+  return true;
 }
 
 }  // namespace
@@ -96,9 +130,8 @@ Status DeEmbeddingProcessor::ApplyFrequencyDependentDiagonalFixtureCompensation(
       return Status::kInvalidArgument;
     }
 
-    const std::size_t profileIndex = FindNearestProfileIndex(point.frequencyHz, profiles);
-    const std::vector<std::complex<double> >& selectedTransfer = profiles[profileIndex].portTransfer;
-    if (!IsValidPortTransfer(selectedTransfer, portCount)) {
+    std::vector<std::complex<double> > interpolatedTransfer;
+    if (!BuildInterpolatedPortTransfer(point.frequencyHz, portCount, profiles, interpolatedTransfer)) {
       return Status::kInvalidArgument;
     }
 
@@ -106,7 +139,7 @@ Status DeEmbeddingProcessor::ApplyFrequencyDependentDiagonalFixtureCompensation(
       for (std::size_t col = 0; col < portCount; ++col) {
         const std::size_t matrixIndex = row * portCount + col;
         point.matrix[matrixIndex] = point.matrix[matrixIndex] /
-            (selectedTransfer[row] * selectedTransfer[col]);
+            (interpolatedTransfer[row] * interpolatedTransfer[col]);
       }
     }
   }

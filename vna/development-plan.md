@@ -6308,6 +6308,39 @@ WU-MAINLINE-030: compare token 结构化落盘与 gate 透传
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.309 已完成 Work Unit
+
+WU-MAINLINE-031: 频点去嵌入插值增强
+
+- Objective:
+  - 将频点去嵌入从“最近邻 profile”升级为“区间线性插值”，提升频段内校正连续性。
+- Scope (in/out):
+  - in: `DeEmbeddingProcessor` 频点 profile 线性插值计算与校验；处理器测试新增插值断言。
+  - out: 修改 gRPC 契约或新增配置字段。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-031):
+  - `vna/src/core/processors/de_embedding_processor.cpp`
+  - `vna/tests/core/de_embedding_processor_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\\easy_de_embedding_processor_test.exe`
+- Rollback plan: 回滚本次提交，恢复 frequency profile 最近邻匹配策略。
+- Risks: profile 输入频点无序时插值区间选择会受影响；当前沿用输入顺序，后续可追加排序规范化。
+- Acceptance criteria:
+  - 频点位于两个 profile 之间时，端口传输系数按线性插值计算。
+  - 去嵌入测试覆盖并通过。
+
+- Validation result (WU-MAINLINE-031):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_de_embedding_processor_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-031):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

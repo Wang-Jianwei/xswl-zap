@@ -74,14 +74,15 @@ int main() {
   profiles.push_back(profileA);
 
   vna::core::processors::FrequencyPortTransferProfile profileB;
-  profileB.frequencyHz = 2.0e9;
-  profileB.portTransfer.push_back(std::complex<double>(4.0, 0.0));
-  profileB.portTransfer.push_back(std::complex<double>(2.0, 0.0));
+       profileB.frequencyHz = 3.0e9;
+       profileB.portTransfer.push_back(std::complex<double>(6.0, 0.0));
+       profileB.portTransfer.push_back(std::complex<double>(3.0, 0.0));
   profiles.push_back(profileB);
 
   assert(processor.ApplyFrequencyDependentDiagonalFixtureCompensation(frequencyData, profiles) ==
          vna::core::Status::kOk);
   assert(std::abs(frequencyData.points[0].matrix[0] - s11Ideal) < 1e-12);
+  // 2.0e9 point should use interpolation between 1.0e9 (2,1) and 3.0e9 (6,3) => (4,2)
   assert(std::abs(frequencyData.points[1].matrix[0] - s11Ideal) < 1e-12);
 
   profiles[1].portTransfer.clear();
