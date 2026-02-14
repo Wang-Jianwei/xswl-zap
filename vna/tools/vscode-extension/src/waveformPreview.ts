@@ -985,7 +985,6 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const emptyHint = document.getElementById("emptyHint");
       const hiddenTraceIds = new Set();
       let currentCanvasModel = initialCanvasModel;
-      let renderMode = "smooth";
       let envelopeHidden = false;
       let pendingWaveformPayload = null;
       let waveformUpdateScheduled = false;

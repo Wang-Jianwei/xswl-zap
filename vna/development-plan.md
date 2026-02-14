@@ -5483,6 +5483,37 @@ WU-MAINLINE-303: gRPC 新增实例能力探测接口
   - 文档同步：已更新 `vna/README.md` 的 WU303 进展摘要。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.286 已完成 Work Unit
+
+WU-VSCODE-004: VS Code Canvas 波形预览空白修复
+
+- Objective: 修复 VS Code 扩展波形预览在 Canvas 模式下图像不显示的问题，并补充回归防护。
+- Scope (in/out):
+  - in: 修复 Webview 脚本语法错误；新增测试断言防止重复声明导致脚本中断；同步 UI 文档说明。
+  - out: 新增预览功能、改动 gRPC 契约、改动 core/service 数据路径。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-004):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅前端渲染脚本修复与测试增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，恢复到修复前状态。
+- Risks: 若后续继续拼接内联脚本，仍存在误引入语法错误风险；已通过测试断言降低回归概率。
+- Acceptance criteria:
+  - `XSWL: Preview Waveform` 在 Canvas 模式下可正常显示曲线。
+  - `waveformPreview` 相关测试通过，且 `renderMode` 重复声明不再出现。
+
+- Validation result (WU-VSCODE-004):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+- Closure notes (WU-VSCODE-004):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

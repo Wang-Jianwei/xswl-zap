@@ -144,6 +144,7 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("document.addEventListener(\"keydown\""));
   assert(html.includes("Mode: Smooth"));
   assert(html.includes("renderMode = \"smooth\""));
+  assert.equal((html.match(/let renderMode = \"smooth\";/g) ?? []).length, 1);
   assert(html.includes("envelopeHidden"));
   assert(html.includes("setTraceVisible"));
   assert(html.includes("waveCanvas"));
