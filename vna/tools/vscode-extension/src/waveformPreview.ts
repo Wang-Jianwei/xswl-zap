@@ -262,21 +262,6 @@ export function buildWaveformPreviewData(
   };
 }
 
-function toPolyline(points: WaveformPoint[], width: number, height: number): string {
-  if (points.length === 0) {
-    return "";
-  }
-
-  const bounds = getPointBounds(points);
-
-  return points
-    .map((point) => {
-      const normalized = normalizePoint(point, bounds, width, height);
-      return `${normalized.x.toFixed(2)},${normalized.y.toFixed(2)}`;
-    })
-    .join(" ");
-}
-
 function getPointBounds(points: WaveformPoint[]): { minX: number; maxX: number; minY: number; maxY: number } {
   if (points.length === 0) {
     return {
@@ -322,27 +307,138 @@ function toNormalizedPoints(points: WaveformPoint[], width: number, height: numb
   return points.map((point) => normalizePoint(point, bounds, width, height));
 }
 
-function renderTrace(trace: WaveformTrace, width: number, height: number): string {
+function movingAverage(points: WaveformPoint[], windowSize: number): WaveformPoint[] {
+  if (points.length <= 2 || windowSize <= 1) {
+    return points;
+  }
+
+  const radius = Math.max(1, Math.floor(windowSize / 2));
+  return points.map((point, index) => {
+    const start = Math.max(0, index - radius);
+    const end = Math.min(points.length - 1, index + radius);
+    let sum = 0;
+    let count = 0;
+    for (let cursor = start; cursor <= end; cursor += 1) {
+      sum += points[cursor].y;
+      count += 1;
+    }
+    return { x: point.x, y: count > 0 ? sum / count : point.y };
+  });
+}
+
+function percentile(values: number[], ratio: number): number {
+  if (values.length === 0) {
+    return 0;
+  }
+  const sorted = [...values].sort((left, right) => left - right);
+  const clamped = Math.max(0, Math.min(1, ratio));
+  const position = (sorted.length - 1) * clamped;
+  const lower = Math.floor(position);
+  const upper = Math.ceil(position);
+  if (lower === upper) {
+    return sorted[lower];
+  }
+  const weight = position - lower;
+  return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+}
+
+function withAlpha(color: string, alpha: number): string {
+  const normalizedAlpha = Math.max(0, Math.min(1, alpha));
+  if (!color.startsWith("#") || (color.length !== 7 && color.length !== 4)) {
+    return `rgba(78, 201, 176, ${normalizedAlpha})`;
+  }
+
+  if (color.length === 4) {
+    const red = parseInt(`${color[1]}${color[1]}`, 16);
+    const green = parseInt(`${color[2]}${color[2]}`, 16);
+    const blue = parseInt(`${color[3]}${color[3]}`, 16);
+    return `rgba(${red}, ${green}, ${blue}, ${normalizedAlpha})`;
+  }
+
+  const red = parseInt(color.slice(1, 3), 16);
+  const green = parseInt(color.slice(3, 5), 16);
+  const blue = parseInt(color.slice(5, 7), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${normalizedAlpha})`;
+}
+
+function renderEnvelope(
+  trace: WaveformTrace,
+  width: number,
+  height: number,
+  bounds: { minX: number; maxX: number; minY: number; maxY: number },
+): string {
+  if (trace.points.length < 8) {
+    return "";
+  }
+
+  const radius = Math.max(2, Math.min(8, Math.floor(trace.points.length / 30)));
+  const upper: WaveformPoint[] = [];
+  const lower: WaveformPoint[] = [];
+  for (let index = 0; index < trace.points.length; index += 1) {
+    const start = Math.max(0, index - radius);
+    const end = Math.min(trace.points.length - 1, index + radius);
+    let localMin = Number.POSITIVE_INFINITY;
+    let localMax = Number.NEGATIVE_INFINITY;
+    for (let cursor = start; cursor <= end; cursor += 1) {
+      const y = trace.points[cursor].y;
+      localMin = Math.min(localMin, y);
+      localMax = Math.max(localMax, y);
+    }
+    const x = trace.points[index].x;
+    upper.push({ x, y: localMax });
+    lower.push({ x, y: localMin });
+  }
+
+  const upperPolyline = upper
+    .map((point) => normalizePoint(point, bounds, width, height))
+    .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
+    .join(" ");
+  const lowerPolyline = lower
+    .map((point) => normalizePoint(point, bounds, width, height))
+    .reverse()
+    .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
+    .join(" ");
+  const polygonPoints = `${upperPolyline} ${lowerPolyline}`.trim();
+  return `<polygon class="trace-envelope" fill="${withAlpha(trace.color, 0.18)}" points="${polygonPoints}" />`;
+}
+
+function renderTrace(
+  trace: WaveformTrace,
+  width: number,
+  height: number,
+  bounds: { minX: number; maxX: number; minY: number; maxY: number },
+  smooth: boolean,
+): string {
   if (trace.points.length === 0) {
     return "";
   }
 
-  if (trace.points.length === 1) {
-    const normalized = toNormalizedPoints(trace.points, width, height);
+  const renderPoints = smooth ? movingAverage(trace.points, 7) : trace.points;
+
+  if (renderPoints.length === 1) {
+    const normalized = toNormalizedPoints(renderPoints, width, height);
     const point = normalized[0];
     return `<circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="3.5" fill="${trace.color}" />`;
   }
 
-  const points = toPolyline(trace.points, width, height);
+  const points = renderPoints
+    .map((point) => normalizePoint(point, bounds, width, height))
+    .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
+    .join(" ");
   return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
 }
 
-function renderTraceMarkers(trace: WaveformTrace, width: number, height: number, isPrimary: boolean): string {
+function renderTraceMarkers(
+  trace: WaveformTrace,
+  width: number,
+  height: number,
+  bounds: { minX: number; maxX: number; minY: number; maxY: number },
+  isPrimary: boolean,
+): string {
   if (trace.points.length === 0 || trace.markers.length === 0) {
     return "";
   }
 
-  const bounds = getPointBounds(trace.points);
   return trace.markers
     .map((marker) => {
       const normalized = normalizePoint({ x: marker.x, y: marker.y }, bounds, width, height);
@@ -398,6 +494,41 @@ function getTraceBounds(traces: WaveformTrace[]): { minX: number; maxX: number; 
   };
 }
 
+function getAdaptiveTraceBounds(
+  traces: WaveformTrace[],
+  frameType: WaveformPreviewData["frameType"],
+): { minX: number; maxX: number; minY: number; maxY: number } {
+  const base = getTraceBounds(traces);
+  const xRange = Math.max(base.maxX - base.minX, 1e-9);
+  const xPadding = xRange * 0.02;
+
+  if (frameType !== "frequency") {
+    const yRange = Math.max(base.maxY - base.minY, 1e-9);
+    const yPadding = yRange * 0.1;
+    return {
+      minX: base.minX - xPadding,
+      maxX: base.maxX + xPadding,
+      minY: base.minY - yPadding,
+      maxY: base.maxY + yPadding,
+    };
+  }
+
+  const yValues = traces.flatMap((trace) => trace.points.map((point) => point.y));
+  const p05 = percentile(yValues, 0.05);
+  const p95 = percentile(yValues, 0.95);
+  const robustMin = Math.min(base.minY, p05);
+  const robustMax = Math.max(base.maxY, p95);
+  const robustRange = Math.max(robustMax - robustMin, 1e-9);
+  const yPadding = robustRange * 0.18;
+
+  return {
+    minX: base.minX - xPadding,
+    maxX: base.maxX + xPadding,
+    minY: Math.max(0, robustMin - yPadding),
+    maxY: robustMax + yPadding,
+  };
+}
+
 function renderAxes(
   width: number,
   height: number,
@@ -434,6 +565,9 @@ function renderAxes(
 export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const width = 900;
   const height = 360;
+  const chartBounds = getAdaptiveTraceBounds(data.traces, data.frameType);
+  const enableSmoothing = data.frameType === "frequency";
+  const enableEnvelope = data.frameType === "frequency";
   const primaryTraceId = data.traces[0]?.id ?? "";
   const primaryTrace = data.traces[0];
   const primaryMarkerCopyText = primaryTrace
@@ -568,9 +702,9 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     data.traces.length === 0
       ? "<div class=\"empty\">No waveform points available.</div>"
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-         ${renderAxes(width, height, getTraceBounds(data.traces))}
+         ${renderAxes(width, height, chartBounds)}
            ${data.traces
-             .map((trace) => `<g data-trace-id="${trace.id}">${renderTrace(trace, width, height)}</g>\n${renderTraceMarkers(trace, width, height, trace.id === primaryTraceId)}`)
+             .map((trace) => `<g data-trace-id="${trace.id}">${enableEnvelope ? renderEnvelope(trace, width, height, chartBounds) : ""}${renderTrace(trace, width, height, chartBounds, enableSmoothing)}</g>\n${renderTraceMarkers(trace, width, height, chartBounds, trace.id === primaryTraceId)}`)
              .join("\n")}
          </svg>`
   }

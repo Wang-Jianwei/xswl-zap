@@ -5012,6 +5012,54 @@ WU-MAINLINE-280: 批次收敛与统一验证（WU278~280）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.263 已完成 Work Unit
+
+WU-MAINLINE-281: VS Code 波形渲染质量增强
+
+- Objective: 快速提升仿真模式在插件端的可视化可读性与真实性。
+- Scope (in/out):
+  - in: 频域平滑曲线、噪声包络阴影、自适应纵轴、共享坐标渲染。
+  - out: 新图表框架替换。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.264 已完成 Work Unit
+
+WU-MAINLINE-282: 插件回归测试补齐渲染增强断言
+
+- Objective: 防止渲染增强在后续迭代中回归丢失。
+- Scope (in/out):
+  - in: `waveformPreview.test.ts` 增加包络渲染断言。
+  - out: 像素级快照测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.265 已完成 Work Unit
+
+WU-MAINLINE-283: 批次收敛与统一验证（WU281~283）
+
+- Objective: 以粗粒度 WU 完成插件波形渲染增强闭环。
+- Scope (in/out):
+  - in: 聚合插件代码、测试、文档并统一回归。
+  - out: 插件命令交互流程重构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU281~283):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件渲染与仿真展示增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复上一版波形渲染逻辑。
+- Risks: 频域平滑会弱化尖峰细节；通过保持原始 marker 读数降低误导风险。
+- Acceptance criteria:
+  - 频域预览支持平滑、包络阴影与自适应纵轴。
+  - 插件测试通过。
+
+- Validation result (WU281~283 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

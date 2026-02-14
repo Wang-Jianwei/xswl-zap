@@ -175,6 +175,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   } as Record<string, unknown>;
   const denseData = buildWaveformPreviewData(densePayload);
   assert.equal(denseData.points.length, 512);
+  const denseHtml = buildWaveformPreviewHtml(denseData);
+  assert(denseHtml.includes("class=\"trace-envelope\""));
+  assert(denseHtml.includes("polygon"));
 
   process.stdout.write("waveformPreview.test passed\n");
 })();
