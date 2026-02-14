@@ -2931,6 +2931,88 @@ WU-MAINLINE-115: 批次收敛与统一验证（WU110~115）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.98 已完成 Work Unit
+
+WU-MAINLINE-116: compare 成功摘要增加 receiver raw 最大误差分量方向
+
+- Objective: 在 matched 场景下识别 receiver raw 最大误差来自实部还是虚部。
+- Scope (in/out):
+  - in: `receiver_raw_max_component` 摘要输出（`real/imag`）。
+  - out: 更细粒度分量时序分析。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.99 已完成 Work Unit
+
+WU-MAINLINE-117: compare 成功摘要增加 receiver compensated 最大误差分量方向
+
+- Objective: 在 matched 场景下识别补偿后通道最大误差主导分量。
+- Scope (in/out):
+  - in: `receiver_comp_max_component` 摘要输出（`real/imag`）。
+  - out: 自动分量补偿策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.100 已完成 Work Unit
+
+WU-MAINLINE-118: compare 成功摘要增加 s-parameter 最大误差分量方向
+
+- Objective: 在 matched 场景下识别 s-parameter 最大误差主导分量。
+- Scope (in/out):
+  - in: `sparameter_max_component` 摘要输出（`real/imag`）。
+  - out: 端口对分量统计图。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.101 已完成 Work Unit
+
+WU-MAINLINE-119: compare 成功摘要增加分类最大误差有符号偏差
+
+- Objective: 提供最大误差点位的偏差方向信息，缩短定位路径。
+- Scope (in/out):
+  - in: `*_max_signed_delta` 摘要输出。
+  - out: 历史偏差趋势模型。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.102 已完成 Work Unit
+
+WU-MAINLINE-120: core/service 回归断言补齐分量方向与有符号偏差
+
+- Objective: 防止新增分量方向与偏差字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: comparator 与 control service 测试增加 `*_max_component`、`*_max_signed_delta` 断言。
+  - out: UI 展示层断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.103 已完成 Work Unit
+
+WU-MAINLINE-121: 批次收敛与统一验证（WU116~121）
+
+- Objective: 合并后端 compare 诊断简单 WU，保持连续闭环交付节奏。
+- Scope (in/out):
+  - in: 聚合 WU116~121 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU116~121):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU110~115 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含三类 `*_max_component` 与 `*_max_signed_delta` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU116~121 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
