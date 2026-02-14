@@ -3379,6 +3379,148 @@ WU-MAINLINE-151: 批次收敛与统一验证（WU140~151）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.134 已完成 Work Unit
+
+WU-MAINLINE-152: compare 成功摘要增加 worst expected 实部
+
+- Objective: 在 matched 场景下暴露全局最差点的期望实部。
+- Scope (in/out):
+  - in: `worst_expected_real` 摘要输出。
+  - out: 历史快照持久化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.135 已完成 Work Unit
+
+WU-MAINLINE-153: compare 成功摘要增加 worst expected 虚部
+
+- Objective: 在 matched 场景下暴露全局最差点的期望虚部。
+- Scope (in/out):
+  - in: `worst_expected_imag` 摘要输出。
+  - out: 结构化复数对象输出。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.136 已完成 Work Unit
+
+WU-MAINLINE-154: compare 成功摘要增加 worst actual 实部
+
+- Objective: 在 matched 场景下暴露全局最差点的实测实部。
+- Scope (in/out):
+  - in: `worst_actual_real` 摘要输出。
+  - out: 实时对比可视化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.137 已完成 Work Unit
+
+WU-MAINLINE-155: compare 成功摘要增加 worst actual 虚部
+
+- Objective: 在 matched 场景下暴露全局最差点的实测虚部。
+- Scope (in/out):
+  - in: `worst_actual_imag` 摘要输出。
+  - out: 结构化复数对象输出。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.138 已完成 Work Unit
+
+WU-MAINLINE-156: compare 成功摘要增加 receiver raw 最大误差点 expected/actual 快照
+
+- Objective: 提供 receiver raw 最大误差点的期望/实测快照。
+- Scope (in/out):
+  - in: `receiver_raw_max_expected_*` / `receiver_raw_max_actual_*` 摘要输出。
+  - out: 通道历史趋势输出。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.139 已完成 Work Unit
+
+WU-MAINLINE-157: compare 成功摘要增加 receiver compensated 最大误差点 expected/actual 快照
+
+- Objective: 提供补偿后最大误差点的期望/实测快照。
+- Scope (in/out):
+  - in: `receiver_comp_max_expected_*` / `receiver_comp_max_actual_*` 摘要输出。
+  - out: 自动补偿建议。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.140 已完成 Work Unit
+
+WU-MAINLINE-158: compare 成功摘要增加 s-parameter 最大误差点 expected/actual 快照
+
+- Objective: 提供 s-parameter 最大误差点的期望/实测快照。
+- Scope (in/out):
+  - in: `sparameter_max_expected_*` / `sparameter_max_actual_*` 摘要输出。
+  - out: 端口对矩阵可视化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.141 已完成 Work Unit
+
+WU-MAINLINE-159: comparator 观测逻辑记录最大误差点复数快照
+
+- Objective: 统一保存各类别最大误差点的 expected/actual 复数值。
+- Scope (in/out):
+  - in: `Observe` 更新最大误差时同步记录复数快照。
+  - out: 外部快照存储。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.142 已完成 Work Unit
+
+WU-MAINLINE-160: comparator 回归断言补齐 worst expected/actual 字段
+
+- Objective: 防止 worst 快照字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `worst_expected/actual` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.143 已完成 Work Unit
+
+WU-MAINLINE-161: service 回归断言补齐 expected/actual 字段
+
+- Objective: 确保 service compare detail 全链路透传快照字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加分类与 worst 快照断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.144 已完成 Work Unit
+
+WU-MAINLINE-162: 文档同步 expected/actual 快照诊断语义
+
+- Objective: 保持文档与实现语义一致。
+- Scope (in/out):
+  - in: README 与 development-plan 更新快照字段说明。
+  - out: 外部文档站同步。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.145 已完成 Work Unit
+
+WU-MAINLINE-163: 批次收敛与统一验证（WU152~163）
+
+- Objective: 大批次合并后端 compare 诊断简单 WU，保持连续高产闭环。
+- Scope (in/out):
+  - in: 聚合 WU152~163 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU152~163):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU140~151 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含 worst 与分类最大误差点 expected/actual 快照字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU152~163 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

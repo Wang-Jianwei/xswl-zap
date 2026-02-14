@@ -70,6 +70,12 @@ struct ComparisonStats {
   double receiverRawMaxSignedDelta = 0.0;
   double receiverCompMaxSignedDelta = 0.0;
   double sParameterMaxSignedDelta = 0.0;
+  std::complex<double> receiverRawMaxExpected;
+  std::complex<double> receiverRawMaxActual;
+  std::complex<double> receiverCompMaxExpected;
+  std::complex<double> receiverCompMaxActual;
+  std::complex<double> sParameterMaxExpected;
+  std::complex<double> sParameterMaxActual;
 
   enum class Category {
     kReceiverRaw,
@@ -103,6 +109,8 @@ struct ComparisonStats {
         receiverRawMaxFrequencyHz = frequencyHz;
         receiverRawMaxIsReal = dominantIsReal;
         receiverRawMaxSignedDelta = dominantSignedDelta;
+        receiverRawMaxExpected = expected;
+        receiverRawMaxActual = actual;
       }
     } else if (category == Category::kReceiverCompensated) {
       receiverCompSamples += 1;
@@ -115,6 +123,8 @@ struct ComparisonStats {
         receiverCompMaxFrequencyHz = frequencyHz;
         receiverCompMaxIsReal = dominantIsReal;
         receiverCompMaxSignedDelta = dominantSignedDelta;
+        receiverCompMaxExpected = expected;
+        receiverCompMaxActual = actual;
       }
     } else {
       sParameterSamples += 1;
@@ -127,6 +137,8 @@ struct ComparisonStats {
         sParameterMaxFrequencyHz = frequencyHz;
         sParameterMaxIsReal = dominantIsReal;
         sParameterMaxSignedDelta = dominantSignedDelta;
+        sParameterMaxExpected = expected;
+        sParameterMaxActual = actual;
       }
     }
     maxComponentDelta = std::max(maxComponentDelta, componentDelta);
@@ -175,6 +187,8 @@ struct ComparisonStats {
     double worstFrequencyHz = 0.0;
     double worstDelta = 0.0;
     double worstSignedDelta = 0.0;
+    std::complex<double> worstExpected;
+    std::complex<double> worstActual;
 
     if (hasReceiverRawMax) {
       hasWorst = true;
@@ -186,6 +200,8 @@ struct ComparisonStats {
       worstFrequencyHz = receiverRawMaxFrequencyHz;
       worstDelta = receiverRawMaxDelta;
       worstSignedDelta = receiverRawMaxSignedDelta;
+      worstExpected = receiverRawMaxExpected;
+      worstActual = receiverRawMaxActual;
     }
     if (hasReceiverCompMax && (!hasWorst || receiverCompMaxDelta > worstDelta)) {
       hasWorst = true;
@@ -197,6 +213,8 @@ struct ComparisonStats {
       worstFrequencyHz = receiverCompMaxFrequencyHz;
       worstDelta = receiverCompMaxDelta;
       worstSignedDelta = receiverCompMaxSignedDelta;
+      worstExpected = receiverCompMaxExpected;
+      worstActual = receiverCompMaxActual;
     }
     if (hasSParameterMax && (!hasWorst || sParameterMaxDelta > worstDelta)) {
       hasWorst = true;
@@ -208,6 +226,8 @@ struct ComparisonStats {
       worstFrequencyHz = sParameterMaxFrequencyHz;
       worstDelta = sParameterMaxDelta;
       worstSignedDelta = sParameterMaxSignedDelta;
+      worstExpected = sParameterMaxExpected;
+      worstActual = sParameterMaxActual;
     }
     const double worstDeltaRatio = tolerance == 0.0 ? 0.0 : (worstDelta / tolerance);
 
@@ -234,6 +254,10 @@ struct ComparisonStats {
                 << ", worst_max_component=" << worstComponent
                 << ", worst_max_signed_delta=" << worstSignedDelta
                 << ", worst_max_frequency_hz=" << worstFrequencyHz
+                << ", worst_expected_real=" << worstExpected.real()
+                << ", worst_expected_imag=" << worstExpected.imag()
+                << ", worst_actual_real=" << worstActual.real()
+                << ", worst_actual_imag=" << worstActual.imag()
                 << ", worst_max_at=point:" << worstPoint
                 << "/" << worstLocationLabel << ":" << worstSubIndex;
             }
@@ -245,7 +269,11 @@ struct ComparisonStats {
                 << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
-                << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta;
+                << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
+                << ", receiver_raw_max_expected_real=" << receiverRawMaxExpected.real()
+                << ", receiver_raw_max_expected_imag=" << receiverRawMaxExpected.imag()
+                << ", receiver_raw_max_actual_real=" << receiverRawMaxActual.real()
+                << ", receiver_raw_max_actual_imag=" << receiverRawMaxActual.imag();
             }
             if (hasReceiverCompMax) {
               stream << ", receiver_comp_max_delta=" << receiverCompMaxDelta
@@ -254,7 +282,11 @@ struct ComparisonStats {
                 << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
-                << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta;
+                << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
+                << ", receiver_comp_max_expected_real=" << receiverCompMaxExpected.real()
+                << ", receiver_comp_max_expected_imag=" << receiverCompMaxExpected.imag()
+                << ", receiver_comp_max_actual_real=" << receiverCompMaxActual.real()
+                << ", receiver_comp_max_actual_imag=" << receiverCompMaxActual.imag();
             }
             if (hasSParameterMax) {
               stream << ", sparameter_max_delta=" << sParameterMaxDelta
@@ -263,7 +295,11 @@ struct ComparisonStats {
                 << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
-                << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta;
+                << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta
+                << ", sparameter_max_expected_real=" << sParameterMaxExpected.real()
+                << ", sparameter_max_expected_imag=" << sParameterMaxExpected.imag()
+                << ", sparameter_max_actual_real=" << sParameterMaxActual.real()
+                << ", sparameter_max_actual_imag=" << sParameterMaxActual.imag();
             }
     return stream.str();
   }

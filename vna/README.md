@@ -166,6 +166,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU140~WU151 进展）：后端 compare 成功摘要新增全局最差类别诊断（`worst_category`、`worst_max_at`、`worst_max_frequency_hz`、`worst_max_delta_ratio`），用于快速锁定优先排查的数据类别与点位。
 
+补充（WU152~WU163 进展）：后端 compare 成功摘要新增全局最差点及分类最大误差点的 expected/actual 快照字段（如 `worst_expected_real`、`worst_actual_real`），便于在 matched 场景下直接观察最差点偏差形态。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

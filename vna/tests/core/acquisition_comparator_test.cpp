@@ -90,6 +90,16 @@ int main() {
   assert(diff.find("worst_max_signed_delta=") != std::string::npos);
   assert(diff.find("worst_max_frequency_hz=") != std::string::npos);
   assert(diff.find("worst_max_at=point:") != std::string::npos);
+  assert(diff.find("worst_expected_real=") != std::string::npos);
+  assert(diff.find("worst_expected_imag=") != std::string::npos);
+  assert(diff.find("worst_actual_real=") != std::string::npos);
+  assert(diff.find("worst_actual_imag=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_expected_real=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_actual_real=") != std::string::npos);
+  assert(diff.find("receiver_comp_max_expected_real=") != std::string::npos);
+  assert(diff.find("receiver_comp_max_actual_real=") != std::string::npos);
+  assert(diff.find("sparameter_max_expected_real=") != std::string::npos);
+  assert(diff.find("sparameter_max_actual_real=") != std::string::npos);
 
   vna::core::AcquisitionResult mismatch = BuildResult();
   mismatch.sParameters.points[0].matrix[0] = std::complex<double>(9.9, 9.9);
