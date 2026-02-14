@@ -41,6 +41,16 @@ const char* PointZoneFromRatio(double ratio) {
   return "back";
 }
 
+const char* RiskLevelFromRatio(double ratio) {
+  if (ratio < 0.5) {
+    return "low";
+  }
+  if (ratio < 0.8) {
+    return "medium";
+  }
+  return "high";
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -214,6 +224,11 @@ struct ComparisonStats {
       ? 0.0
       : static_cast<double>(sParameterMaxPoint) /
         static_cast<double>(sParameterTotalPoints - 1);
+    const char* overallMaxRiskLevel = RiskLevelFromRatio(overallMaxDeltaRatio);
+    const char* overallRmsRiskLevel = RiskLevelFromRatio(overallRmsDeltaRatio);
+    const char* receiverRawMaxRiskLevel = RiskLevelFromRatio(receiverRawMaxDeltaRatio);
+    const char* receiverCompMaxRiskLevel = RiskLevelFromRatio(receiverCompMaxDeltaRatio);
+    const char* sParameterMaxRiskLevel = RiskLevelFromRatio(sParameterMaxDeltaRatio);
     const char* receiverRawMaxPointZone = PointZoneFromRatio(receiverRawMaxPointRatio);
     const char* receiverCompMaxPointZone = PointZoneFromRatio(receiverCompMaxPointRatio);
     const char* sParameterMaxPointZone = PointZoneFromRatio(sParameterMaxPointRatio);
@@ -282,6 +297,7 @@ struct ComparisonStats {
     const double worstPointRatio = worstTotalPoints <= 1
       ? 0.0
       : static_cast<double>(worstPoint) / static_cast<double>(worstTotalPoints - 1);
+    const char* worstRiskLevel = RiskLevelFromRatio(worstDeltaRatio);
     const char* worstPointZone = PointZoneFromRatio(worstPointRatio);
 
         stream << "tolerance=" << tolerance
@@ -292,8 +308,10 @@ struct ComparisonStats {
            << ", max_component_delta=" << maxComponentDelta
               << ", rms_component_delta=" << rmsDelta
               << ", max_component_delta_ratio=" << overallMaxDeltaRatio
+              << ", max_component_risk_level=" << overallMaxRiskLevel
               << ", max_component_tolerance_margin=" << overallMaxToleranceMargin
               << ", rms_component_delta_ratio=" << overallRmsDeltaRatio
+              << ", rms_component_risk_level=" << overallRmsRiskLevel
               << ", rms_component_tolerance_margin=" << overallRmsToleranceMargin
               << ", receiver_raw_rms_delta=" << receiverRawRmsDelta
               << ", receiver_raw_rms_delta_ratio=" << receiverRawRmsDeltaRatio
@@ -308,6 +326,7 @@ struct ComparisonStats {
               stream << ", worst_category=" << worstCategory
                 << ", worst_max_delta=" << worstDelta
                 << ", worst_max_delta_ratio=" << worstDeltaRatio
+                << ", worst_max_risk_level=" << worstRiskLevel
                 << ", worst_max_tolerance_margin=" << worstToleranceMargin
                 << ", worst_max_component=" << worstComponent
                 << ", worst_max_component_margin=" << worstComponentMargin
@@ -339,6 +358,7 @@ struct ComparisonStats {
                 << ", receiver_raw_max_point_ratio=" << receiverRawMaxPointRatio
                 << ", receiver_raw_max_point_zone=" << receiverRawMaxPointZone
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
+                << ", receiver_raw_max_risk_level=" << receiverRawMaxRiskLevel
                 << ", receiver_raw_max_tolerance_margin=" << receiverRawMaxToleranceMargin
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
@@ -363,6 +383,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_point_ratio=" << receiverCompMaxPointRatio
                 << ", receiver_comp_max_point_zone=" << receiverCompMaxPointZone
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
+                << ", receiver_comp_max_risk_level=" << receiverCompMaxRiskLevel
                 << ", receiver_comp_max_tolerance_margin=" << receiverCompMaxToleranceMargin
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
@@ -387,6 +408,7 @@ struct ComparisonStats {
                 << ", sparameter_max_point_ratio=" << sParameterMaxPointRatio
                 << ", sparameter_max_point_zone=" << sParameterMaxPointZone
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
+                << ", sparameter_max_risk_level=" << sParameterMaxRiskLevel
                 << ", sparameter_max_tolerance_margin=" << sParameterMaxToleranceMargin
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin

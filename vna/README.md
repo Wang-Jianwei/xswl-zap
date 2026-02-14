@@ -180,6 +180,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU224~WU231 进展）：后端 compare 成功摘要新增最大误差点位分段字段（分类与全局 `*_max_point_zone`，取值 `front/middle/back`），用于快速识别误差峰值所在扫频区段。
 
+补充（WU232~WU239 进展）：后端 compare 成功摘要新增容差风险分级字段（overall/分类/worst 的 `*_risk_level`，取值 `low/medium/high`），用于快速判断当前误差相对容差的风险等级。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置
