@@ -6484,6 +6484,42 @@ WU-MAINLINE-035: VS Code 导入/回放比对主流程闭环（前后端）
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.314 已完成 Work Unit
+
+WU-MAINLINE-036: VS Code 批量回放比对命令（抓大放小）
+
+- Objective:
+  - 提供目录级批量回放比对入口，减少逐个 JSON 手工执行 compare 的操作成本，优先提升主链路效率。
+- Scope (in/out):
+  - in: 新增 `Batch Compare Imported Acquisition` 命令；递归扫描目录 JSON；逐文件调用 compare；输出 matched/mismatched/failed 汇总。
+  - out: 并行调度、结果持久化报表、Webview 图形化对比。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-036):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用已有 `CompareImportedAcquisition` RPC）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，移除新增批量命令与汇总格式化逻辑。
+- Risks: 目录递归扫描在超大目录下耗时可能增加；当前以“可中断 + 进度提示”保障可控性。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Batch Compare Imported Acquisition`。
+  - 扩展可递归扫描目录下 JSON 并输出批量比对汇总（total/matched/mismatched/failed）。
+  - 扩展测试通过。
+
+- Validation result (WU-MAINLINE-036):
+  - `npm run test` 通过
+
+- Closure notes (WU-MAINLINE-036):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

@@ -1,6 +1,9 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import * as vscode from "vscode";
 import {
   formatAcquisitionSummary,
+  formatBatchCompareImportedSummary,
   formatCompareImportedAcquisitionSummary,
   formatImportedAcquisitionSummary,
   formatInstanceCapabilities,
@@ -63,6 +66,40 @@ function withScanState(
     streamActive,
     streamFrameCount,
   };
+}
+
+function collectJsonFilesRecursively(rootDir: string): string[] {
+  const results: string[] = [];
+  const stack: string[] = [rootDir];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) {
+      continue;
+    }
+
+    let entries: fs.Dirent[] = [];
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+        continue;
+      }
+
+      if (entry.isFile() && entry.name.toLowerCase().endsWith(".json")) {
+        results.push(fullPath);
+      }
+    }
+  }
+
+  results.sort((left, right) => left.localeCompare(right));
+  return results;
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -462,6 +499,184 @@ export function activate(context: vscode.ExtensionContext): void {
     },
   );
 
+  const batchCompareImportedAcquisitionCommand = vscode.commands.registerCommand(
+    "xswlZapVna.batchCompareImportedAcquisition",
+    async () => {
+      const instanceIdInput = await vscode.window.showInputBox({
+        prompt: "Instance ID",
+        value: "inst0",
+        ignoreFocusOut: true,
+      });
+      if (!instanceIdInput) {
+        return;
+      }
+
+      const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? "";
+      const folderInput = await vscode.window.showInputBox({
+        prompt: "Directory to scan JSON baselines (recursive)",
+        value: workspaceRoot,
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const normalized = value.trim();
+          if (normalized.length === 0) {
+            return "Directory path is required.";
+          }
+          if (!fs.existsSync(normalized) || !fs.statSync(normalized).isDirectory()) {
+            return "Directory does not exist.";
+          }
+          return undefined;
+        },
+      });
+      if (!folderInput) {
+        return;
+      }
+
+      const sampleCountInput = await vscode.window.showInputBox({
+        prompt: "Sample count",
+        value: "128",
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const parsed = Number(value);
+          if (!Number.isInteger(parsed) || parsed <= 0) {
+            return "Sample count must be a positive integer.";
+          }
+          return undefined;
+        },
+      });
+      if (!sampleCountInput) {
+        return;
+      }
+
+      const modeSelection = await vscode.window.showQuickPick(
+        [
+          { label: "frequency", description: "CW 频域批量比对" },
+          { label: "time", description: "Pulse 时域批量比对" },
+        ],
+        {
+          title: "Batch compare acquisition mode",
+          ignoreFocusOut: true,
+        },
+      );
+      if (!modeSelection) {
+        return;
+      }
+
+      const toleranceInput = await vscode.window.showInputBox({
+        prompt: "Compare tolerance",
+        value: "1e-6",
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const parsed = Number(value);
+          if (!Number.isFinite(parsed) || parsed <= 0) {
+            return "Tolerance must be a positive number.";
+          }
+          return undefined;
+        },
+      });
+      if (!toleranceInput) {
+        return;
+      }
+
+      const scanDir = folderInput.trim();
+      const sampleCount = Number(sampleCountInput);
+      const tolerance = Number(toleranceInput);
+      const mode = modeSelection.label as "frequency" | "time";
+
+      const requestId = createRequestId();
+      const { address, deadlineMs, autoOpenOutput } = readConfig();
+      const client = new ServiceClient({ address, deadlineMs });
+
+      try {
+        const jsonPaths = collectJsonFilesRecursively(scanDir);
+        if (jsonPaths.length === 0) {
+          vscode.window.showWarningMessage(`No JSON baseline found under ${scanDir}.`);
+          return;
+        }
+
+        const summary = {
+          total: jsonPaths.length,
+          matched: 0,
+          mismatched: 0,
+          failed: 0,
+        };
+
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: "XSWL Batch Compare Imported Acquisition",
+            cancellable: true,
+          },
+          async (progress, token) => {
+            for (let index = 0; index < jsonPaths.length; index += 1) {
+              if (token.isCancellationRequested) {
+                throw new Error("batch compare canceled by user");
+              }
+
+              const jsonPath = jsonPaths[index];
+              progress.report({
+                increment: (100 / jsonPaths.length),
+                message: `${index + 1}/${jsonPaths.length}: ${path.basename(jsonPath)}`,
+              });
+
+              try {
+                const result = await client.compareImportedAcquisition(
+                  jsonPath,
+                  instanceIdInput,
+                  sampleCount,
+                  tolerance,
+                  mode,
+                );
+                const message = formatCompareImportedAcquisitionSummary(result);
+                logBlock(
+                  outputChannel,
+                  result.matched ? "INFO" : "ERROR",
+                  `[BatchCompareImportedAcquisition][requestId=${requestId}]`,
+                  [
+                    `index=${index + 1}/${jsonPaths.length}, jsonPath=${jsonPath}`,
+                    message,
+                  ],
+                );
+
+                if (result.matched) {
+                  summary.matched += 1;
+                } else {
+                  summary.mismatched += 1;
+                }
+              } catch (error) {
+                summary.failed += 1;
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                logBlock(outputChannel, "ERROR", `[BatchCompareImportedAcquisition][requestId=${requestId}]`, [
+                  `index=${index + 1}/${jsonPaths.length}, jsonPath=${jsonPath}`,
+                  `failed=${errorMessage}`,
+                ]);
+              }
+            }
+          },
+        );
+
+        const summaryText = formatBatchCompareImportedSummary(summary);
+        logBlock(outputChannel, "INFO", `[BatchCompareImportedAcquisitionSummary][requestId=${requestId}]`, [
+          `instanceId=${instanceIdInput}, scanDir=${scanDir}, sampleCount=${sampleCount}, mode=${mode}, tolerance=${tolerance}`,
+          summaryText,
+        ]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+        if (summary.failed > 0 || summary.mismatched > 0) {
+          vscode.window.showWarningMessage(`BatchCompareImportedAcquisition: ${summaryText} | req=${requestId}`);
+        } else {
+          vscode.window.showInformationMessage(`BatchCompareImportedAcquisition: ${summaryText} | req=${requestId}`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logBlock(outputChannel, "ERROR", `[BatchCompareImportedAcquisition][requestId=${requestId}]`, [errorMessage]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        vscode.window.showErrorMessage(`BatchCompareImportedAcquisition failed: ${errorMessage} | req=${requestId}`);
+      } finally {
+        client.dispose();
+      }
+    },
+  );
+
   const previewWaveformCommand = vscode.commands.registerCommand("xswlZapVna.previewWaveform", async () => {
     const instanceIdInput = await vscode.window.showInputBox({
       prompt: "Instance ID",
@@ -841,6 +1056,7 @@ export function activate(context: vscode.ExtensionContext): void {
     streamPreviewCommand,
     importAcquisitionCommand,
     compareImportedAcquisitionCommand,
+    batchCompareImportedAcquisitionCommand,
     previewWaveformCommand,
   );
 }

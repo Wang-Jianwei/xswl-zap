@@ -8,6 +8,7 @@
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
 - Command: `XSWL: Import Acquisition`（从 JSON 导入一次采集结果并输出帧摘要）
 - Command: `XSWL: Compare Imported Acquisition`（基于导入 JSON 发起当前采集并做容差比对，输出 match/mismatch 与 `grpc_compare_token`）
+- Command: `XSWL: Batch Compare Imported Acquisition`（递归扫描目录下 JSON 基准文件并批量比对，输出 matched/mismatched/failed 汇总）
 - Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 默认持续自动刷新，直到取消或关闭页面）
   - 频域预览会基于 `sampleCount` 自动构造扫频参数（`start/stop/sweepPointCount`），默认返回多点频域波形（不再退化为单点）
   - 频域下支持 trace source 选择：`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`
@@ -114,6 +115,7 @@ npm run test
 - Run command `XSWL: Stream Preview` and cancel from progress notification when needed
 - Run command `XSWL: Import Acquisition` to load a JSON acquisition baseline
 - Run command `XSWL: Compare Imported Acquisition` to compare current acquisition against imported baseline
+- Run command `XSWL: Batch Compare Imported Acquisition` to compare all JSON baselines under a directory in one run
 - Run command `XSWL: Preview Waveform` to visualize latest acquired points in a Webview chart
   - `snapshot`: 单次采集并显示
   - `live`: 基于 stream 的持续自动刷新（无固定帧数上限，支持取消）

@@ -1,6 +1,7 @@
 import { strict as assert } from "node:assert";
 import {
   formatAcquisitionSummary,
+  formatBatchCompareImportedSummary,
   formatCompareImportedAcquisitionSummary,
   formatImportedAcquisitionSummary,
   formatInstanceCapabilities,
@@ -173,6 +174,16 @@ import {
       grpcCompareToken: "grpc_compare_token=instance:inst0|sample:128|timeout_ms:2000|tolerance:1e-6",
     }),
     "matched=false | detail=COMPARE_MISMATCH: max_abs_diff=0.12 | grpcCompareToken=grpc_compare_token=instance:inst0|sample:128|timeout_ms:2000|tolerance:1e-6",
+  );
+
+  assert.equal(
+    formatBatchCompareImportedSummary({
+      total: 9,
+      matched: 7,
+      mismatched: 1,
+      failed: 1,
+    }),
+    "total=9 | matched=7 | mismatched=1 | failed=1",
   );
 
   process.stdout.write("statusFormatter.test passed\n");

@@ -1,5 +1,6 @@
 import type {
   AcquisitionSummary,
+  BatchCompareImportedSummary,
   CompareImportedAcquisitionSummary,
   ImportedAcquisitionSummary,
   InstanceCapabilities,
@@ -91,6 +92,15 @@ export function formatCompareImportedAcquisitionSummary(summary: CompareImported
     fields.push(`grpcCompareToken=${summary.grpcCompareToken}`);
   }
   return fields.join(" | ");
+}
+
+export function formatBatchCompareImportedSummary(summary: BatchCompareImportedSummary): string {
+  return [
+    `total=${summary.total}`,
+    `matched=${summary.matched}`,
+    `mismatched=${summary.mismatched}`,
+    `failed=${summary.failed}`,
+  ].join(" | ");
 }
 
 export function formatInstanceCapabilities(capabilities: InstanceCapabilities): string {

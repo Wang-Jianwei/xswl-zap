@@ -42,6 +42,10 @@
         "title": "XSWL: Compare Imported Acquisition"
       },
       {
+        "command": "xswlZapVna.batchCompareImportedAcquisition",
+        "title": "XSWL: Batch Compare Imported Acquisition"
+      },
+      {
         "command": "xswlZapVna.previewWaveform",
         "title": "XSWL: Preview Waveform"
       },

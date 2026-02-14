@@ -65,6 +65,13 @@ export interface CompareImportedAcquisitionSummary {
   grpcCompareToken: string;
 }
 
+export interface BatchCompareImportedSummary {
+  total: number;
+  matched: number;
+  mismatched: number;
+  failed: number;
+}
+
 export interface WaveformPoint {
   x: number;
   y: number;
