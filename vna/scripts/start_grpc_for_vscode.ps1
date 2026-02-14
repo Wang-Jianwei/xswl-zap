@@ -1,11 +1,28 @@
 param(
-  [switch]$SkipBuild
+  [switch]$SkipBuild,
+  [switch]$SkipDoctor
 )
 
 $ErrorActionPreference = "Stop"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptDir
+
+$doctorScript = Join-Path $scriptDir "doctor_grpc_for_vscode.ps1"
+if (-not $SkipDoctor -and (Test-Path $doctorScript)) {
+  Write-Host "[VSCODE-GRPC] preflight doctor check"
+  & $doctorScript
+  if ($LASTEXITCODE -ne 0) {
+    throw "doctor_grpc_for_vscode failed. use -SkipDoctor to bypass."
+  }
+}
+
+$existing = Get-Process -Name "easy_grpc_server" -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($null -ne $existing) {
+  Write-Host "[VSCODE-GRPC] already running. pid=$($existing.Id)"
+  Write-Host "[VSCODE-GRPC] stop command: taskkill /IM easy_grpc_server.exe /F"
+  exit 0
+}
 
 $serverExe = Join-Path $projectRoot "build-grpc\easy_grpc_server.exe"
 

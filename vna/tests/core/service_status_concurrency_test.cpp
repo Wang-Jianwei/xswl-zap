@@ -10,6 +10,14 @@ int main() {
   vna::service::ProcessManager processManager;
   vna::service::ServiceStatusService statusService;
 
+  vna::service::ServiceConfig initialConfig;
+  initialConfig.bindAddress = "127.0.0.1";
+  initialConfig.port = 50051;
+  initialConfig.tlsEnabled = false;
+  initialConfig.logLevel = "info";
+  statusService.UpdateConfig(initialConfig);
+  statusService.UpdateBootstrapContext("grpc", "config/service.yaml");
+
   std::atomic<bool> done(false);
 
   std::thread writer([&]() {

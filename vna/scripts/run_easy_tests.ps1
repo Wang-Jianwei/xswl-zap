@@ -1,5 +1,6 @@
 param(
-  [string]$BuildDir = "$PSScriptRoot\..\build"
+  [string]$BuildDir = "$PSScriptRoot\..\build",
+  [int]$PerTestTimeoutSec = 120
 )
 
 $ErrorActionPreference = 'Stop'
@@ -25,6 +26,23 @@ if ($null -ne (Get-Variable -Name PSNativeCommandUseErrorActionPreference -Error
 }
 
 Ensure-MingwRuntime
+
+$RepoDir = (Resolve-Path "$PSScriptRoot\..").Path
+
+function Stop-ProcessTree {
+  param(
+    [int]$ProcessId
+  )
+
+  try {
+    taskkill /F /T /PID $ProcessId | Out-Null
+  } catch {
+    try {
+      Stop-Process -Id $ProcessId -Force -ErrorAction SilentlyContinue
+    } catch {
+    }
+  }
+}
 
 $tests = @(
   'easy_time_domain_processor_test.exe',
@@ -54,17 +72,73 @@ $tests = @(
   'easy_service_status_concurrency_test.exe',
   'easy_vna_control_inproc_handler_test.exe'
 )
+
+$failed = @()
+
 foreach ($test in $tests) {
   $path = Join-Path $BuildDir $test
   if (-not (Test-Path $path)) {
-    throw "Missing test binary: $path"
+    $failed += [pscustomobject]@{
+      Test = $test
+      Reason = 'missing-binary'
+      Detail = $path
+    }
+    Write-Host "[FAIL] $test (missing binary)"
+    continue
   }
 
   Write-Host "[RUN] $test"
-  & $path
-  if ($LASTEXITCODE -ne 0) {
-    throw "Test failed: $test (exit=$LASTEXITCODE)"
+
+  $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+  $startInfo.FileName = $path
+  $startInfo.WorkingDirectory = $RepoDir
+  $startInfo.UseShellExecute = $false
+  $startInfo.RedirectStandardOutput = $false
+  $startInfo.RedirectStandardError = $false
+
+  $proc = [System.Diagnostics.Process]::Start($startInfo)
+  if ($null -eq $proc) {
+    $failed += [pscustomobject]@{
+      Test = $test
+      Reason = 'start-failed'
+      Detail = 'process start returned null'
+    }
+    Write-Host "[FAIL] $test (start failed)"
+    continue
   }
+
+  $finished = $proc.WaitForExit($PerTestTimeoutSec * 1000)
+  if (-not $finished) {
+    Stop-ProcessTree -ProcessId $proc.Id
+    $failed += [pscustomobject]@{
+      Test = $test
+      Reason = 'timeout'
+      Detail = "exceeded ${PerTestTimeoutSec}s"
+    }
+    Write-Host "[TIMEOUT] $test (>${PerTestTimeoutSec}s, process tree killed)"
+    continue
+  }
+
+  $exitCode = $proc.ExitCode
+  if ($exitCode -ne 0) {
+    $failed += [pscustomobject]@{
+      Test = $test
+      Reason = 'non-zero-exit'
+      Detail = "exit=$exitCode"
+    }
+    Write-Host "[FAIL] $test (exit=$exitCode)"
+    continue
+  }
+
+  Write-Host "[PASS] $test"
+}
+
+if ($failed.Count -gt 0) {
+  Write-Host "`nEasy test summary: $($tests.Count - $failed.Count)/$($tests.Count) passed, $($failed.Count) failed."
+  foreach ($item in $failed) {
+    Write-Host "  - $($item.Test): $($item.Reason) ($($item.Detail))"
+  }
+  exit 1
 }
 
 Write-Host "All easy tests passed."

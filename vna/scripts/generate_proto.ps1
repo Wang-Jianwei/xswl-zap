@@ -40,13 +40,20 @@ if ([string]::IsNullOrWhiteSpace($GrpcPluginPath)) {
 }
 
 if ([string]::IsNullOrWhiteSpace($TsPluginPath)) {
-    $tsPluginCmd = Join-Path $env:APPDATA "npm/protoc-gen-ts_proto.cmd"
-    $tsPluginShim = Join-Path $env:APPDATA "npm/protoc-gen-ts_proto"
+    $candidatePaths = @(
+        (Join-Path $projectRoot "tools\vscode-extension\node_modules\.bin\protoc-gen-ts_proto.cmd"),
+        (Join-Path $projectRoot "tools\vscode-extension\node_modules\.bin\protoc-gen-ts_proto"),
+        (Join-Path $projectRoot "node_modules\.bin\protoc-gen-ts_proto.cmd"),
+        (Join-Path $projectRoot "node_modules\.bin\protoc-gen-ts_proto"),
+        (Join-Path $env:APPDATA "npm\protoc-gen-ts_proto.cmd"),
+        (Join-Path $env:APPDATA "npm\protoc-gen-ts_proto")
+    )
 
-    if (Test-Path $tsPluginCmd) {
-        $TsPluginPath = $tsPluginCmd
-    } elseif (Test-Path $tsPluginShim) {
-        $TsPluginPath = $tsPluginShim
+    foreach ($candidate in $candidatePaths) {
+        if (-not [string]::IsNullOrWhiteSpace($candidate) -and (Test-Path $candidate)) {
+            $TsPluginPath = $candidate
+            break
+        }
     }
 
     $tsCommand = $null
@@ -59,7 +66,7 @@ if ([string]::IsNullOrWhiteSpace($TsPluginPath)) {
 
     if ([string]::IsNullOrWhiteSpace($TsPluginPath)) {
         if ($null -eq $tsCommand) {
-            throw "protoc-gen-ts_proto not found in PATH."
+            throw "protoc-gen-ts_proto not found. Run 'npm install --ignore-scripts' in vna/tools/vscode-extension, or install it globally."
         }
         $TsPluginPath = $tsCommand.Source
     }
