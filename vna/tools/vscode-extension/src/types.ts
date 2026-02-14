@@ -52,6 +52,19 @@ export interface StreamPreviewSummary extends StreamPreviewFrame {
   canceled: boolean;
 }
 
+export interface ImportedAcquisitionSummary {
+  instanceId: string;
+  timestampNs: number;
+  frameType: "frequency" | "time" | "unknown";
+  pointCount: number;
+}
+
+export interface CompareImportedAcquisitionSummary {
+  matched: boolean;
+  detail: string;
+  grpcCompareToken: string;
+}
+
 export interface WaveformPoint {
   x: number;
   y: number;

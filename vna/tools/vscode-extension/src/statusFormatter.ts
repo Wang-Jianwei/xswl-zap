@@ -1,5 +1,7 @@
 import type {
   AcquisitionSummary,
+  CompareImportedAcquisitionSummary,
+  ImportedAcquisitionSummary,
   InstanceCapabilities,
   ServiceStatus,
   StreamPreviewSummary,
@@ -69,6 +71,26 @@ export function formatStreamPreviewSummary(summary: StreamPreviewSummary): strin
     `lastPoints=${summary.lastPointCount}`,
     `canceled=${summary.canceled}`,
   ].join(" | ");
+}
+
+export function formatImportedAcquisitionSummary(summary: ImportedAcquisitionSummary): string {
+  return [
+    `instanceId=${summary.instanceId}`,
+    `timestampNs=${summary.timestampNs}`,
+    `frame=${summary.frameType}`,
+    `points=${summary.pointCount}`,
+  ].join(" | ");
+}
+
+export function formatCompareImportedAcquisitionSummary(summary: CompareImportedAcquisitionSummary): string {
+  const fields = [
+    `matched=${summary.matched}`,
+    `detail=${summary.detail}`,
+  ];
+  if (summary.grpcCompareToken.length > 0) {
+    fields.push(`grpcCompareToken=${summary.grpcCompareToken}`);
+  }
+  return fields.join(" | ");
 }
 
 export function formatInstanceCapabilities(capabilities: InstanceCapabilities): string {

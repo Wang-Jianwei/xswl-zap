@@ -34,6 +34,14 @@
         "title": "XSWL: Stream Preview"
       },
       {
+        "command": "xswlZapVna.importAcquisition",
+        "title": "XSWL: Import Acquisition"
+      },
+      {
+        "command": "xswlZapVna.compareImportedAcquisition",
+        "title": "XSWL: Compare Imported Acquisition"
+      },
+      {
         "command": "xswlZapVna.previewWaveform",
         "title": "XSWL: Preview Waveform"
       },

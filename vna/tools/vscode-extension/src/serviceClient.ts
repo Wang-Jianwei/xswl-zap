@@ -3,6 +3,8 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import type {
   AcquisitionSummary,
+  CompareImportedAcquisitionSummary,
+  ImportedAcquisitionSummary,
   InstanceCapabilities,
   ServiceStatus,
   StreamPreviewFrame,
@@ -69,6 +71,35 @@ export interface ScanStateResult {
 export interface ServiceClientOptions {
   address: string;
   deadlineMs: number;
+}
+
+export interface CompareDetailWithToken {
+  detail: string;
+  grpcCompareToken: string;
+}
+
+export function splitCompareDetail(detail: string): CompareDetailWithToken {
+  const tokenPrefix = "grpc_compare_token=";
+  const marker = `, ${tokenPrefix}`;
+  const markerIndex = detail.indexOf(marker);
+  if (markerIndex >= 0) {
+    return {
+      detail: detail.substring(0, markerIndex).trim(),
+      grpcCompareToken: detail.substring(markerIndex + 2).trim(),
+    };
+  }
+
+  if (detail.indexOf(tokenPrefix) === 0) {
+    return {
+      detail: "",
+      grpcCompareToken: detail.trim(),
+    };
+  }
+
+  return {
+    detail,
+    grpcCompareToken: "",
+  };
 }
 
 export function parseInstanceCapabilities(payload: Record<string, unknown>): InstanceCapabilities {
@@ -258,6 +289,116 @@ export class ServiceClient {
             timestampNs: Number(payload.timestampNs ?? 0),
             frameType,
             pointCount,
+          });
+        },
+      );
+    });
+  }
+
+  importAcquisition(jsonPath: string): Promise<ImportedAcquisitionSummary> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ImportedAcquisitionSummary>((resolve, reject) => {
+      (this.client as unknown as {
+        importAcquisition: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).importAcquisition(
+        {
+          jsonPath,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const payload = response;
+          const frequencyFrame = payload.frequencyFrame as Record<string, unknown> | undefined;
+          const timeFrame = payload.timeFrame as Record<string, unknown> | undefined;
+          const frequencyPoints = frequencyFrame?.points;
+          const timePoints = timeFrame?.points;
+
+          let frameType: "frequency" | "time" | "unknown" = "unknown";
+          let pointCount = 0;
+          if (Array.isArray(frequencyPoints)) {
+            frameType = "frequency";
+            pointCount = frequencyPoints.length;
+          } else if (Array.isArray(timePoints)) {
+            frameType = "time";
+            pointCount = timePoints.length;
+          }
+
+          resolve({
+            instanceId: String(payload.instanceId ?? ""),
+            timestampNs: Number(payload.timestampNs ?? 0),
+            frameType,
+            pointCount,
+          });
+        },
+      );
+    });
+  }
+
+  compareImportedAcquisition(
+    jsonPath: string,
+    instanceId: string,
+    sampleCount: number,
+    tolerance: number,
+    mode: WaveformMode,
+  ): Promise<CompareImportedAcquisitionSummary> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<CompareImportedAcquisitionSummary>((resolve, reject) => {
+      (this.client as unknown as {
+        compareImportedAcquisition: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).compareImportedAcquisition(
+        {
+          jsonPath,
+          tolerance,
+          currentRequest: {
+            instanceId,
+            sampleCount,
+            timeoutMs: Math.max(this.deadlineMs, 1000),
+            excitation:
+              mode === "time"
+                ? {
+                    mode: 2,
+                    settlingTimeMs: 0,
+                    enableAutoTrigger: true,
+                    pulse: {
+                      centerFrequencyHz: 1.0e9,
+                      pulseWidthNs: 200,
+                      pulsePeriodNs: 2000,
+                      powerDbm: -10,
+                      riseTimeNs: 20,
+                    },
+                  }
+                : {
+                    mode: 1,
+                    settlingTimeMs: 0,
+                    enableAutoTrigger: true,
+                    cw: buildCwExcitationFromSampleCount(sampleCount),
+                  },
+          },
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const parsed = splitCompareDetail(String(response.detail ?? ""));
+          resolve({
+            matched: Boolean(response.matched),
+            detail: parsed.detail,
+            grpcCompareToken: parsed.grpcCompareToken,
           });
         },
       );

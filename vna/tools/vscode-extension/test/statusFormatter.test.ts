@@ -1,6 +1,8 @@
 import { strict as assert } from "node:assert";
 import {
   formatAcquisitionSummary,
+  formatCompareImportedAcquisitionSummary,
+  formatImportedAcquisitionSummary,
   formatInstanceCapabilities,
   formatServiceStatusMultiline,
   formatServiceStatus,
@@ -152,6 +154,25 @@ import {
       maxSamplingRateGhz: 2.5,
     }),
     "pulse=true | multiTone=false | externalClock=true | minPulseWidthNs=80 | minPulsePeriodNs=200 | maxSamplingRateGhz=2.5",
+  );
+
+  assert.equal(
+    formatImportedAcquisitionSummary({
+      instanceId: "inst0",
+      timestampNs: 777,
+      frameType: "frequency",
+      pointCount: 64,
+    }),
+    "instanceId=inst0 | timestampNs=777 | frame=frequency | points=64",
+  );
+
+  assert.equal(
+    formatCompareImportedAcquisitionSummary({
+      matched: false,
+      detail: "COMPARE_MISMATCH: max_abs_diff=0.12",
+      grpcCompareToken: "grpc_compare_token=instance:inst0|sample:128|timeout_ms:2000|tolerance:1e-6",
+    }),
+    "matched=false | detail=COMPARE_MISMATCH: max_abs_diff=0.12 | grpcCompareToken=grpc_compare_token=instance:inst0|sample:128|timeout_ms:2000|tolerance:1e-6",
   );
 
   process.stdout.write("statusFormatter.test passed\n");

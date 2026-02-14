@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import {
   formatAcquisitionSummary,
+  formatCompareImportedAcquisitionSummary,
+  formatImportedAcquisitionSummary,
   formatInstanceCapabilities,
   formatServiceStatus,
   formatServiceStatusMultiline,
@@ -310,6 +312,155 @@ export function activate(context: vscode.ExtensionContext): void {
       client.dispose();
     }
   });
+
+  const importAcquisitionCommand = vscode.commands.registerCommand("xswlZapVna.importAcquisition", async () => {
+    const activeFile = vscode.window.activeTextEditor?.document.fileName ?? "";
+    const defaultJsonPath = activeFile.toLowerCase().endsWith(".json") ? activeFile : "";
+
+    const jsonPathInput = await vscode.window.showInputBox({
+      prompt: "Imported acquisition JSON path",
+      value: defaultJsonPath,
+      ignoreFocusOut: true,
+      validateInput: (value) => (value.trim().length === 0 ? "JSON path is required." : undefined),
+    });
+    if (!jsonPathInput) {
+      return;
+    }
+
+    const jsonPath = jsonPathInput.trim();
+    const requestId = createRequestId();
+    const { address, deadlineMs, autoOpenOutput } = readConfig();
+    const client = new ServiceClient({ address, deadlineMs });
+
+    try {
+      const summary = await client.importAcquisition(jsonPath);
+      const message = formatImportedAcquisitionSummary(summary);
+      logBlock(outputChannel, "INFO", `[ImportAcquisition][requestId=${requestId}]`, [
+        `jsonPath=${jsonPath}`,
+        message,
+      ]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showInformationMessage(`ImportAcquisition: ${message} | req=${requestId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logBlock(outputChannel, "ERROR", `[ImportAcquisition][requestId=${requestId}]`, [errorMessage]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showErrorMessage(`ImportAcquisition failed: ${errorMessage} | req=${requestId}`);
+    } finally {
+      client.dispose();
+    }
+  });
+
+  const compareImportedAcquisitionCommand = vscode.commands.registerCommand(
+    "xswlZapVna.compareImportedAcquisition",
+    async () => {
+      const instanceIdInput = await vscode.window.showInputBox({
+        prompt: "Instance ID",
+        value: "inst0",
+        ignoreFocusOut: true,
+      });
+      if (!instanceIdInput) {
+        return;
+      }
+
+      const activeFile = vscode.window.activeTextEditor?.document.fileName ?? "";
+      const defaultJsonPath = activeFile.toLowerCase().endsWith(".json") ? activeFile : "";
+      const jsonPathInput = await vscode.window.showInputBox({
+        prompt: "Imported acquisition JSON path",
+        value: defaultJsonPath,
+        ignoreFocusOut: true,
+        validateInput: (value) => (value.trim().length === 0 ? "JSON path is required." : undefined),
+      });
+      if (!jsonPathInput) {
+        return;
+      }
+
+      const sampleCountInput = await vscode.window.showInputBox({
+        prompt: "Sample count",
+        value: "128",
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const parsed = Number(value);
+          if (!Number.isInteger(parsed) || parsed <= 0) {
+            return "Sample count must be a positive integer.";
+          }
+          return undefined;
+        },
+      });
+      if (!sampleCountInput) {
+        return;
+      }
+
+      const modeSelection = await vscode.window.showQuickPick(
+        [
+          { label: "frequency", description: "CW 频域采集后比对" },
+          { label: "time", description: "Pulse 时域采集后比对" },
+        ],
+        {
+          title: "Compare acquisition mode",
+          ignoreFocusOut: true,
+        },
+      );
+      if (!modeSelection) {
+        return;
+      }
+
+      const toleranceInput = await vscode.window.showInputBox({
+        prompt: "Compare tolerance",
+        value: "1e-6",
+        ignoreFocusOut: true,
+        validateInput: (value) => {
+          const parsed = Number(value);
+          if (!Number.isFinite(parsed) || parsed <= 0) {
+            return "Tolerance must be a positive number.";
+          }
+          return undefined;
+        },
+      });
+      if (!toleranceInput) {
+        return;
+      }
+
+      const sampleCount = Number(sampleCountInput);
+      const tolerance = Number(toleranceInput);
+      const jsonPath = jsonPathInput.trim();
+      const mode = modeSelection.label as "frequency" | "time";
+
+      const requestId = createRequestId();
+      const { address, deadlineMs, autoOpenOutput } = readConfig();
+      const client = new ServiceClient({ address, deadlineMs });
+
+      try {
+        const summary = await client.compareImportedAcquisition(
+          jsonPath,
+          instanceIdInput,
+          sampleCount,
+          tolerance,
+          mode,
+        );
+        const message = formatCompareImportedAcquisitionSummary(summary);
+        const logLines = [
+          `instanceId=${instanceIdInput}, jsonPath=${jsonPath}, sampleCount=${sampleCount}, mode=${mode}, tolerance=${tolerance}`,
+          message,
+        ];
+        logBlock(outputChannel, summary.matched ? "INFO" : "ERROR", `[CompareImportedAcquisition][requestId=${requestId}]`, logLines);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+        if (summary.matched) {
+          vscode.window.showInformationMessage(`CompareImportedAcquisition: matched | req=${requestId}`);
+        } else {
+          vscode.window.showWarningMessage(`CompareImportedAcquisition: mismatch | req=${requestId}`);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logBlock(outputChannel, "ERROR", `[CompareImportedAcquisition][requestId=${requestId}]`, [errorMessage]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        vscode.window.showErrorMessage(`CompareImportedAcquisition failed: ${errorMessage} | req=${requestId}`);
+      } finally {
+        client.dispose();
+      }
+    },
+  );
 
   const previewWaveformCommand = vscode.commands.registerCommand("xswlZapVna.previewWaveform", async () => {
     const instanceIdInput = await vscode.window.showInputBox({
@@ -688,6 +839,8 @@ export function activate(context: vscode.ExtensionContext): void {
     validateTopologyCommand,
     acquireOnceCommand,
     streamPreviewCommand,
+    importAcquisitionCommand,
+    compareImportedAcquisitionCommand,
     previewWaveformCommand,
   );
 }

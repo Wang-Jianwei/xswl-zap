@@ -6446,6 +6446,44 @@ WU-MAINLINE-034: 去嵌入配置解析器模块化与单测闭环
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.313 已完成 Work Unit
+
+WU-MAINLINE-035: VS Code 导入/回放比对主流程闭环（前后端）
+
+- Objective:
+  - 打通 VS Code 扩展到后端 gRPC 的“导入基准 JSON -> 当前采集容差比对”主流程，优先完成核心可用链路。
+- Scope (in/out):
+  - in: 扩展新增 `ImportAcquisition` / `CompareImportedAcquisition` 命令；ServiceClient 接入对应 RPC；输出透传 `grpc_compare_token`；补单测与文档。
+  - out: 新增 Webview 图形化比对面板、批量比对任务调度。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-035):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/tools/vscode-extension/test/serviceClient.test.ts`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用已有 `vna.proto` 的 `ImportAcquisition` 与 `CompareImportedAcquisition` RPC）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，移除新增命令贡献项与对应 client/formatter/types 变更。
+- Risks: 比对命令当前采用交互输入参数（instance/sampleCount/mode/tolerance），尚未提供配置模板；后续可在不改契约前提下补快捷预设。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Import Acquisition` 并输出导入结果摘要。
+  - 命令面板可执行 `XSWL: Compare Imported Acquisition` 并输出 match/mismatch 结果与 `grpc_compare_token`。
+  - 扩展构建与单测通过。
+
+- Validation result (WU-MAINLINE-035):
+  - `npm run test` 通过
+
+- Closure notes (WU-MAINLINE-035):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
