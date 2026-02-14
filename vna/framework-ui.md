@@ -101,6 +101,7 @@ flowchart LR
 
 - 插件命令 `XSWL: Preview Waveform`：触发一次 `Acquire`，在 Webview 内展示最小折线图。
 - 支持采集模式选择：`frequency`（CW）/`time`（Pulse）。
+- 频域（CW）预览请求会根据 `sampleCount` 自动填充 `start/stop/sweepPointCount`，保证返回多点频域曲线（避免单点退化）。
 - 支持预览类型选择：`snapshot`（单次）/`live`（短时自动刷新，可取消）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。

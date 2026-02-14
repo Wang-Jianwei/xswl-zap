@@ -7,6 +7,7 @@
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
 - Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 会短时自动刷新）
+  - 频域预览会基于 `sampleCount` 自动构造扫频参数（`start/stop/sweepPointCount`），默认返回多点频域波形（不再退化为单点）
   - 频域下支持 trace source 选择：`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`
   - 选择 `receiverRaw` / `receiverCompensated` / `all` 时可输入 `channel index`（默认 0）
   - 选择 `all` 时可进一步勾选可见曲线（显隐控制）

@@ -14,6 +14,27 @@ import type {
 } from "./types";
 import { buildWaveformPreviewData } from "./waveformPreview";
 
+const kDefaultCwCenterFrequencyHz = 1.0e9;
+const kDefaultCwSpanHz = 1.0e8;
+
+export function buildCwExcitationFromSampleCount(sampleCount: number): Record<string, number> {
+  const normalizedSampleCount = Number.isFinite(sampleCount)
+    ? Math.max(2, Math.min(4096, Math.trunc(sampleCount)))
+    : 256;
+  const halfSpanHz = kDefaultCwSpanHz / 2.0;
+  return {
+    frequencyHz: kDefaultCwCenterFrequencyHz,
+    startFrequencyHz: kDefaultCwCenterFrequencyHz - halfSpanHz,
+    stopFrequencyHz: kDefaultCwCenterFrequencyHz + halfSpanHz,
+    sweepPointCount: normalizedSampleCount,
+    ifBandwidthHz: 1.0e3,
+    portCount: 2,
+    excitationPort: 1,
+    powerDbm: -10,
+    dwellTimeMs: 1,
+  };
+}
+
 export interface ServiceClientOptions {
   address: string;
   deadlineMs: number;
@@ -139,11 +160,7 @@ export class ServiceClient {
             mode: 1,
             settlingTimeMs: 0,
             enableAutoTrigger: true,
-            cw: {
-              frequencyHz: 1.0e9,
-              powerDbm: -10,
-              dwellTimeMs: 1,
-            },
+            cw: buildCwExcitationFromSampleCount(sampleCount),
           },
         },
         { deadline },
@@ -219,11 +236,7 @@ export class ServiceClient {
                   mode: 1,
                   settlingTimeMs: 0,
                   enableAutoTrigger: true,
-                  cw: {
-                    frequencyHz: 1.0e9,
-                    powerDbm: -10,
-                    dwellTimeMs: 1,
-                  },
+                  cw: buildCwExcitationFromSampleCount(sampleCount),
                 },
         },
         { deadline },
@@ -281,11 +294,7 @@ export class ServiceClient {
                   mode: 1,
                   settlingTimeMs: 0,
                   enableAutoTrigger: true,
-                  cw: {
-                    frequencyHz: 1.0e9,
-                    powerDbm: -10,
-                    dwellTimeMs: 1,
-                  },
+                  cw: buildCwExcitationFromSampleCount(sampleCount),
                 },
         },
         { deadline },
@@ -372,11 +381,7 @@ export class ServiceClient {
             mode: 1,
             settlingTimeMs: 0,
             enableAutoTrigger: true,
-            cw: {
-              frequencyHz: 1.0e9,
-              powerDbm: -10,
-              dwellTimeMs: 1,
-            },
+            cw: buildCwExcitationFromSampleCount(sampleCount),
           },
         },
         { deadline },

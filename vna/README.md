@@ -172,6 +172,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU176~WU191 进展）：后端 compare 成功摘要新增分类与全局最差点的实部/虚部绝对误差拆分字段（如 `receiver_raw_max_real_delta`、`receiver_raw_max_imag_delta`、`worst_max_real_delta`、`worst_max_imag_delta`），便于快速识别误差构成。
 
+补充（WU192~WU203 进展）：VS Code 插件已修复频域波形仅单点显示问题，`Preview Waveform`/`Stream Preview` 的 CW 请求现会携带扫频参数（`start/stop/sweepPointCount`），`sampleCount` 可映射为多点频域预览。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置
