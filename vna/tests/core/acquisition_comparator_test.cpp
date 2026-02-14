@@ -60,6 +60,9 @@ int main() {
   assert(diff.find("sparameter_samples=") != std::string::npos);
   assert(diff.find("max_component_delta=") != std::string::npos);
   assert(diff.find("rms_component_delta=") != std::string::npos);
+  assert(diff.find("receiver_raw_rms_delta=") != std::string::npos);
+  assert(diff.find("receiver_comp_rms_delta=") != std::string::npos);
+  assert(diff.find("sparameter_rms_delta=") != std::string::npos);
   assert(diff.find("receiver_raw_max_at=point:") != std::string::npos);
   assert(diff.find("receiver_comp_max_at=point:") != std::string::npos);
   assert(diff.find("sparameter_max_at=point:") != std::string::npos);

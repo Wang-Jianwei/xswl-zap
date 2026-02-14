@@ -52,6 +52,9 @@ struct ComparisonStats {
   double receiverRawMaxDelta = 0.0;
   double receiverCompMaxDelta = 0.0;
   double sParameterMaxDelta = 0.0;
+  double receiverRawSumSquareDelta = 0.0;
+  double receiverCompSumSquareDelta = 0.0;
+  double sParameterSumSquareDelta = 0.0;
   std::size_t receiverRawMaxPoint = 0;
   std::size_t receiverRawMaxChannel = 0;
   std::size_t receiverCompMaxPoint = 0;
@@ -69,6 +72,7 @@ struct ComparisonStats {
     sampleCount += 1;
     if (category == Category::kReceiverRaw) {
       receiverRawSamples += 1;
+      receiverRawSumSquareDelta += delta * delta;
       if (!hasReceiverRawMax || delta > receiverRawMaxDelta) {
         hasReceiverRawMax = true;
         receiverRawMaxDelta = delta;
@@ -77,6 +81,7 @@ struct ComparisonStats {
       }
     } else if (category == Category::kReceiverCompensated) {
       receiverCompSamples += 1;
+      receiverCompSumSquareDelta += delta * delta;
       if (!hasReceiverCompMax || delta > receiverCompMaxDelta) {
         hasReceiverCompMax = true;
         receiverCompMaxDelta = delta;
@@ -85,6 +90,7 @@ struct ComparisonStats {
       }
     } else {
       sParameterSamples += 1;
+      sParameterSumSquareDelta += delta * delta;
       if (!hasSParameterMax || delta > sParameterMaxDelta) {
         hasSParameterMax = true;
         sParameterMaxDelta = delta;
@@ -102,13 +108,28 @@ struct ComparisonStats {
     const double rmsDelta = sampleCount == 0
                                 ? 0.0
                                 : std::sqrt(sumSquareDelta / static_cast<double>(sampleCount));
+    const double receiverRawRmsDelta = receiverRawSamples == 0
+                                           ? 0.0
+                                           : std::sqrt(receiverRawSumSquareDelta /
+                                                       static_cast<double>(receiverRawSamples));
+    const double receiverCompRmsDelta = receiverCompSamples == 0
+                                            ? 0.0
+                                            : std::sqrt(receiverCompSumSquareDelta /
+                                                        static_cast<double>(receiverCompSamples));
+    const double sParameterRmsDelta = sParameterSamples == 0
+                                          ? 0.0
+                                          : std::sqrt(sParameterSumSquareDelta /
+                                                      static_cast<double>(sParameterSamples));
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
           << ", receiver_raw_samples=" << receiverRawSamples
           << ", receiver_comp_samples=" << receiverCompSamples
           << ", sparameter_samples=" << sParameterSamples
            << ", max_component_delta=" << maxComponentDelta
-              << ", rms_component_delta=" << rmsDelta;
+              << ", rms_component_delta=" << rmsDelta
+              << ", receiver_raw_rms_delta=" << receiverRawRmsDelta
+              << ", receiver_comp_rms_delta=" << receiverCompRmsDelta
+              << ", sparameter_rms_delta=" << sParameterRmsDelta;
 
             if (hasReceiverRawMax) {
               stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta

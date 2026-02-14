@@ -2849,6 +2849,88 @@ WU-MAINLINE-109: 批次收敛与统一验证（WU104~109）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.92 已完成 Work Unit
+
+WU-MAINLINE-110: compare 成功摘要增加 receiver raw RMS 误差
+
+- Objective: 在 matched 场景下提供 receiver raw 整体误差强度指标。
+- Scope (in/out):
+  - in: `receiver_raw_rms_delta` 摘要输出。
+  - out: 频段分桶 RMS 统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.93 已完成 Work Unit
+
+WU-MAINLINE-111: compare 成功摘要增加 receiver compensated RMS 误差
+
+- Objective: 在 matched 场景下提供补偿后通道整体误差强度指标。
+- Scope (in/out):
+  - in: `receiver_comp_rms_delta` 摘要输出。
+  - out: 通道分组趋势统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.94 已完成 Work Unit
+
+WU-MAINLINE-112: compare 成功摘要增加 s-parameter RMS 误差
+
+- Objective: 在 matched 场景下提供 s-parameter 维度整体误差强度指标。
+- Scope (in/out):
+  - in: `sparameter_rms_delta` 摘要输出。
+  - out: 端口对矩阵细分统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.95 已完成 Work Unit
+
+WU-MAINLINE-113: comparator 增加分类平方和累计
+
+- Objective: 为分类 RMS 指标提供稳定计算基础。
+- Scope (in/out):
+  - in: 按类别累计 `sumSquareDelta` 并在摘要统一输出。
+  - out: 诊断持久化存储。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.96 已完成 Work Unit
+
+WU-MAINLINE-114: core/service 回归断言补齐分类 RMS 字段
+
+- Objective: 防止分类 RMS 摘要字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: comparator 与 control service 测试增加 `*_rms_delta` 断言。
+  - out: UI 层字段展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.97 已完成 Work Unit
+
+WU-MAINLINE-115: 批次收敛与统一验证（WU110~115）
+
+- Objective: 合并后端 compare 诊断简单 WU，保持高频闭环效率。
+- Scope (in/out):
+  - in: 聚合 WU110~115 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU110~115):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU104~109 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含三类 `*_rms_delta` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU110~115 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

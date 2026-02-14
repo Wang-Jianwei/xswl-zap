@@ -156,6 +156,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU104~WU109 进展）：后端 compare 成功摘要新增各数据类别最大误差位置（`receiver_raw_max_at` / `receiver_comp_max_at` / `sparameter_max_at`），便于在 matched 场景下快速定位“误差峰值点位”。
 
+补充（WU110~WU115 进展）：后端 compare 成功摘要新增分类 RMS 误差字段（`receiver_raw_rms_delta` / `receiver_comp_rms_delta` / `sparameter_rms_delta`），用于快速判断不同数据类别的整体误差水平。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

@@ -107,6 +107,9 @@ int main() {
         assert(compareDiff.find("tolerance=") != std::string::npos);
         assert(compareDiff.find("receiver_raw_samples=") != std::string::npos);
         assert(compareDiff.find("max_component_delta=") != std::string::npos);
+        assert(compareDiff.find("receiver_raw_rms_delta=") != std::string::npos);
+        assert(compareDiff.find("receiver_comp_rms_delta=") != std::string::npos);
+        assert(compareDiff.find("sparameter_rms_delta=") != std::string::npos);
         assert(compareDiff.find("receiver_raw_max_at=point:") != std::string::npos);
         assert(compareDiff.find("sparameter_max_at=point:") != std::string::npos);
 
