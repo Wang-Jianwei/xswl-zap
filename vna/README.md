@@ -495,6 +495,12 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 .\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild
 ```
 
+CI 推荐 profile（等价 strict，并固定 CI 报告输出命名）：
+
+```powershell
+.\scripts\run_mainline_gate.ps1 -Profile ci -SkipBuild
+```
+
 可选标准模式（不启用 UI E2E 与 strict unknown-stderr）：
 
 ```powershell

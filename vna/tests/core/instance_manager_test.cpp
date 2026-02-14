@@ -1,5 +1,7 @@
 #include <cassert>
+#include <chrono>
 #include <memory>
+#include <thread>
 
 #include "core/built_in_drivers.h"
 #include "core/instance_manager.h"
@@ -44,6 +46,31 @@ int main() {
   assert(instanceManager.StartInstance("inst1") == vna::core::Status::kOk);
   assert(resourceManager.ActiveLeaseCount() == 1);
   assert(instanceManager.StopInstance("inst1") == vna::core::Status::kOk);
+
+  // Lease expiry + external contention: acquire should fail instead of bypassing lease state.
+  vna::core::InstanceConfig config3 = config;
+  config3.instanceId = "inst2";
+  config3.resourceId = "dev2";
+  config3.leaseTtlSeconds = 1;
+  assert(instanceManager.CreateInstance(config3) == vna::core::Status::kOk);
+  assert(instanceManager.StartInstance("inst2") == vna::core::Status::kOk);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+
+  vna::core::ResourceRequest competingRequest;
+  competingRequest.resourceId = "dev2";
+  competingRequest.workspaceId = "ws-competing";
+  competingRequest.exclusive = true;
+  competingRequest.timeoutMs = 0;
+
+  vna::core::LeaseInfo competingLease;
+  assert(resourceManager.Acquire(competingRequest, 2, competingLease) == vna::core::Status::kOk);
+
+  vna::core::AcquisitionResult conflictResult;
+  assert(instanceManager.AcquireOnce("inst2", excitation, 32, 1000, conflictResult) == vna::core::Status::kTimeout);
+
+  assert(resourceManager.Release(competingLease.leaseId) == vna::core::Status::kOk);
+  assert(instanceManager.StopInstance("inst2") == vna::core::Status::kOk);
 
   return 0;
 }

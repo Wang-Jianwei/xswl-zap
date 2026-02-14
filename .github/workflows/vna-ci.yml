@@ -74,7 +74,7 @@ jobs:
         working-directory: vna
         run: |
           $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
-          .\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild -SmokeTimeoutSec 20 -ResultJsonPath '.\build-grpc\ci-mainline-gate-{timestamp}.json'
+          .\scripts\run_mainline_gate.ps1 -Profile ci -SkipBuild -SmokeTimeoutSec 20
 
       - name: Upload gate artifacts
         if: always()

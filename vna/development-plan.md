@@ -6012,6 +6012,43 @@ WU-VSCODE-019~021: 主线门禁统一入口与 CI 严格接线
   - 文档同步：已更新 `vna/README.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.301 已完成 Work Unit
+
+WU-MAINLINE-022~023: 门禁 CI 预设收敛 + 实例租约续期增强
+
+- Objective:
+  - WU-MAINLINE-022：补齐 `run_mainline_gate.ps1` 的 `ci` profile，统一 CI 与本地门禁入口并固化报告命名。
+  - WU-MAINLINE-023：在 `InstanceManager::AcquireOnce` 增加采集前租约续期/重获逻辑，避免租约失效后“无校验继续采集”。
+- Scope (in/out):
+  - in: 门禁入口 profile 增强、`vna-ci` 调用收敛、README 用法更新、instance manager 核心逻辑与回归测试。
+  - out: 修改 gRPC 契约、修改 compare 判定语义。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-022~023):
+  - `vna/scripts/run_mainline_gate.ps1`
+  - `.github/workflows/vna-ci.yml`
+  - `vna/README.md`
+  - `vna/src/core/instance_manager.cpp`
+  - `vna/tests/core/instance_manager_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/scripts && .\run_mainline_gate.ps1 -Profile ci -SkipBuild -SmokeTimeoutSec 20`
+  - `cd vna/build && ctest -R easy_instance_manager_test --output-on-failure --timeout 20`
+- Rollback plan: 回滚本次提交，恢复 strict/profile 参数直传方式与原有 instance acquire 简化租约逻辑。
+- Risks: 租约续期失败会更早暴露资源冲突（从“隐式成功”变为显式失败）；该行为符合资源独占契约。
+- Acceptance criteria:
+  - CI 通过 `-Profile ci` 执行 strict mainline gate，结果文件名稳定。
+  - 租约过期后若资源被抢占，`AcquireOnce` 返回超时/冲突而非继续成功。
+
+- Validation result (WU-MAINLINE-022~023):
+  - `run_mainline_gate.ps1 -Profile ci -SkipBuild` 通过
+  - `ctest -R easy_instance_manager_test` 通过
+
+- Closure notes (WU-MAINLINE-022~023):
+  - 文档同步：已更新 `vna/README.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

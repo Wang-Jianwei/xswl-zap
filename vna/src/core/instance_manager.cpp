@@ -161,7 +161,28 @@ Status InstanceManager::AcquireOnce(const std::string& instanceId,
     return Status::kInvalidArgument;
   }
 
-  // Pre-GA: simplified lease handling - renew not automatic.
+  if (!resourceManager_ || entry.leaseId.empty()) {
+    return Status::kInternalError;
+  }
+
+  const Status renewStatus = resourceManager_->Renew(entry.leaseId, entry.config.leaseTtlSeconds);
+  if (renewStatus == Status::kTimeout) {
+    ResourceRequest request;
+    request.resourceId = entry.config.resourceId;
+    request.workspaceId = entry.config.workspaceId;
+    request.exclusive = true;
+    request.timeoutMs = 0;
+
+    LeaseInfo lease;
+    const Status reacquireStatus = resourceManager_->Acquire(request, entry.config.leaseTtlSeconds, lease);
+    if (reacquireStatus != Status::kOk) {
+      return reacquireStatus;
+    }
+    entry.leaseId = lease.leaseId;
+  } else if (renewStatus != Status::kOk) {
+    return renewStatus;
+  }
+
   return entry.pipeline->Acquire(instanceId, excitation, sampleCount, timeoutMs, out);
 }
 

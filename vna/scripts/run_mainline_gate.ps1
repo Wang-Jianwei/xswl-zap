@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("standard", "strict")]
+  [ValidateSet("standard", "strict", "ci")]
   [string]$Profile = "strict",
   [switch]$SkipBuild,
   [int]$SmokeTimeoutSec = 20,
@@ -28,8 +28,12 @@ if ($AsJson) {
   $gateParams.AsJson = $true
 }
 
-if ($Profile -eq "strict") {
+if ($Profile -eq "strict" -or $Profile -eq "ci") {
   $gateParams.StrictMainline = $true
+}
+
+if ($Profile -eq "ci" -and $ResultJsonPath -eq ".\build-grpc\mainline-gate-result-{timestamp}.json") {
+  $gateParams.ResultJsonPath = ".\build-grpc\ci-mainline-gate-{timestamp}.json"
 }
 
 if ($FailOnWarningCodes.Count -gt 0) {
