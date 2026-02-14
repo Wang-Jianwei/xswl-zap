@@ -325,8 +325,33 @@ struct ComparisonStats {
     const char* worstRiskLevel = RiskLevelFromRatio(worstDeltaRatio);
     const char* worstPointZone = PointZoneFromRatio(worstPointRatio);
     const std::string worstProfile = BuildRiskZoneProfile(worstRiskLevel, worstPointZone);
-    const std::string worstDigest =
-      BuildWorstDigest(worstCategory, worstProfile, worstPoint, worstLocationLabel, worstSubIndex);
+    const std::string worstDigest = hasWorst
+      ? BuildWorstDigest(worstCategory, worstProfile, worstPoint, worstLocationLabel, worstSubIndex)
+      : "none";
+    const std::string receiverRawDigest = hasReceiverRawMax
+      ? BuildWorstDigest("receiver_raw",
+                         receiverRawMaxProfile,
+                         receiverRawMaxPoint,
+                         "channel",
+                         receiverRawMaxChannel)
+      : "none";
+    const std::string receiverCompDigest = hasReceiverCompMax
+      ? BuildWorstDigest("receiver_comp",
+                         receiverCompMaxProfile,
+                         receiverCompMaxPoint,
+                         "channel",
+                         receiverCompMaxChannel)
+      : "none";
+    const std::string sParameterDigest = hasSParameterMax
+      ? BuildWorstDigest("sparameter",
+                         sParameterMaxProfile,
+                         sParameterMaxPoint,
+                         "value",
+                         sParameterMaxValue)
+      : "none";
+    const std::string overallDigest = hasWorst
+      ? (std::string("overall|") + overallMaxRiskLevel + "|" + worstDigest)
+      : "overall|none";
 
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
@@ -346,7 +371,8 @@ struct ComparisonStats {
               << ", receiver_comp_rms_delta=" << receiverCompRmsDelta
               << ", receiver_comp_rms_delta_ratio=" << receiverCompRmsDeltaRatio
               << ", sparameter_rms_delta=" << sParameterRmsDelta
-              << ", sparameter_rms_delta_ratio=" << sParameterRmsDeltaRatio;
+              << ", sparameter_rms_delta_ratio=" << sParameterRmsDeltaRatio
+              << ", overall_digest=" << overallDigest;
 
             if (hasWorst) {
               const double worstRealDelta = std::fabs(worstActual.real() - worstExpected.real());
@@ -391,6 +417,7 @@ struct ComparisonStats {
                 << ", receiver_raw_max_risk_level=" << receiverRawMaxRiskLevel
                 << ", receiver_raw_max_tolerance_margin=" << receiverRawMaxToleranceMargin
                 << ", receiver_raw_max_profile=" << receiverRawMaxProfile
+                << ", receiver_raw_digest=" << receiverRawDigest
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
@@ -417,6 +444,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_risk_level=" << receiverCompMaxRiskLevel
                 << ", receiver_comp_max_tolerance_margin=" << receiverCompMaxToleranceMargin
                 << ", receiver_comp_max_profile=" << receiverCompMaxProfile
+                << ", receiver_comp_digest=" << receiverCompDigest
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
@@ -443,6 +471,7 @@ struct ComparisonStats {
                 << ", sparameter_max_risk_level=" << sParameterMaxRiskLevel
                 << ", sparameter_max_tolerance_margin=" << sParameterMaxToleranceMargin
                 << ", sparameter_max_profile=" << sParameterMaxProfile
+                << ", sparameter_digest=" << sParameterDigest
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta
