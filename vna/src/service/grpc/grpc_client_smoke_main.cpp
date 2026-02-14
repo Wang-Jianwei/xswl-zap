@@ -219,6 +219,11 @@ int main(int argc, char** argv) {
       return 15;
     }
 
+    if (response.detail().find("grpc_compare_token=") == std::string::npos) {
+      std::cout << "CompareImportedAcquisition validation failed: missing grpc_compare_token\n";
+      return 16;
+    }
+
     if (!response.matched()) {
       std::cout << "CompareImportedAcquisition warning: matched=false detail="
                 << response.detail() << "\n";

@@ -6240,6 +6240,39 @@ WU-MAINLINE-028: 去嵌入状态可观测化（compare detail 标记）
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.307 已完成 Work Unit
+
+WU-MAINLINE-029: gRPC compare detail 上下文 token 化
+
+- Objective:
+  - 在 gRPC `CompareImportedAcquisition` 的 `detail` 中追加统一上下文 token，支持 UI/E2E 与门禁日志按请求参数快速检索。
+- Scope (in/out):
+  - in: gRPC service detail 拼接 `grpc_compare_token`、grpc smoke client 校验 token 存在。
+  - out: 修改 proto 字段、改变 compare 判定分支语义。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-029):
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/src/service/grpc/grpc_client_smoke_main.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && .\scripts\build_grpc_adapter.ps1`
+  - `cd vna && .\build-grpc\easy_grpc_client_smoke.exe 127.0.0.1:50051`
+- Rollback plan: 回滚本次提交，恢复 compare detail 原有内容。
+- Risks: detail 文本长度增加；当前以追加形式实现，兼容已有前缀匹配逻辑。
+- Acceptance criteria:
+  - compare detail 包含 `grpc_compare_token=`。
+  - grpc smoke client 校验 token 存在并通过。
+
+- Validation result (WU-MAINLINE-029):
+  - `build_grpc_adapter.ps1` 通过
+  - `easy_grpc_client_smoke.exe` 通过
+
+- Closure notes (WU-MAINLINE-029):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

@@ -189,6 +189,24 @@ std::string BuildRequestConfigDigest(const ::vna::AcquisitionRequest& request) {
   return oss.str();
 }
 
+std::string BuildGrpcCompareContextToken(const ::vna::CompareImportedAcquisitionRequest& request) {
+  std::ostringstream oss;
+  oss << "grpc_compare_token="
+      << "instance:" << request.current_request().instance_id()
+      << "|sample:" << request.current_request().sample_count()
+      << "|timeout_ms:" << request.current_request().timeout_ms()
+      << "|tolerance:" << request.tolerance();
+  return oss.str();
+}
+
+std::string AppendCompareContextToken(const std::string& detail,
+                                      const std::string& contextToken) {
+  if (detail.empty()) {
+    return contextToken;
+  }
+  return detail + ", " + contextToken;
+}
+
 void LogConfigTransitionIfChanged(const char* scope, const ::vna::AcquisitionRequest& request) {
   static std::mutex logMutex;
   static std::string lastAcquireDigest;
@@ -482,18 +500,20 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   }
 
   std::string diff;
+  const std::string contextToken = BuildGrpcCompareContextToken(*request);
   const ::vna::core::Status compareStatus = controlService_->CompareImportedAcquisition(
       request->json_path(), current, request->tolerance(), &diff);
   if (compareStatus == ::vna::core::Status::kOk) {
     response->set_matched(true);
-    response->set_detail(diff.empty() ? "COMPARE_MATCHED" : diff);
+    const std::string detail = diff.empty() ? "COMPARE_MATCHED" : diff;
+    response->set_detail(AppendCompareContextToken(detail, contextToken));
     return ::grpc::Status::OK;
   }
 
   if (compareStatus == ::vna::core::Status::kInvalidArgument &&
       diff.find("COMPARE_MISMATCH:") == 0) {
     response->set_matched(false);
-    response->set_detail(diff);
+    response->set_detail(AppendCompareContextToken(diff, contextToken));
     return ::grpc::Status::OK;
   }
 
