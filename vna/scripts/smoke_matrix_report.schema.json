@@ -21,6 +21,11 @@
     "overallPassed": { "type": "boolean" },
     "caseCount": { "type": "integer", "minimum": 0 },
     "reportDigest": { "type": "string" },
+    "compareContextTokenCount": { "type": "integer", "minimum": 0 },
+    "compareContextTokens": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "failedCaseNames": {
       "type": "array",
       "items": { "type": "string" }
@@ -114,6 +119,11 @@
           "durationMs": { "type": "integer", "minimum": 0 },
           "unaryExitCode": { "type": ["integer", "null"] },
           "streamExitCode": { "type": ["integer", "null"] },
+          "grpcCompareTokenCount": { "type": "integer", "minimum": 0 },
+          "grpcCompareTokens": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "failureReason": { "type": "string" },
           "resultDigest": { "type": "string" },
           "passed": { "type": "boolean" }

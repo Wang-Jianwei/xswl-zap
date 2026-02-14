@@ -79,6 +79,8 @@ function Write-ResultJsonIfNeeded {
 $resolvedReportPath = $ReportPath
 $matchedCodes = @()
 $failureMessage = ""
+$compareContextTokenCount = 0
+$compareContextTokens = @()
 $resolvedResultJsonPath = Resolve-PathPlaceholders $ResultJsonPath
 $startedAtUtc = [DateTime]::UtcNow
 
@@ -117,8 +119,15 @@ try {
     throw "Report validation failed with exit code: $LASTEXITCODE"
   }
 
+  $report = Get-Content -Path $resolvedReportPath -Raw | ConvertFrom-Json
+  if ($null -ne $report.compareContextTokenCount) {
+    $compareContextTokenCount = [int]$report.compareContextTokenCount
+  }
+  if ($null -ne $report.compareContextTokens) {
+    $compareContextTokens = @($report.compareContextTokens)
+  }
+
   if ($FailOnWarningCodes.Count -gt 0) {
-    $report = Get-Content -Path $resolvedReportPath -Raw | ConvertFrom-Json
     $warningCodes = @($report.warnings | ForEach-Object { $_.code })
     $matchedCodes = @($warningCodes | Where-Object { $FailOnWarningCodes -contains $_ } | Select-Object -Unique)
     if ($matchedCodes.Count -gt 0) {
@@ -164,6 +173,8 @@ try {
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
     matchedWarningCodes = @($matchedCodes)
+    compareContextTokenCount = $compareContextTokenCount
+    compareContextTokens = @($compareContextTokens)
     error = ""
   }
 
@@ -195,6 +206,8 @@ catch {
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
     matchedWarningCodes = @($matchedCodes)
+    compareContextTokenCount = $compareContextTokenCount
+    compareContextTokens = @($compareContextTokens)
     error = $failureMessage
   }
 

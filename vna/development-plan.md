@@ -6273,6 +6273,41 @@ WU-MAINLINE-029: gRPC compare detail 上下文 token 化
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.308 已完成 Work Unit
+
+WU-MAINLINE-030: compare token 结构化落盘与 gate 透传
+
+- Objective:
+  - 将 `grpc_compare_token` 从“日志文本”升级为 smoke/gate 报告中的结构化字段，实现日志、报告、门禁结果三处一致可检索。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 提取 token 并写入 case/top-level 字段；schema 扩展；`run_smoke_report_gate.ps1` 透传 token 汇总到 gate result json。
+  - out: 修改 compare RPC 契约或客户端请求结构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-030):
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/scripts/smoke_matrix_report.schema.json`
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && .\scripts\run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 20`
+  - `cd vna && .\scripts\run_smoke_report_gate.ps1 -SkipBuild -SmokeTimeoutSec 20`
+- Rollback plan: 回滚本次提交，恢复 token 仅在控制台日志中可见的行为。
+- Risks: 报告字段增量会影响外部严格 schema 使用者；当前已同步 schema 并保持旧字段兼容。
+- Acceptance criteria:
+  - smoke 报告包含 `compareContextTokenCount` 与 `compareContextTokens`。
+  - 每个 case 包含 `grpcCompareTokenCount` 与 `grpcCompareTokens`。
+  - gate result json 包含 compare token 汇总透传字段。
+
+- Validation result (WU-MAINLINE-030):
+  - `run_grpc_smoke_matrix.ps1 -SkipBuild` 通过
+  - `run_smoke_report_gate.ps1 -SkipBuild` 通过
+
+- Closure notes (WU-MAINLINE-030):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

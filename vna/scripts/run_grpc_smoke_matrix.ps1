@@ -149,6 +149,7 @@ function Invoke-SmokeCommand {
   $unknownStderrCount = 0
   $successMatched = $false
   $compareMismatchWarningCount = 0
+  $grpcCompareTokens = @()
 
   foreach ($line in $stdoutLines) {
     $isKnownNoise = $false
@@ -170,6 +171,10 @@ function Invoke-SmokeCommand {
 
     if ($line -match "CompareImportedAcquisition warning:\s*matched=false") {
       $compareMismatchWarningCount += 1
+    }
+
+    if ($line -match "grpc_compare_token=[^,\s]+") {
+      $grpcCompareTokens += $matches[0]
     }
 
     Write-Host $line
@@ -197,6 +202,10 @@ function Invoke-SmokeCommand {
     if (-not [string]::IsNullOrWhiteSpace($line)) {
       $unknownStderrCount += 1
     }
+
+    if ($line -match "grpc_compare_token=[^,\s]+") {
+      $grpcCompareTokens += $matches[0]
+    }
   }
 
   if ($suppressedCount -gt 0) {
@@ -220,11 +229,15 @@ function Invoke-SmokeCommand {
     $effectiveExitCode = 125
   }
 
+  $uniqueGrpcCompareTokens = @($grpcCompareTokens | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique | Sort-Object)
+
   return ,([PSCustomObject]@{
     ExitCode = $effectiveExitCode
     SuppressedCount = $suppressedCount
     UnknownStderrCount = $unknownStderrCount
     CompareMismatchWarningCount = $compareMismatchWarningCount
+    GrpcCompareTokenCount = $uniqueGrpcCompareTokens.Count
+    GrpcCompareTokens = $uniqueGrpcCompareTokens
     TimedOut = $timedOut
     SuccessMatched = $successMatched
   })
@@ -328,6 +341,8 @@ try {
         suppressedNoiseCount = $unaryResult.SuppressedCount + $streamResult.SuppressedCount
         unknownStderrCount = $unknownStderrCount
         compareMismatchWarningCount = $unaryResult.CompareMismatchWarningCount + $streamResult.CompareMismatchWarningCount
+        grpcCompareTokenCount = $unaryResult.GrpcCompareTokenCount + $streamResult.GrpcCompareTokenCount
+        grpcCompareTokens = @($unaryResult.GrpcCompareTokens + $streamResult.GrpcCompareTokens | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique | Sort-Object)
         failureReason = $failureReason
         resultDigest = $caseResultDigest
         passed = $casePassed
@@ -360,6 +375,16 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   if ($null -eq $compareMismatchWarningTotal) {
     $compareMismatchWarningTotal = 0
   }
+  $compareTokenTotal = @($matrixResults | Measure-Object -Property grpcCompareTokenCount -Sum).Sum
+  if ($null -eq $compareTokenTotal) {
+    $compareTokenTotal = 0
+  }
+
+  $compareContextTokens = @()
+  foreach ($caseResult in $matrixResults) {
+    $compareContextTokens += @($caseResult.grpcCompareTokens)
+  }
+  $compareContextTokens = @($compareContextTokens | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique | Sort-Object)
 
   $failureSummary = [PSCustomObject]@{
     totalFailedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
@@ -417,11 +442,19 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     }
   }
 
+  if ($compareTokenTotal -eq 0) {
+    $warnings += [PSCustomObject]@{
+      code = "compare_context_token_missing"
+      count = [int]$matrixResults.Count
+      message = "No grpc_compare_token found in smoke compare detail output."
+    }
+  }
+
   $warnings = @($warnings | Sort-Object code)
 
   $passedCases = @($matrixResults | Where-Object { $_.passed }).Count
   $failedCases = @($matrixResults | Where-Object { -not $_.passed }).Count
-  $reportDigest = "passed=$passedCases/$($matrixResults.Count);failed=$failedCases;noise=$noiseSuppressedTotal;warnings=$($warnings.Count)"
+  $reportDigest = "passed=$passedCases/$($matrixResults.Count);failed=$failedCases;noise=$noiseSuppressedTotal;warnings=$($warnings.Count);compare_tokens=$($compareContextTokens.Count)"
   $reportStatus = if ($hasFailure) { "FAIL" } else { "PASS" }
   $generatedBy = [PSCustomObject]@{
     script = $scriptName
@@ -429,7 +462,7 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   }
 
   $report = [PSCustomObject]@{
-    reportVersion = "1.6"
+    reportVersion = "1.7"
     timestampUtc = (Get-Date).ToUniversalTime().ToString("o")
     durationMs = [int]((Get-Date) - $matrixStartedAt).TotalMilliseconds
     status = $reportStatus
@@ -438,6 +471,8 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
     overallPassed = (-not $hasFailure)
     caseCount = $matrixResults.Count
     reportDigest = $reportDigest
+    compareContextTokenCount = [int]$compareContextTokens.Count
+    compareContextTokens = $compareContextTokens
     generatedBy = $generatedBy
     failedCaseNames = $failedCaseNames
     noiseSuppressedTotal = [int]$noiseSuppressedTotal
