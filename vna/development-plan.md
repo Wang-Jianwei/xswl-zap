@@ -6117,6 +6117,48 @@ WU-MAINLINE-025: 去嵌入处理器 MVP（端口对角复数校正）
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.304 已完成 Work Unit
+
+WU-MAINLINE-026: 去嵌入能力接入采集主链路（service 配置开关）
+
+- Objective:
+  - 将去嵌入处理能力从独立处理器接入 `VnaControlService::AcquireOnce` 主链路，并提供 service 配置开关与端口传输系数入口（不改 proto）。
+- Scope (in/out):
+  - in: `VnaControlService` 增加去嵌入配置接口与采集后处理、`ServiceConfig` 增加去嵌入配置项、grpc server 启动时读取并生效、相关回归测试。
+  - out: 修改 gRPC 请求结构、实现完整频点相关夹具网络模型。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-026):
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/include/service/service_config.h`
+  - `vna/src/service/service_config.cpp`
+  - `vna/src/service/grpc/grpc_server_main.cpp`
+  - `vna/config/service.yaml`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/tests/core/service_config_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\easy_service_config_test.exe`
+  - `cd vna/build && .\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本次提交，恢复去嵌入仅作为独立处理器的状态。
+- Risks: 去嵌入配置与端口数不匹配时采集会快速失败（`kInvalidArgument`）；该行为用于避免错误配置静默污染测量结果。
+- Acceptance criteria:
+  - `service.yaml` 可配置 `de_embedding_enabled` 与 `de_embedding_port_transfer`。
+  - 开启后 `AcquireOnce` 进入去嵌入后处理流程；配置非法时返回错误而非静默成功。
+  - 服务配置与主链路测试通过。
+
+- Validation result (WU-MAINLINE-026):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_service_config_test.exe` 通过
+  - `easy_vna_control_service_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-026):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/config/service.yaml`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

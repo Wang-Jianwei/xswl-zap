@@ -16,6 +16,8 @@ struct ServiceConfig {
   std::string logLevel = "info";
   std::uint32_t streamThrottleEveryNFrames = 4;
   std::uint32_t streamThrottleMs = 10;
+  bool deEmbeddingEnabled = false;
+  std::string deEmbeddingPortTransfer = "";
 };
 
 class ServiceConfigLoader {

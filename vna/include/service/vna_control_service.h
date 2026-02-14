@@ -1,5 +1,6 @@
 #pragma once
 
+#include <complex>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -7,6 +8,7 @@
 #include "core/excitation_mode.h"
 #include "core/hardware_driver.h"
 #include "core/measurement_data.h"
+#include "core/processors/de_embedding_processor.h"
 #include "core/status.h"
 #include "core/topology_types.h"
 #include "core/vna_runtime.h"
@@ -52,6 +54,10 @@ class VnaControlService {
   core::Status GetInstanceCapabilities(const std::string& instanceId,
                                        core::HardwareCapabilities& out) const;
 
+  core::Status SetDeEmbeddingPortTransfer(
+      const std::vector<std::complex<double> >& portTransfer);
+  void SetDeEmbeddingEnabled(bool enabled);
+
   core::Status ExportAcquisitionResult(const core::AcquisitionResult& result,
                                        const std::string& csvPath,
                                        const std::string& touchstonePath,
@@ -75,6 +81,9 @@ class VnaControlService {
 
   core::VnaRuntime runtime_;
   bool started_;
+  bool deEmbeddingEnabled_;
+  std::vector<std::complex<double> > deEmbeddingPortTransfer_;
+  core::processors::DeEmbeddingProcessor deEmbeddingProcessor_;
 };
 
 }  // namespace service

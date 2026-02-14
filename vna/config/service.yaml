@@ -5,6 +5,8 @@ tls_enabled: false
 log_level: info
 stream_throttle_every_n_frames: 4
 stream_throttle_ms: 10
+de_embedding_enabled: false
+de_embedding_port_transfer: 1.0,1.0,1.0,1.0
 
 
 

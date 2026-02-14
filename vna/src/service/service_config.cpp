@@ -145,6 +145,21 @@ core::Status ServiceConfigLoader::LoadFromFile(const std::string& filePath,
       }
       continue;
     }
+
+    if (key == "de_embedding_enabled") {
+      bool enabled = false;
+      if (!ParseBool(value, enabled)) {
+        outErrors.push_back("de_embedding_enabled must be boolean (true/false)");
+      } else {
+        parsed.deEmbeddingEnabled = enabled;
+      }
+      continue;
+    }
+
+    if (key == "de_embedding_port_transfer") {
+      parsed.deEmbeddingPortTransfer = value;
+      continue;
+    }
   }
 
   if (!outErrors.empty()) {

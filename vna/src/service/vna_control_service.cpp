@@ -61,7 +61,8 @@ bool HasParentTraversal(const std::string& path) {
 
 }  // namespace
 
-VnaControlService::VnaControlService() : runtime_(), started_(false) {}
+VnaControlService::VnaControlService()
+  : runtime_(), started_(false), deEmbeddingEnabled_(false) {}
 
 core::ValidationResult VnaControlService::ValidateTopology(const core::Topology& topology) const {
   core::TopologyManager manager;
@@ -164,12 +165,43 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
   const std::uint32_t effectiveSampleCount = sampleCount == 0 ? kDefaultSampleCount : sampleCount;
   const std::uint32_t effectiveTimeoutMs = timeoutMs == 0 ? kDefaultTimeoutMs : timeoutMs;
 
-  return runtime_.AcquireOnce(instanceId, excitation, effectiveSampleCount, effectiveTimeoutMs, out);
+  const core::Status acquireStatus =
+      runtime_.AcquireOnce(instanceId, excitation, effectiveSampleCount, effectiveTimeoutMs, out);
+  if (acquireStatus != core::Status::kOk) {
+    return acquireStatus;
+  }
+
+  if (deEmbeddingEnabled_) {
+    return deEmbeddingProcessor_.ApplyDiagonalFixtureCompensation(
+        out.sParameters, deEmbeddingPortTransfer_);
+  }
+
+  return core::Status::kOk;
 }
 
 core::Status VnaControlService::GetInstanceCapabilities(const std::string& instanceId,
                                                         core::HardwareCapabilities& out) const {
   return runtime_.GetInstanceCapabilities(instanceId, out);
+}
+
+core::Status VnaControlService::SetDeEmbeddingPortTransfer(
+    const std::vector<std::complex<double> >& portTransfer) {
+  if (portTransfer.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  for (std::size_t i = 0; i < portTransfer.size(); ++i) {
+    if (std::abs(portTransfer[i]) <= 1e-15) {
+      return core::Status::kInvalidArgument;
+    }
+  }
+
+  deEmbeddingPortTransfer_ = portTransfer;
+  return core::Status::kOk;
+}
+
+void VnaControlService::SetDeEmbeddingEnabled(bool enabled) {
+  deEmbeddingEnabled_ = enabled;
 }
 
 core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,

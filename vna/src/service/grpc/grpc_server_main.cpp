@@ -1,5 +1,8 @@
 #include <iostream>
 #include <memory>
+#include <cctype>
+#include <complex>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -13,6 +16,60 @@
 #include "service/vna_control_inproc_handler.h"
 #include "service/vna_control_service.h"
 #include "service/grpc/vna_control_grpc_service.h"
+
+namespace {
+
+std::string TrimText(const std::string& text) {
+  std::size_t begin = 0;
+  while (begin < text.size() && std::isspace(static_cast<unsigned char>(text[begin])) != 0) {
+    ++begin;
+  }
+
+  std::size_t end = text.size();
+  while (end > begin && std::isspace(static_cast<unsigned char>(text[end - 1])) != 0) {
+    --end;
+  }
+
+  return text.substr(begin, end - begin);
+}
+
+bool ParsePortTransferList(const std::string& text,
+                           std::vector<std::complex<double> >& out,
+                           std::string& error) {
+  out.clear();
+  error.clear();
+  if (text.empty()) {
+    error = "de_embedding_port_transfer is empty";
+    return false;
+  }
+
+  std::stringstream ss(text);
+  std::string token;
+  while (std::getline(ss, token, ',')) {
+    const std::string trimmed = TrimText(token);
+    if (trimmed.empty()) {
+      error = "de_embedding_port_transfer contains empty item";
+      return false;
+    }
+
+    std::stringstream parser(trimmed);
+    double value = 0.0;
+    parser >> value;
+    if (parser.fail() || !parser.eof()) {
+      error = "de_embedding_port_transfer must be comma-separated doubles";
+      return false;
+    }
+    out.push_back(std::complex<double>(value, 0.0));
+  }
+
+  if (out.empty()) {
+    error = "de_embedding_port_transfer produced no values";
+    return false;
+  }
+  return true;
+}
+
+}  // namespace
 
 int main(int argc, char** argv) {
   vna::core::RegisterBuiltInDrivers();
@@ -66,6 +123,22 @@ int main(int argc, char** argv) {
   vna::service::ServiceStatusService statusService;
   vna::service::VnaControlService controlService;
   vna::service::VnaControlInProcessHandler inprocHandler;
+
+  if (config.deEmbeddingEnabled) {
+    std::vector<std::complex<double> > portTransfer;
+    std::string parseError;
+    if (!ParsePortTransferList(config.deEmbeddingPortTransfer, portTransfer, parseError)) {
+      std::cout << "grpc de-embedding config invalid: " << parseError << "\n";
+      return 1;
+    }
+
+    if (controlService.SetDeEmbeddingPortTransfer(portTransfer) != vna::core::Status::kOk) {
+      std::cout << "grpc de-embedding config rejected: invalid port transfer values\n";
+      return 1;
+    }
+    controlService.SetDeEmbeddingEnabled(true);
+    std::cout << "grpc de-embedding enabled: port_count=" << portTransfer.size() << "\n";
+  }
 
   vna::core::Topology topology;
   topology.id = "grpc-topology";

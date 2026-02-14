@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <complex>
 #include <fstream>
 #include <limits>
 #include <string>
@@ -110,6 +111,30 @@ int main() {
     assert(defaultedResult.instanceId == "inst0");
     assert(defaultedResult.frequencyDomain.frequenciesHz.size() == 32);
     assert(defaultedResult.frequencyDomain.samples.size() == 32);
+
+        std::vector<std::complex<double> > invalidTransfer;
+        invalidTransfer.push_back(std::complex<double>(1.0, 0.0));
+        assert(service.SetDeEmbeddingPortTransfer(invalidTransfer) == vna::core::Status::kOk);
+        service.SetDeEmbeddingEnabled(true);
+
+        vna::core::AcquisitionResult deembedInvalidResult;
+        assert(service.AcquireOnce("inst0", excitation, 32, 1000, deembedInvalidResult) ==
+          vna::core::Status::kInvalidArgument);
+
+        std::vector<std::complex<double> > validTransfer;
+        const std::size_t portCount = result.sParameters.points.empty()
+            ? 0
+            : static_cast<std::size_t>(result.sParameters.points[0].portCount);
+        assert(portCount > 0);
+        for (std::size_t i = 0; i < portCount; ++i) {
+          validTransfer.push_back(std::complex<double>(1.0, 0.0));
+        }
+        assert(service.SetDeEmbeddingPortTransfer(validTransfer) == vna::core::Status::kOk);
+
+        vna::core::AcquisitionResult deembedValidResult;
+        assert(service.AcquireOnce("inst0", excitation, 32, 1000, deembedValidResult) ==
+          vna::core::Status::kOk);
+        service.SetDeEmbeddingEnabled(false);
 
     const std::string csvPath = "build/vna-control-service-export.csv";
     const std::string touchstonePath = "build/vna-control-service-export.s2p";
