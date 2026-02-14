@@ -184,6 +184,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU240~WU247 进展）：后端 compare 成功摘要新增联合画像字段（分类与全局 `*_max_profile`，格式 `risk/zone`，例如 `high/back`），用于一眼识别“风险等级 + 误差区段”。
 
+补充（WU248~WU255 进展）：后端 compare 成功摘要新增 `worst_digest` 短串字段（格式 `category|risk/zone|pX/(cY|vY)`），用于日志与告警中快速检索最差点核心上下文。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

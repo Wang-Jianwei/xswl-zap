@@ -156,6 +156,7 @@ int main() {
         assert(compareDiff.find("worst_max_point_ratio=") != std::string::npos);
         assert(compareDiff.find("worst_max_point_zone=") != std::string::npos);
         assert(compareDiff.find("worst_max_profile=") != std::string::npos);
+        assert(compareDiff.find("worst_digest=") != std::string::npos);
         assert(compareDiff.find("worst_max_real_delta=") != std::string::npos);
         assert(compareDiff.find("worst_max_imag_delta=") != std::string::npos);
         assert(compareDiff.find("worst_max_at=point:") != std::string::npos);

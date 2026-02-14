@@ -4538,6 +4538,108 @@ WU-MAINLINE-247: 批次收敛与统一验证（WU240~247）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.230 已完成 Work Unit
+
+WU-MAINLINE-248: compare 成功摘要增加 worst digest 字段
+
+- Objective: 提供可直接用于日志检索的最差点摘要短串。
+- Scope (in/out):
+  - in: `worst_digest` 摘要输出。
+  - out: 外部告警系统索引策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.231 已完成 Work Unit
+
+WU-MAINLINE-249: comparator 统一 worst digest 组装口径
+
+- Objective: 统一 digest 字段格式，避免后续拼接漂移。
+- Scope (in/out):
+  - in: 统一函数 `BuildWorstDigest`（`category|profile|point/sub-index`）。
+  - out: 可配置 digest 模板。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.232 已完成 Work Unit
+
+WU-MAINLINE-250: worst digest 含风险与区段上下文
+
+- Objective: digest 中包含 `risk/zone` 联合画像，增强可读性。
+- Scope (in/out):
+  - in: digest 使用 `worst_max_profile`。
+  - out: 外部 profile 统计聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.233 已完成 Work Unit
+
+WU-MAINLINE-251: worst digest 区分 channel/value 子索引
+
+- Objective: digest 明确区分接收机通道与 S 参数矩阵值索引。
+- Scope (in/out):
+  - in: `cY` 与 `vY` 子索引编码。
+  - out: 结构化子索引字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.234 已完成 Work Unit
+
+WU-MAINLINE-252: core 回归断言补齐 worst digest 字段
+
+- Objective: 防止 worst digest 字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `worst_digest` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.235 已完成 Work Unit
+
+WU-MAINLINE-253: service 回归断言补齐 worst digest 字段
+
+- Objective: 确保 compare detail 全链路透传 worst digest 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 `worst_digest` 断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.236 已完成 Work Unit
+
+WU-MAINLINE-254: README 同步 worst digest 能力说明
+
+- Objective: 对外说明 worst digest 字段语义与用途。
+- Scope (in/out):
+  - in: README 新增进展说明。
+  - out: 独立设计文档章节。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.237 已完成 Work Unit
+
+WU-MAINLINE-255: 批次收敛与统一验证（WU248~255）
+
+- Objective: 合并 worst digest 诊断轻量 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU248~255 的代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU248~255):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU240~247 诊断粒度。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含 `worst_digest` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU248~255 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

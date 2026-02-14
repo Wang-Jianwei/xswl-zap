@@ -55,6 +55,21 @@ std::string BuildRiskZoneProfile(const char* riskLevel, const char* pointZone) {
   return std::string(riskLevel) + "/" + pointZone;
 }
 
+std::string BuildWorstDigest(const char* category,
+                             const std::string& profile,
+                             std::size_t pointIndex,
+                             const char* locationLabel,
+                             std::size_t subIndex) {
+  std::ostringstream stream;
+  stream << category << "|" << profile << "|p" << pointIndex;
+  if (locationLabel == std::string("channel")) {
+    stream << "/c" << subIndex;
+  } else {
+    stream << "/v" << subIndex;
+  }
+  return stream.str();
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -310,6 +325,8 @@ struct ComparisonStats {
     const char* worstRiskLevel = RiskLevelFromRatio(worstDeltaRatio);
     const char* worstPointZone = PointZoneFromRatio(worstPointRatio);
     const std::string worstProfile = BuildRiskZoneProfile(worstRiskLevel, worstPointZone);
+    const std::string worstDigest =
+      BuildWorstDigest(worstCategory, worstProfile, worstPoint, worstLocationLabel, worstSubIndex);
 
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
@@ -347,6 +364,7 @@ struct ComparisonStats {
                 << ", worst_max_point_ratio=" << worstPointRatio
                 << ", worst_max_point_zone=" << worstPointZone
                 << ", worst_max_profile=" << worstProfile
+                << ", worst_digest=" << worstDigest
                 << ", worst_max_real_delta=" << worstRealDelta
                 << ", worst_max_imag_delta=" << worstImagDelta
                 << ", worst_expected_real=" << worstExpected.real()
