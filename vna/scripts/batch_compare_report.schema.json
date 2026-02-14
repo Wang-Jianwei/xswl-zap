@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xswl-zap/vna/batch_compare_report.schema.json",
+  "title": "VS Code Batch Compare Imported Acquisition Report",
+  "type": "object",
+  "required": [
+    "requestId",
+    "generatedAt",
+    "instanceId",
+    "scanDir",
+    "mode",
+    "sampleCount",
+    "tolerance",
+    "summary",
+    "cases"
+  ],
+  "properties": {
+    "requestId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "instanceId": { "type": "string", "minLength": 1 },
+    "scanDir": { "type": "string", "minLength": 1 },
+    "mode": { "type": "string", "enum": ["frequency", "time"] },
+    "sampleCount": { "type": "integer", "minimum": 1 },
+    "tolerance": { "type": "number", "exclusiveMinimum": 0 },
+    "summary": {
+      "type": "object",
+      "required": ["total", "matched", "mismatched", "failed"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "matched": { "type": "integer", "minimum": 0 },
+        "mismatched": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "index",
+          "jsonPath",
+          "status",
+          "detail",
+          "grpcCompareToken",
+          "error"
+        ],
+        "properties": {
+          "index": { "type": "integer", "minimum": 1 },
+          "jsonPath": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["matched", "mismatched", "failed"] },
+          "detail": { "type": "string" },
+          "grpcCompareToken": { "type": "string" },
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}

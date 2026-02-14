@@ -4,6 +4,9 @@ param(
   [switch]$StrictMainline,
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
+  [string]$BatchCompareReportPath = "",
+  [switch]$FailOnBatchCompareMismatch,
+  [switch]$FailOnBatchCompareFailed,
   [switch]$RunUiGrpcE2E,
   [string[]]$FailOnWarningCodes = @(),
   [switch]$AsJson,
@@ -34,10 +37,14 @@ $projectRoot = Split-Path -Parent $scriptDir
 $matrixScript = Join-Path $scriptDir "run_grpc_smoke_matrix.ps1"
 $validatorScript = Join-Path $scriptDir "validate_smoke_matrix_report.ps1"
 $schemaPath = Join-Path $scriptDir "smoke_matrix_report.schema.json"
+$batchCompareValidatorScript = Join-Path $scriptDir "validate_batch_compare_report.ps1"
+$batchCompareSchemaPath = Join-Path $scriptDir "batch_compare_report.schema.json"
 
 if (-not (Test-Path $matrixScript)) { throw "Missing script: $matrixScript" }
 if (-not (Test-Path $validatorScript)) { throw "Missing script: $validatorScript" }
 if (-not (Test-Path $schemaPath)) { throw "Missing schema: $schemaPath" }
+if (-not (Test-Path $batchCompareValidatorScript)) { throw "Missing script: $batchCompareValidatorScript" }
+if (-not (Test-Path $batchCompareSchemaPath)) { throw "Missing schema: $batchCompareSchemaPath" }
 
 $startGrpcScript = Join-Path $scriptDir "start_grpc_for_vscode.ps1"
 if ($RunUiGrpcE2E -and -not (Test-Path $startGrpcScript)) {
@@ -77,17 +84,21 @@ function Write-ResultJsonIfNeeded {
 }
 
 $resolvedReportPath = $ReportPath
+$resolvedBatchCompareReportPath = ""
 $matchedCodes = @()
 $failureMessage = ""
 $compareContextTokenCount = 0
 $compareContextTokens = @()
+$batchCompareSummary = $null
 $resolvedResultJsonPath = Resolve-PathPlaceholders $ResultJsonPath
 $startedAtUtc = [DateTime]::UtcNow
 
 if ($StrictMainline) {
   $RunUiGrpcE2E = $true
   $FailOnUnknownStderr = $true
-  Write-Host "[GATE] strict mainline preset enabled: RunUiGrpcE2E=True, FailOnUnknownStderr=True"
+  $FailOnBatchCompareMismatch = $true
+  $FailOnBatchCompareFailed = $true
+  Write-Host "[GATE] strict mainline preset enabled: RunUiGrpcE2E=True, FailOnUnknownStderr=True, FailOnBatchCompareMismatch=True, FailOnBatchCompareFailed=True"
 }
 
 try {
@@ -135,6 +146,35 @@ try {
     }
   }
 
+  if (-not [string]::IsNullOrWhiteSpace($BatchCompareReportPath)) {
+    $resolvedBatchCompareReportPath = Resolve-PathPlaceholders $BatchCompareReportPath
+    if (-not [System.IO.Path]::IsPathRooted($resolvedBatchCompareReportPath)) {
+      $resolvedBatchCompareReportPath = Join-Path $projectRoot $resolvedBatchCompareReportPath
+    }
+
+    Write-Host "[GATE] validating batch compare report: $resolvedBatchCompareReportPath"
+    & $batchCompareValidatorScript -ReportPath $resolvedBatchCompareReportPath -SchemaPath $batchCompareSchemaPath
+    if ($LASTEXITCODE -ne 0) {
+      throw "Batch compare report validation failed with exit code: $LASTEXITCODE"
+    }
+
+    $batchCompareReport = Get-Content -Path $resolvedBatchCompareReportPath -Raw | ConvertFrom-Json
+    $batchCompareSummary = [PSCustomObject]@{
+      total = [int]$batchCompareReport.summary.total
+      matched = [int]$batchCompareReport.summary.matched
+      mismatched = [int]$batchCompareReport.summary.mismatched
+      failed = [int]$batchCompareReport.summary.failed
+    }
+
+    if ($FailOnBatchCompareMismatch -and $batchCompareSummary.mismatched -gt 0) {
+      throw "Gate failed due to batch compare mismatched count: $($batchCompareSummary.mismatched)"
+    }
+
+    if ($FailOnBatchCompareFailed -and $batchCompareSummary.failed -gt 0) {
+      throw "Gate failed due to batch compare failed count: $($batchCompareSummary.failed)"
+    }
+  }
+
   if ($RunUiGrpcE2E) {
     Write-Host "[GATE] running grpc-backed UI E2E..."
     & $startGrpcScript
@@ -170,9 +210,13 @@ try {
     strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
+    failOnBatchCompareMismatch = [bool]$FailOnBatchCompareMismatch
+    failOnBatchCompareFailed = [bool]$FailOnBatchCompareFailed
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
     matchedWarningCodes = @($matchedCodes)
+    batchCompareReportPath = $resolvedBatchCompareReportPath
+    batchCompareSummary = $batchCompareSummary
     compareContextTokenCount = $compareContextTokenCount
     compareContextTokens = @($compareContextTokens)
     error = ""
@@ -203,9 +247,13 @@ catch {
     strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
+    failOnBatchCompareMismatch = [bool]$FailOnBatchCompareMismatch
+    failOnBatchCompareFailed = [bool]$FailOnBatchCompareFailed
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
     matchedWarningCodes = @($matchedCodes)
+    batchCompareReportPath = $resolvedBatchCompareReportPath
+    batchCompareSummary = $batchCompareSummary
     compareContextTokenCount = $compareContextTokenCount
     compareContextTokens = @($compareContextTokens)
     error = $failureMessage

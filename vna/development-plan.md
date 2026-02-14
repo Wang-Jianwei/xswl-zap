@@ -6552,6 +6552,41 @@ WU-MAINLINE-037: 批量回放比对结构化报告落盘
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.316 已完成 Work Unit
+
+WU-MAINLINE-038: Batch Compare 报告接入 gate 门禁
+
+- Objective:
+  - 将 VS Code 批量回放比对报告纳入现有 smoke gate 消费链路，实现脚本级通过/失败判定。
+- Scope (in/out):
+  - in: 新增 batch compare 报告 schema 与验证脚本；`run_smoke_report_gate.ps1` 增加报告路径输入、校验与失败策略开关。
+  - out: 改动 gRPC 后端行为或扩展命令交互。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-038):
+  - `vna/scripts/batch_compare_report.schema.json`
+  - `vna/scripts/validate_batch_compare_report.ps1`
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `powershell -NoProfile -Command "[void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_smoke_report_gate.ps1' -Raw)); [void][ScriptBlock]::Create((Get-Content 'vna/scripts/validate_batch_compare_report.ps1' -Raw)); Write-Host 'syntax ok'"`
+- Rollback plan: 回滚本次提交，恢复 gate 对 batch compare 报告的忽略行为。
+- Risks: 若传入不存在或格式非法的 batch 报告路径，gate 会显式失败；该行为符合门禁预期。
+- Acceptance criteria:
+  - gate 支持可选消费 batch compare 报告并输出汇总到 gate result。
+  - 支持基于 mismatch/failed 计数的失败策略（开关化）。
+  - 脚本语法与扩展测试通过。
+
+- Validation result (WU-MAINLINE-038):
+  - `npm run test` 通过
+  - 脚本语法检查通过
+
+- Closure notes (WU-MAINLINE-038):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
