@@ -5110,6 +5110,56 @@ WU-MAINLINE-286: 批次收敛与统一验证（WU284~286）
 - Validation result (WU284~286 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.269 已完成 Work Unit
+
+WU-MAINLINE-287: VS Code live 波形开关能力与默认策略优化
+
+- Objective: 提升 live 波形分析效率并减少图面干扰。
+- Scope (in/out):
+  - in: 新增 `Raw/Smooth`、`Peak Hold`、`Recent Avg`、`Envelope` 快捷开关；优化默认显示策略。
+  - out: 插件命令交互重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.270 已完成 Work Unit
+
+WU-MAINLINE-288: 插件回归覆盖 live 开关与默认策略
+
+- Objective: 防止 live 开关能力在后续迭代回归。
+- Scope (in/out):
+  - in: 更新 `waveformPreview.test.ts` 与 `liveWaveformOverlay.test.ts` 断言。
+  - out: 端到端 UI 自动化测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.271 已完成 Work Unit
+
+WU-MAINLINE-289: 批次收敛与统一验证（WU287~289）
+
+- Objective: 以粗粒度 WU 完成 live 开关增强闭环。
+- Scope (in/out):
+  - in: 聚合插件代码、测试、文档并统一回归。
+  - out: 插件协议变更。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU287~289):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/liveWaveformOverlay.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/test/liveWaveformOverlay.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件可视化增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复上一版 live 预览显示策略。
+- Risks: 开关项增多会提高初次学习成本；通过默认策略和文档说明降低门槛。
+- Acceptance criteria:
+  - live 预览支持快捷显隐开关与优化后的默认显示策略。
+  - 插件测试通过。
+
+- Validation result (WU287~289 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

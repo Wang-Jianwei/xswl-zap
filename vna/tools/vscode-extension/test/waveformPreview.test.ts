@@ -70,8 +70,8 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const filteredHtml = buildWaveformPreviewHtml(filteredAllData);
   assert(filteredHtml.includes("visible=frame,s11"));
   assert(filteredHtml.includes("legend=frame:#4ec9b0 | s-parameter s11:#c586c0"));
-  assert(filteredHtml.includes("class=\"legend-item is-primary\""));
-  assert(filteredHtml.includes("class=\"marker-row is-primary\""));
+  assert(filteredHtml.includes("legend-item is-primary"));
+  assert(filteredHtml.includes("marker-row is-primary"));
   assert(filteredHtml.includes("data-trace-id=\"frame\""));
   assert(filteredHtml.includes("legend.addEventListener(\"click\""));
 
@@ -98,7 +98,7 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
   assert(html.includes("polyline"));
-  assert(html.includes("class=\"marker-row is-primary\""));
+  assert(html.includes("marker-row is-primary"));
   assert(html.includes("class=\"marker-name\""));
   assert(html.includes("class=\"marker-point\""));
   assert(html.includes("class=\"marker-label-bg\""));
@@ -106,6 +106,10 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("y="));
   assert(html.includes("id=\"copyPrimaryMarker\""));
   assert(html.includes("id=\"clearCopyStatus\""));
+  assert(html.includes("id=\"toggleRenderMode\""));
+  assert(html.includes("id=\"togglePeakHold\""));
+  assert(html.includes("id=\"toggleRecentAvg\""));
+  assert(html.includes("id=\"toggleEnvelope\""));
   assert(html.includes("copy-primary-marker"));
   assert(html.includes("timestampNs=123"));
   assert(html.includes("source=frame"));
@@ -129,6 +133,10 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("setTimeout(() =>"));
   assert(html.includes("}, 2000)"));
   assert(html.includes("document.addEventListener(\"keydown\""));
+  assert(html.includes("Mode: Smooth"));
+  assert(html.includes("show-smooth"));
+  assert(html.includes("hide-envelope"));
+  assert(html.includes("setTraceVisible"));
   assert(html.includes("axis-line"));
   assert(html.includes("axis-tick"));
   assert(html.includes("xMin="));

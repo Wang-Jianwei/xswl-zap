@@ -131,8 +131,16 @@ export function applyLiveFrequencyOverlays(
   traces = upsertTrace(traces, peakTrace);
   traces = upsertTrace(traces, averageTrace);
 
+  const currentVisible = waveform.visibleTraceIds.length > 0
+    ? waveform.visibleTraceIds
+    : waveform.traces.map((trace) => trace.id);
+  const preservePeakVisibility = currentVisible.includes("livePeakHold");
   const visibleTraceIds = Array.from(
-    new Set([...waveform.visibleTraceIds, "livePeakHold", "liveRecentAvg"]),
+    new Set([
+      ...currentVisible,
+      "liveRecentAvg",
+      ...(preservePeakVisibility ? ["livePeakHold"] : []),
+    ]),
   );
 
   return {

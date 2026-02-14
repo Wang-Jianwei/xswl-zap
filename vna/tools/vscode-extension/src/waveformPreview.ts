@@ -413,19 +413,30 @@ function renderTrace(
     return "";
   }
 
-  const renderPoints = smooth ? movingAverage(trace.points, 7) : trace.points;
+  const rawPoints = trace.points;
+  const smoothPoints = smooth ? movingAverage(trace.points, 7) : trace.points;
 
-  if (renderPoints.length === 1) {
-    const normalized = toNormalizedPoints(renderPoints, width, height);
+  if (smoothPoints.length === 1) {
+    const normalized = toNormalizedPoints(smoothPoints, width, height);
     const point = normalized[0];
     return `<circle cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="3.5" fill="${trace.color}" />`;
   }
 
-  const points = renderPoints
+  const rawPolyline = rawPoints
     .map((point) => normalizePoint(point, bounds, width, height))
     .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
     .join(" ");
-  return `<polyline fill="none" stroke="${trace.color}" stroke-width="2" points="${points}" />`;
+  const smoothPolyline = smoothPoints
+    .map((point) => normalizePoint(point, bounds, width, height))
+    .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
+    .join(" ");
+
+  if (!smooth) {
+    return `<polyline class="trace-path trace-raw" fill="none" stroke="${trace.color}" stroke-width="2" points="${rawPolyline}" />`;
+  }
+
+  return `<polyline class="trace-path trace-raw" fill="none" stroke="${withAlpha(trace.color, 0.55)}" stroke-width="1.3" points="${rawPolyline}" />
+<polyline class="trace-path trace-smooth" fill="none" stroke="${trace.color}" stroke-width="2.2" points="${smoothPolyline}" />`;
 }
 
 function renderTraceMarkers(
@@ -568,6 +579,10 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const chartBounds = getAdaptiveTraceBounds(data.traces, data.frameType);
   const enableSmoothing = data.frameType === "frequency";
   const enableEnvelope = data.frameType === "frequency";
+  const canToggleRenderMode = data.frameType === "frequency";
+  const visibleTraceSet = new Set(
+    data.visibleTraceIds.length > 0 ? data.visibleTraceIds : data.traces.map((trace) => trace.id),
+  );
   const primaryTraceId = data.traces[0]?.id ?? "";
   const primaryTrace = data.traces[0];
   const primaryMarkerCopyText = primaryTrace
@@ -603,12 +618,12 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   const legendItems = markerEntries
     .map(
       ({ trace }) =>
-        `<button type="button" class="legend-item ${trace.id === primaryTraceId ? "is-primary" : ""}" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
+        `<button type="button" class="legend-item ${trace.id === primaryTraceId ? "is-primary" : ""} ${visibleTraceSet.has(trace.id) ? "" : "is-hidden"}" data-trace-id="${trace.id}" title="toggle ${trace.label}"><span class="legend-dot" style="background:${trace.color}"></span>${trace.label}</button>`,
     )
     .join("");
   const markerRows = markerEntries
     .map(({ trace, text }) => {
-      return `<div class="marker-row ${trace.id === primaryTraceId ? "is-primary" : ""}" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
+      return `<div class="marker-row ${trace.id === primaryTraceId ? "is-primary" : ""} ${visibleTraceSet.has(trace.id) ? "" : "is-hidden"}" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
     })
     .join("");
   const legendText = data.traces.map((trace) => `${trace.label}:${trace.color}`).join(" | ");
@@ -660,6 +675,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       cursor: pointer;
       font-size: 12px;
     }
+    .action-btn.is-hidden { opacity: 0.55; }
     .action-btn[disabled] { opacity: 0.5; cursor: default; }
     .shortcut-hint { font-size: 11px; opacity: 0.75; margin-left: 2px; }
     .legend-item {
@@ -680,6 +696,13 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
     .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
     .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
+    .chart .trace-envelope { pointer-events: none; }
+    .chart.hide-envelope .trace-envelope { display: none; }
+    .chart .trace-raw { display: none; }
+    .chart.show-raw .trace-raw { display: inline; }
+    .chart.show-raw .trace-smooth { display: none; }
+    .chart.show-smooth .trace-raw { display: none; }
+    .chart.show-smooth .trace-smooth { display: inline; }
     .chart .marker-point text { fill: var(--vscode-foreground); font-size: 10px; opacity: 0.95; }
     .chart .marker-label-bg { fill: var(--vscode-editor-background); stroke: var(--vscode-focusBorder); stroke-width: 0.8; opacity: 0.95; }
     .chart .marker-label-text { fill: var(--vscode-foreground); font-size: 9.5px; letter-spacing: 0.1px; }
@@ -693,6 +716,10 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div class="actions">
     <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-length="${primaryMarkerCopyText.length}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
     <button id="clearCopyStatus" class="action-btn" title="Clear copy status">Clear Status</button>
+    ${canToggleRenderMode ? '<button id="toggleRenderMode" class="action-btn" title="Toggle raw/smooth">Mode: Smooth</button>' : ""}
+    <button id="togglePeakHold" class="action-btn" title="Toggle peak hold">Peak Hold</button>
+    <button id="toggleRecentAvg" class="action-btn" title="Toggle recent average">Recent Avg</button>
+    ${enableEnvelope ? '<button id="toggleEnvelope" class="action-btn" title="Toggle envelope shading">Envelope</button>' : ""}
     <span class="shortcut-hint" title="Ctrl/Cmd + C or Alt + C to copy, Esc to clear">Ctrl/Cmd + C | Alt + C | Esc</span>
   </div>
   <div id="copyStatus" class="copy-status" aria-live="polite"></div>
@@ -704,7 +731,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
          ${renderAxes(width, height, chartBounds)}
            ${data.traces
-             .map((trace) => `<g data-trace-id="${trace.id}">${enableEnvelope ? renderEnvelope(trace, width, height, chartBounds) : ""}${renderTrace(trace, width, height, chartBounds, enableSmoothing)}</g>\n${renderTraceMarkers(trace, width, height, chartBounds, trace.id === primaryTraceId)}`)
+             .map((trace) => `<g data-trace-id="${trace.id}" style="display:${visibleTraceSet.has(trace.id) ? "" : "none"}">${enableEnvelope ? renderEnvelope(trace, width, height, chartBounds) : ""}${renderTrace(trace, width, height, chartBounds, enableSmoothing)}</g>\n${renderTraceMarkers(trace, width, height, chartBounds, trace.id === primaryTraceId)}`)
              .join("\n")}
          </svg>`
   }
@@ -848,6 +875,87 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       });
 
       const legend = document.getElementById("legend");
+      const toggleRenderModeButton = document.getElementById("toggleRenderMode");
+      const toggleEnvelopeButton = document.getElementById("toggleEnvelope");
+      const togglePeakHoldButton = document.getElementById("togglePeakHold");
+      const toggleRecentAvgButton = document.getElementById("toggleRecentAvg");
+      const chart = document.querySelector("svg.chart");
+
+      const setTraceVisible = (traceId, visible) => {
+        const groups = document.querySelectorAll("g[data-trace-id=\"" + traceId + "\"]");
+        const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
+        const legendItems = document.querySelectorAll(".legend-item[data-trace-id=\"" + traceId + "\"]");
+        groups.forEach((group) => {
+          if (group instanceof HTMLElement) {
+            group.style.display = visible ? "" : "none";
+          }
+        });
+        markerRows.forEach((row) => {
+          if (row instanceof HTMLElement) {
+            row.classList.toggle("is-hidden", !visible);
+          }
+        });
+        legendItems.forEach((item) => {
+          if (item instanceof HTMLElement) {
+            item.classList.toggle("is-hidden", !visible);
+          }
+        });
+      };
+
+      const syncOverlayButtonState = (button, traceId) => {
+        if (!(button instanceof HTMLButtonElement)) {
+          return;
+        }
+        const hidden = document.querySelector(".legend-item[data-trace-id=\"" + traceId + "\"]")?.classList.contains("is-hidden");
+        button.classList.toggle("is-hidden", Boolean(hidden));
+      };
+
+      if (togglePeakHoldButton instanceof HTMLButtonElement) {
+        togglePeakHoldButton.addEventListener("click", () => {
+          const hidden = document.querySelector(".legend-item[data-trace-id=\"livePeakHold\"]")?.classList.contains("is-hidden");
+          setTraceVisible("livePeakHold", Boolean(hidden));
+          syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
+        });
+      }
+
+      if (toggleRecentAvgButton instanceof HTMLButtonElement) {
+        toggleRecentAvgButton.addEventListener("click", () => {
+          const hidden = document.querySelector(".legend-item[data-trace-id=\"liveRecentAvg\"]")?.classList.contains("is-hidden");
+          setTraceVisible("liveRecentAvg", Boolean(hidden));
+          syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+        });
+      }
+
+      let renderMode = "smooth";
+      const applyRenderMode = () => {
+        if (!(chart instanceof SVGElement)) {
+          return;
+        }
+        chart.classList.toggle("show-raw", renderMode === "raw");
+        chart.classList.toggle("show-smooth", renderMode === "smooth");
+        if (toggleRenderModeButton instanceof HTMLButtonElement) {
+          toggleRenderModeButton.textContent = renderMode === "smooth" ? "Mode: Smooth" : "Mode: Raw";
+        }
+      };
+
+      if (toggleRenderModeButton instanceof HTMLButtonElement) {
+        toggleRenderModeButton.addEventListener("click", () => {
+          renderMode = renderMode === "smooth" ? "raw" : "smooth";
+          applyRenderMode();
+        });
+      }
+
+      if (toggleEnvelopeButton instanceof HTMLButtonElement && chart instanceof SVGElement) {
+        toggleEnvelopeButton.addEventListener("click", () => {
+          chart.classList.toggle("hide-envelope");
+          toggleEnvelopeButton.classList.toggle("is-hidden", chart.classList.contains("hide-envelope"));
+        });
+      }
+
+      applyRenderMode();
+      syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
+      syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+
       if (!legend) {
         return;
       }

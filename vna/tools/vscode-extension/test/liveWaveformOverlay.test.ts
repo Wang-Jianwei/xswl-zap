@@ -56,8 +56,31 @@ function buildFrame(y0: number, y1: number): WaveformPreviewData {
   assert(Math.abs(avg2.points[0].y - 2) < 1e-9);
   assert(Math.abs(avg2.points[1].y - 1.5) < 1e-9);
 
-  assert(pass2.waveform.visibleTraceIds.includes("livePeakHold"));
   assert(pass2.waveform.visibleTraceIds.includes("liveRecentAvg"));
+  assert(!pass2.waveform.visibleTraceIds.includes("livePeakHold"));
+
+  const freshState = createLiveWaveformOverlayState();
+  const baseFrame = buildFrame(2, 4);
+  const passDefault = applyLiveFrequencyOverlays(
+    {
+      ...baseFrame,
+      visibleTraceIds: ["frame"],
+    },
+    freshState,
+    4,
+  );
+  assert(passDefault.waveform.visibleTraceIds.includes("liveRecentAvg"));
+  assert(!passDefault.waveform.visibleTraceIds.includes("livePeakHold"));
+
+  const passOptInPeak = applyLiveFrequencyOverlays(
+    {
+      ...buildFrame(5, 6),
+      visibleTraceIds: ["frame", "livePeakHold"],
+    },
+    passDefault.state,
+    4,
+  );
+  assert(passOptInPeak.waveform.visibleTraceIds.includes("livePeakHold"));
 
   process.stdout.write("liveWaveformOverlay.test passed\n");
 })();
