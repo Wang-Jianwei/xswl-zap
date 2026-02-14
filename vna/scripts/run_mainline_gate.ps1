@@ -4,6 +4,9 @@ param(
   [switch]$SkipBuild,
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
+  [string]$BatchCompareReportPath = "",
+  [switch]$FailOnBatchCompareMismatch,
+  [switch]$FailOnBatchCompareFailed,
   [string]$ResultJsonPath = ".\build-grpc\mainline-gate-result-{timestamp}.json",
   [string[]]$FailOnWarningCodes = @(),
   [switch]$AsJson
@@ -22,6 +25,18 @@ $gateParams = @{
   SmokeTimeoutSec = $SmokeTimeoutSec
   ReportPath = $ReportPath
   ResultJsonPath = $ResultJsonPath
+}
+
+if (-not [string]::IsNullOrWhiteSpace($BatchCompareReportPath)) {
+  $gateParams.BatchCompareReportPath = $BatchCompareReportPath
+}
+
+if ($FailOnBatchCompareMismatch) {
+  $gateParams.FailOnBatchCompareMismatch = $true
+}
+
+if ($FailOnBatchCompareFailed) {
+  $gateParams.FailOnBatchCompareFailed = $true
 }
 
 if ($AsJson) {

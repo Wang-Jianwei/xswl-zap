@@ -6587,6 +6587,37 @@ WU-MAINLINE-038: Batch Compare 报告接入 gate 门禁
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.317 已完成 Work Unit
+
+WU-MAINLINE-039: 主线门禁入口透传 batch compare 报告策略
+
+- Objective:
+  - 让 `run_mainline_gate.ps1` 统一入口可直接透传 batch compare 报告路径与失败策略，避免使用者绕过主入口调用子脚本。
+- Scope (in/out):
+  - in: 主线门禁脚本新增 `BatchCompareReportPath` 与 batch fail 开关透传；README 补充使用示例与结果字段说明。
+  - out: 修改 smoke matrix 执行逻辑或扩展端功能。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-039):
+  - `vna/scripts/run_mainline_gate.ps1`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `powershell -NoProfile -Command "[void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_mainline_gate.ps1' -Raw)); Write-Host 'mainline syntax ok'"`
+- Rollback plan: 回滚本次提交，恢复主线门禁入口仅支持原有参数的行为。
+- Risks: 无 batch 报告文件时若误传开关会导致 gate 失败；通过参数显式控制且路径可选，风险可控。
+- Acceptance criteria:
+  - 主线入口支持透传 `BatchCompareReportPath`、`FailOnBatchCompareMismatch`、`FailOnBatchCompareFailed`。
+  - README 给出统一入口调用方式与新增结果字段。
+
+- Validation result (WU-MAINLINE-039):
+  - `run_mainline_gate.ps1` 脚本语法检查通过
+
+- Closure notes (WU-MAINLINE-039):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

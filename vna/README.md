@@ -474,13 +474,24 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 - `reportPath` / `resultJsonPath`
 - `strictMainline` / `runUiGrpcE2E`
 - `failOnUnknownStderr` / `smokeTimeoutSec`
+- `failOnBatchCompareMismatch` / `failOnBatchCompareFailed`
 - `failOnWarningCodes` / `matchedWarningCodes`
+- `batchCompareReportPath` / `batchCompareSummary`
 - `error`
 
 如需在门禁中把特定告警码升级为失败（例如已知噪声也视为失败）：
 
 ```powershell
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild -FailOnWarningCodes known_noise_suppressed
+```
+
+如需消费 VS Code 批量比对报告并按 mismatch/failed 数量触发门禁失败：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild `
+   -BatchCompareReportPath .\build-grpc\batch-compare-report.json `
+   -FailOnBatchCompareMismatch `
+   -FailOnBatchCompareFailed
 ```
 
 主线严格门禁预设（推荐主线分支/预提交）：
@@ -507,10 +518,19 @@ CI 推荐 profile（等价 strict，并固定 CI 报告输出命名）：
 .\scripts\run_mainline_gate.ps1 -Profile standard -SkipBuild
 ```
 
+主线封装脚本同样支持 batch compare 报告透传：
+
+```powershell
+.\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild `
+   -BatchCompareReportPath .\build-grpc\batch-compare-report.json
+```
+
 `-StrictMainline` 会自动启用：
 
 - `-RunUiGrpcE2E`
 - `-FailOnUnknownStderr`
+- `-FailOnBatchCompareMismatch`
+- `-FailOnBatchCompareFailed`
 
 如需在严格门禁中同时将 compare 告警升级为失败，可叠加：
 
