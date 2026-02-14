@@ -6520,6 +6520,38 @@ WU-MAINLINE-036: VS Code 批量回放比对命令（抓大放小）
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.315 已完成 Work Unit
+
+WU-MAINLINE-037: 批量回放比对结构化报告落盘
+
+- Objective:
+  - 在 VS Code 批量比对命令中增加结构化 JSON 报告落盘能力，供 gate/脚本直接消费。
+- Scope (in/out):
+  - in: 批量比对命令新增“是否落盘”交互与报告路径输入；输出包含元数据、汇总和逐文件 case 结果。
+  - out: 新增后端 RPC、引入新的报告 schema 校验脚本。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-037):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用已有 `CompareImportedAcquisition` RPC）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，恢复批量比对仅输出控制台摘要的行为。
+- Risks: 用户填写无效报告路径会导致落盘失败；当前通过输入校验（父目录存在）降低风险。
+- Acceptance criteria:
+  - 批量比对命令支持可选 JSON 报告落盘。
+  - 报告包含 request 元数据、summary 与逐 case 结果（matched/mismatched/failed）。
+  - 扩展测试通过。
+
+- Validation result (WU-MAINLINE-037):
+  - `npm run test` 通过
+
+- Closure notes (WU-MAINLINE-037):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/tools/vscode-extension/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

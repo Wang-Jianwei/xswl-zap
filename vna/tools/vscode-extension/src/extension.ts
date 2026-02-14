@@ -102,6 +102,32 @@ function collectJsonFilesRecursively(rootDir: string): string[] {
   return results;
 }
 
+interface BatchCompareCaseRecord {
+  index: number;
+  jsonPath: string;
+  status: "matched" | "mismatched" | "failed";
+  detail: string;
+  grpcCompareToken: string;
+  error: string;
+}
+
+interface BatchCompareReport {
+  requestId: string;
+  generatedAt: string;
+  instanceId: string;
+  scanDir: string;
+  mode: "frequency" | "time";
+  sampleCount: number;
+  tolerance: number;
+  summary: {
+    total: number;
+    matched: number;
+    mismatched: number;
+    failed: number;
+  };
+  cases: BatchCompareCaseRecord[];
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   const outputChannel = vscode.window.createOutputChannel("XSWL VNA");
 
@@ -582,6 +608,47 @@ export function activate(context: vscode.ExtensionContext): void {
       const tolerance = Number(toleranceInput);
       const mode = modeSelection.label as "frequency" | "time";
 
+      const reportOutputSelection = await vscode.window.showQuickPick(
+        [
+          { label: "yes", description: "Write structured JSON report to file" },
+          { label: "no", description: "Only show summary in output" },
+        ],
+        {
+          title: "Write batch compare report JSON?",
+          ignoreFocusOut: true,
+        },
+      );
+      if (!reportOutputSelection) {
+        return;
+      }
+
+      let reportPath = "";
+      if (reportOutputSelection.label === "yes") {
+        const defaultReportPath = path.join(scanDir, `batch_compare_report_${Date.now()}.json`);
+        const reportPathInput = await vscode.window.showInputBox({
+          prompt: "Batch compare report output path",
+          value: defaultReportPath,
+          ignoreFocusOut: true,
+          validateInput: (value) => {
+            const normalized = value.trim();
+            if (normalized.length === 0) {
+              return "Report path is required.";
+            }
+
+            const parentDir = path.dirname(normalized);
+            if (!fs.existsSync(parentDir)) {
+              return "Parent directory does not exist.";
+            }
+
+            return undefined;
+          },
+        });
+        if (!reportPathInput) {
+          return;
+        }
+        reportPath = reportPathInput.trim();
+      }
+
       const requestId = createRequestId();
       const { address, deadlineMs, autoOpenOutput } = readConfig();
       const client = new ServiceClient({ address, deadlineMs });
@@ -599,6 +666,7 @@ export function activate(context: vscode.ExtensionContext): void {
           mismatched: 0,
           failed: 0,
         };
+        const caseResults: BatchCompareCaseRecord[] = [];
 
         await vscode.window.withProgress(
           {
@@ -639,12 +707,36 @@ export function activate(context: vscode.ExtensionContext): void {
 
                 if (result.matched) {
                   summary.matched += 1;
+                  caseResults.push({
+                    index: index + 1,
+                    jsonPath,
+                    status: "matched",
+                    detail: result.detail,
+                    grpcCompareToken: result.grpcCompareToken,
+                    error: "",
+                  });
                 } else {
                   summary.mismatched += 1;
+                  caseResults.push({
+                    index: index + 1,
+                    jsonPath,
+                    status: "mismatched",
+                    detail: result.detail,
+                    grpcCompareToken: result.grpcCompareToken,
+                    error: "",
+                  });
                 }
               } catch (error) {
                 summary.failed += 1;
                 const errorMessage = error instanceof Error ? error.message : String(error);
+                caseResults.push({
+                  index: index + 1,
+                  jsonPath,
+                  status: "failed",
+                  detail: "",
+                  grpcCompareToken: "",
+                  error: errorMessage,
+                });
                 logBlock(outputChannel, "ERROR", `[BatchCompareImportedAcquisition][requestId=${requestId}]`, [
                   `index=${index + 1}/${jsonPaths.length}, jsonPath=${jsonPath}`,
                   `failed=${errorMessage}`,
@@ -659,6 +751,26 @@ export function activate(context: vscode.ExtensionContext): void {
           `instanceId=${instanceIdInput}, scanDir=${scanDir}, sampleCount=${sampleCount}, mode=${mode}, tolerance=${tolerance}`,
           summaryText,
         ]);
+
+        if (reportPath.length > 0) {
+          const report: BatchCompareReport = {
+            requestId,
+            generatedAt: nowTimestamp(),
+            instanceId: instanceIdInput,
+            scanDir,
+            mode,
+            sampleCount,
+            tolerance,
+            summary,
+            cases: caseResults,
+          };
+
+          fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+          logBlock(outputChannel, "INFO", `[BatchCompareImportedAcquisitionReport][requestId=${requestId}]`, [
+            `reportPath=${reportPath}`,
+          ]);
+        }
+
         showOutputIfEnabled(outputChannel, autoOpenOutput);
 
         if (summary.failed > 0 || summary.mismatched > 0) {
