@@ -151,6 +151,20 @@ struct ComparisonStats {
                                           ? 0.0
                                           : std::sqrt(sParameterSumSquareDelta /
                                                       static_cast<double>(sParameterSamples));
+    const double overallMaxDeltaRatio = tolerance == 0.0 ? 0.0 : (maxComponentDelta / tolerance);
+    const double overallRmsDeltaRatio = tolerance == 0.0 ? 0.0 : (rmsDelta / tolerance);
+    const double receiverRawMaxDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (receiverRawMaxDelta / tolerance);
+    const double receiverCompMaxDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (receiverCompMaxDelta / tolerance);
+    const double sParameterMaxDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (sParameterMaxDelta / tolerance);
+    const double receiverRawRmsDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (receiverRawRmsDelta / tolerance);
+    const double receiverCompRmsDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (receiverCompRmsDelta / tolerance);
+    const double sParameterRmsDeltaRatio =
+      tolerance == 0.0 ? 0.0 : (sParameterRmsDelta / tolerance);
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
           << ", receiver_raw_samples=" << receiverRawSamples
@@ -158,15 +172,21 @@ struct ComparisonStats {
           << ", sparameter_samples=" << sParameterSamples
            << ", max_component_delta=" << maxComponentDelta
               << ", rms_component_delta=" << rmsDelta
+              << ", max_component_delta_ratio=" << overallMaxDeltaRatio
+              << ", rms_component_delta_ratio=" << overallRmsDeltaRatio
               << ", receiver_raw_rms_delta=" << receiverRawRmsDelta
+              << ", receiver_raw_rms_delta_ratio=" << receiverRawRmsDeltaRatio
               << ", receiver_comp_rms_delta=" << receiverCompRmsDelta
-              << ", sparameter_rms_delta=" << sParameterRmsDelta;
+              << ", receiver_comp_rms_delta_ratio=" << receiverCompRmsDeltaRatio
+              << ", sparameter_rms_delta=" << sParameterRmsDelta
+              << ", sparameter_rms_delta_ratio=" << sParameterRmsDeltaRatio;
 
             if (hasReceiverRawMax) {
               stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta
                 << ", receiver_raw_max_at=point:" << receiverRawMaxPoint
                 << "/channel:" << receiverRawMaxChannel
                 << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
+                << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta;
             }
@@ -175,6 +195,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_at=point:" << receiverCompMaxPoint
                 << "/channel:" << receiverCompMaxChannel
                 << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
+                << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta;
             }
@@ -183,6 +204,7 @@ struct ComparisonStats {
                 << ", sparameter_max_at=point:" << sParameterMaxPoint
                 << "/value:" << sParameterMaxValue
                 << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
+                << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta;
             }

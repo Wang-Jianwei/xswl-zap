@@ -3095,6 +3095,148 @@ WU-MAINLINE-127: 批次收敛与统一验证（WU122~127）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.110 已完成 Work Unit
+
+WU-MAINLINE-128: compare 成功摘要增加 overall 最大误差容差比
+
+- Objective: 直接展示最大误差相对容差的占比。
+- Scope (in/out):
+  - in: `max_component_delta_ratio` 摘要输出。
+  - out: 自动阈值分级策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.111 已完成 Work Unit
+
+WU-MAINLINE-129: compare 成功摘要增加 overall RMS 容差比
+
+- Objective: 直接展示 RMS 误差相对容差占比。
+- Scope (in/out):
+  - in: `rms_component_delta_ratio` 摘要输出。
+  - out: 历史趋势评估。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.112 已完成 Work Unit
+
+WU-MAINLINE-130: compare 成功摘要增加 receiver raw RMS 容差比
+
+- Objective: 提供 receiver raw 分类 RMS 裕量指标。
+- Scope (in/out):
+  - in: `receiver_raw_rms_delta_ratio` 摘要输出。
+  - out: 通道分层统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.113 已完成 Work Unit
+
+WU-MAINLINE-131: compare 成功摘要增加 receiver compensated RMS 容差比
+
+- Objective: 提供补偿后分类 RMS 裕量指标。
+- Scope (in/out):
+  - in: `receiver_comp_rms_delta_ratio` 摘要输出。
+  - out: 自动补偿参数修正。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.114 已完成 Work Unit
+
+WU-MAINLINE-132: compare 成功摘要增加 s-parameter RMS 容差比
+
+- Objective: 提供 s-parameter 分类 RMS 裕量指标。
+- Scope (in/out):
+  - in: `sparameter_rms_delta_ratio` 摘要输出。
+  - out: 端口对热点分析。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.115 已完成 Work Unit
+
+WU-MAINLINE-133: compare 成功摘要增加 receiver raw 最大误差容差比
+
+- Objective: 提供 receiver raw 峰值误差裕量指标。
+- Scope (in/out):
+  - in: `receiver_raw_max_delta_ratio` 摘要输出。
+  - out: 峰值点自动告警。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.116 已完成 Work Unit
+
+WU-MAINLINE-134: compare 成功摘要增加 receiver compensated 最大误差容差比
+
+- Objective: 提供补偿后峰值误差裕量指标。
+- Scope (in/out):
+  - in: `receiver_comp_max_delta_ratio` 摘要输出。
+  - out: 峰值回放聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.117 已完成 Work Unit
+
+WU-MAINLINE-135: compare 成功摘要增加 s-parameter 最大误差容差比
+
+- Objective: 提供 s-parameter 峰值误差裕量指标。
+- Scope (in/out):
+  - in: `sparameter_max_delta_ratio` 摘要输出。
+  - out: 频段阈值优化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.118 已完成 Work Unit
+
+WU-MAINLINE-136: comparator 摘要层统一 ratio 计算
+
+- Objective: 统一 ratio 计算口径，避免各字段逻辑漂移。
+- Scope (in/out):
+  - in: 在 `BuildSummary` 统一按 `delta/tolerance` 计算各 ratio 字段。
+  - out: 新增结构化诊断模型。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.119 已完成 Work Unit
+
+WU-MAINLINE-137: comparator 回归断言补齐 ratio 字段
+
+- Objective: 防止 ratio 字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 overall/分类 ratio 断言。
+  - out: 模糊测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.120 已完成 Work Unit
+
+WU-MAINLINE-138: service 回归断言补齐 ratio 字段
+
+- Objective: 确保 service compare detail 全链路透传 ratio 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 ratio 字段断言。
+  - out: gRPC 客户端显示校验。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.121 已完成 Work Unit
+
+WU-MAINLINE-139: 批次收敛与统一验证（WU128~139）
+
+- Objective: 大批次合并后端 compare 诊断简单 WU，提升单轮产出效率。
+- Scope (in/out):
+  - in: 聚合 WU128~139 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU128~139):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU122~127 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含 overall 与分类 `*_delta_ratio` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU128~139 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
