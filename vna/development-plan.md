@@ -5975,6 +5975,43 @@ WU-VSCODE-017~018: 扩展接入实例能力查询与预览能力联动
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.300 已完成 Work Unit
+
+WU-VSCODE-019~021: 主线门禁统一入口与 CI 严格接线
+
+- Objective:
+  - WU-VSCODE-019：新增 `run_mainline_gate.ps1` 作为主线门禁统一入口（`standard/strict` profile）。
+  - WU-VSCODE-020：将 StrictMainline 接入 `vna-ci` Windows job，形成 CI 自动执行。
+  - WU-VSCODE-021：在 CI 中归档 gate/matrix JSON 报告，便于失败追溯。
+- Scope (in/out):
+  - in: 新增脚本封装、`vna-ci.yml` 增加 node 依赖安装与 strict gate 执行、上传 gate artifact、README 使用说明。
+  - out: 修改 smoke/gate 核心判定语义。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-019~021):
+  - `vna/scripts/run_mainline_gate.ps1`
+  - `.github/workflows/vna-ci.yml`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/scripts && .\run_mainline_gate.ps1 -Profile standard -SkipBuild -SmokeTimeoutSec 20`
+  - `cd vna/scripts && .\run_mainline_gate.ps1 -Profile strict -SkipBuild -SmokeTimeoutSec 20`
+- Rollback plan: 回滚本次提交，恢复直接调用 `run_smoke_report_gate.ps1` 的方式。
+- Risks: CI strict profile 依赖浏览器与 grpc build 链路；当前已通过脚本 doctor + npm 依赖安装降低环境漂移风险。
+- Acceptance criteria:
+  - 本地可通过统一脚本执行 `standard/strict` 两种门禁 profile。
+  - `vna-ci` 自动执行 strict mainline gate。
+  - CI 产出 `smoke-matrix-gate-*.json` 与 `ci-mainline-gate-*.json` artifact。
+
+- Validation result (WU-VSCODE-019~021):
+  - `run_mainline_gate.ps1 -Profile standard -SkipBuild` 通过
+  - `run_mainline_gate.ps1 -Profile strict -SkipBuild` 通过
+
+- Closure notes (WU-VSCODE-019~021):
+  - 文档同步：已更新 `vna/README.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

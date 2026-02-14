@@ -43,6 +43,15 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install VS Code extension deps
+        working-directory: vna/tools/vscode-extension
+        run: npm ci
+
       - name: Configure
         working-directory: vna
         run: |
@@ -60,3 +69,18 @@ jobs:
         run: |
           $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
           .\scripts\run_easy_tests.ps1
+
+      - name: Mainline strict gate
+        working-directory: vna
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+          .\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild -SmokeTimeoutSec 20 -ResultJsonPath '.\build-grpc\ci-mainline-gate-{timestamp}.json'
+
+      - name: Upload gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vna-gate-reports
+          path: |
+            vna/build-grpc/smoke-matrix-gate-*.json
+            vna/build-grpc/ci-mainline-gate-*.json

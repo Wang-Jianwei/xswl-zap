@@ -489,6 +489,18 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild -StrictMainline
 ```
 
+主线门禁封装脚本（推荐 CI 与本地统一入口）：
+
+```powershell
+.\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild
+```
+
+可选标准模式（不启用 UI E2E 与 strict unknown-stderr）：
+
+```powershell
+.\scripts\run_mainline_gate.ps1 -Profile standard -SkipBuild
+```
+
 `-StrictMainline` 会自动启用：
 
 - `-RunUiGrpcE2E`
