@@ -105,6 +105,9 @@ int main() {
           vna::core::Status::kOk);
         assert(compareDiff.find("COMPARE_MATCHED:") == 0);
         assert(compareDiff.find("tolerance=") != std::string::npos);
+        assert(compareDiff.find("summary_version=") != std::string::npos);
+        assert(compareDiff.find("summary_schema=") != std::string::npos);
+        assert(compareDiff.find("summary_compat=") != std::string::npos);
         assert(compareDiff.find("receiver_raw_samples=") != std::string::npos);
         assert(compareDiff.find("max_component_delta=") != std::string::npos);
         assert(compareDiff.find("max_component_delta_ratio=") != std::string::npos);

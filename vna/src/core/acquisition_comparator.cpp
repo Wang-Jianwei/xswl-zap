@@ -11,6 +11,10 @@ namespace core {
 
 namespace {
 
+const int kCompareSummaryVersion = 2;
+const char* kCompareSummarySchema = "compare_detail_v2";
+const char* kCompareSummaryCompat = "stable";
+
 bool AlmostEqual(double lhs, double rhs, double tolerance) {
   return std::fabs(lhs - rhs) <= tolerance;
 }
@@ -354,6 +358,9 @@ struct ComparisonStats {
       : "overall|none";
 
         stream << "tolerance=" << tolerance
+          << ", summary_version=" << kCompareSummaryVersion
+          << ", summary_schema=" << kCompareSummarySchema
+          << ", summary_compat=" << kCompareSummaryCompat
           << ", samples=" << sampleCount
           << ", receiver_raw_samples=" << receiverRawSamples
           << ", receiver_comp_samples=" << receiverCompSamples

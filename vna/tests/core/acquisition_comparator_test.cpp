@@ -55,6 +55,9 @@ int main() {
   assert(vna::core::AcquisitionComparator::AreEquivalentForReplay(baseline, same, 1e-9, &diff));
   assert(diff.find("COMPARE_MATCHED:") == 0);
   assert(diff.find("tolerance=") != std::string::npos);
+  assert(diff.find("summary_version=") != std::string::npos);
+  assert(diff.find("summary_schema=") != std::string::npos);
+  assert(diff.find("summary_compat=") != std::string::npos);
   assert(diff.find("receiver_raw_samples=") != std::string::npos);
   assert(diff.find("receiver_comp_samples=") != std::string::npos);
   assert(diff.find("sparameter_samples=") != std::string::npos);
