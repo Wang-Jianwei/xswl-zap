@@ -176,6 +176,7 @@ int main() {
         assert(service.CompareImportedAcquisition(jsonPath, result, 1e-6, &compareDiff) ==
           vna::core::Status::kOk);
         assert(compareDiff.find("COMPARE_MATCHED:") == 0);
+        assert(compareDiff.find("deembedding=off") != std::string::npos);
         assert(compareDiff.find("tolerance=") != std::string::npos);
         assert(compareDiff.find("summary_version=") != std::string::npos);
         assert(compareDiff.find("summary_schema=") != std::string::npos);
@@ -258,12 +259,20 @@ int main() {
         assert(compareDiff.find("sparameter_max_expected_real=") != std::string::npos);
         assert(compareDiff.find("sparameter_max_actual_real=") != std::string::npos);
 
+         service.SetDeEmbeddingEnabled(true);
+         std::string deembedCompare;
+         assert(service.CompareImportedAcquisition(jsonPath, result, 1e-6, &deembedCompare) ==
+           vna::core::Status::kOk);
+         assert(deembedCompare.find("deembedding=on,mode=frequency") != std::string::npos);
+         service.SetDeEmbeddingEnabled(false);
+
         vna::core::AcquisitionResult altered = result;
         altered.sParameters.points[0].matrix[0] = std::complex<double>(123.0, 456.0);
         assert(service.CompareImportedAcquisition(jsonPath, altered, 1e-9, &compareDiff) ==
           vna::core::Status::kInvalidArgument);
         assert(compareDiff.find("COMPARE_MISMATCH:") != std::string::npos);
         assert(compareDiff.find("delta=") != std::string::npos);
+        assert(compareDiff.find("deembedding=off") != std::string::npos);
 
     std::string exportError;
     const vna::core::Status invalidExportStatus = service.ExportAcquisitionResult(
@@ -306,7 +315,7 @@ int main() {
             std::string invalidTolerance;
             assert(service.CompareImportedAcquisition(jsonPath, result, 0.0, &invalidTolerance) ==
               vna::core::Status::kInvalidArgument);
-            assert(invalidTolerance == "COMPARE_TOLERANCE_INVALID: tolerance must be > 0");
+            assert(invalidTolerance.find("COMPARE_TOLERANCE_INVALID: tolerance must be > 0") == 0);
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);

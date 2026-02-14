@@ -231,6 +231,24 @@ void VnaControlService::SetDeEmbeddingEnabled(bool enabled) {
   deEmbeddingEnabled_ = enabled;
 }
 
+std::string VnaControlService::BuildDeEmbeddingContextTag() const {
+  if (!deEmbeddingEnabled_) {
+    return "deembedding=off";
+  }
+
+  if (!deEmbeddingFrequencyProfiles_.empty()) {
+    return "deembedding=on,mode=frequency,profile_count=" +
+        std::to_string(deEmbeddingFrequencyProfiles_.size());
+  }
+
+  if (!deEmbeddingPortTransfer_.empty()) {
+    return "deembedding=on,mode=global,port_count=" +
+        std::to_string(deEmbeddingPortTransfer_.size());
+  }
+
+  return "deembedding=on,mode=unconfigured";
+}
+
 core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,
                                                        const std::string& csvPath,
                                                        const std::string& touchstonePath,
@@ -310,9 +328,10 @@ core::Status VnaControlService::CompareImportedAcquisition(const std::string& js
                                                           const core::AcquisitionResult& current,
                                                           double tolerance,
                                                           std::string* diffMessage) {
+  const std::string deEmbeddingTag = BuildDeEmbeddingContextTag();
   if (tolerance <= 0.0) {
     if (diffMessage != nullptr) {
-      *diffMessage = "COMPARE_TOLERANCE_INVALID: tolerance must be > 0";
+      *diffMessage = "COMPARE_TOLERANCE_INVALID: tolerance must be > 0, " + deEmbeddingTag;
     }
     return core::Status::kInvalidArgument;
   }
@@ -322,7 +341,7 @@ core::Status VnaControlService::CompareImportedAcquisition(const std::string& js
   const core::Status importStatus = ImportAcquisitionResult(jsonPath, imported, &importError);
   if (importStatus != core::Status::kOk) {
     if (diffMessage != nullptr) {
-      *diffMessage = importError;
+      *diffMessage = importError + ", " + deEmbeddingTag;
     }
     return importStatus;
   }
@@ -332,13 +351,16 @@ core::Status VnaControlService::CompareImportedAcquisition(const std::string& js
       imported, current, tolerance, &mismatch);
   if (!same) {
     if (diffMessage != nullptr) {
-      *diffMessage = mismatch.find("COMPARE_MISMATCH:") == 0 ? mismatch : "COMPARE_MISMATCH: " + mismatch;
+      const std::string mismatchDetail =
+          mismatch.find("COMPARE_MISMATCH:") == 0 ? mismatch : "COMPARE_MISMATCH: " + mismatch;
+      *diffMessage = mismatchDetail + ", " + deEmbeddingTag;
     }
     return core::Status::kInvalidArgument;
   }
 
   if (diffMessage != nullptr) {
-    *diffMessage = mismatch.empty() ? "COMPARE_MATCHED" : mismatch;
+    const std::string matchDetail = mismatch.empty() ? "COMPARE_MATCHED" : mismatch;
+    *diffMessage = matchDetail + ", " + deEmbeddingTag;
   }
   return core::Status::kOk;
 }

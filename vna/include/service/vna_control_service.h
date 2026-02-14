@@ -80,6 +80,7 @@ class VnaControlService {
 
  private:
   static TopologyErrorDetail BuildTopologyError(const std::string& rawError);
+  std::string BuildDeEmbeddingContextTag() const;
 
   core::VnaRuntime runtime_;
   bool started_;

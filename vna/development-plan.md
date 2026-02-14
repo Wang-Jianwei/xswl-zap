@@ -6206,6 +6206,40 @@ WU-MAINLINE-027: 频点相关去嵌入系数（core + service 配置）
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/config/service.yaml`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.306 已完成 Work Unit
+
+WU-MAINLINE-028: 去嵌入状态可观测化（compare detail 标记）
+
+- Objective:
+  - 在 `CompareImportedAcquisition` 详情中显式输出去嵌入上下文（开关/模式/规模），便于回归与现场诊断快速判断比较条件。
+- Scope (in/out):
+  - in: `VnaControlService` 增加去嵌入上下文标签生成并拼接到 compare detail；扩展核心服务测试断言。
+  - out: 修改 compare RPC 契约字段、调整 compare 判定阈值。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-028):
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本次提交，恢复 compare detail 原有输出。
+- Risks: detail 字符串内容增加会影响依赖精确等值比较的调用方；当前仓内测试已改为前缀/包含断言并保留兼容。
+- Acceptance criteria:
+  - compare 成功/失败/参数错误路径都包含 `deembedding=` 上下文字段。
+  - 在 frequency-profile 去嵌入开启时，detail 可见 `mode=frequency`。
+
+- Validation result (WU-MAINLINE-028):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_vna_control_service_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-028):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
