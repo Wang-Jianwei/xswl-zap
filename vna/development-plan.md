@@ -6651,6 +6651,43 @@ WU-MAINLINE-040: strict/ci 门禁默认要求 batch compare 报告
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.319 已完成 Work Unit
+
+WU-MAINLINE-041: 非交互 gRPC 批量回放比对报告生成器
+
+- Objective:
+  - 提供后端驱动的批量回放比对 CLI 与脚本入口，在自动化环境中直接生成 batch compare 报告，消除对 VS Code 交互命令的依赖。
+- Scope (in/out):
+  - in: 新增 `easy_grpc_batch_compare` 可执行；新增 `run_grpc_batch_compare.ps1`；接入 grpc 构建脚本与 README。
+  - out: 修改 gRPC 服务端契约、修改 gate 判定策略。
+- Status: ✅ Completed (2026-02-15)
+
+- Files to change (WU-MAINLINE-041):
+  - `vna/src/service/grpc/grpc_batch_compare_main.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/scripts/build_grpc_adapter.ps1`
+  - `vna/scripts/run_grpc_batch_compare.ps1`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用已有 `CompareImportedAcquisition` RPC）。
+- Test plan:
+  - `cd vna && cmake --build --preset grpc-mingw64 --target vna_grpc_batch_compare`
+  - `powershell -NoProfile -Command "[void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_grpc_batch_compare.ps1' -Raw)); Write-Host 'batch script syntax ok'"`
+- Rollback plan: 回滚本次提交，恢复仅通过 VS Code 命令生成 batch compare 报告的路径。
+- Risks: 当输入目录包含大量非采集 JSON 时，compare RPC 失败计数可能增多；可通过独立基准目录隔离输入源。
+- Acceptance criteria:
+  - 可执行文件支持目录递归批量 compare 并输出结构化 JSON 报告。
+  - PowerShell 脚本支持占位符路径、失败策略开关与最小构建依赖。
+  - grpc 目标构建通过。
+
+- Validation result (WU-MAINLINE-041):
+  - `vna_grpc_batch_compare` 目标构建通过
+  - `run_grpc_batch_compare.ps1` 脚本语法检查通过
+
+- Closure notes (WU-MAINLINE-041):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

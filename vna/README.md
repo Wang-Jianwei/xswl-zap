@@ -498,6 +498,23 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 
 `-BatchCompareReportPath` 也支持 `{latest}` / `{latestBatchCompareReport}`，用于自动发现 `build-grpc` 下最新报告。
 
+如需在非交互场景直接生成 batch compare 报告（不依赖 VS Code 命令交互）：
+
+```powershell
+.\scripts\run_grpc_batch_compare.ps1 -SkipBuild `
+   -InputDir .\build-grpc `
+   -OutputJsonPath '.\build-grpc\batch_compare_report_{timestamp}.json' `
+   -Mode frequency `
+   -SampleCount 128 `
+   -Tolerance 1e-6
+```
+
+如需将 mismatch/failed 直接视为命令失败（用于 CI 严格链路）：
+
+```powershell
+.\scripts\run_grpc_batch_compare.ps1 -SkipBuild -FailOnMismatch -FailOnFailed
+```
+
 主线严格门禁预设（推荐主线分支/预提交）：
 
 ```powershell

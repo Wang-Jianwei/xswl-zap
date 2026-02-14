@@ -35,9 +35,9 @@ try {
     cmake --preset grpc-mingw64
   }
 
-  Write-Host "[GRPC] build targets vna_grpc_service_adapter, vna_grpc_server, vna_grpc_client_smoke, vna_grpc_stream_smoke and vna_grpc_service_status_mapping_test"
+  Write-Host "[GRPC] build targets vna_grpc_service_adapter, vna_grpc_server, vna_grpc_client_smoke, vna_grpc_stream_smoke, vna_grpc_batch_compare and vna_grpc_service_status_mapping_test"
   Invoke-NativeChecked -Step "cmake-build-grpc" -Command {
-    cmake --build --preset grpc-mingw64 --target vna_grpc_service_adapter vna_grpc_server vna_grpc_client_smoke vna_grpc_stream_smoke vna_grpc_service_status_mapping_test
+    cmake --build --preset grpc-mingw64 --target vna_grpc_service_adapter vna_grpc_server vna_grpc_client_smoke vna_grpc_stream_smoke vna_grpc_batch_compare vna_grpc_service_status_mapping_test
   }
 }
 finally {
