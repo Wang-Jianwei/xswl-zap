@@ -130,8 +130,10 @@ WU-<ID>: <Title>
 满足以下条件的 WU，可合并为一次提交：
 
 - 仅文档/脚本轻量改动，不涉及 proto/公共接口/核心业务逻辑
-- 变更文件少且彼此同主题（建议不超过 3 个 WU）
+- 变更文件少且彼此同主题（默认应优先合并，建议 6~12 个小 WU 一批；同主题且同验证链路下可扩展到 16 个）
 - 可在一组测试命令中完成共同验证
+
+执行偏好补充：除非涉及重大契约变更、高风险重构或用户明确要求拆分，否则不将任务过细拆分为大量单独小 WU。
 
 合并提交时必须满足：
 
@@ -4226,6 +4228,108 @@ WU-MAINLINE-223: 批次收敛与统一验证（WU216~223）
   - core/service 定向测试通过。
 
 - Validation result (WU216~223 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
+### 8.206 已完成 Work Unit
+
+WU-MAINLINE-224: compare 成功摘要增加 receiver raw 最大点位分段字段
+
+- Objective: 识别 raw 最大误差点位于扫频前/中/后段。
+- Scope (in/out):
+  - in: `receiver_raw_max_point_zone` 摘要输出（`front/middle/back`）。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.207 已完成 Work Unit
+
+WU-MAINLINE-225: compare 成功摘要增加 receiver compensated 最大点位分段字段
+
+- Objective: 识别 compensated 最大误差点位于扫频前/中/后段。
+- Scope (in/out):
+  - in: `receiver_comp_max_point_zone` 摘要输出（`front/middle/back`）。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.208 已完成 Work Unit
+
+WU-MAINLINE-226: compare 成功摘要增加 s-parameter 最大点位分段字段
+
+- Objective: 识别 s-parameter 最大误差点位于扫频前/中/后段。
+- Scope (in/out):
+  - in: `sparameter_max_point_zone` 摘要输出（`front/middle/back`）。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.209 已完成 Work Unit
+
+WU-MAINLINE-227: compare 成功摘要增加 worst 最大点位分段字段
+
+- Objective: 识别全局最差误差点位于扫频前/中/后段。
+- Scope (in/out):
+  - in: `worst_max_point_zone` 摘要输出（`front/middle/back`）。
+  - out: 动态告警阈值策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.210 已完成 Work Unit
+
+WU-MAINLINE-228: comparator 抽象统一分段口径
+
+- Objective: 统一 point ratio 到 point zone 的区间划分口径。
+- Scope (in/out):
+  - in: 统一函数 `PointZoneFromRatio`（`front/middle/back`）。
+  - out: 外部可配置分段阈值。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.211 已完成 Work Unit
+
+WU-MAINLINE-229: core 回归断言补齐分段字段
+
+- Objective: 防止 point zone 字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `*_max_point_zone` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.212 已完成 Work Unit
+
+WU-MAINLINE-230: service 回归断言补齐分段字段
+
+- Objective: 确保 compare detail 全链路透传 point zone 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 `*_max_point_zone` 断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.213 已完成 Work Unit
+
+WU-MAINLINE-231: 批次收敛与统一验证（WU224~231）
+
+- Objective: 合并 point zone 诊断轻量 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU224~231 的代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU224~231):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU216~223 诊断粒度。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含分类与 worst 的 `*_max_point_zone` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU224~231 合并提交):
   - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过

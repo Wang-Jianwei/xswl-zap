@@ -31,6 +31,16 @@ bool IsFiniteComplex(const std::complex<double>& value) {
   return std::isfinite(value.real()) && std::isfinite(value.imag());
 }
 
+const char* PointZoneFromRatio(double ratio) {
+  if (ratio < (1.0 / 3.0)) {
+    return "front";
+  }
+  if (ratio < (2.0 / 3.0)) {
+    return "middle";
+  }
+  return "back";
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -204,6 +214,9 @@ struct ComparisonStats {
       ? 0.0
       : static_cast<double>(sParameterMaxPoint) /
         static_cast<double>(sParameterTotalPoints - 1);
+    const char* receiverRawMaxPointZone = PointZoneFromRatio(receiverRawMaxPointRatio);
+    const char* receiverCompMaxPointZone = PointZoneFromRatio(receiverCompMaxPointRatio);
+    const char* sParameterMaxPointZone = PointZoneFromRatio(sParameterMaxPointRatio);
 
     bool hasWorst = false;
     const char* worstCategory = "none";
@@ -269,6 +282,7 @@ struct ComparisonStats {
     const double worstPointRatio = worstTotalPoints <= 1
       ? 0.0
       : static_cast<double>(worstPoint) / static_cast<double>(worstTotalPoints - 1);
+    const char* worstPointZone = PointZoneFromRatio(worstPointRatio);
 
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
@@ -301,6 +315,7 @@ struct ComparisonStats {
                 << ", worst_max_frequency_hz=" << worstFrequencyHz
                 << ", worst_total_points=" << worstTotalPoints
                 << ", worst_max_point_ratio=" << worstPointRatio
+                << ", worst_max_point_zone=" << worstPointZone
                 << ", worst_max_real_delta=" << worstRealDelta
                 << ", worst_max_imag_delta=" << worstImagDelta
                 << ", worst_expected_real=" << worstExpected.real()
@@ -322,6 +337,7 @@ struct ComparisonStats {
                 << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
                 << ", receiver_raw_total_points=" << receiverRawTotalPoints
                 << ", receiver_raw_max_point_ratio=" << receiverRawMaxPointRatio
+                << ", receiver_raw_max_point_zone=" << receiverRawMaxPointZone
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_tolerance_margin=" << receiverRawMaxToleranceMargin
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
@@ -345,6 +361,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
                 << ", receiver_comp_total_points=" << receiverCompTotalPoints
                 << ", receiver_comp_max_point_ratio=" << receiverCompMaxPointRatio
+                << ", receiver_comp_max_point_zone=" << receiverCompMaxPointZone
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_tolerance_margin=" << receiverCompMaxToleranceMargin
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
@@ -368,6 +385,7 @@ struct ComparisonStats {
                 << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
                 << ", sparameter_total_points=" << sParameterTotalPoints
                 << ", sparameter_max_point_ratio=" << sParameterMaxPointRatio
+                << ", sparameter_max_point_zone=" << sParameterMaxPointZone
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_tolerance_margin=" << sParameterMaxToleranceMargin
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
