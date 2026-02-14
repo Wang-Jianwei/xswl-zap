@@ -5762,6 +5762,40 @@ WU-VSCODE-011: 扫描状态后端主导化（Set/GetScanState）
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.294 已完成 Work Unit
+
+WU-VSCODE-012: 新增真实 gRPC 实流 UI E2E（Playwright）
+
+- Objective: 增加一条可执行的前后端联动 UI E2E，用真实 gRPC stream 数据驱动 Webview Canvas 渲染与扫描状态交互回归。
+- Scope (in/out):
+  - in: 新增 `waveformPreview.grpc.ui.e2e.test.ts`；新增 `npm run test:ui:grpc` 脚本；补充 UI 与计划文档。
+  - out: 改动后端采集算法或扩展命令面板交互流程。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-012):
+  - `vna/tools/vscode-extension/test/waveformPreview.grpc.ui.e2e.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用已存在 `Acquire/StreamAcquisition/SetScanState/GetScanState` 契约）。
+- Test plan:
+  - `cd vna/scripts && .\start_grpc_for_vscode.ps1`
+  - `cd vna/tools/vscode-extension && npm run test:ui:grpc`
+- Rollback plan: 回滚本次提交，移除 `test:ui:grpc` 与新增 E2E 测试文件。
+- Risks: 用例依赖本机可执行 Chromium（Edge/Chrome）与本地 gRPC 服务可用；已支持环境变量覆盖地址/浏览器路径。
+- Acceptance criteria:
+  - 能真实连接 `127.0.0.1:50051` 并接收 stream 帧。
+  - E2E 验证 Canvas 非空绘制。
+  - E2E 验证 `hold/continuous` 切换后状态展示与后端确认一致。
+
+- Validation result (WU-VSCODE-012):
+  - `cd vna/scripts && .\start_grpc_for_vscode.ps1` 通过（后端已在 50051 监听）
+  - `cd vna/tools/vscode-extension && npm run test:ui:grpc` 通过（`waveformPreview.grpc.ui.e2e.test passed`）
+
+- Closure notes (WU-VSCODE-012):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

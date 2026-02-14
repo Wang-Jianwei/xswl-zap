@@ -118,6 +118,7 @@ flowchart LR
 - 修复 Webview 初始化时序下的函数/变量 TDZ 引用问题（流式更新早到时导致绘图与交互按钮失效），并补充回归断言。
 - 新增 Webview 运行时诊断上报（初始化/异常/绘制失败）到扩展输出通道，并在图页显示脚本状态，便于现场快速定位“无波形/无日志”问题。
 - 新增 Playwright 无头 UI 冒烟测试（`npm run test:ui`），自动校验脚本就绪、Canvas 非空绘制与关键按钮交互生效。
+- 新增真实 gRPC 实流 UI E2E（`npm run test:ui:grpc`），在后端在线时验证“实流帧 -> Webview 更新 -> Canvas 绘制 -> 扫描状态切换确认”链路。
 - 修复图例/按钮交互选择器字符串引号转义错误导致的 Webview 脚本语法异常（`missing ) after argument list`）。
 - Canvas 渲染增加高 DPI 缩放适配（`devicePixelRatio` 背板缩放 + CSS 尺寸保持），提升高分屏下波形清晰度。
 - 预览页面改为响应式无滚动布局：波形区域占满剩余空间并随窗口尺寸自动重绘（`ResizeObserver` + `window.resize`），避免出现滚动条。
