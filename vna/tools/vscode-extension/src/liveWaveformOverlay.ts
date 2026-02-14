@@ -1,4 +1,11 @@
-import type { WaveformMarker, WaveformPoint, WaveformPreviewData, WaveformTrace } from "./types";
+import type {
+  LiveStatsLevel,
+  LiveWaveformStats,
+  WaveformMarker,
+  WaveformPoint,
+  WaveformPreviewData,
+  WaveformTrace,
+} from "./types";
 
 export interface LiveWaveformOverlayState {
   peakHoldPoints: WaveformPoint[];
@@ -80,6 +87,74 @@ function upsertTrace(traces: WaveformTrace[], trace: WaveformTrace): WaveformTra
   return next;
 }
 
+function mean(values: number[]): number {
+  if (values.length === 0) {
+    return 0;
+  }
+  const sum = values.reduce((acc, value) => acc + value, 0);
+  return sum / values.length;
+}
+
+function stdDev(values: number[], valueMean: number): number {
+  if (values.length < 2) {
+    return 0;
+  }
+  const variance = values.reduce((acc, value) => {
+    const delta = value - valueMean;
+    return acc + delta * delta;
+  }, 0) / values.length;
+  return Math.sqrt(Math.max(0, variance));
+}
+
+function nextLevel(current: LiveStatsLevel, candidate: LiveStatsLevel): LiveStatsLevel {
+  const rank: Record<LiveStatsLevel, number> = {
+    normal: 0,
+    warning: 1,
+    critical: 2,
+  };
+  return rank[candidate] > rank[current] ? candidate : current;
+}
+
+function buildLiveStats(frames: WaveformPoint[][]): LiveWaveformStats {
+  const values = frames.flatMap((frame) => frame.map((point) => point.y));
+  if (values.length === 0) {
+    return {
+      peakToPeak: 0,
+      mean: 0,
+      stdDev: 0,
+      coefficientOfVariation: 0,
+      level: "normal",
+      window: 0,
+    };
+  }
+
+  const statMean = mean(values);
+  const statStdDev = stdDev(values, statMean);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const peakToPeak = maxValue - minValue;
+  const denominator = Math.max(Math.abs(statMean), 1e-9);
+  const coefficientOfVariation = statStdDev / denominator;
+  const peakToPeakRatio = peakToPeak / denominator;
+
+  let level: LiveStatsLevel = "normal";
+  if (coefficientOfVariation >= 0.12 || peakToPeakRatio >= 0.45) {
+    level = nextLevel(level, "warning");
+  }
+  if (coefficientOfVariation >= 0.2 || peakToPeakRatio >= 0.8) {
+    level = nextLevel(level, "critical");
+  }
+
+  return {
+    peakToPeak,
+    mean: statMean,
+    stdDev: statStdDev,
+    coefficientOfVariation,
+    level,
+    window: frames.length,
+  };
+}
+
 export function applyLiveFrequencyOverlays(
   waveform: WaveformPreviewData,
   state: LiveWaveformOverlayState,
@@ -110,6 +185,7 @@ export function applyLiveFrequencyOverlays(
   const currentFrame = primaryTrace.points.map((point) => ({ x: point.x, y: point.y }));
   const updatedRecent = [...nextRecent, currentFrame].slice(-Math.max(2, recentFrameWindow));
   const averagePoints = buildAveragePoints(updatedRecent);
+  const liveStats = buildLiveStats(updatedRecent);
 
   const peakTrace: WaveformTrace = {
     id: "livePeakHold",
@@ -148,6 +224,7 @@ export function applyLiveFrequencyOverlays(
       ...waveform,
       traces,
       visibleTraceIds,
+      liveStats,
     },
     state: {
       peakHoldPoints: updatedPeak,

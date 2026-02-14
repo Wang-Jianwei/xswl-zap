@@ -573,26 +573,44 @@ function renderAxes(
   return `${horizontal}\n${vertical}\n${axes}\n${ticks}`;
 }
 
-export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
+export interface WaveformPreviewUpdatePayload {
+  metaText: string;
+  axisText: string;
+  legendText: string;
+  scanStatusText: string;
+  scanStatusClass: string;
+  liveStatsText: string;
+  liveStatsClass: string;
+  scanState: "continuous" | "single" | "hold";
+  legendItems: string;
+  markerRows: string;
+  canvasModel: {
+    width: number;
+    height: number;
+    bounds: { minX: number; maxX: number; minY: number; maxY: number };
+    enableSmoothing: boolean;
+    enableEnvelope: boolean;
+    traces: Array<{
+      id: string;
+      label: string;
+      color: string;
+      points: WaveformPoint[];
+      markers: WaveformMarker[];
+      isPrimary: boolean;
+    }>;
+  };
+}
+
+export function buildWaveformPreviewUpdatePayload(data: WaveformPreviewData): WaveformPreviewUpdatePayload {
   const width = 900;
   const height = 360;
   const chartBounds = getAdaptiveTraceBounds(data.traces, data.frameType);
   const enableSmoothing = data.frameType === "frequency";
   const enableEnvelope = data.frameType === "frequency";
-  const canToggleRenderMode = data.frameType === "frequency";
   const visibleTraceSet = new Set(
     data.visibleTraceIds.length > 0 ? data.visibleTraceIds : data.traces.map((trace) => trace.id),
   );
   const primaryTraceId = data.traces[0]?.id ?? "";
-  const primaryTrace = data.traces[0];
-  const primaryMarkerCopyText = primaryTrace
-    ? `timestampNs=${data.timestampNs} | source=${data.traceSource} | channel=${data.channelIndex} | ${primaryTrace.label} | ${primaryTrace.markers
-        .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
-        .join("; ")}`
-    : "";
-  const copyTitle = primaryMarkerCopyText
-    ? `Copy primary marker to clipboard (${primaryMarkerCopyText.length} chars)`
-    : "No primary marker available";
   const markerEntries = data.traces
     .map((trace) => {
       const text = trace.markers
@@ -626,7 +644,61 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       return `<div class="marker-row ${trace.id === primaryTraceId ? "is-primary" : ""} ${visibleTraceSet.has(trace.id) ? "" : "is-hidden"}" data-trace-id="${trace.id}"><span class="marker-name">${trace.label}</span><span class="marker-values">${text || "none"}</span></div>`;
     })
     .join("");
+
   const legendText = data.traces.map((trace) => `${trace.label}:${trace.color}`).join(" | ");
+  const scanState = data.scanState ?? "continuous";
+  const streamStateText = data.streamActive === false ? "stopped" : "running";
+  const streamFrameCount = data.streamFrameCount ?? 0;
+  const scanStatusClass = `scan-status is-${scanState}`;
+  const liveStatsSummary = data.liveStats
+    ? `p2p=${formatTick(data.liveStats.peakToPeak)} | mean=${formatTick(data.liveStats.mean)} | std=${formatTick(data.liveStats.stdDev)} | cv=${data.liveStats.coefficientOfVariation.toFixed(3)} | window=${data.liveStats.window} | level=${data.liveStats.level}`
+    : "live stats unavailable";
+  const liveStatsClass = `stats-panel is-${data.liveStats?.level ?? "normal"}`;
+  const canvasModel = {
+    width,
+    height,
+    bounds: chartBounds,
+    enableSmoothing,
+    enableEnvelope,
+    traces: data.traces.map((trace) => ({
+      id: trace.id,
+      label: trace.label,
+      color: trace.color,
+      points: trace.points,
+      markers: trace.markers,
+      isPrimary: trace.id === primaryTraceId,
+    })),
+  };
+
+  return {
+    metaText: `instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | visible=${data.visibleTraceIds.join(",") || "all"} | points=${data.points.length} | timestampNs=${data.timestampNs}`,
+    axisText: `x=${data.xLabel} | y=${data.yLabel}`,
+    legendText: `legend=${legendText || "none"}`,
+    scanStatusText: `scan=${scanState} | stream=${streamStateText} | frames=${streamFrameCount}`,
+    scanStatusClass,
+    liveStatsText: `live stats=${liveStatsSummary}`,
+    liveStatsClass,
+    scanState,
+    legendItems,
+    markerRows,
+    canvasModel,
+  };
+}
+
+export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
+  const initialPayload = buildWaveformPreviewUpdatePayload(data);
+  const canToggleRenderMode = data.frameType === "frequency";
+  const enableEnvelope = data.frameType === "frequency";
+  const primaryTrace = data.traces[0];
+  const primaryMarkerCopyText = primaryTrace
+    ? `timestampNs=${data.timestampNs} | source=${data.traceSource} | channel=${data.channelIndex} | ${primaryTrace.label} | ${primaryTrace.markers
+        .map((marker) => `${marker.label}: x=${formatTick(marker.x)}, y=${formatTick(marker.y)}`)
+        .join("; ")}`
+    : "";
+  const copyTitle = primaryMarkerCopyText
+    ? `Copy primary marker to clipboard (${primaryMarkerCopyText.length} chars)`
+    : "No primary marker available";
+  const initialCanvasModelJson = JSON.stringify(initialPayload.canvasModel).replace(/</g, "\\u003c");
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -639,6 +711,50 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 12px; }
     .meta { margin-bottom: 10px; }
     .axis { margin-bottom: 6px; opacity: 0.9; }
+    .scan-status {
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-editor-background);
+      font-size: 12px;
+      opacity: 0.95;
+    }
+    .scan-status.is-single { border-color: var(--vscode-testing-iconQueued); }
+    .scan-status.is-hold { border-color: var(--vscode-testing-iconFailed); }
+    .scan-controls { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .scan-btn {
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-editor-background);
+      color: var(--vscode-foreground);
+      border-radius: 4px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .scan-btn.is-active {
+      border-color: var(--vscode-focusBorder);
+      background: var(--vscode-button-background);
+      color: var(--vscode-button-foreground);
+      font-weight: 600;
+    }
+    .stats-panel {
+      margin-bottom: 8px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-editor-background);
+      opacity: 0.95;
+      font-size: 12px;
+    }
+    .stats-panel.is-warning {
+      border-color: var(--vscode-testing-iconQueued);
+      color: var(--vscode-testing-iconQueued);
+    }
+    .stats-panel.is-critical {
+      border-color: var(--vscode-testing-iconFailed);
+      color: var(--vscode-testing-iconFailed);
+    }
     .marker { margin-bottom: 10px; opacity: 0.9; display: grid; gap: 4px; }
     .marker-row { display: flex; gap: 8px; align-items: baseline; }
     .marker-row.is-hidden { opacity: 0.45; text-decoration: line-through; }
@@ -692,27 +808,25 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     .legend-item.is-hidden { opacity: 0.45; text-decoration: line-through; }
     .legend-item.is-primary { border-color: var(--vscode-focusBorder); }
     .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-    .chart { border: 1px solid var(--vscode-editorWidget-border); background: var(--vscode-editor-background); }
-    .chart .grid-line { stroke: var(--vscode-descriptionForeground); stroke-width: 1; opacity: 0.25; }
-    .chart .axis-line { stroke: var(--vscode-foreground); stroke-width: 1.2; opacity: 0.7; }
-    .chart .axis-tick { fill: var(--vscode-descriptionForeground); font-size: 11px; opacity: 0.9; }
-    .chart .trace-envelope { pointer-events: none; }
-    .chart.hide-envelope .trace-envelope { display: none; }
-    .chart .trace-raw { display: none; }
-    .chart.show-raw .trace-raw { display: inline; }
-    .chart.show-raw .trace-smooth { display: none; }
-    .chart.show-smooth .trace-raw { display: none; }
-    .chart.show-smooth .trace-smooth { display: inline; }
-    .chart .marker-point text { fill: var(--vscode-foreground); font-size: 10px; opacity: 0.95; }
-    .chart .marker-label-bg { fill: var(--vscode-editor-background); stroke: var(--vscode-focusBorder); stroke-width: 0.8; opacity: 0.95; }
-    .chart .marker-label-text { fill: var(--vscode-foreground); font-size: 9.5px; letter-spacing: 0.1px; }
+    .chart-canvas {
+      border: 1px solid var(--vscode-editorWidget-border);
+      background: var(--vscode-editor-background);
+      display: block;
+    }
     .empty { opacity: 0.8; }
   </style>
 </head>
 <body>
-  <div class="meta">instance=${data.instanceId} | frame=${data.frameType} | source=${data.traceSource} | channel=${data.channelIndex} | visible=${data.visibleTraceIds.join(",") || "all"} | points=${data.points.length} | timestampNs=${data.timestampNs}</div>
-  <div class="axis">x=${data.xLabel} | y=${data.yLabel}</div>
-  <div class="axis">legend=${legendText || "none"}</div>
+  <div id="metaText" class="meta">${initialPayload.metaText}</div>
+  <div id="axisText" class="axis">${initialPayload.axisText}</div>
+  <div id="legendText" class="axis">${initialPayload.legendText}</div>
+  <div id="scanStatus" class="${initialPayload.scanStatusClass}">${initialPayload.scanStatusText}</div>
+  <div class="scan-controls">
+    <button id="scanContinuous" class="scan-btn ${initialPayload.scanState === "continuous" ? "is-active" : ""}" title="Continuous scan">Continuous</button>
+    <button id="scanSingle" class="scan-btn ${initialPayload.scanState === "single" ? "is-active" : ""}" title="Single scan">Single</button>
+    <button id="scanHold" class="scan-btn ${initialPayload.scanState === "hold" ? "is-active" : ""}" title="Hold (stop stream)">Hold</button>
+  </div>
+  <div id="liveStats" class="${initialPayload.liveStatsClass}">${initialPayload.liveStatsText}</div>
   <div class="actions">
     <button id="copyPrimaryMarker" class="action-btn" ${primaryMarkerCopyText ? "" : "disabled"} title="${copyTitle}" data-copy-length="${primaryMarkerCopyText.length}" data-copy-text="${primaryMarkerCopyText.replace(/"/g, "&quot;")}">Copy Primary Marker</button>
     <button id="clearCopyStatus" class="action-btn" title="Clear copy status">Clear Status</button>
@@ -723,20 +837,15 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
     <span class="shortcut-hint" title="Ctrl/Cmd + C or Alt + C to copy, Esc to clear">Ctrl/Cmd + C | Alt + C | Esc</span>
   </div>
   <div id="copyStatus" class="copy-status" aria-live="polite"></div>
-  <div class="legend" id="legend">${legendItems}</div>
-  <div class="marker" id="markerPanel">${markerRows || "none"}</div>
-  ${
-    data.traces.length === 0
-      ? "<div class=\"empty\">No waveform points available.</div>"
-      : `<svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-         ${renderAxes(width, height, chartBounds)}
-           ${data.traces
-             .map((trace) => `<g data-trace-id="${trace.id}" style="display:${visibleTraceSet.has(trace.id) ? "" : "none"}">${enableEnvelope ? renderEnvelope(trace, width, height, chartBounds) : ""}${renderTrace(trace, width, height, chartBounds, enableSmoothing)}</g>\n${renderTraceMarkers(trace, width, height, chartBounds, trace.id === primaryTraceId)}`)
-             .join("\n")}
-         </svg>`
-  }
+  <div class="legend" id="legend">${initialPayload.legendItems}</div>
+  <div class="marker" id="markerPanel">${initialPayload.markerRows || "none"}</div>
+  <div id="chartHost">
+    <canvas id="waveCanvas" class="chart-canvas" width="900" height="360"></canvas>
+    <div id="emptyHint" class="empty" style="display:none; margin-top:6px;">No waveform points available.</div>
+  </div>
   <script>
     (function () {
+      const initialCanvasModel = ${initialCanvasModelJson};
       const vscodeApi = typeof acquireVsCodeApi === "function" ? acquireVsCodeApi() : undefined;
       const copyButton = document.getElementById("copyPrimaryMarker");
       const clearStatusButton = document.getElementById("clearCopyStatus");
@@ -862,8 +971,351 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         void copyPrimaryMarker();
       });
 
+      const legend = document.getElementById("legend");
+      const actions = document.querySelector(".actions");
+      const scanControls = document.querySelector(".scan-controls");
+      const scanContinuousButton = document.getElementById("scanContinuous");
+      const scanSingleButton = document.getElementById("scanSingle");
+      const scanHoldButton = document.getElementById("scanHold");
+      const toggleRenderModeButton = document.getElementById("toggleRenderMode");
+      const toggleEnvelopeButton = document.getElementById("toggleEnvelope");
+      const togglePeakHoldButton = document.getElementById("togglePeakHold");
+      const toggleRecentAvgButton = document.getElementById("toggleRecentAvg");
+      const canvas = document.getElementById("waveCanvas");
+      const emptyHint = document.getElementById("emptyHint");
+      const hiddenTraceIds = new Set();
+      let currentCanvasModel = initialCanvasModel;
+      let renderMode = "smooth";
+      let envelopeHidden = false;
+      let pendingWaveformPayload = null;
+      let waveformUpdateScheduled = false;
+
+      const parseColor = (token, fallback) => {
+        const value = String(token || "").trim();
+        return value.length > 0 ? value : fallback;
+      };
+
+      const withAlphaLocal = (color, alpha) => {
+        if (!String(color || "").startsWith("#") || (color.length !== 7 && color.length !== 4)) {
+          return "rgba(78, 201, 176, " + alpha + ")";
+        }
+        if (color.length === 4) {
+          const red = parseInt(color[1] + color[1], 16);
+          const green = parseInt(color[2] + color[2], 16);
+          const blue = parseInt(color[3] + color[3], 16);
+          return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+        }
+        const red = parseInt(color.slice(1, 3), 16);
+        const green = parseInt(color.slice(3, 5), 16);
+        const blue = parseInt(color.slice(5, 7), 16);
+        return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+      };
+
+      const formatTickJs = (value) => {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) {
+          return "0";
+        }
+        const abs = Math.abs(numeric);
+        if (abs >= 1.0e6 || (abs > 0 && abs < 1.0e-3)) {
+          return numeric.toExponential(3);
+        }
+        return numeric.toFixed(3);
+      };
+
+      const normalizePointJs = (point, bounds, width, height) => {
+        const safeRangeX = Math.max(bounds.maxX - bounds.minX, 1e-12);
+        const safeRangeY = Math.max(bounds.maxY - bounds.minY, 1e-12);
+        return {
+          x: ((point.x - bounds.minX) / safeRangeX) * (width - 20) + 10,
+          y: height - (((point.y - bounds.minY) / safeRangeY) * (height - 20) + 10),
+        };
+      };
+
+      const movingAverageLocal = (points, windowSize) => {
+        if (!Array.isArray(points) || points.length <= 2 || windowSize <= 1) {
+          return points;
+        }
+        const radius = Math.max(1, Math.floor(windowSize / 2));
+        return points.map((point, index) => {
+          const start = Math.max(0, index - radius);
+          const end = Math.min(points.length - 1, index + radius);
+          let sum = 0;
+          let count = 0;
+          for (let cursor = start; cursor <= end; cursor += 1) {
+            sum += points[cursor].y;
+            count += 1;
+          }
+          return { x: point.x, y: count > 0 ? sum / count : point.y };
+        });
+      };
+
+      const drawChart = () => {
+        if (!(canvas instanceof HTMLCanvasElement) || !currentCanvasModel) {
+          return;
+        }
+        const context = canvas.getContext("2d");
+        if (!context) {
+          return;
+        }
+        const traces = Array.isArray(currentCanvasModel.traces) ? currentCanvasModel.traces : [];
+        if (emptyHint instanceof HTMLElement) {
+          emptyHint.style.display = traces.length === 0 ? "block" : "none";
+        }
+
+        const width = Number(currentCanvasModel.width || 900);
+        const height = Number(currentCanvasModel.height || 360);
+        if (canvas.width !== width) {
+          canvas.width = width;
+        }
+        if (canvas.height !== height) {
+          canvas.height = height;
+        }
+
+        const styles = getComputedStyle(document.body);
+        const bg = parseColor(styles.getPropertyValue("--vscode-editor-background"), "#1e1e1e");
+        const fg = parseColor(styles.getPropertyValue("--vscode-foreground"), "#d4d4d4");
+        const desc = parseColor(styles.getPropertyValue("--vscode-descriptionForeground"), "#8a8a8a");
+
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = bg;
+        context.fillRect(0, 0, width, height);
+
+        const bounds = currentCanvasModel.bounds || { minX: 0, maxX: 1, minY: 0, maxY: 1 };
+        const left = 10;
+        const right = width - 10;
+        const top = 10;
+        const bottom = height - 10;
+        const divisions = 4;
+
+        context.strokeStyle = withAlphaLocal(desc, 0.25);
+        context.lineWidth = 1;
+        for (let idx = 0; idx <= divisions; idx += 1) {
+          const y = top + ((bottom - top) * idx) / divisions;
+          context.beginPath();
+          context.moveTo(left, y);
+          context.lineTo(right, y);
+          context.stroke();
+        }
+        for (let idx = 0; idx <= divisions; idx += 1) {
+          const x = left + ((right - left) * idx) / divisions;
+          context.beginPath();
+          context.moveTo(x, top);
+          context.lineTo(x, bottom);
+          context.stroke();
+        }
+
+        context.strokeStyle = withAlphaLocal(fg, 0.7);
+        context.lineWidth = 1.2;
+        context.beginPath();
+        context.moveTo(left, bottom);
+        context.lineTo(right, bottom);
+        context.moveTo(left, top);
+        context.lineTo(left, bottom);
+        context.stroke();
+
+        context.fillStyle = withAlphaLocal(desc, 0.9);
+        context.font = "11px sans-serif";
+        context.fillText("xMin=" + formatTickJs(bounds.minX), left, height - 2);
+        const xMaxText = "xMax=" + formatTickJs(bounds.maxX);
+        context.fillText(xMaxText, right - context.measureText(xMaxText).width, height - 2);
+        context.fillText("yMax=" + formatTickJs(bounds.maxY), left + 2, top + 12);
+        context.fillText("yMin=" + formatTickJs(bounds.minY), left + 2, bottom - 4);
+
+        for (const trace of traces) {
+          if (!trace || hiddenTraceIds.has(trace.id)) {
+            continue;
+          }
+          const sourcePoints = Array.isArray(trace.points) ? trace.points : [];
+          if (sourcePoints.length === 0) {
+            continue;
+          }
+
+          const smoothPoints =
+            currentCanvasModel.enableSmoothing && renderMode === "smooth"
+              ? movingAverageLocal(sourcePoints, 7)
+              : sourcePoints;
+
+          if (currentCanvasModel.enableEnvelope && !envelopeHidden && sourcePoints.length >= 8) {
+            const radius = Math.max(2, Math.min(8, Math.floor(sourcePoints.length / 30)));
+            const upper = [];
+            const lower = [];
+            for (let index = 0; index < sourcePoints.length; index += 1) {
+              const start = Math.max(0, index - radius);
+              const end = Math.min(sourcePoints.length - 1, index + radius);
+              let localMin = Number.POSITIVE_INFINITY;
+              let localMax = Number.NEGATIVE_INFINITY;
+              for (let cursor = start; cursor <= end; cursor += 1) {
+                localMin = Math.min(localMin, sourcePoints[cursor].y);
+                localMax = Math.max(localMax, sourcePoints[cursor].y);
+              }
+              upper.push(normalizePointJs({ x: sourcePoints[index].x, y: localMax }, bounds, width, height));
+              lower.push(normalizePointJs({ x: sourcePoints[index].x, y: localMin }, bounds, width, height));
+            }
+            context.fillStyle = withAlphaLocal(trace.color, 0.18);
+            context.beginPath();
+            upper.forEach((point, idx) => {
+              if (idx === 0) {
+                context.moveTo(point.x, point.y);
+              } else {
+                context.lineTo(point.x, point.y);
+              }
+            });
+            for (let idx = lower.length - 1; idx >= 0; idx -= 1) {
+              context.lineTo(lower[idx].x, lower[idx].y);
+            }
+            context.closePath();
+            context.fill();
+          }
+
+          const drawPolyline = (points, strokeStyle, strokeWidth) => {
+            context.strokeStyle = strokeStyle;
+            context.lineWidth = strokeWidth;
+            context.beginPath();
+            points.forEach((point, idx) => {
+              const normalized = normalizePointJs(point, bounds, width, height);
+              if (idx === 0) {
+                context.moveTo(normalized.x, normalized.y);
+              } else {
+                context.lineTo(normalized.x, normalized.y);
+              }
+            });
+            context.stroke();
+          };
+
+          if (renderMode === "raw") {
+            drawPolyline(sourcePoints, trace.color, 1.8);
+          } else if (currentCanvasModel.enableSmoothing) {
+            drawPolyline(sourcePoints, withAlphaLocal(trace.color, 0.55), 1.1);
+            drawPolyline(smoothPoints, trace.color, 2.1);
+          } else {
+            drawPolyline(sourcePoints, trace.color, 1.8);
+          }
+
+          const markers = Array.isArray(trace.markers) ? trace.markers : [];
+          for (const marker of markers) {
+            const normalized = normalizePointJs(marker, bounds, width, height);
+            context.fillStyle = trace.color;
+            context.beginPath();
+            context.arc(normalized.x, normalized.y, 3, 0, Math.PI * 2);
+            context.fill();
+
+            const markerLabel = trace.isPrimary
+              ? marker.label + " x=" + formatTickJs(marker.x) + " y=" + formatTickJs(marker.y)
+              : marker.label;
+            const textX = normalized.x + 6;
+            const textY = normalized.y - 6;
+
+            if (trace.isPrimary) {
+              const labelWidth = Math.max(30, Math.min(240, markerLabel.length * 6.4 + 10));
+              context.fillStyle = bg;
+              context.fillRect(textX, textY - 10, labelWidth, 14);
+              context.strokeStyle = parseColor(styles.getPropertyValue("--vscode-focusBorder"), "#3794ff");
+              context.lineWidth = 0.8;
+              context.strokeRect(textX, textY - 10, labelWidth, 14);
+            }
+
+            context.fillStyle = fg;
+            context.font = "10px sans-serif";
+            context.fillText(markerLabel, textX, textY);
+          }
+        }
+      };
+
+      const applyWaveformUpdate = (payload) => {
+        if (!payload || typeof payload !== "object") {
+          return;
+        }
+        const metaText = document.getElementById("metaText");
+        const axisText = document.getElementById("axisText");
+        const legendText = document.getElementById("legendText");
+        const scanStatus = document.getElementById("scanStatus");
+        const liveStats = document.getElementById("liveStats");
+        const legendNode = document.getElementById("legend");
+        const markerPanel = document.getElementById("markerPanel");
+
+        if (metaText instanceof HTMLElement) {
+          metaText.textContent = String(payload.metaText || "");
+        }
+        if (axisText instanceof HTMLElement) {
+          axisText.textContent = String(payload.axisText || "");
+        }
+        if (legendText instanceof HTMLElement) {
+          legendText.textContent = String(payload.legendText || "");
+        }
+        if (scanStatus instanceof HTMLElement) {
+          scanStatus.className = String(payload.scanStatusClass || "scan-status");
+          scanStatus.textContent = String(payload.scanStatusText || "");
+        }
+        if (liveStats instanceof HTMLElement) {
+          liveStats.className = String(payload.liveStatsClass || "stats-panel");
+          liveStats.textContent = String(payload.liveStatsText || "");
+        }
+        if (legendNode instanceof HTMLElement) {
+          legendNode.innerHTML = String(payload.legendItems || "");
+        }
+        if (markerPanel instanceof HTMLElement) {
+          markerPanel.innerHTML = String(payload.markerRows || "none");
+        }
+
+        currentCanvasModel = payload.canvasModel || currentCanvasModel;
+
+        hiddenTraceIds.forEach((traceId) => {
+          const legendItem = document.querySelector('.legend-item[data-trace-id="' + traceId + '"]');
+          if (legendItem instanceof HTMLElement) {
+            legendItem.classList.add("is-hidden");
+          }
+          const markerRow = document.querySelector('.marker-row[data-trace-id="' + traceId + '"]');
+          if (markerRow instanceof HTMLElement) {
+            markerRow.classList.add("is-hidden");
+          }
+        });
+
+        if (scanContinuousButton instanceof HTMLButtonElement) {
+          scanContinuousButton.classList.toggle("is-active", payload.scanState === "continuous");
+        }
+        if (scanSingleButton instanceof HTMLButtonElement) {
+          scanSingleButton.classList.toggle("is-active", payload.scanState === "single");
+        }
+        if (scanHoldButton instanceof HTMLButtonElement) {
+          scanHoldButton.classList.toggle("is-active", payload.scanState === "hold");
+        }
+
+        applyRenderMode();
+        syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
+        syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+      };
+
+      const scheduleWaveformUpdate = (payload) => {
+        pendingWaveformPayload = payload;
+        if (waveformUpdateScheduled) {
+          return;
+        }
+        waveformUpdateScheduled = true;
+
+        const flush = () => {
+          waveformUpdateScheduled = false;
+          if (!pendingWaveformPayload) {
+            return;
+          }
+          const latest = pendingWaveformPayload;
+          pendingWaveformPayload = null;
+          applyWaveformUpdate(latest);
+        };
+
+        if (typeof requestAnimationFrame === "function") {
+          requestAnimationFrame(() => flush());
+          return;
+        }
+        setTimeout(() => flush(), 16);
+      };
+
       window.addEventListener("message", (event) => {
         const payload = event.data;
+        if (payload && payload.type === "waveform-update") {
+          scheduleWaveformUpdate(payload.payload);
+          return;
+        }
         if (!payload || payload.type !== "copy-primary-marker-result") {
           return;
         }
@@ -874,22 +1326,14 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         finishCopying();
       });
 
-      const legend = document.getElementById("legend");
-      const toggleRenderModeButton = document.getElementById("toggleRenderMode");
-      const toggleEnvelopeButton = document.getElementById("toggleEnvelope");
-      const togglePeakHoldButton = document.getElementById("togglePeakHold");
-      const toggleRecentAvgButton = document.getElementById("toggleRecentAvg");
-      const chart = document.querySelector("svg.chart");
-
       const setTraceVisible = (traceId, visible) => {
-        const groups = document.querySelectorAll("g[data-trace-id=\"" + traceId + "\"]");
         const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
         const legendItems = document.querySelectorAll(".legend-item[data-trace-id=\"" + traceId + "\"]");
-        groups.forEach((group) => {
-          if (group instanceof HTMLElement) {
-            group.style.display = visible ? "" : "none";
-          }
-        });
+        if (visible) {
+          hiddenTraceIds.delete(traceId);
+        } else {
+          hiddenTraceIds.add(traceId);
+        }
         markerRows.forEach((row) => {
           if (row instanceof HTMLElement) {
             row.classList.toggle("is-hidden", !visible);
@@ -900,6 +1344,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
             item.classList.toggle("is-hidden", !visible);
           }
         });
+        drawChart();
       };
 
       const syncOverlayButtonState = (button, traceId) => {
@@ -928,14 +1373,10 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
 
       let renderMode = "smooth";
       const applyRenderMode = () => {
-        if (!(chart instanceof SVGElement)) {
-          return;
-        }
-        chart.classList.toggle("show-raw", renderMode === "raw");
-        chart.classList.toggle("show-smooth", renderMode === "smooth");
         if (toggleRenderModeButton instanceof HTMLButtonElement) {
           toggleRenderModeButton.textContent = renderMode === "smooth" ? "Mode: Smooth" : "Mode: Raw";
         }
+        drawChart();
       };
 
       if (toggleRenderModeButton instanceof HTMLButtonElement) {
@@ -945,16 +1386,50 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         });
       }
 
-      if (toggleEnvelopeButton instanceof HTMLButtonElement && chart instanceof SVGElement) {
+      if (toggleEnvelopeButton instanceof HTMLButtonElement) {
         toggleEnvelopeButton.addEventListener("click", () => {
-          chart.classList.toggle("hide-envelope");
-          toggleEnvelopeButton.classList.toggle("is-hidden", chart.classList.contains("hide-envelope"));
+          envelopeHidden = !envelopeHidden;
+          toggleEnvelopeButton.classList.toggle("is-hidden", envelopeHidden);
+          drawChart();
         });
       }
 
       applyRenderMode();
       syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
       syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+
+      const postScanState = (state) => {
+        if (!vscodeApi) {
+          return;
+        }
+        vscodeApi.postMessage({ type: "set-scan-state", state });
+      };
+
+      const postUiInteraction = (active) => {
+        if (!vscodeApi) {
+          return;
+        }
+        vscodeApi.postMessage({ type: "ui-interaction", active });
+      };
+
+      [legend, actions, scanControls].forEach((node) => {
+        if (!(node instanceof HTMLElement)) {
+          return;
+        }
+        node.addEventListener("mouseenter", () => postUiInteraction(true));
+        node.addEventListener("mouseleave", () => postUiInteraction(false));
+        node.addEventListener("mousedown", () => postUiInteraction(true));
+      });
+
+      if (scanContinuousButton instanceof HTMLButtonElement) {
+        scanContinuousButton.addEventListener("click", () => postScanState("continuous"));
+      }
+      if (scanSingleButton instanceof HTMLButtonElement) {
+        scanSingleButton.addEventListener("click", () => postScanState("single"));
+      }
+      if (scanHoldButton instanceof HTMLButtonElement) {
+        scanHoldButton.addEventListener("click", () => postScanState("hold"));
+      }
 
       if (!legend) {
         return;
@@ -972,19 +1447,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         if (!traceId) {
           return;
         }
-        const groups = document.querySelectorAll("g[data-trace-id=\"" + traceId + "\"]");
-        const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
-        const hidden = item.classList.toggle("is-hidden");
-        groups.forEach((group) => {
-          if (group instanceof HTMLElement) {
-            group.style.display = hidden ? "none" : "";
-          }
-        });
-        markerRows.forEach((row) => {
-          if (row instanceof HTMLElement) {
-            row.classList.toggle("is-hidden", hidden);
-          }
-        });
+        const hidden = item.classList.contains("is-hidden");
+        setTraceVisible(traceId, hidden);
       });
     })();
   </script>

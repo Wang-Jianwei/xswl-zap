@@ -148,6 +148,14 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU85~WU90 进展）：复制交互再增强，新增 `Clear Status`、`Alt + C` 快捷键、字符数回显和无 Clipboard API 显式提示。
 
+补充（WU293~WU295 进展）：插件 `live` 预览支持手动扫描状态切换 `continuous/single/hold`，并新增扫描状态栏显示模式、流状态与累计帧数。
+
+补充（WU299~WU300 进展）：`live` 持续扫描取消固定帧上限，`single` 一帧后自动进入 `hold`，`hold` 明确为停流停扫（与 VNA 语义对齐）。
+
+补充（WU301 进展）：`live` 高频多 trace 场景启用增量更新链路（首帧初始化 + 后续消息更新）、扩展/前端双侧更新合并与按点数自适应节流。
+
+补充（WU302 进展）：波形图主渲染路径切换到 Canvas（替代 SVG），在上万点与多曲线高频刷新场景下降低 DOM 重排与重绘开销。
+
 补充（WU91 进展）：后端 core 回放比对能力增强，`AcquisitionComparator` 增加 `max/rms` 误差统计与精确 mismatch 上下文（point/channel/value + delta），并贯通到 service/gRPC compare detail。
 
 补充（WU92~WU97 进展）：后端 compare 诊断继续增强，新增 tolerance/分组样本计数摘要、非有限值检测（NaN/Inf），并在 core/service 测试中覆盖成功与异常路径。
@@ -347,6 +355,14 @@ gRPC C++ 适配层隔离构建（不影响主线 `ninja-mingw`）：
 
 - `stream_throttle_every_n_frames`：每发送 N 帧后触发一次节流休眠。
 - `stream_throttle_ms`：每次节流休眠毫秒数（`0` 表示不休眠）。
+
+后台状态变更日志（便于持续测试观察）会输出到 server 控制台：
+
+- `[SERVICE_CONFIG_CHANGED]`：服务配置（地址/端口/TLS/log level）变更。
+- `[SERVICE_HEALTH_CHANGED]`：健康状态（ready/state/message）变更。
+- `[SERVICE_BOOTSTRAP_CHANGED]`：启动上下文（mode/config_path）变更。
+- `[CONFIG_INIT][ACQUIRE|STREAM]` / `[CONFIG_CHANGED][ACQUIRE|STREAM]`：采集请求配置初始化与变更。
+- `[STREAM_STATE] started/cancelled`：流式采集启动与停止（含帧计数）。
 
 一键节流矩阵 smoke（自动切换配置并执行 unary + stream 验证）：
 

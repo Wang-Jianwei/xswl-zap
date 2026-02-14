@@ -71,6 +71,19 @@ export interface WaveformTrace {
   markers: WaveformMarker[];
 }
 
+export type LiveStatsLevel = "normal" | "warning" | "critical";
+
+export interface LiveWaveformStats {
+  peakToPeak: number;
+  mean: number;
+  stdDev: number;
+  coefficientOfVariation: number;
+  level: LiveStatsLevel;
+  window: number;
+}
+
+export type WaveformScanState = "continuous" | "single" | "hold";
+
 export interface WaveformPreviewData {
   instanceId: string;
   timestampNs: number;
@@ -83,4 +96,8 @@ export interface WaveformPreviewData {
   traces: WaveformTrace[];
   points: WaveformPoint[];
   markers: WaveformMarker[];
+  liveStats?: LiveWaveformStats;
+  scanState?: WaveformScanState;
+  streamActive?: boolean;
+  streamFrameCount?: number;
 }

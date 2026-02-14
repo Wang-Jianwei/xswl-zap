@@ -1,4 +1,6 @@
 #include <cassert>
+#include <iostream>
+#include <sstream>
 
 #include "service/service_status_service.h"
 
@@ -40,19 +42,48 @@ int main() {
 
   service.UpdateRuntimeMetrics(2, 1);
 
+  std::ostringstream capturedLogs;
+  std::streambuf* originalBuffer = std::cout.rdbuf(capturedLogs.rdbuf());
+
+  {
+    vna::service::ServiceConfig config;
+    config.bindAddress = "127.0.0.1";
+    config.port = 52000;
+    config.tlsEnabled = false;
+    config.logLevel = "trace";
+    service.UpdateConfig(config);
+  }
+
+  {
+    vna::service::HealthStatus health;
+    health.ready = false;
+    health.state = "degraded";
+    health.message = "test-transition";
+    health.uptimeMs = 100;
+    service.UpdateHealth(health);
+  }
+
+  service.UpdateBootstrapContext("grpc", "config/final.yaml");
+  std::cout.rdbuf(originalBuffer);
+
+  const std::string logs = capturedLogs.str();
+  assert(logs.find("[SERVICE_CONFIG_CHANGED]") != std::string::npos);
+  assert(logs.find("[SERVICE_HEALTH_CHANGED]") != std::string::npos);
+  assert(logs.find("[SERVICE_BOOTSTRAP_CHANGED]") != std::string::npos);
+
   {
     const vna::service::ServiceStatusSnapshot status = service.GetStatus();
-    assert(status.ready);
-    assert(status.state == "ready");
-    assert(status.message == "running");
+    assert(!status.ready);
+    assert(status.state == "degraded");
+    assert(status.message == "test-transition");
     assert(status.bootstrapMode == "grpc");
-    assert(status.configPath == "config/override.yaml");
-    assert(status.uptimeMs == 42);
+    assert(status.configPath == "config/final.yaml");
+    assert(status.uptimeMs == 100);
 
     assert(status.bindAddress == "127.0.0.1");
-    assert(status.port == 51000);
-    assert(status.tlsEnabled);
-    assert(status.logLevel == "debug");
+    assert(status.port == 52000);
+    assert(!status.tlsEnabled);
+    assert(status.logLevel == "trace");
 
     assert(status.instanceCount == 2);
     assert(status.activeLeaseCount == 1);

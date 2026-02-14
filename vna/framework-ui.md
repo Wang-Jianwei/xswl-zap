@@ -107,7 +107,14 @@ flowchart LR
 - 多 trace 叠加渲染统一共享坐标范围，避免各曲线独立缩放导致的视觉误判。
 - `live` 预览新增 `peak hold` 与最近 N 帧均值叠加曲线，便于同时观察瞬时峰值与整体趋势。
 - `live` 预览增加快捷显隐开关（`Raw/Smooth`、`Peak Hold`、`Recent Avg`、`Envelope`），并优化默认显示策略（先显示趋势线，峰值线默认可按需开启）。
-- 支持预览类型选择：`snapshot`（单次）/`live`（短时自动刷新，可取消）。
+- `live` 预览新增多帧统计面板：`peak-to-peak`、`mean`、`std`、`cv` 与窗口长度，支持实时判读波动强度。
+- 统计面板支持阈值高亮（`normal` / `warning` / `critical`），用于快速识别异常波动区间。
+- `live` 预览支持手动扫描状态切换：`continuous` / `single` / `hold`，其中 `single` 发起一帧采集并在该帧结束后自动进入 `hold`，`hold` 遵循 VNA 语义并停止 stream 扫描。
+- 新增扫描状态栏，展示当前扫描模式、流状态（running/stopped）与累计帧数，便于持续扫描可视化观测。
+- `live` 高频场景采用增量更新链路（首帧初始化 + 后续消息更新），避免整页 Webview 重建造成交互闪烁。
+- 扩展与 Webview 两侧均启用更新合并（仅保留最新帧）与自适应节流，提升多 trace 高频刷新稳定性。
+- 波形图主渲染路径采用 Canvas（替代 SVG），降低上万点多曲线场景下的重排与重绘压力。
+- 支持预览类型选择：`snapshot`（单次）/`live`（持续自动刷新，直到取消）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。
   - 时域帧：`magnitude` 作为纵轴，`time_ns` 作为横轴。

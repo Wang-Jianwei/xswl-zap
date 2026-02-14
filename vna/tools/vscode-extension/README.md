@@ -6,7 +6,7 @@
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
-- Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 会短时自动刷新）
+- Command: `XSWL: Preview Waveform`（支持 `snapshot/live` 两种预览方式；live 默认持续自动刷新，直到取消或关闭页面）
   - 频域预览会基于 `sampleCount` 自动构造扫频参数（`start/stop/sweepPointCount`），默认返回多点频域波形（不再退化为单点）
   - 频域下支持 trace source 选择：`frame` / `receiverRaw` / `receiverCompensated` / `sParameterS11` / `all`
   - 选择 `receiverRaw` / `receiverCompensated` / `all` 时可输入 `channel index`（默认 0）
@@ -17,6 +17,10 @@
   - 多曲线渲染统一使用共享坐标范围，避免各曲线各自缩放导致对比失真
   - `live` 预览新增 `peak hold` 叠加曲线，持续跟踪最近窗口内峰值
   - `live` 预览新增最近 N 帧均值曲线（rolling average），用于观察整体趋势
+  - `live` 预览新增多帧统计面板（`peak-to-peak` / `mean` / `std` / `cv` / `window`）
+  - 统计面板支持 `normal/warning/critical` 阈值高亮，便于快速识别波动异常
+  - `live` 预览支持手动切换扫描状态：`continuous` / `single` / `hold`（`single` 会发起一帧采集并在该帧完成后自动进入 `hold`；`hold` 会停止 stream 扫描）
+  - 扫描状态栏实时显示当前扫描模式、流状态（running/stopped）与累计帧数，便于观察持续扫描
   - 波形坐标轴显示基础刻度文本（x/y 的 min/max）
   - marker 以按曲线分组列表展示，并在图内绘制 min/max 标记点
   - marker 分组按 y 值优先级排序，当前主曲线（primary trace）高亮显示
@@ -108,7 +112,7 @@ npm run test
 - Run command `XSWL: Stream Preview` and cancel from progress notification when needed
 - Run command `XSWL: Preview Waveform` to visualize latest acquired points in a Webview chart
   - `snapshot`: 单次采集并显示
-  - `live`: 基于 stream 的短时自动刷新（可设置 max frames，支持取消）
+  - `live`: 基于 stream 的持续自动刷新（无固定帧数上限，支持取消）
 - Run command `XSWL: Open Output` to view command logs in one place
 - Run command `XSWL: Clear Output` to reset logs quickly
 
@@ -125,4 +129,8 @@ npm run test
 
 - Webview 渲染点数上限：512（超出自动下采样）
 - live 模式刷新节流：默认每 3 帧刷新一次图形
+- 扩展侧更新合并：当 Webview 消息通道拥塞时，仅保留最新波形帧，避免更新队列堆积
+- 刷新间隔自适应：按当前总渲染点数动态提高最小刷新间隔，降低多 trace 高频刷新抖动
+- Webview 侧帧内合并：`waveform-update` 在 `requestAnimationFrame` 周期内合并，只渲染最新一帧
+- 图面渲染采用 Canvas（替代 SVG），降低大点数与高频更新下的 DOM 开销
 - 多 trace 模式（`all`）显示图例并叠加多曲线

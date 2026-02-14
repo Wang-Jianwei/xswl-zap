@@ -8,8 +8,8 @@ import {
 } from "./statusFormatter";
 import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
-import { buildWaveformPreviewHtml } from "./waveformPreview";
-import type { WaveformTraceSource } from "./types";
+import { buildWaveformPreviewHtml, buildWaveformPreviewUpdatePayload } from "./waveformPreview";
+import type { WaveformPreviewData, WaveformScanState, WaveformTraceSource } from "./types";
 
 type LogLevel = "INFO" | "ERROR";
 let requestSequence = 0;
@@ -46,6 +46,20 @@ function showOutputIfEnabled(outputChannel: vscode.OutputChannel, autoOpenOutput
   if (autoOpenOutput) {
     outputChannel.show(true);
   }
+}
+
+function withScanState(
+  waveform: WaveformPreviewData,
+  scanState: WaveformScanState,
+  streamActive: boolean,
+  streamFrameCount: number,
+): WaveformPreviewData {
+  return {
+    ...waveform,
+    scanState,
+    streamActive,
+    streamFrameCount,
+  };
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -373,7 +387,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const previewTypeSelection = await vscode.window.showQuickPick(
       [
         { label: "snapshot", description: "单次采集后打开图形" },
-        { label: "live", description: "短时流式自动刷新" },
+        { label: "live", description: "持续流式自动刷新（直到取消）" },
       ],
       {
         title: "Preview type",
@@ -384,25 +398,7 @@ export function activate(context: vscode.ExtensionContext): void {
       return;
     }
 
-    let liveMaxFrames = 30;
-    if (previewTypeSelection.label === "live") {
-      const maxFramesInput = await vscode.window.showInputBox({
-        prompt: "Live refresh max frames",
-        value: "30",
-        ignoreFocusOut: true,
-        validateInput: (value) => {
-          const parsed = Number(value);
-          if (!Number.isInteger(parsed) || parsed <= 0 || parsed > 200) {
-            return "Max frames must be an integer between 1 and 200.";
-          }
-          return undefined;
-        },
-      });
-      if (!maxFramesInput) {
-        return;
-      }
-      liveMaxFrames = Number(maxFramesInput);
-    }
+    const liveMaxFrames = 0;
 
     const requestId = createRequestId();
     const { address, deadlineMs, autoOpenOutput } = readConfig();
@@ -416,8 +412,122 @@ export function activate(context: vscode.ExtensionContext): void {
         { enableScripts: true },
       );
 
+      let currentScanState: WaveformScanState = previewTypeSelection.label === "live" ? "continuous" : "single";
+      let liveFrameCount = 0;
+      let liveStreamActive = previewTypeSelection.label === "live";
+      let liveSingleConsumed = false;
+      let latestWaveformForUi: WaveformPreviewData | null = null;
+      let liveAbortController: AbortController | undefined;
+      let liveOverlayState = createLiveWaveformOverlayState();
+      let suspendRenderUntilMs = 0;
+      let uiInteractionActive = false;
+      let lastRenderAtMs = 0;
+      let webviewInitialized = false;
+      let postMessageInFlight = false;
+      let queuedWaveformForUi: WaveformPreviewData | null = null;
+
+      const estimateRenderIntervalMs = (waveform: WaveformPreviewData): number => {
+        const totalPoints = waveform.traces.reduce((sum, trace) => sum + trace.points.length, 0);
+        if (totalPoints >= 4500) {
+          return 320;
+        }
+        if (totalPoints >= 2800) {
+          return 260;
+        }
+        if (totalPoints >= 1600) {
+          return 210;
+        }
+        return 170;
+      };
+
+      const renderWaveform = (waveform: WaveformPreviewData): void => {
+        const waveformWithState = withScanState(waveform, currentScanState, liveStreamActive, liveFrameCount);
+        if (!webviewInitialized) {
+          panel.webview.html = buildWaveformPreviewHtml(waveformWithState);
+          webviewInitialized = true;
+          return;
+        }
+
+        if (postMessageInFlight) {
+          queuedWaveformForUi = waveformWithState;
+          return;
+        }
+
+        postMessageInFlight = true;
+        const postPromise = panel.webview.postMessage({
+          type: "waveform-update",
+          payload: buildWaveformPreviewUpdatePayload(waveformWithState),
+        });
+
+        void Promise.resolve(postPromise).finally(() => {
+          postMessageInFlight = false;
+          if (!queuedWaveformForUi) {
+            return;
+          }
+          const latestQueued = queuedWaveformForUi;
+          queuedWaveformForUi = null;
+          renderWaveform(latestQueued);
+        });
+      };
+
       panel.webview.onDidReceiveMessage(async (message: unknown) => {
         const payload = message as { type?: string; text?: string };
+        if (payload.type === "set-scan-state") {
+          const state = String((message as { state?: string }).state ?? "") as WaveformScanState;
+          if (state !== "continuous" && state !== "single" && state !== "hold") {
+            return;
+          }
+          currentScanState = state;
+          if (state === "single") {
+            liveSingleConsumed = false;
+            if (previewTypeSelection.label === "live" && !liveStreamActive) {
+              const localConfig = readConfig();
+              const singleClient = new ServiceClient({
+                address: localConfig.address,
+                deadlineMs: localConfig.deadlineMs,
+              });
+              try {
+                const singleWaveform = await singleClient.acquireWaveform(
+                  instanceIdInput,
+                  sampleCount,
+                  waveformMode,
+                  traceSource,
+                  channelIndex,
+                  visibleTraceIds,
+                );
+                const enhanced = applyLiveFrequencyOverlays(singleWaveform, liveOverlayState, 8);
+                liveOverlayState = enhanced.state;
+                liveFrameCount += 1;
+                liveStreamActive = false;
+                currentScanState = "hold";
+                latestWaveformForUi = enhanced.waveform;
+                renderWaveform(enhanced.waveform);
+              } catch (error) {
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                vscode.window.showErrorMessage(`Single scan failed: ${errorMessage}`);
+              } finally {
+                singleClient.dispose();
+              }
+              return;
+            }
+          }
+          if (state === "hold" && liveAbortController && !liveAbortController.signal.aborted) {
+            liveAbortController.abort();
+            liveStreamActive = false;
+          }
+          if (latestWaveformForUi) {
+            renderWaveform(latestWaveformForUi);
+          }
+          return;
+        }
+
+        if (payload.type === "ui-interaction") {
+          const active = Boolean((message as { active?: boolean }).active);
+          uiInteractionActive = active;
+          suspendRenderUntilMs = Date.now() + (active ? 1500 : 250);
+          return;
+        }
+
         if (payload.type !== "copy-primary-marker") {
           return;
         }
@@ -451,7 +561,8 @@ export function activate(context: vscode.ExtensionContext): void {
           channelIndex,
           visibleTraceIds,
         );
-        panel.webview.html = buildWaveformPreviewHtml(waveform);
+        latestWaveformForUi = waveform;
+        renderWaveform(waveform);
 
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
           `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, visible=${visibleTraceIds.join(",") || "all"}, preview=snapshot, sampleCount=${sampleCount}, frame=${waveform.frameType}, traces=${waveform.traces.length}, points=${waveform.points.length}`,
@@ -463,8 +574,8 @@ export function activate(context: vscode.ExtensionContext): void {
         );
       } else {
         const abortController = new AbortController();
+        liveAbortController = abortController;
         panel.onDidDispose(() => abortController.abort());
-        let liveOverlayState = createLiveWaveformOverlayState();
 
         const finalWaveform = await vscode.window.withProgress(
           {
@@ -484,12 +595,46 @@ export function activate(context: vscode.ExtensionContext): void {
               visibleTraceIds,
               liveMaxFrames,
               (waveform, frameCount) => {
-                if (frameCount === 1 || frameCount % 3 === 0 || frameCount === liveMaxFrames) {
-                  const enhanced = applyLiveFrequencyOverlays(waveform, liveOverlayState, 8);
-                  liveOverlayState = enhanced.state;
-                  panel.webview.html = buildWaveformPreviewHtml(enhanced.waveform);
+                const enhanced = applyLiveFrequencyOverlays(waveform, liveOverlayState, 8);
+                liveOverlayState = enhanced.state;
+                liveFrameCount = frameCount;
+                liveStreamActive = true;
+                latestWaveformForUi = enhanced.waveform;
+                const nowMs = Date.now();
+
+                if (currentScanState === "hold") {
+                  return;
+                }
+
+                if (currentScanState === "single") {
+                  if (liveSingleConsumed) {
+                    return;
+                  }
+                  liveSingleConsumed = true;
+                  currentScanState = "hold";
+                  if (liveAbortController && !liveAbortController.signal.aborted) {
+                    liveAbortController.abort();
+                    liveStreamActive = false;
+                  }
+                  renderWaveform(enhanced.waveform);
                   progress.report({
-                    message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}`,
+                    message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}, scan=${currentScanState}`,
+                  });
+                  return;
+                }
+
+                if (frameCount === 1 || frameCount % 3 === 0) {
+                  if (uiInteractionActive || nowMs < suspendRenderUntilMs) {
+                    return;
+                  }
+                  const minRenderIntervalMs = estimateRenderIntervalMs(enhanced.waveform);
+                  if (nowMs - lastRenderAtMs < minRenderIntervalMs) {
+                    return;
+                  }
+                  lastRenderAtMs = nowMs;
+                  renderWaveform(enhanced.waveform);
+                  progress.report({
+                    message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}, scan=${currentScanState}`,
                   });
                 }
               },
@@ -498,8 +643,12 @@ export function activate(context: vscode.ExtensionContext): void {
           },
         );
 
+        liveStreamActive = false;
+        latestWaveformForUi = finalWaveform;
+        renderWaveform(finalWaveform);
+
         logBlock(outputChannel, "INFO", `[PreviewWaveform][requestId=${requestId}]`, [
-          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, visible=${visibleTraceIds.join(",") || "all"}, preview=live, sampleCount=${sampleCount}, maxFrames=${liveMaxFrames}, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
+          `instanceId=${instanceIdInput}, mode=${waveformMode}, source=${traceSource}, channel=${channelIndex}, visible=${visibleTraceIds.join(",") || "all"}, preview=live, sampleCount=${sampleCount}, frameLimit=unlimited, frame=${finalWaveform.frameType}, traces=${finalWaveform.traces.length}, points=${finalWaveform.points.length}`,
           `markers=${finalWaveform.markers.map((marker) => `${marker.label}(${marker.x.toFixed(4)},${marker.y.toFixed(4)})`).join(";")}`,
         ]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);

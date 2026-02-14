@@ -299,6 +299,7 @@ export class ServiceClient {
         },
         { deadline },
       );
+      const hasFrameLimit = Number.isFinite(maxFrames) && maxFrames > 0;
 
       let finished = false;
       let frameCount = 0;
@@ -328,7 +329,7 @@ export class ServiceClient {
         frameCount += 1;
         latest = buildWaveformPreviewData(response, traceSource, channelIndex, visibleTraceIds);
         onFrame?.(latest, frameCount);
-        if (frameCount >= maxFrames) {
+        if (hasFrameLimit && frameCount >= maxFrames) {
           call.cancel();
         }
       });

@@ -93,23 +93,32 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   } as Record<string, unknown>;
   const singlePointData = buildWaveformPreviewData(singlePointPayload);
   assert.equal(singlePointData.points.length, 1);
-  assert(buildWaveformPreviewHtml(singlePointData).includes("<circle"));
+  assert(buildWaveformPreviewHtml(singlePointData).includes("id=\"waveCanvas\""));
 
   const html = buildWaveformPreviewHtml(frequencyData);
   assert(html.includes("instance=inst0"));
-  assert(html.includes("polyline"));
+  assert(html.includes("scan=continuous"));
+  assert(html.includes("stream=running"));
+  assert(html.includes("frames=0"));
+  assert(html.includes("drawChart"));
   assert(html.includes("marker-row is-primary"));
   assert(html.includes("class=\"marker-name\""));
-  assert(html.includes("class=\"marker-point\""));
-  assert(html.includes("class=\"marker-label-bg\""));
-  assert(html.includes("min x="));
-  assert(html.includes("y="));
+  assert(html.includes("normalizePointJs"));
+  assert(html.includes("formatTickJs"));
   assert(html.includes("id=\"copyPrimaryMarker\""));
   assert(html.includes("id=\"clearCopyStatus\""));
   assert(html.includes("id=\"toggleRenderMode\""));
   assert(html.includes("id=\"togglePeakHold\""));
   assert(html.includes("id=\"toggleRecentAvg\""));
   assert(html.includes("id=\"toggleEnvelope\""));
+  assert(html.includes("id=\"scanContinuous\""));
+  assert(html.includes("id=\"scanSingle\""));
+  assert(html.includes("id=\"scanHold\""));
+  assert(html.includes("set-scan-state"));
+  assert(html.includes("ui-interaction"));
+  assert(html.includes("postUiInteraction"));
+  assert(html.includes("scheduleWaveformUpdate"));
+  assert(html.includes("requestAnimationFrame"));
   assert(html.includes("copy-primary-marker"));
   assert(html.includes("timestampNs=123"));
   assert(html.includes("source=frame"));
@@ -134,14 +143,35 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("}, 2000)"));
   assert(html.includes("document.addEventListener(\"keydown\""));
   assert(html.includes("Mode: Smooth"));
-  assert(html.includes("show-smooth"));
-  assert(html.includes("hide-envelope"));
+  assert(html.includes("renderMode = \"smooth\""));
+  assert(html.includes("envelopeHidden"));
   assert(html.includes("setTraceVisible"));
-  assert(html.includes("axis-line"));
-  assert(html.includes("axis-tick"));
+  assert(html.includes("waveCanvas"));
+  assert(html.includes("canvas.getContext(\"2d\")"));
   assert(html.includes("xMin="));
   assert(html.includes("yMax="));
   assert(html.includes("channel=0"));
+  assert(html.includes("live stats=live stats unavailable"));
+
+  const statsHtml = buildWaveformPreviewHtml({
+    ...frequencyData,
+    scanState: "hold",
+    streamActive: false,
+    streamFrameCount: 13,
+    liveStats: {
+      peakToPeak: 1.2,
+      mean: 0.8,
+      stdDev: 0.16,
+      coefficientOfVariation: 0.2,
+      level: "warning",
+      window: 6,
+    },
+  });
+  assert(statsHtml.includes("class=\"stats-panel is-warning\""));
+  assert(statsHtml.includes("class=\"scan-status is-hold\""));
+  assert(statsHtml.includes("scan=hold | stream=stopped | frames=13"));
+  assert(statsHtml.includes("live stats=p2p="));
+  assert(statsHtml.includes("level=warning"));
 
   const allHtml = buildWaveformPreviewHtml(allTraceData);
   const frameIndex = allHtml.indexOf("data-trace-id=\"frame\"");
@@ -184,8 +214,8 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   const denseData = buildWaveformPreviewData(densePayload);
   assert.equal(denseData.points.length, 512);
   const denseHtml = buildWaveformPreviewHtml(denseData);
-  assert(denseHtml.includes("class=\"trace-envelope\""));
-  assert(denseHtml.includes("polygon"));
+  assert(denseHtml.includes("id=\"waveCanvas\""));
+  assert(denseHtml.includes("drawPolyline"));
 
   process.stdout.write("waveformPreview.test passed\n");
 })();

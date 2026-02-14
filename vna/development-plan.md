@@ -5160,6 +5160,276 @@ WU-MAINLINE-289: 批次收敛与统一验证（WU287~289）
 - Validation result (WU287~289 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.272 已完成 Work Unit
+
+WU-MAINLINE-290: VS Code live 多帧统计面板
+
+- Objective: 为 live 波形提供可持续观测的统计摘要。
+- Scope (in/out):
+  - in: 在 live 预览输出中增加 `peak-to-peak`、`mean`、`std`、`cv`、`window` 统计。
+  - out: 后端统计协议扩展。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.273 已完成 Work Unit
+
+WU-MAINLINE-291: live 阈值高亮分级
+
+- Objective: 提升异常波动识别速度。
+- Scope (in/out):
+  - in: 统计面板增加 `normal/warning/critical` 阈值高亮。
+  - out: 用户可配置阈值。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.274 已完成 Work Unit
+
+WU-MAINLINE-292: 批次收敛与统一验证（WU290~292）
+
+- Objective: 以粗粒度 WU 完成 live 统计与高亮能力闭环。
+- Scope (in/out):
+  - in: 聚合插件代码、测试、文档并统一回归。
+  - out: 插件协议变更。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU290~292):
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/liveWaveformOverlay.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/liveWaveformOverlay.test.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 仅插件内部数据结构新增 `liveStats` 字段（无后端协议变更）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复上一版 live 预览呈现逻辑。
+- Risks: 阈值为默认经验值，复杂场景下可能产生误报。
+- Acceptance criteria:
+  - live 预览显示多帧统计面板。
+  - 统计面板随阈值分级高亮。
+  - 插件测试通过。
+
+- Validation result (WU290~292 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+### 8.275 已完成 Work Unit
+
+WU-MAINLINE-293: live 扫描状态手动配置
+
+- Objective: 支持在波形页内手动切换扫描状态，减少参数反复输入。
+- Scope (in/out):
+  - in: 新增 `continuous/single/hold` UI 按钮并接入 live 渲染状态机。
+  - out: 后端采集协议变更。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.276 已完成 Work Unit
+
+WU-MAINLINE-294: 持续扫描状态可见化
+
+- Objective: 让用户可直接查看持续扫描运行状态。
+- Scope (in/out):
+  - in: 增加状态栏显示扫描模式、stream 状态与帧计数。
+  - out: 历史帧持久化统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.277 已完成 Work Unit
+
+WU-MAINLINE-295: 批次收敛与统一验证（WU293~295）
+
+- Objective: 以粗粒度 WU 完成扫描状态 UI 能力闭环。
+- Scope (in/out):
+  - in: 聚合插件代码、测试、文档并统一回归。
+  - out: 插件命令体系重构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU293~295):
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无后端协议变更（插件内部预览数据增加扫描状态元信息）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复参数驱动的原有扫描行为。
+- Risks: `single` 到 `hold` 的自动切换为固定策略，后续可能需要可配置化。
+- Acceptance criteria:
+  - 波形页支持 `continuous/single/hold` 手动切换。
+  - 可见扫描状态与持续扫描帧计数。
+  - 插件测试通过。
+
+- Validation result (WU293~295 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+### 8.278 已完成 Work Unit
+
+WU-MAINLINE-296: 后端服务配置状态变更日志
+
+- Objective: 在后台可观测服务配置与健康状态的变更过程。
+- Scope (in/out):
+  - in: `ServiceStatusService` 输出配置/健康/启动上下文状态变更日志。
+  - out: 引入第三方日志框架。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.279 已完成 Work Unit
+
+WU-MAINLINE-297: 采集请求配置变更日志
+
+- Objective: 在持续测试中快速识别采集配置切换。
+- Scope (in/out):
+  - in: gRPC `Acquire/StreamAcquisition` 输出请求配置初始化与变更日志，记录 stream 启停。
+  - out: RPC 契约字段变更。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.280 已完成 Work Unit
+
+WU-MAINLINE-298: 批次收敛与统一验证（WU296~298）
+
+- Objective: 以粗粒度 WU 完成后端配置状态日志能力闭环。
+- Scope (in/out):
+  - in: 聚合后端代码、测试、文档并统一回归。
+  - out: 跨模块日志体系重构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU296~298):
+  - `vna/src/service/service_status_service.cpp`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/service_status_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅日志与测试增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_service_status_service_test`
+  - `cd vna && .\build\easy_service_status_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复原有无变更日志输出行为。
+- Risks: 日志量在高频状态切换场景可能增大；当前仅在状态变化时输出以控制噪声。
+- Acceptance criteria:
+  - 后台可见服务配置/健康/启动上下文变更日志。
+  - 后台可见 Acquire/Stream 配置变更与 stream 启停日志。
+  - 对应后端测试通过。
+
+- Validation result (WU296~298 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_service_status_service_test` 通过
+  - `cd vna && .\build\easy_service_status_service_test.exe` 通过
+
+### 8.281 已完成 Work Unit
+
+WU-MAINLINE-299: 插件 live 持续扫描无帧上限
+
+- Objective: 修复 live 预览固定帧数自动停止，支持持续扫描测试。
+- Scope (in/out):
+  - in: 取消默认 max frames 限制；live 仅在用户取消或关闭面板时结束；同步文案。
+  - out: 后端 stream 协议变更。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU299):
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无后端协议变更（插件端流控制策略调整）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复固定帧上限策略。
+- Risks: 持续扫描会增加运行时资源占用，需依赖用户取消或关闭窗口结束流。
+- Acceptance criteria:
+  - live 模式不再因固定帧数自动停止。
+  - 用户可通过取消/关闭面板控制结束。
+  - 插件测试通过。
+
+- Validation result (WU299):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+### 8.282 已完成 Work Unit
+
+WU-MAINLINE-300: single/hold 语义与 VNA 对齐
+
+- Objective: 使 `single/hold` 扫描行为与常见 VNA 语义一致。
+- Scope (in/out):
+  - in: `single` 扫描一帧后自动进入 `hold` 且停止 stream；`hold` 明确为停流停扫。
+  - out: 后端采集协议变更。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU300):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件端状态机语义调整）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复旧的 `single` 显示语义。
+- Risks: `single` 将主动停流，若用户期望连续观测需切回 `continuous`。
+- Acceptance criteria:
+  - `single` 扫描一帧后停流并转为 `hold`。
+  - `hold` 可直接停流停扫。
+  - 插件测试通过。
+
+- Validation result (WU300):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+### 8.283 已完成 Work Unit
+
+WU-MAINLINE-301: live 高频多 trace 增量刷新优化
+
+- Objective: 提升大数据量与高频更新场景下的波形预览稳定性与交互可用性。
+- Scope (in/out):
+  - in: 扩展侧消息合并（仅保留最新帧）、按总点数动态节流、Webview 侧 `requestAnimationFrame` 合并更新。
+  - out: 渲染引擎改为 Canvas/WebGL。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU301):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件端渲染调度优化）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复固定节流和非合并更新策略。
+- Risks: 在极端高频下会主动丢弃中间帧，以“最新帧可见性”优先于“逐帧完整回放”。
+- Acceptance criteria:
+  - 高频更新时不出现明显消息堆积与交互阻塞。
+  - 多 trace 场景下渲染与按钮交互保持稳定。
+  - 插件测试通过。
+
+- Validation result (WU301):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+### 8.284 已完成 Work Unit
+
+WU-MAINLINE-302: 波形预览渲染引擎切换为 Canvas
+
+- Objective: 提前完成高频大数据场景渲染路径升级，避免后续 SVG 返工。
+- Scope (in/out):
+  - in: `waveformPreview` 渲染模型改为 Canvas 数据模型与 2D 绘制，保留现有交互（图例显隐、raw/smooth、envelope、扫描状态）。
+  - out: 引入 WebGL 或第三方图形库。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU302):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端渲染实现切换）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复 SVG 渲染路径。
+- Risks: Canvas 路径在极端高频下为保证交互会丢弃中间帧，优先展示最新状态。
+- Acceptance criteria:
+  - 波形图在 Canvas 上完成绘制且功能行为保持一致。
+  - 高频更新场景无明显交互卡顿。
+  - 插件测试通过。
+
+- Validation result (WU302):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

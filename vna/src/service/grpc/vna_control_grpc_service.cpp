@@ -1,6 +1,9 @@
 #include "service/grpc/vna_control_grpc_service.h"
 
 #include <chrono>
+#include <iostream>
+#include <mutex>
+#include <sstream>
 #include <thread>
 
 #include "core/excitation_mode.h"
@@ -148,6 +151,55 @@ void FillProtoFromCoreResult(const ::vna::core::AcquisitionResult& in,
   return excitation;
 }
 
+std::string BuildRequestConfigDigest(const ::vna::AcquisitionRequest& request) {
+  std::ostringstream oss;
+  oss << "instance=" << request.instance_id()
+      << ", sample_count=" << request.sample_count()
+      << ", timeout_ms=" << request.timeout_ms()
+      << ", mode=" << request.excitation().mode();
+
+  if (request.excitation().mode() == ::vna::ExcitationMode::EXCITATION_MODE_PULSE) {
+    oss << ", pulse.center_hz=" << request.excitation().pulse().center_frequency_hz()
+        << ", pulse.width_ns=" << request.excitation().pulse().pulse_width_ns()
+        << ", pulse.period_ns=" << request.excitation().pulse().pulse_period_ns()
+        << ", pulse.power_dbm=" << request.excitation().pulse().power_dbm();
+  } else {
+    oss << ", cw.start_hz=" << request.excitation().cw().start_frequency_hz()
+        << ", cw.stop_hz=" << request.excitation().cw().stop_frequency_hz()
+        << ", cw.points=" << request.excitation().cw().sweep_point_count()
+        << ", cw.ifbw_hz=" << request.excitation().cw().if_bandwidth_hz();
+  }
+
+  return oss.str();
+}
+
+void LogConfigTransitionIfChanged(const char* scope, const ::vna::AcquisitionRequest& request) {
+  static std::mutex logMutex;
+  static std::string lastAcquireDigest;
+  static std::string lastStreamDigest;
+
+  const std::string digest = BuildRequestConfigDigest(request);
+
+  std::lock_guard<std::mutex> lock(logMutex);
+  std::string* lastDigest = nullptr;
+  if (std::string(scope) == "ACQUIRE") {
+    lastDigest = &lastAcquireDigest;
+  } else {
+    lastDigest = &lastStreamDigest;
+  }
+
+  if (lastDigest->empty()) {
+    std::cout << "[CONFIG_INIT][" << scope << "] " << digest << "\n";
+    *lastDigest = digest;
+    return;
+  }
+
+  if (*lastDigest != digest) {
+    std::cout << "[CONFIG_CHANGED][" << scope << "] from{" << *lastDigest << "} to{" << digest << "}\n";
+    *lastDigest = digest;
+  }
+}
+
 }  // namespace
 
 namespace vna {
@@ -238,6 +290,7 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   }
 
   const ::vna::core::ExcitationConfig excitation = BuildCoreExcitation(*request);
+  LogConfigTransitionIfChanged("ACQUIRE", *request);
 
   ::vna::core::AcquisitionResult result;
   const ::vna::core::Status status = controlService_->AcquireOnce(
@@ -370,7 +423,9 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   }
 
   const ::vna::core::ExcitationConfig excitation = BuildCoreExcitation(*request);
+  LogConfigTransitionIfChanged("STREAM", *request);
   int frameCount = 0;
+  std::cout << "[STREAM_STATE] started instance=" << request->instance_id() << "\n";
 
   while (!context->IsCancelled()) {
     ::vna::core::AcquisitionResult coreResult;
@@ -395,6 +450,8 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     }
   }
 
+  std::cout << "[STREAM_STATE] cancelled instance=" << request->instance_id()
+            << ", frames=" << frameCount << "\n";
   return ::grpc::Status(::grpc::StatusCode::CANCELLED, "stream cancelled");
 }
 
