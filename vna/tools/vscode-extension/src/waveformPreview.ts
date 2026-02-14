@@ -584,6 +584,7 @@ export interface WaveformPreviewUpdatePayload {
   scanState: "continuous" | "single" | "hold";
   legendItems: string;
   markerRows: string;
+  scriptStatusText?: string;
   canvasModel: {
     width: number;
     height: number;
@@ -681,6 +682,7 @@ export function buildWaveformPreviewUpdatePayload(data: WaveformPreviewData): Wa
     scanState,
     legendItems,
     markerRows,
+    scriptStatusText: "script=booting",
     canvasModel,
   };
 }
@@ -821,6 +823,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <div id="axisText" class="axis">${initialPayload.axisText}</div>
   <div id="legendText" class="axis">${initialPayload.legendText}</div>
   <div id="scanStatus" class="${initialPayload.scanStatusClass}">${initialPayload.scanStatusText}</div>
+  <div id="scriptStatus" class="axis">${initialPayload.scriptStatusText}</div>
   <div class="scan-controls">
     <button id="scanContinuous" class="scan-btn ${initialPayload.scanState === "continuous" ? "is-active" : ""}" title="Continuous scan">Continuous</button>
     <button id="scanSingle" class="scan-btn ${initialPayload.scanState === "single" ? "is-active" : ""}" title="Single scan">Single</button>
@@ -983,12 +986,43 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const toggleRecentAvgButton = document.getElementById("toggleRecentAvg");
       const canvas = document.getElementById("waveCanvas");
       const emptyHint = document.getElementById("emptyHint");
+      const scriptStatus = document.getElementById("scriptStatus");
       const hiddenTraceIds = new Set();
       let currentCanvasModel = initialCanvasModel;
       let renderMode = "smooth";
       let envelopeHidden = false;
       let pendingWaveformPayload = null;
       let waveformUpdateScheduled = false;
+
+      const setScriptStatus = (text) => {
+        if (scriptStatus instanceof HTMLElement) {
+          scriptStatus.textContent = String(text || "");
+        }
+      };
+
+      const postWebviewLog = (level, message, detail) => {
+        if (!vscodeApi) {
+          return;
+        }
+        vscodeApi.postMessage({
+          type: "webview-log",
+          level,
+          message,
+          detail,
+        });
+      };
+
+      window.addEventListener("error", (event) => {
+        const message = event && event.message ? String(event.message) : "unknown webview error";
+        setScriptStatus("script=error");
+        postWebviewLog("error", "webview runtime error", message);
+      });
+
+      window.addEventListener("unhandledrejection", (event) => {
+        const reason = event && event.reason ? String(event.reason) : "unknown rejection";
+        setScriptStatus("script=error");
+        postWebviewLog("error", "webview unhandled rejection", reason);
+      });
 
       const parseColor = (token, fallback) => {
         const value = String(token || "").trim();
@@ -1052,12 +1086,17 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
 
       const drawChart = () => {
         if (!(canvas instanceof HTMLCanvasElement) || !currentCanvasModel) {
+          setScriptStatus("script=ready (canvas unavailable)");
+          postWebviewLog("error", "canvas unavailable", "waveCanvas element missing or invalid");
           return;
         }
-        const context = canvas.getContext("2d");
-        if (!context) {
-          return;
-        }
+        try {
+          const context = canvas.getContext("2d");
+          if (!context) {
+            setScriptStatus("script=ready (2d unavailable)");
+            postWebviewLog("error", "canvas 2d context unavailable", "getContext(2d) returned null");
+            return;
+          }
         const traces = Array.isArray(currentCanvasModel.traces) ? currentCanvasModel.traces : [];
         if (emptyHint instanceof HTMLElement) {
           emptyHint.style.display = traces.length === 0 ? "block" : "none";
@@ -1219,6 +1258,12 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
             context.font = "10px sans-serif";
             context.fillText(markerLabel, textX, textY);
           }
+        }
+          setScriptStatus("script=ready");
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          setScriptStatus("script=error");
+          postWebviewLog("error", "drawChart failed", errorMessage);
         }
       };
 
@@ -1396,6 +1441,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       applyRenderMode();
       syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
       syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+      postWebviewLog("info", "webview initialized", "canvas waveform script ready");
 
       const postScanState = (state) => {
         if (!vscodeApi) {

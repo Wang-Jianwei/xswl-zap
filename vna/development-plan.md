@@ -5546,6 +5546,39 @@ WU-VSCODE-005: VS Code 波形预览初始化时序修复
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.288 已完成 Work Unit
+
+WU-VSCODE-006: VS Code 波形预览可观测性增强与异常兜底
+
+- Objective: 解决“无波形且无日志”排障困难问题，为 Webview 渲染链路增加可观测性并补充异常兜底。
+- Scope (in/out):
+  - in: Webview 增加脚本状态显示；上报初始化/运行时异常/绘制失败到扩展输出通道；补充回归断言。
+  - out: 改动 gRPC 契约与后端数据结构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-006):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件端渲染与日志链路增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，恢复增强前实现。
+- Risks: 日志增多可能带来轻微输出噪音；已限制为关键节点与异常路径。
+- Acceptance criteria:
+  - 图页展示 `scriptStatus`（booting/ready/error）。
+  - Webview 初始化与异常可在扩展输出通道看到。
+  - 扩展测试通过。
+
+- Validation result (WU-VSCODE-006):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+- Closure notes (WU-VSCODE-006):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

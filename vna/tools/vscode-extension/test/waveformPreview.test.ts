@@ -114,8 +114,13 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("id=\"scanContinuous\""));
   assert(html.includes("id=\"scanSingle\""));
   assert(html.includes("id=\"scanHold\""));
+  assert(html.includes("id=\"scriptStatus\""));
+  assert(html.includes("script=booting"));
   assert(html.includes("set-scan-state"));
   assert(html.includes("ui-interaction"));
+  assert(html.includes("webview-log"));
+  assert(html.includes("window.addEventListener(\"error\""));
+  assert(html.includes("window.addEventListener(\"unhandledrejection\""));
   assert(html.includes("postUiInteraction"));
   assert(html.includes("scheduleWaveformUpdate"));
   assert(html.includes("requestAnimationFrame"));

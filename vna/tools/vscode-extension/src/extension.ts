@@ -471,7 +471,18 @@ export function activate(context: vscode.ExtensionContext): void {
       };
 
       panel.webview.onDidReceiveMessage(async (message: unknown) => {
-        const payload = message as { type?: string; text?: string };
+        const payload = message as { type?: string; text?: string; level?: string; message?: string; detail?: string };
+        if (payload.type === "webview-log") {
+          const level = String(payload.level ?? "info").toLowerCase() === "error" ? "ERROR" : "INFO";
+          const lines = [
+            String(payload.message ?? "webview event"),
+            String(payload.detail ?? ""),
+          ].filter((line) => line.length > 0);
+          logBlock(outputChannel, level as LogLevel, `[PreviewWaveformWebview][requestId=${requestId}]`, lines);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+          return;
+        }
+
         if (payload.type === "set-scan-state") {
           const state = String((message as { state?: string }).state ?? "") as WaveformScanState;
           if (state !== "continuous" && state !== "single" && state !== "hold") {
