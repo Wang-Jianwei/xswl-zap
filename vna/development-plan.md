@@ -5649,6 +5649,40 @@ WU-VSCODE-008: VS Code 波形 Canvas 高清渲染优化
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.291 已完成 Work Unit
+
+WU-VSCODE-009: VS Code 波形预览页面自适应无滚动改造
+
+- Objective: 将波形预览页面改为自适应布局，保证窗口变化时波形区域自动适配，且页面不出现滚动条。
+- Scope (in/out):
+  - in: Webview 页面改为 `flex` 响应式布局；图表区域占满剩余空间；接入 `ResizeObserver` 与 `window.resize` 重绘；补充回归断言。
+  - out: 修改后端采集/协议逻辑。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-009):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅前端布局与渲染行为优化）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `cd vna/tools/vscode-extension && npm run test:ui`
+- Rollback plan: 回滚本次提交，恢复固定尺寸布局。
+- Risks: 在极小窗口下信息区会压缩显示；通过图表最小高度与内容裁剪避免出现滚动条。
+- Acceptance criteria:
+  - 页面无滚动条。
+  - 波形区域随窗口大小变化自动重绘。
+  - 扩展回归与 UI 冒烟通过。
+
+- Validation result (WU-VSCODE-009):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+  - `cd vna/tools/vscode-extension && npm run test:ui` 通过
+
+- Closure notes (WU-VSCODE-009):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

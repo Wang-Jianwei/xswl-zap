@@ -710,7 +710,23 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XSWL Waveform Preview</title>
   <style>
-    body { font-family: var(--vscode-font-family); color: var(--vscode-foreground); padding: 12px; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      box-sizing: border-box;
+      font-family: var(--vscode-font-family);
+      color: var(--vscode-foreground);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    * { box-sizing: border-box; }
     .meta { margin-bottom: 10px; }
     .axis { margin-bottom: 6px; opacity: 0.9; }
     .scan-status {
@@ -757,14 +773,14 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       border-color: var(--vscode-testing-iconFailed);
       color: var(--vscode-testing-iconFailed);
     }
-    .marker { margin-bottom: 10px; opacity: 0.9; display: grid; gap: 4px; }
+    .marker { margin-bottom: 4px; opacity: 0.9; display: grid; gap: 4px; max-height: 82px; overflow: hidden; }
     .marker-row { display: flex; gap: 8px; align-items: baseline; }
     .marker-row.is-hidden { opacity: 0.45; text-decoration: line-through; }
     .marker-row.is-primary { border-left: 2px solid var(--vscode-focusBorder); padding-left: 6px; }
     .marker-name { font-weight: 600; min-width: 150px; }
     .marker-values { opacity: 0.9; }
-    .legend { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .actions { margin-bottom: 8px; display: flex; gap: 8px; }
+    .legend { margin-bottom: 4px; display: flex; gap: 8px; flex-wrap: wrap; max-height: 60px; overflow: hidden; }
+    .actions { margin-bottom: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
     .copy-status {
       margin-bottom: 8px;
       padding: 4px 8px;
@@ -814,8 +830,22 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       border: 1px solid var(--vscode-editorWidget-border);
       background: var(--vscode-editor-background);
       display: block;
+      width: 100%;
+      height: 100%;
     }
-    .empty { opacity: 0.8; }
+    #chartHost {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 180px;
+      overflow: hidden;
+    }
+    .empty {
+      opacity: 0.8;
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -984,6 +1014,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const toggleEnvelopeButton = document.getElementById("toggleEnvelope");
       const togglePeakHoldButton = document.getElementById("togglePeakHold");
       const toggleRecentAvgButton = document.getElementById("toggleRecentAvg");
+      const chartHost = document.getElementById("chartHost");
       const canvas = document.getElementById("waveCanvas");
       const emptyHint = document.getElementById("emptyHint");
       const scriptStatus = document.getElementById("scriptStatus");
@@ -1102,8 +1133,10 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           emptyHint.style.display = traces.length === 0 ? "block" : "none";
         }
 
-        const width = Number(currentCanvasModel.width || 900);
-        const height = Number(currentCanvasModel.height || 360);
+        const hostWidth = chartHost instanceof HTMLElement ? chartHost.clientWidth : 0;
+        const hostHeight = chartHost instanceof HTMLElement ? chartHost.clientHeight : 0;
+        const width = Math.max(120, Math.floor(hostWidth || Number(currentCanvasModel.width || 900)));
+        const height = Math.max(120, Math.floor(hostHeight || Number(currentCanvasModel.height || 360)));
         const rawDpr = typeof window !== "undefined" && typeof window.devicePixelRatio === "number"
           ? window.devicePixelRatio
           : 1;
@@ -1453,6 +1486,23 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       applyRenderMode();
       syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
       syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
+
+      const requestChartRedraw = () => {
+        if (typeof requestAnimationFrame === "function") {
+          requestAnimationFrame(() => drawChart());
+          return;
+        }
+        setTimeout(() => drawChart(), 16);
+      };
+
+      if (typeof ResizeObserver === "function" && chartHost instanceof HTMLElement) {
+        const resizeObserver = new ResizeObserver(() => {
+          requestChartRedraw();
+        });
+        resizeObserver.observe(chartHost);
+      }
+      window.addEventListener("resize", requestChartRedraw);
+
       postWebviewLog("info", "webview initialized", "canvas waveform script ready");
 
       const postScanState = (state) => {

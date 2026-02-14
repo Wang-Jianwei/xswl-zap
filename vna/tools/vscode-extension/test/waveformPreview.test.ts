@@ -160,6 +160,10 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("setTraceVisible"));
   assert(html.includes("waveCanvas"));
   assert(html.includes("canvas.getContext(\"2d\")"));
+    assert(html.includes("overflow: hidden"));
+    assert(html.includes("flex: 1 1 auto"));
+    assert(html.includes("ResizeObserver"));
+    assert(html.includes("window.addEventListener(\"resize\""));
   assert(html.includes("xMin="));
   assert(html.includes("yMax="));
   assert(html.includes("channel=0"));
