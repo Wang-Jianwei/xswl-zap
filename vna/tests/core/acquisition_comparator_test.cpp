@@ -58,6 +58,9 @@ int main() {
   assert(diff.find("summary_version=") != std::string::npos);
   assert(diff.find("summary_schema=") != std::string::npos);
   assert(diff.find("summary_compat=") != std::string::npos);
+  assert(diff.find("summary_token=") != std::string::npos);
+  assert(diff.find("summary_primary_profile=") != std::string::npos);
+  assert(diff.find("summary_health_level=") != std::string::npos);
   assert(diff.find("receiver_raw_samples=") != std::string::npos);
   assert(diff.find("receiver_comp_samples=") != std::string::npos);
   assert(diff.find("sparameter_samples=") != std::string::npos);

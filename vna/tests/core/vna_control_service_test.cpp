@@ -108,6 +108,9 @@ int main() {
         assert(compareDiff.find("summary_version=") != std::string::npos);
         assert(compareDiff.find("summary_schema=") != std::string::npos);
         assert(compareDiff.find("summary_compat=") != std::string::npos);
+        assert(compareDiff.find("summary_token=") != std::string::npos);
+        assert(compareDiff.find("summary_primary_profile=") != std::string::npos);
+        assert(compareDiff.find("summary_health_level=") != std::string::npos);
         assert(compareDiff.find("receiver_raw_samples=") != std::string::npos);
         assert(compareDiff.find("max_component_delta=") != std::string::npos);
         assert(compareDiff.find("max_component_delta_ratio=") != std::string::npos);

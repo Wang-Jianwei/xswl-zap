@@ -74,6 +74,16 @@ std::string BuildWorstDigest(const char* category,
   return stream.str();
 }
 
+const char* HealthLevelFromRisk(const char* riskLevel) {
+  if (std::string(riskLevel) == "low") {
+    return "good";
+  }
+  if (std::string(riskLevel) == "medium") {
+    return "warning";
+  }
+  return "critical";
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -356,6 +366,11 @@ struct ComparisonStats {
     const std::string overallDigest = hasWorst
       ? (std::string("overall|") + overallMaxRiskLevel + "|" + worstDigest)
       : "overall|none";
+    const std::string summaryToken = std::string(kCompareSummarySchema) +
+      "@v" + std::to_string(kCompareSummaryVersion) +
+      "/" + kCompareSummaryCompat;
+    const std::string summaryPrimaryProfile = hasWorst ? worstProfile : "none/none";
+    const char* summaryHealthLevel = HealthLevelFromRisk(overallMaxRiskLevel);
 
         stream << "tolerance=" << tolerance
           << ", summary_version=" << kCompareSummaryVersion
@@ -383,7 +398,10 @@ struct ComparisonStats {
               << ", receiver_comp_digest=" << receiverCompDigest
               << ", sparameter_digest=" << sParameterDigest
               << ", worst_digest=" << worstDigest
-              << ", overall_digest=" << overallDigest;
+              << ", overall_digest=" << overallDigest
+              << ", summary_token=" << summaryToken
+              << ", summary_primary_profile=" << summaryPrimaryProfile
+              << ", summary_health_level=" << summaryHealthLevel;
 
             if (hasWorst) {
               const double worstRealDelta = std::fabs(worstActual.real() - worstExpected.real());

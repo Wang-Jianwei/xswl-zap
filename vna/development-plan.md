@@ -4905,6 +4905,58 @@ WU-MAINLINE-274: 批次收敛与统一验证（WU272~274）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.257 已完成 Work Unit
+
+WU-MAINLINE-275: compare 成功摘要新增加速诊断字段
+
+- Objective: 一次性提升 summary 的可检索与可判读效率。
+- Scope (in/out):
+  - in: 新增 `summary_token`、`summary_primary_profile`、`summary_health_level`。
+  - out: proto 结构化字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.258 已完成 Work Unit
+
+WU-MAINLINE-276: core/service 回归覆盖加速诊断字段
+
+- Objective: 防止新增字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: core/service compare detail 测试增加字段断言。
+  - out: 全字段顺序快照测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.259 已完成 Work Unit
+
+WU-MAINLINE-277: 批次收敛与统一验证（WU275~277）
+
+- Objective: 以粗粒度 WU 完成本批代码/测试/文档闭环并提升单次吞吐。
+- Scope (in/out):
+  - in: 聚合本批改动并执行定向回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU275~277):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU272~274 输出形态。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含 `summary_token/summary_primary_profile/summary_health_level`。
+  - core/service 定向测试通过。
+
+- Validation result (WU275~277 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
