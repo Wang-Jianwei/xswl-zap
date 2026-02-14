@@ -3521,6 +3521,148 @@ WU-MAINLINE-163: 批次收敛与统一验证（WU152~163）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.146 已完成 Work Unit
+
+WU-MAINLINE-164: compare 成功摘要增加 receiver raw 分量优势幅度
+
+- Objective: 量化 receiver raw 最大误差点实部/虚部主导优势。
+- Scope (in/out):
+  - in: `receiver_raw_max_component_margin` 摘要输出。
+  - out: 分量告警阈值策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.147 已完成 Work Unit
+
+WU-MAINLINE-165: compare 成功摘要增加 receiver compensated 分量优势幅度
+
+- Objective: 量化补偿后最大误差点实部/虚部主导优势。
+- Scope (in/out):
+  - in: `receiver_comp_max_component_margin` 摘要输出。
+  - out: 自动补偿建议。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.148 已完成 Work Unit
+
+WU-MAINLINE-166: compare 成功摘要增加 s-parameter 分量优势幅度
+
+- Objective: 量化 s-parameter 最大误差点实部/虚部主导优势。
+- Scope (in/out):
+  - in: `sparameter_max_component_margin` 摘要输出。
+  - out: 端口对统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.149 已完成 Work Unit
+
+WU-MAINLINE-167: compare 成功摘要增加 worst 分量优势幅度
+
+- Objective: 量化全局最差点分量主导优势，提升优先级判断效率。
+- Scope (in/out):
+  - in: `worst_max_component_margin` 摘要输出。
+  - out: 结构化评分模型。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.150 已完成 Work Unit
+
+WU-MAINLINE-168: comparator 统一分量优势幅度计算逻辑
+
+- Objective: 统一分量优势幅度计算口径，避免字段间语义漂移。
+- Scope (in/out):
+  - in: 在 `Observe` 中以 `|abs(realDelta)-abs(imagDelta)|` 计算 margin。
+  - out: 独立数学库封装。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.151 已完成 Work Unit
+
+WU-MAINLINE-169: comparator 在最大误差更新时记录 margin
+
+- Objective: 确保各类别最大误差点同步记录 margin。
+- Scope (in/out):
+  - in: raw/comp/sparameter 最大值更新时同步写入 `*_component_margin`。
+  - out: 历史分布存储。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.152 已完成 Work Unit
+
+WU-MAINLINE-170: worst 选择逻辑透传对应 margin
+
+- Objective: 确保 worst 诊断组与来源类别 margin 保持一致。
+- Scope (in/out):
+  - in: worst 选中项同步透传 `worst_max_component_margin`。
+  - out: 多指标权重合成。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.153 已完成 Work Unit
+
+WU-MAINLINE-171: comparator 回归断言补齐 margin 字段
+
+- Objective: 防止 margin 字段后续回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `*_component_margin` 与 `worst_max_component_margin` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.154 已完成 Work Unit
+
+WU-MAINLINE-172: service 回归断言补齐 margin 字段
+
+- Objective: 确保 service compare detail 全链路透传 margin 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 margin 字段断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.155 已完成 Work Unit
+
+WU-MAINLINE-173: 文档同步 margin 诊断语义
+
+- Objective: 保持文档与实现语义一致。
+- Scope (in/out):
+  - in: README 与 development-plan 更新 margin 字段说明。
+  - out: 外部文档站同步。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.156 已完成 Work Unit
+
+WU-MAINLINE-174: 批次测试验证收敛
+
+- Objective: 对本批新增 margin 字段执行定向构建与测试回归。
+- Scope (in/out):
+  - in: 构建 comparator/service 目标并执行 easy 单测。
+  - out: 全量测试矩阵。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.157 已完成 Work Unit
+
+WU-MAINLINE-175: 批次收敛与统一验证（WU164~175）
+
+- Objective: 大批次合并后端 compare 诊断简单 WU，保持高频闭环产出。
+- Scope (in/out):
+  - in: 聚合 WU164~175 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU164~175):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU152~163 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含分类与 worst `*_component_margin` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU164~175 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

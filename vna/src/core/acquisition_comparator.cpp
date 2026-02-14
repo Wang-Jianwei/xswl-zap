@@ -70,6 +70,9 @@ struct ComparisonStats {
   double receiverRawMaxSignedDelta = 0.0;
   double receiverCompMaxSignedDelta = 0.0;
   double sParameterMaxSignedDelta = 0.0;
+  double receiverRawMaxComponentMargin = 0.0;
+  double receiverCompMaxComponentMargin = 0.0;
+  double sParameterMaxComponentMargin = 0.0;
   std::complex<double> receiverRawMaxExpected;
   std::complex<double> receiverRawMaxActual;
   std::complex<double> receiverCompMaxExpected;
@@ -96,6 +99,7 @@ struct ComparisonStats {
     const bool dominantIsReal = realDelta >= imagDelta;
     const double componentDelta = dominantIsReal ? realDelta : imagDelta;
     const double dominantSignedDelta = dominantIsReal ? realSignedDelta : imagSignedDelta;
+    const double componentMargin = std::fabs(realDelta - imagDelta);
 
     sampleCount += 1;
     if (category == Category::kReceiverRaw) {
@@ -109,6 +113,7 @@ struct ComparisonStats {
         receiverRawMaxFrequencyHz = frequencyHz;
         receiverRawMaxIsReal = dominantIsReal;
         receiverRawMaxSignedDelta = dominantSignedDelta;
+        receiverRawMaxComponentMargin = componentMargin;
         receiverRawMaxExpected = expected;
         receiverRawMaxActual = actual;
       }
@@ -123,6 +128,7 @@ struct ComparisonStats {
         receiverCompMaxFrequencyHz = frequencyHz;
         receiverCompMaxIsReal = dominantIsReal;
         receiverCompMaxSignedDelta = dominantSignedDelta;
+        receiverCompMaxComponentMargin = componentMargin;
         receiverCompMaxExpected = expected;
         receiverCompMaxActual = actual;
       }
@@ -137,6 +143,7 @@ struct ComparisonStats {
         sParameterMaxFrequencyHz = frequencyHz;
         sParameterMaxIsReal = dominantIsReal;
         sParameterMaxSignedDelta = dominantSignedDelta;
+        sParameterMaxComponentMargin = componentMargin;
         sParameterMaxExpected = expected;
         sParameterMaxActual = actual;
       }
@@ -187,6 +194,7 @@ struct ComparisonStats {
     double worstFrequencyHz = 0.0;
     double worstDelta = 0.0;
     double worstSignedDelta = 0.0;
+    double worstComponentMargin = 0.0;
     std::complex<double> worstExpected;
     std::complex<double> worstActual;
 
@@ -200,6 +208,7 @@ struct ComparisonStats {
       worstFrequencyHz = receiverRawMaxFrequencyHz;
       worstDelta = receiverRawMaxDelta;
       worstSignedDelta = receiverRawMaxSignedDelta;
+      worstComponentMargin = receiverRawMaxComponentMargin;
       worstExpected = receiverRawMaxExpected;
       worstActual = receiverRawMaxActual;
     }
@@ -213,6 +222,7 @@ struct ComparisonStats {
       worstFrequencyHz = receiverCompMaxFrequencyHz;
       worstDelta = receiverCompMaxDelta;
       worstSignedDelta = receiverCompMaxSignedDelta;
+      worstComponentMargin = receiverCompMaxComponentMargin;
       worstExpected = receiverCompMaxExpected;
       worstActual = receiverCompMaxActual;
     }
@@ -226,6 +236,7 @@ struct ComparisonStats {
       worstFrequencyHz = sParameterMaxFrequencyHz;
       worstDelta = sParameterMaxDelta;
       worstSignedDelta = sParameterMaxSignedDelta;
+      worstComponentMargin = sParameterMaxComponentMargin;
       worstExpected = sParameterMaxExpected;
       worstActual = sParameterMaxActual;
     }
@@ -252,6 +263,7 @@ struct ComparisonStats {
                 << ", worst_max_delta=" << worstDelta
                 << ", worst_max_delta_ratio=" << worstDeltaRatio
                 << ", worst_max_component=" << worstComponent
+                << ", worst_max_component_margin=" << worstComponentMargin
                 << ", worst_max_signed_delta=" << worstSignedDelta
                 << ", worst_max_frequency_hz=" << worstFrequencyHz
                 << ", worst_expected_real=" << worstExpected.real()
@@ -269,6 +281,7 @@ struct ComparisonStats {
                 << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
+                << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
                 << ", receiver_raw_max_expected_real=" << receiverRawMaxExpected.real()
                 << ", receiver_raw_max_expected_imag=" << receiverRawMaxExpected.imag()
@@ -282,6 +295,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
+                << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
                 << ", receiver_comp_max_expected_real=" << receiverCompMaxExpected.real()
                 << ", receiver_comp_max_expected_imag=" << receiverCompMaxExpected.imag()
@@ -295,6 +309,7 @@ struct ComparisonStats {
                 << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
+                << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta
                 << ", sparameter_max_expected_real=" << sParameterMaxExpected.real()
                 << ", sparameter_max_expected_imag=" << sParameterMaxExpected.imag()

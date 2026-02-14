@@ -74,6 +74,9 @@ int main() {
   assert(diff.find("receiver_raw_max_component=") != std::string::npos);
   assert(diff.find("receiver_comp_max_component=") != std::string::npos);
   assert(diff.find("sparameter_max_component=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_component_margin=") != std::string::npos);
+  assert(diff.find("receiver_comp_max_component_margin=") != std::string::npos);
+  assert(diff.find("sparameter_max_component_margin=") != std::string::npos);
   assert(diff.find("receiver_raw_max_frequency_hz=") != std::string::npos);
   assert(diff.find("receiver_comp_max_frequency_hz=") != std::string::npos);
   assert(diff.find("sparameter_max_frequency_hz=") != std::string::npos);
@@ -87,6 +90,7 @@ int main() {
   assert(diff.find("worst_max_delta=") != std::string::npos);
   assert(diff.find("worst_max_delta_ratio=") != std::string::npos);
   assert(diff.find("worst_max_component=") != std::string::npos);
+  assert(diff.find("worst_max_component_margin=") != std::string::npos);
   assert(diff.find("worst_max_signed_delta=") != std::string::npos);
   assert(diff.find("worst_max_frequency_hz=") != std::string::npos);
   assert(diff.find("worst_max_at=point:") != std::string::npos);
