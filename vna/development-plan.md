@@ -6049,6 +6049,39 @@ WU-MAINLINE-022~023: 门禁 CI 预设收敛 + 实例租约续期增强
   - 文档同步：已更新 `vna/README.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.302 已完成 Work Unit
+
+WU-MAINLINE-024: 采集参数默认化（sample_count/timeout_ms）
+
+- Objective:
+  - 在 `VnaControlService::AcquireOnce` 增加参数默认化：当调用方传入 `sampleCount=0` 或 `timeoutMs=0` 时，回退到稳定默认值，避免请求缺省导致主链路失败。
+- Scope (in/out):
+  - in: service 层采集参数默认化逻辑、核心服务回归测试。
+  - out: 修改 proto 契约字段语义、修改硬件驱动采样实现。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-024):
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本次提交，恢复 `AcquireOnce` 对 `sampleCount/timeoutMs` 的原样透传。
+- Risks: 默认值策略改变了“0 值输入”的语义（由潜在失败转为可执行默认采集）；当前限定在 service 层，风险可控且便于回滚。
+- Acceptance criteria:
+  - `AcquireOnce` 在 `sampleCount=0`、`timeoutMs=0` 时仍可成功返回采集结果。
+  - 回归测试覆盖默认化分支并通过。
+
+- Validation result (WU-MAINLINE-024):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_vna_control_service_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-024):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

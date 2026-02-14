@@ -104,6 +104,13 @@ int main() {
     }
     assert(maxMagnitude > minMagnitude + 1e-4);
 
+    // sample_count/timeout_ms 默认化：传 0 时应回退为服务默认值并成功采集。
+    vna::core::AcquisitionResult defaultedResult;
+    assert(service.AcquireOnce("inst0", excitation, 0, 0, defaultedResult) == vna::core::Status::kOk);
+    assert(defaultedResult.instanceId == "inst0");
+    assert(defaultedResult.frequencyDomain.frequenciesHz.size() == 32);
+    assert(defaultedResult.frequencyDomain.samples.size() == 32);
+
     const std::string csvPath = "build/vna-control-service-export.csv";
     const std::string touchstonePath = "build/vna-control-service-export.s2p";
         const std::string jsonPath = "build/vna-control-service-export.json";

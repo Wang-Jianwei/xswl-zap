@@ -12,6 +12,13 @@ namespace service {
 
 namespace {
 
+const std::uint32_t kDefaultSampleCount = 32;
+const std::uint32_t kDefaultTimeoutMs = 1000;
+
+}  // namespace
+
+namespace {
+
 bool EndsWithJson(const std::string& path) {
   if (path.size() < 5) {
     return false;
@@ -153,7 +160,11 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
   if (!started_) {
     return core::Status::kInvalidArgument;
   }
-  return runtime_.AcquireOnce(instanceId, excitation, sampleCount, timeoutMs, out);
+
+  const std::uint32_t effectiveSampleCount = sampleCount == 0 ? kDefaultSampleCount : sampleCount;
+  const std::uint32_t effectiveTimeoutMs = timeoutMs == 0 ? kDefaultTimeoutMs : timeoutMs;
+
+  return runtime_.AcquireOnce(instanceId, excitation, effectiveSampleCount, effectiveTimeoutMs, out);
 }
 
 core::Status VnaControlService::GetInstanceCapabilities(const std::string& instanceId,
