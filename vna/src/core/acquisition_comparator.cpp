@@ -187,6 +187,11 @@ struct ComparisonStats {
       tolerance == 0.0 ? 0.0 : (receiverCompRmsDelta / tolerance);
     const double sParameterRmsDeltaRatio =
       tolerance == 0.0 ? 0.0 : (sParameterRmsDelta / tolerance);
+    const double overallMaxToleranceMargin = tolerance - maxComponentDelta;
+    const double overallRmsToleranceMargin = tolerance - rmsDelta;
+    const double receiverRawMaxToleranceMargin = tolerance - receiverRawMaxDelta;
+    const double receiverCompMaxToleranceMargin = tolerance - receiverCompMaxDelta;
+    const double sParameterMaxToleranceMargin = tolerance - sParameterMaxDelta;
     const double receiverRawMaxPointRatio = receiverRawTotalPoints <= 1
       ? 0.0
       : static_cast<double>(receiverRawMaxPoint) /
@@ -260,6 +265,7 @@ struct ComparisonStats {
       worstActual = sParameterMaxActual;
     }
     const double worstDeltaRatio = tolerance == 0.0 ? 0.0 : (worstDelta / tolerance);
+    const double worstToleranceMargin = tolerance - worstDelta;
     const double worstPointRatio = worstTotalPoints <= 1
       ? 0.0
       : static_cast<double>(worstPoint) / static_cast<double>(worstTotalPoints - 1);
@@ -272,7 +278,9 @@ struct ComparisonStats {
            << ", max_component_delta=" << maxComponentDelta
               << ", rms_component_delta=" << rmsDelta
               << ", max_component_delta_ratio=" << overallMaxDeltaRatio
+              << ", max_component_tolerance_margin=" << overallMaxToleranceMargin
               << ", rms_component_delta_ratio=" << overallRmsDeltaRatio
+              << ", rms_component_tolerance_margin=" << overallRmsToleranceMargin
               << ", receiver_raw_rms_delta=" << receiverRawRmsDelta
               << ", receiver_raw_rms_delta_ratio=" << receiverRawRmsDeltaRatio
               << ", receiver_comp_rms_delta=" << receiverCompRmsDelta
@@ -286,6 +294,7 @@ struct ComparisonStats {
               stream << ", worst_category=" << worstCategory
                 << ", worst_max_delta=" << worstDelta
                 << ", worst_max_delta_ratio=" << worstDeltaRatio
+                << ", worst_max_tolerance_margin=" << worstToleranceMargin
                 << ", worst_max_component=" << worstComponent
                 << ", worst_max_component_margin=" << worstComponentMargin
                 << ", worst_max_signed_delta=" << worstSignedDelta
@@ -314,6 +323,7 @@ struct ComparisonStats {
                 << ", receiver_raw_total_points=" << receiverRawTotalPoints
                 << ", receiver_raw_max_point_ratio=" << receiverRawMaxPointRatio
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
+                << ", receiver_raw_max_tolerance_margin=" << receiverRawMaxToleranceMargin
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
@@ -336,6 +346,7 @@ struct ComparisonStats {
                 << ", receiver_comp_total_points=" << receiverCompTotalPoints
                 << ", receiver_comp_max_point_ratio=" << receiverCompMaxPointRatio
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
+                << ", receiver_comp_max_tolerance_margin=" << receiverCompMaxToleranceMargin
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
@@ -358,6 +369,7 @@ struct ComparisonStats {
                 << ", sparameter_total_points=" << sParameterTotalPoints
                 << ", sparameter_max_point_ratio=" << sParameterMaxPointRatio
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
+                << ", sparameter_max_tolerance_margin=" << sParameterMaxToleranceMargin
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta

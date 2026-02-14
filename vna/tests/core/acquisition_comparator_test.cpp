@@ -61,7 +61,9 @@ int main() {
   assert(diff.find("max_component_delta=") != std::string::npos);
   assert(diff.find("rms_component_delta=") != std::string::npos);
   assert(diff.find("max_component_delta_ratio=") != std::string::npos);
+  assert(diff.find("max_component_tolerance_margin=") != std::string::npos);
   assert(diff.find("rms_component_delta_ratio=") != std::string::npos);
+  assert(diff.find("rms_component_tolerance_margin=") != std::string::npos);
   assert(diff.find("receiver_raw_rms_delta=") != std::string::npos);
   assert(diff.find("receiver_comp_rms_delta=") != std::string::npos);
   assert(diff.find("sparameter_rms_delta=") != std::string::npos);
@@ -87,8 +89,11 @@ int main() {
   assert(diff.find("receiver_comp_max_point_ratio=") != std::string::npos);
   assert(diff.find("sparameter_max_point_ratio=") != std::string::npos);
   assert(diff.find("receiver_raw_max_delta_ratio=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_tolerance_margin=") != std::string::npos);
   assert(diff.find("receiver_comp_max_delta_ratio=") != std::string::npos);
+  assert(diff.find("receiver_comp_max_tolerance_margin=") != std::string::npos);
   assert(diff.find("sparameter_max_delta_ratio=") != std::string::npos);
+  assert(diff.find("sparameter_max_tolerance_margin=") != std::string::npos);
   assert(diff.find("receiver_raw_max_signed_delta=") != std::string::npos);
   assert(diff.find("receiver_comp_max_signed_delta=") != std::string::npos);
   assert(diff.find("sparameter_max_signed_delta=") != std::string::npos);
@@ -101,6 +106,7 @@ int main() {
   assert(diff.find("worst_category=") != std::string::npos);
   assert(diff.find("worst_max_delta=") != std::string::npos);
   assert(diff.find("worst_max_delta_ratio=") != std::string::npos);
+  assert(diff.find("worst_max_tolerance_margin=") != std::string::npos);
   assert(diff.find("worst_max_component=") != std::string::npos);
   assert(diff.find("worst_max_component_margin=") != std::string::npos);
   assert(diff.find("worst_max_signed_delta=") != std::string::npos);

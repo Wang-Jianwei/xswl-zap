@@ -4128,6 +4128,108 @@ WU-MAINLINE-215: 批次收敛与统一验证（WU204~215）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.198 已完成 Work Unit
+
+WU-MAINLINE-216: compare 成功摘要增加 overall 最大误差容差裕量
+
+- Objective: 直接给出最大误差距离容差上限的剩余量。
+- Scope (in/out):
+  - in: `max_component_tolerance_margin` 摘要输出。
+  - out: proto 结构化字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.199 已完成 Work Unit
+
+WU-MAINLINE-217: compare 成功摘要增加 overall RMS 容差裕量
+
+- Objective: 直接给出 RMS 误差距离容差上限的剩余量。
+- Scope (in/out):
+  - in: `rms_component_tolerance_margin` 摘要输出。
+  - out: proto 结构化字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.200 已完成 Work Unit
+
+WU-MAINLINE-218: compare 成功摘要增加 receiver raw 最大误差容差裕量
+
+- Objective: 评估 raw 类别最大误差的容差余量。
+- Scope (in/out):
+  - in: `receiver_raw_max_tolerance_margin` 摘要输出。
+  - out: 热区聚类与分段统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.201 已完成 Work Unit
+
+WU-MAINLINE-219: compare 成功摘要增加 receiver compensated 最大误差容差裕量
+
+- Objective: 评估 compensated 类别最大误差的容差余量。
+- Scope (in/out):
+  - in: `receiver_comp_max_tolerance_margin` 摘要输出。
+  - out: 热区聚类与分段统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.202 已完成 Work Unit
+
+WU-MAINLINE-220: compare 成功摘要增加 s-parameter 最大误差容差裕量
+
+- Objective: 评估 s-parameter 类别最大误差的容差余量。
+- Scope (in/out):
+  - in: `sparameter_max_tolerance_margin` 摘要输出。
+  - out: 热区聚类与分段统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.203 已完成 Work Unit
+
+WU-MAINLINE-221: compare 成功摘要增加 worst 最大误差容差裕量
+
+- Objective: 直接评估全局最差误差点距容差上限余量。
+- Scope (in/out):
+  - in: `worst_max_tolerance_margin` 摘要输出。
+  - out: 动态告警阈值策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.204 已完成 Work Unit
+
+WU-MAINLINE-222: core/service 回归断言补齐容差裕量字段
+
+- Objective: 防止容差裕量字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: core/service compare detail 测试新增 `*_tolerance_margin` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.205 已完成 Work Unit
+
+WU-MAINLINE-223: 批次收敛与统一验证（WU216~223）
+
+- Objective: 合并 compare 容差裕量诊断轻量 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU216~223 的代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU216~223):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU204~215 诊断粒度。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含 overall/分类/worst 的 `*_tolerance_margin` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU216~223 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

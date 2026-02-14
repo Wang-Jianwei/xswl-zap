@@ -176,6 +176,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU204~WU215 进展）：后端 compare 成功摘要新增最大误差点位的序列相对位置字段（分类与全局 `*_max_point_ratio`，并附 `*_total_points`），可快速判断误差峰值位于扫频前段/中段/后段。
 
+补充（WU216~WU223 进展）：后端 compare 成功摘要新增容差裕量字段（overall/分类/worst 的 `*_tolerance_margin`），用于直接评估当前 matched 结果距容差上限的剩余空间。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置
