@@ -61,6 +61,9 @@ struct ComparisonStats {
   std::size_t receiverCompMaxChannel = 0;
   std::size_t sParameterMaxPoint = 0;
   std::size_t sParameterMaxValue = 0;
+  std::size_t receiverRawTotalPoints = 0;
+  std::size_t receiverCompTotalPoints = 0;
+  std::size_t sParameterTotalPoints = 0;
   double receiverRawMaxFrequencyHz = 0.0;
   double receiverCompMaxFrequencyHz = 0.0;
   double sParameterMaxFrequencyHz = 0.0;
@@ -184,6 +187,18 @@ struct ComparisonStats {
       tolerance == 0.0 ? 0.0 : (receiverCompRmsDelta / tolerance);
     const double sParameterRmsDeltaRatio =
       tolerance == 0.0 ? 0.0 : (sParameterRmsDelta / tolerance);
+    const double receiverRawMaxPointRatio = receiverRawTotalPoints <= 1
+      ? 0.0
+      : static_cast<double>(receiverRawMaxPoint) /
+        static_cast<double>(receiverRawTotalPoints - 1);
+    const double receiverCompMaxPointRatio = receiverCompTotalPoints <= 1
+      ? 0.0
+      : static_cast<double>(receiverCompMaxPoint) /
+        static_cast<double>(receiverCompTotalPoints - 1);
+    const double sParameterMaxPointRatio = sParameterTotalPoints <= 1
+      ? 0.0
+      : static_cast<double>(sParameterMaxPoint) /
+        static_cast<double>(sParameterTotalPoints - 1);
 
     bool hasWorst = false;
     const char* worstCategory = "none";
@@ -191,6 +206,7 @@ struct ComparisonStats {
     const char* worstLocationLabel = "channel";
     std::size_t worstPoint = 0;
     std::size_t worstSubIndex = 0;
+    std::size_t worstTotalPoints = 0;
     double worstFrequencyHz = 0.0;
     double worstDelta = 0.0;
     double worstSignedDelta = 0.0;
@@ -209,6 +225,7 @@ struct ComparisonStats {
       worstDelta = receiverRawMaxDelta;
       worstSignedDelta = receiverRawMaxSignedDelta;
       worstComponentMargin = receiverRawMaxComponentMargin;
+      worstTotalPoints = receiverRawTotalPoints;
       worstExpected = receiverRawMaxExpected;
       worstActual = receiverRawMaxActual;
     }
@@ -223,6 +240,7 @@ struct ComparisonStats {
       worstDelta = receiverCompMaxDelta;
       worstSignedDelta = receiverCompMaxSignedDelta;
       worstComponentMargin = receiverCompMaxComponentMargin;
+      worstTotalPoints = receiverCompTotalPoints;
       worstExpected = receiverCompMaxExpected;
       worstActual = receiverCompMaxActual;
     }
@@ -237,10 +255,14 @@ struct ComparisonStats {
       worstDelta = sParameterMaxDelta;
       worstSignedDelta = sParameterMaxSignedDelta;
       worstComponentMargin = sParameterMaxComponentMargin;
+      worstTotalPoints = sParameterTotalPoints;
       worstExpected = sParameterMaxExpected;
       worstActual = sParameterMaxActual;
     }
     const double worstDeltaRatio = tolerance == 0.0 ? 0.0 : (worstDelta / tolerance);
+    const double worstPointRatio = worstTotalPoints <= 1
+      ? 0.0
+      : static_cast<double>(worstPoint) / static_cast<double>(worstTotalPoints - 1);
 
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
@@ -268,6 +290,8 @@ struct ComparisonStats {
                 << ", worst_max_component_margin=" << worstComponentMargin
                 << ", worst_max_signed_delta=" << worstSignedDelta
                 << ", worst_max_frequency_hz=" << worstFrequencyHz
+                << ", worst_total_points=" << worstTotalPoints
+                << ", worst_max_point_ratio=" << worstPointRatio
                 << ", worst_max_real_delta=" << worstRealDelta
                 << ", worst_max_imag_delta=" << worstImagDelta
                 << ", worst_expected_real=" << worstExpected.real()
@@ -287,6 +311,8 @@ struct ComparisonStats {
                 << ", receiver_raw_max_at=point:" << receiverRawMaxPoint
                 << "/channel:" << receiverRawMaxChannel
                 << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
+                << ", receiver_raw_total_points=" << receiverRawTotalPoints
+                << ", receiver_raw_max_point_ratio=" << receiverRawMaxPointRatio
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
@@ -307,6 +333,8 @@ struct ComparisonStats {
                 << ", receiver_comp_max_at=point:" << receiverCompMaxPoint
                 << "/channel:" << receiverCompMaxChannel
                 << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
+                << ", receiver_comp_total_points=" << receiverCompTotalPoints
+                << ", receiver_comp_max_point_ratio=" << receiverCompMaxPointRatio
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
@@ -327,6 +355,8 @@ struct ComparisonStats {
                 << ", sparameter_max_at=point:" << sParameterMaxPoint
                 << "/value:" << sParameterMaxValue
                 << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
+                << ", sparameter_total_points=" << sParameterTotalPoints
+                << ", sparameter_max_point_ratio=" << sParameterMaxPointRatio
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
@@ -373,6 +403,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             << ", actual=" << current.receiverRaw.points.size();
     return Fail(diffMessage, message.str());
   }
+  stats.receiverRawTotalPoints = baseline.receiverRaw.points.size();
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.receiverRaw.points.size(); ++pointIndex) {
     const ReceiverFrequencyPoint& lhsPoint = baseline.receiverRaw.points[pointIndex];
@@ -445,6 +476,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             << ", actual=" << current.receiverCompensated.points.size();
     return Fail(diffMessage, message.str());
   }
+  stats.receiverCompTotalPoints = baseline.receiverCompensated.points.size();
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.receiverCompensated.points.size(); ++pointIndex) {
     const ReceiverFrequencyPoint& lhsPoint = baseline.receiverCompensated.points[pointIndex];
@@ -516,6 +548,7 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             << ", actual=" << current.sParameters.points.size();
     return Fail(diffMessage, message.str());
   }
+  stats.sParameterTotalPoints = baseline.sParameters.points.size();
 
   for (std::size_t pointIndex = 0; pointIndex < baseline.sParameters.points.size(); ++pointIndex) {
     const SParameterFrequencyPoint& lhsPoint = baseline.sParameters.points[pointIndex];

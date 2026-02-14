@@ -3986,6 +3986,148 @@ WU-MAINLINE-203: 批次收敛与统一验证（WU192~203）
 - Validation result (WU192~203 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.186 已完成 Work Unit
+
+WU-MAINLINE-204: compare 成功摘要增加 receiver raw 总点数字段
+
+- Objective: 为点位比例诊断提供分母信息。
+- Scope (in/out):
+  - in: `receiver_raw_total_points` 摘要输出。
+  - out: 结构化 proto 字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.187 已完成 Work Unit
+
+WU-MAINLINE-205: compare 成功摘要增加 receiver compensated 总点数字段
+
+- Objective: 为补偿通道点位比例诊断提供分母信息。
+- Scope (in/out):
+  - in: `receiver_comp_total_points` 摘要输出。
+  - out: 结构化 proto 字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.188 已完成 Work Unit
+
+WU-MAINLINE-206: compare 成功摘要增加 s-parameter 总点数字段
+
+- Objective: 为 s-parameter 点位比例诊断提供分母信息。
+- Scope (in/out):
+  - in: `sparameter_total_points` 摘要输出。
+  - out: 结构化 proto 字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.189 已完成 Work Unit
+
+WU-MAINLINE-207: compare 成功摘要增加 receiver raw 最大点位比例
+
+- Objective: 快速判断 raw 最大误差点在扫频序列中的相对位置。
+- Scope (in/out):
+  - in: `receiver_raw_max_point_ratio` 摘要输出。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.190 已完成 Work Unit
+
+WU-MAINLINE-208: compare 成功摘要增加 receiver compensated 最大点位比例
+
+- Objective: 快速判断 compensated 最大误差点相对位置。
+- Scope (in/out):
+  - in: `receiver_comp_max_point_ratio` 摘要输出。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.191 已完成 Work Unit
+
+WU-MAINLINE-209: compare 成功摘要增加 s-parameter 最大点位比例
+
+- Objective: 快速判断 s-parameter 最大误差点相对位置。
+- Scope (in/out):
+  - in: `sparameter_max_point_ratio` 摘要输出。
+  - out: 频段热区自动聚类。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.192 已完成 Work Unit
+
+WU-MAINLINE-210: compare 成功摘要增加 worst 总点数字段
+
+- Objective: 为全局最差点位比例提供分母信息。
+- Scope (in/out):
+  - in: `worst_total_points` 摘要输出。
+  - out: 结构化 proto 字段化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.193 已完成 Work Unit
+
+WU-MAINLINE-211: compare 成功摘要增加 worst 最大点位比例
+
+- Objective: 直接判断全局最差误差点位于扫频前中后段。
+- Scope (in/out):
+  - in: `worst_max_point_ratio` 摘要输出。
+  - out: 动态优先级策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.194 已完成 Work Unit
+
+WU-MAINLINE-212: comparator 统一点位比例计算口径
+
+- Objective: 统一点位比例计算（`index/(total-1)`），避免字段口径漂移。
+- Scope (in/out):
+  - in: `BuildSummary` 内集中计算 point ratio。
+  - out: 独立工具函数抽取。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.195 已完成 Work Unit
+
+WU-MAINLINE-213: comparator 回归断言补齐点位比例字段
+
+- Objective: 防止点位比例字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `*_total_points` / `*_max_point_ratio` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.196 已完成 Work Unit
+
+WU-MAINLINE-214: service 回归断言补齐点位比例字段
+
+- Objective: 确保 service compare detail 全链路透传点位比例字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加相关断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.197 已完成 Work Unit
+
+WU-MAINLINE-215: 批次收敛与统一验证（WU204~215）
+
+- Objective: 合并后端 compare 诊断简单 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU204~215 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU204~215):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU192~203 诊断粒度。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含分类与 worst 的 `*_total_points` / `*_max_point_ratio` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU204~215 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
