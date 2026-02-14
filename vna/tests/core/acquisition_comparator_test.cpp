@@ -69,6 +69,9 @@ int main() {
   assert(diff.find("receiver_raw_max_component=") != std::string::npos);
   assert(diff.find("receiver_comp_max_component=") != std::string::npos);
   assert(diff.find("sparameter_max_component=") != std::string::npos);
+  assert(diff.find("receiver_raw_max_frequency_hz=") != std::string::npos);
+  assert(diff.find("receiver_comp_max_frequency_hz=") != std::string::npos);
+  assert(diff.find("sparameter_max_frequency_hz=") != std::string::npos);
   assert(diff.find("receiver_raw_max_signed_delta=") != std::string::npos);
   assert(diff.find("receiver_comp_max_signed_delta=") != std::string::npos);
   assert(diff.find("sparameter_max_signed_delta=") != std::string::npos);

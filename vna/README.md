@@ -160,6 +160,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU116~WU121 进展）：后端 compare 成功摘要新增最大误差分量方向与有符号偏差字段（如 `receiver_raw_max_component`、`receiver_raw_max_signed_delta`），用于在 matched 场景下识别误差主要来自实部/虚部及偏差方向。
 
+补充（WU122~WU127 进展）：后端 compare 成功摘要新增最大误差对应频点字段（`receiver_raw_max_frequency_hz` / `receiver_comp_max_frequency_hz` / `sparameter_max_frequency_hz`），便于直接定位误差峰值频点。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

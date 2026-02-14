@@ -61,6 +61,9 @@ struct ComparisonStats {
   std::size_t receiverCompMaxChannel = 0;
   std::size_t sParameterMaxPoint = 0;
   std::size_t sParameterMaxValue = 0;
+  double receiverRawMaxFrequencyHz = 0.0;
+  double receiverCompMaxFrequencyHz = 0.0;
+  double sParameterMaxFrequencyHz = 0.0;
   bool receiverRawMaxIsReal = true;
   bool receiverCompMaxIsReal = true;
   bool sParameterMaxIsReal = true;
@@ -78,7 +81,8 @@ struct ComparisonStats {
                const std::complex<double>& actual,
                Category category,
                std::size_t pointIndex,
-               std::size_t subIndex) {
+               std::size_t subIndex,
+               double frequencyHz) {
     const double realSignedDelta = actual.real() - expected.real();
     const double imagSignedDelta = actual.imag() - expected.imag();
     const double realDelta = std::fabs(realSignedDelta);
@@ -96,6 +100,7 @@ struct ComparisonStats {
         receiverRawMaxDelta = componentDelta;
         receiverRawMaxPoint = pointIndex;
         receiverRawMaxChannel = subIndex;
+        receiverRawMaxFrequencyHz = frequencyHz;
         receiverRawMaxIsReal = dominantIsReal;
         receiverRawMaxSignedDelta = dominantSignedDelta;
       }
@@ -107,6 +112,7 @@ struct ComparisonStats {
         receiverCompMaxDelta = componentDelta;
         receiverCompMaxPoint = pointIndex;
         receiverCompMaxChannel = subIndex;
+        receiverCompMaxFrequencyHz = frequencyHz;
         receiverCompMaxIsReal = dominantIsReal;
         receiverCompMaxSignedDelta = dominantSignedDelta;
       }
@@ -118,6 +124,7 @@ struct ComparisonStats {
         sParameterMaxDelta = componentDelta;
         sParameterMaxPoint = pointIndex;
         sParameterMaxValue = subIndex;
+        sParameterMaxFrequencyHz = frequencyHz;
         sParameterMaxIsReal = dominantIsReal;
         sParameterMaxSignedDelta = dominantSignedDelta;
       }
@@ -159,6 +166,7 @@ struct ComparisonStats {
               stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta
                 << ", receiver_raw_max_at=point:" << receiverRawMaxPoint
                 << "/channel:" << receiverRawMaxChannel
+                << ", receiver_raw_max_frequency_hz=" << receiverRawMaxFrequencyHz
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta;
             }
@@ -166,6 +174,7 @@ struct ComparisonStats {
               stream << ", receiver_comp_max_delta=" << receiverCompMaxDelta
                 << ", receiver_comp_max_at=point:" << receiverCompMaxPoint
                 << "/channel:" << receiverCompMaxChannel
+                << ", receiver_comp_max_frequency_hz=" << receiverCompMaxFrequencyHz
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta;
             }
@@ -173,6 +182,7 @@ struct ComparisonStats {
               stream << ", sparameter_max_delta=" << sParameterMaxDelta
                 << ", sparameter_max_at=point:" << sParameterMaxPoint
                 << "/value:" << sParameterMaxValue
+                << ", sparameter_max_frequency_hz=" << sParameterMaxFrequencyHz
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta;
             }
@@ -271,7 +281,8 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             rhsChannel.iq,
             ComparisonStats::Category::kReceiverRaw,
             pointIndex,
-            channelIndex);
+                    channelIndex,
+                    lhsPoint.frequencyHz);
     }
   }
 
@@ -342,7 +353,8 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             rhsChannel.iq,
             ComparisonStats::Category::kReceiverCompensated,
             pointIndex,
-            channelIndex);
+                    channelIndex,
+                    lhsPoint.frequencyHz);
     }
   }
 
@@ -401,7 +413,8 @@ bool AcquisitionComparator::AreEquivalentForReplay(const AcquisitionResult& base
             rhsPoint.matrix[valueIndex],
             ComparisonStats::Category::kSParameter,
             pointIndex,
-            valueIndex);
+                    valueIndex,
+                    lhsPoint.frequencyHz);
     }
   }
 
