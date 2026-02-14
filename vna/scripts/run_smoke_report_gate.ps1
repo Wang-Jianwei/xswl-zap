@@ -82,15 +82,23 @@ $resolvedResultJsonPath = Resolve-PathPlaceholders $ResultJsonPath
 $startedAtUtc = [DateTime]::UtcNow
 
 try {
+  if (-not [System.IO.Path]::IsPathRooted($resolvedReportPath)) {
+    $resolvedReportPath = Join-Path $projectRoot $resolvedReportPath
+  }
+
   Write-Host "[GATE] running smoke matrix..."
-  & $matrixScript -SkipBuild:$SkipBuild -FailOnUnknownStderr:$FailOnUnknownStderr -SmokeTimeoutSec $SmokeTimeoutSec -ReportJsonPath $ReportPath
+  & $matrixScript -SkipBuild:$SkipBuild -FailOnUnknownStderr:$FailOnUnknownStderr -SmokeTimeoutSec $SmokeTimeoutSec -ReportJsonPath $resolvedReportPath
 
   if ($LASTEXITCODE -ne 0) {
     throw "Smoke matrix failed with exit code: $LASTEXITCODE"
   }
 
   if ($resolvedReportPath.Contains("{timestamp}") -or $resolvedReportPath.Contains("{timestampUtc}") -or $resolvedReportPath.Contains("{timestampLocal}")) {
-    $latest = Get-ChildItem -Path (Join-Path $projectRoot "build-grpc") -Filter "smoke-matrix-gate-*.json" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    $reportDir = Split-Path -Parent $resolvedReportPath
+    if ([string]::IsNullOrWhiteSpace($reportDir)) {
+      $reportDir = Join-Path $projectRoot "build-grpc"
+    }
+    $latest = Get-ChildItem -Path $reportDir -Filter "smoke-matrix-gate-*.json" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
     if (-not $latest) { throw "Could not locate generated gate report under build-grpc" }
     $resolvedReportPath = $latest.FullName
   }
