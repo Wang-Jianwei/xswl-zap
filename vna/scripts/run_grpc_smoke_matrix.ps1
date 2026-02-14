@@ -148,6 +148,7 @@ function Invoke-SmokeCommand {
   $suppressedCount = 0
   $unknownStderrCount = 0
   $successMatched = $false
+  $compareMismatchWarningCount = 0
 
   foreach ($line in $stdoutLines) {
     $isKnownNoise = $false
@@ -165,6 +166,10 @@ function Invoke-SmokeCommand {
 
     if (-not [string]::IsNullOrWhiteSpace($ExpectedSuccessPattern) -and $line -match $ExpectedSuccessPattern) {
       $successMatched = $true
+    }
+
+    if ($line -match "CompareImportedAcquisition warning:\s*matched=false") {
+      $compareMismatchWarningCount += 1
     }
 
     Write-Host $line
@@ -219,6 +224,7 @@ function Invoke-SmokeCommand {
     ExitCode = $effectiveExitCode
     SuppressedCount = $suppressedCount
     UnknownStderrCount = $unknownStderrCount
+    CompareMismatchWarningCount = $compareMismatchWarningCount
     TimedOut = $timedOut
     SuccessMatched = $successMatched
   })
@@ -321,6 +327,7 @@ try {
         streamTimedOut = $streamResult.TimedOut
         suppressedNoiseCount = $unaryResult.SuppressedCount + $streamResult.SuppressedCount
         unknownStderrCount = $unknownStderrCount
+        compareMismatchWarningCount = $unaryResult.CompareMismatchWarningCount + $streamResult.CompareMismatchWarningCount
         failureReason = $failureReason
         resultDigest = $caseResultDigest
         passed = $casePassed
@@ -348,6 +355,10 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
   $unknownStderrTotal = @($matrixResults | Measure-Object -Property unknownStderrCount -Sum).Sum
   if ($null -eq $unknownStderrTotal) {
     $unknownStderrTotal = 0
+  }
+  $compareMismatchWarningTotal = @($matrixResults | Measure-Object -Property compareMismatchWarningCount -Sum).Sum
+  if ($null -eq $compareMismatchWarningTotal) {
+    $compareMismatchWarningTotal = 0
   }
 
   $failureSummary = [PSCustomObject]@{
@@ -395,6 +406,14 @@ if (-not [string]::IsNullOrWhiteSpace($ReportJsonPath)) {
       code = "unknown_stderr_not_fatal"
       count = [int]$unknownStderrTotal
       message = "Unknown stderr lines were observed but strict mode is disabled."
+    }
+  }
+
+  if ($compareMismatchWarningTotal -gt 0) {
+    $warnings += [PSCustomObject]@{
+      code = "compare_mismatch_nonfatal"
+      count = [int]$compareMismatchWarningTotal
+      message = "CompareImportedAcquisition returned matched=false in smoke; treated as warning for dynamic mock data."
     }
   }
 

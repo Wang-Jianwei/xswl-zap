@@ -5862,6 +5862,41 @@ WU-VSCODE-014: 修复 smoke matrix / gate 路径与导入对比稳定性
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.297 已完成 Work Unit
+
+WU-VSCODE-015: Compare mismatch 告警结构化并接入 gate 策略
+
+- Objective: 将 `CompareImportedAcquisition warning: matched=false` 从日志文本升级为可治理的结构化 warning code，使 gate 可按策略升级为失败。
+- Scope (in/out):
+  - in: `run_grpc_smoke_matrix.ps1` 识别 compare warning 并汇总入报告 `warnings`（`compare_mismatch_nonfatal`）；验证 gate 的 `FailOnWarningCodes` 可命中该 code。
+  - out: 调整 Compare 算法或 mock 驱动数值模型。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-015):
+  - `vna/scripts/run_grpc_smoke_matrix.ps1`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/scripts && .\run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 20`
+  - `cd vna/scripts && .\run_smoke_report_gate.ps1 -SkipBuild -SmokeTimeoutSec 20`
+  - `cd vna/scripts && .\run_smoke_report_gate.ps1 -SkipBuild -SmokeTimeoutSec 20 -FailOnWarningCodes compare_mismatch_nonfatal`
+- Rollback plan: 回滚本次提交，恢复 compare warning 仅文本输出、不可策略化匹配。
+- Risks: 若 warning code 使用过严可能导致 gate 频繁失败；当前默认不启用 fail 策略，保持兼容。
+- Acceptance criteria:
+  - 报告 `warnings` 出现 `compare_mismatch_nonfatal` 且计数>0（当 compare warning 出现时）。
+  - 默认 gate 可通过。
+  - `FailOnWarningCodes compare_mismatch_nonfatal` 时 gate 按预期失败。
+
+- Validation result (WU-VSCODE-015):
+  - `run_grpc_smoke_matrix.ps1 -SkipBuild -SmokeTimeoutSec 20` 通过（all cases passed）。
+  - `run_smoke_report_gate.ps1 -SkipBuild -SmokeTimeoutSec 20` 通过（GATE PASS）。
+  - `run_smoke_report_gate.ps1 -SkipBuild -SmokeTimeoutSec 20 -FailOnWarningCodes compare_mismatch_nonfatal` 失败（命中策略，符合预期）。
+  - 最新报告示例含 `WARN:compare_mismatch_nonfatal:3`。
+
+- Closure notes (WU-VSCODE-015):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
