@@ -1372,8 +1372,8 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       });
 
       function setTraceVisible(traceId, visible) {
-        const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
-        const legendItems = document.querySelectorAll(".legend-item[data-trace-id=\"" + traceId + "\"]");
+        const markerRows = document.querySelectorAll(".marker-row[data-trace-id='" + traceId + "']");
+        const legendItems = document.querySelectorAll(".legend-item[data-trace-id='" + traceId + "']");
         if (visible) {
           hiddenTraceIds.delete(traceId);
         } else {
@@ -1396,13 +1396,13 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         if (!(button instanceof HTMLButtonElement)) {
           return;
         }
-        const hidden = document.querySelector(".legend-item[data-trace-id=\"" + traceId + "\"]")?.classList.contains("is-hidden");
+        const hidden = document.querySelector(".legend-item[data-trace-id='" + traceId + "']")?.classList.contains("is-hidden");
         button.classList.toggle("is-hidden", Boolean(hidden));
       }
 
       if (togglePeakHoldButton instanceof HTMLButtonElement) {
         togglePeakHoldButton.addEventListener("click", () => {
-          const hidden = document.querySelector(".legend-item[data-trace-id=\"livePeakHold\"]")?.classList.contains("is-hidden");
+          const hidden = document.querySelector(".legend-item[data-trace-id='livePeakHold']")?.classList.contains("is-hidden");
           setTraceVisible("livePeakHold", Boolean(hidden));
           syncOverlayButtonState(togglePeakHoldButton, "livePeakHold");
         });
@@ -1410,7 +1410,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
 
       if (toggleRecentAvgButton instanceof HTMLButtonElement) {
         toggleRecentAvgButton.addEventListener("click", () => {
-          const hidden = document.querySelector(".legend-item[data-trace-id=\"liveRecentAvg\"]")?.classList.contains("is-hidden");
+          const hidden = document.querySelector(".legend-item[data-trace-id='liveRecentAvg']")?.classList.contains("is-hidden");
           setTraceVisible("liveRecentAvg", Boolean(hidden));
           syncOverlayButtonState(toggleRecentAvgButton, "liveRecentAvg");
         });

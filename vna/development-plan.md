@@ -5579,6 +5579,43 @@ WU-VSCODE-006: VS Code 波形预览可观测性增强与异常兜底
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.289 已完成 Work Unit
+
+WU-VSCODE-007: VS Code 波形预览 UI 自动化冒烟与语法根因修复
+
+- Objective: 为波形预览建立自动化 UI 验证能力，并修复导致页面脚本中断的选择器引号转义问题。
+- Scope (in/out):
+  - in: 新增 `test:ui`（Playwright 无头测试）；覆盖脚本状态、Canvas 绘制、按钮交互；修复 querySelector 选择器字符串语法错误。
+  - out: 修改后端采集逻辑与 gRPC 契约。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-007):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.ui.test.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/package-lock.json`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端测试/渲染脚本修复）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test:ui`
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，恢复到修复前版本。
+- Risks: `test:ui` 依赖本机 Chromium/Edge 可执行文件；已提供环境变量覆盖路径能力。
+- Acceptance criteria:
+  - `test:ui` 可自动验证 Canvas 非空绘制与按钮交互。
+  - 波形预览脚本不再出现 `missing ) after argument list`。
+  - 扩展回归测试通过。
+
+- Validation result (WU-VSCODE-007):
+  - `cd vna/tools/vscode-extension && npm run test:ui` 通过
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+- Closure notes (WU-VSCODE-007):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

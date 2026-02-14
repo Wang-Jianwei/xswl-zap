@@ -90,11 +90,13 @@
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
     "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js && node ./out/test/liveWaveformOverlay.test.js && node ./out/test/serviceClient.test.js",
+    "test:ui": "npm run build && node ./out/test/waveformPreview.ui.test.js",
     "package": "vsce package"
   },
   "devDependencies": {
     "@types/node": "^20.17.24",
     "@types/vscode": "^1.90.0",
+    "playwright-core": "^1.53.2",
     "ts-proto": "^2.11.2",
     "typescript": "^5.7.3",
     "vsce": "^2.15.0"
