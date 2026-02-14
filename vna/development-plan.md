@@ -4436,6 +4436,108 @@ WU-MAINLINE-239: 批次收敛与统一验证（WU232~239）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.222 已完成 Work Unit
+
+WU-MAINLINE-240: compare 成功摘要增加 receiver raw 联合画像字段
+
+- Objective: 统一表达 raw 最大误差的风险等级与区段信息。
+- Scope (in/out):
+  - in: `receiver_raw_max_profile` 摘要输出（格式 `risk/zone`）。
+  - out: 外部 profile 统计聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.223 已完成 Work Unit
+
+WU-MAINLINE-241: compare 成功摘要增加 receiver compensated 联合画像字段
+
+- Objective: 统一表达 compensated 最大误差的风险等级与区段信息。
+- Scope (in/out):
+  - in: `receiver_comp_max_profile` 摘要输出（格式 `risk/zone`）。
+  - out: 外部 profile 统计聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.224 已完成 Work Unit
+
+WU-MAINLINE-242: compare 成功摘要增加 s-parameter 联合画像字段
+
+- Objective: 统一表达 s-parameter 最大误差的风险等级与区段信息。
+- Scope (in/out):
+  - in: `sparameter_max_profile` 摘要输出（格式 `risk/zone`）。
+  - out: 外部 profile 统计聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.225 已完成 Work Unit
+
+WU-MAINLINE-243: compare 成功摘要增加 worst 联合画像字段
+
+- Objective: 统一表达全局最差点的风险等级与区段信息。
+- Scope (in/out):
+  - in: `worst_max_profile` 摘要输出（格式 `risk/zone`）。
+  - out: 外部 profile 统计聚合。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.226 已完成 Work Unit
+
+WU-MAINLINE-244: comparator 统一 profile 组合口径
+
+- Objective: 统一 risk level 与 point zone 的组合规则。
+- Scope (in/out):
+  - in: 统一函数 `BuildRiskZoneProfile`（`risk + '/' + zone`）。
+  - out: 外部可配置 profile 模板。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.227 已完成 Work Unit
+
+WU-MAINLINE-245: core 回归断言补齐 profile 字段
+
+- Objective: 防止 profile 字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `*_max_profile` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.228 已完成 Work Unit
+
+WU-MAINLINE-246: service 回归断言补齐 profile 字段
+
+- Objective: 确保 compare detail 全链路透传 profile 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 `*_max_profile` 断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.229 已完成 Work Unit
+
+WU-MAINLINE-247: 批次收敛与统一验证（WU240~247）
+
+- Objective: 合并 profile 诊断轻量 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU240~247 的代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU240~247):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU232~239 诊断粒度。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含分类与 worst 的 `*_max_profile` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU240~247 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

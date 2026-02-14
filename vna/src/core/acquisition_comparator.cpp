@@ -51,6 +51,10 @@ const char* RiskLevelFromRatio(double ratio) {
   return "high";
 }
 
+std::string BuildRiskZoneProfile(const char* riskLevel, const char* pointZone) {
+  return std::string(riskLevel) + "/" + pointZone;
+}
+
 bool Fail(std::string* diffMessage, const std::string& message) {
   if (diffMessage != nullptr) {
     *diffMessage = message;
@@ -232,6 +236,12 @@ struct ComparisonStats {
     const char* receiverRawMaxPointZone = PointZoneFromRatio(receiverRawMaxPointRatio);
     const char* receiverCompMaxPointZone = PointZoneFromRatio(receiverCompMaxPointRatio);
     const char* sParameterMaxPointZone = PointZoneFromRatio(sParameterMaxPointRatio);
+    const std::string receiverRawMaxProfile =
+      BuildRiskZoneProfile(receiverRawMaxRiskLevel, receiverRawMaxPointZone);
+    const std::string receiverCompMaxProfile =
+      BuildRiskZoneProfile(receiverCompMaxRiskLevel, receiverCompMaxPointZone);
+    const std::string sParameterMaxProfile =
+      BuildRiskZoneProfile(sParameterMaxRiskLevel, sParameterMaxPointZone);
 
     bool hasWorst = false;
     const char* worstCategory = "none";
@@ -299,6 +309,7 @@ struct ComparisonStats {
       : static_cast<double>(worstPoint) / static_cast<double>(worstTotalPoints - 1);
     const char* worstRiskLevel = RiskLevelFromRatio(worstDeltaRatio);
     const char* worstPointZone = PointZoneFromRatio(worstPointRatio);
+    const std::string worstProfile = BuildRiskZoneProfile(worstRiskLevel, worstPointZone);
 
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
@@ -335,6 +346,7 @@ struct ComparisonStats {
                 << ", worst_total_points=" << worstTotalPoints
                 << ", worst_max_point_ratio=" << worstPointRatio
                 << ", worst_max_point_zone=" << worstPointZone
+                << ", worst_max_profile=" << worstProfile
                 << ", worst_max_real_delta=" << worstRealDelta
                 << ", worst_max_imag_delta=" << worstImagDelta
                 << ", worst_expected_real=" << worstExpected.real()
@@ -360,6 +372,7 @@ struct ComparisonStats {
                 << ", receiver_raw_max_delta_ratio=" << receiverRawMaxDeltaRatio
                 << ", receiver_raw_max_risk_level=" << receiverRawMaxRiskLevel
                 << ", receiver_raw_max_tolerance_margin=" << receiverRawMaxToleranceMargin
+                << ", receiver_raw_max_profile=" << receiverRawMaxProfile
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
@@ -385,6 +398,7 @@ struct ComparisonStats {
                 << ", receiver_comp_max_delta_ratio=" << receiverCompMaxDeltaRatio
                 << ", receiver_comp_max_risk_level=" << receiverCompMaxRiskLevel
                 << ", receiver_comp_max_tolerance_margin=" << receiverCompMaxToleranceMargin
+                << ", receiver_comp_max_profile=" << receiverCompMaxProfile
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
@@ -410,6 +424,7 @@ struct ComparisonStats {
                 << ", sparameter_max_delta_ratio=" << sParameterMaxDeltaRatio
                 << ", sparameter_max_risk_level=" << sParameterMaxRiskLevel
                 << ", sparameter_max_tolerance_margin=" << sParameterMaxToleranceMargin
+                << ", sparameter_max_profile=" << sParameterMaxProfile
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta
