@@ -3663,6 +3663,188 @@ WU-MAINLINE-175: 批次收敛与统一验证（WU164~175）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.158 已完成 Work Unit
+
+WU-MAINLINE-176: compare 成功摘要增加 receiver raw 最大误差实部绝对差
+
+- Objective: 提供 receiver raw 最大误差点的实部绝对差。
+- Scope (in/out):
+  - in: `receiver_raw_max_real_delta` 摘要输出。
+  - out: 通道历史趋势分析。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.159 已完成 Work Unit
+
+WU-MAINLINE-177: compare 成功摘要增加 receiver raw 最大误差虚部绝对差
+
+- Objective: 提供 receiver raw 最大误差点的虚部绝对差。
+- Scope (in/out):
+  - in: `receiver_raw_max_imag_delta` 摘要输出。
+  - out: 分量热图可视化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.160 已完成 Work Unit
+
+WU-MAINLINE-178: compare 成功摘要增加 receiver compensated 最大误差实部绝对差
+
+- Objective: 提供补偿后最大误差点的实部绝对差。
+- Scope (in/out):
+  - in: `receiver_comp_max_real_delta` 摘要输出。
+  - out: 自动补偿修正建议。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.161 已完成 Work Unit
+
+WU-MAINLINE-179: compare 成功摘要增加 receiver compensated 最大误差虚部绝对差
+
+- Objective: 提供补偿后最大误差点的虚部绝对差。
+- Scope (in/out):
+  - in: `receiver_comp_max_imag_delta` 摘要输出。
+  - out: 分量热图可视化。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.162 已完成 Work Unit
+
+WU-MAINLINE-180: compare 成功摘要增加 s-parameter 最大误差实部绝对差
+
+- Objective: 提供 s-parameter 最大误差点的实部绝对差。
+- Scope (in/out):
+  - in: `sparameter_max_real_delta` 摘要输出。
+  - out: 端口对分量统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.163 已完成 Work Unit
+
+WU-MAINLINE-181: compare 成功摘要增加 s-parameter 最大误差虚部绝对差
+
+- Objective: 提供 s-parameter 最大误差点的虚部绝对差。
+- Scope (in/out):
+  - in: `sparameter_max_imag_delta` 摘要输出。
+  - out: 端口对分量统计。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.164 已完成 Work Unit
+
+WU-MAINLINE-182: compare 成功摘要增加 worst 最大误差实部绝对差
+
+- Objective: 提供全局最差点实部绝对差，提升优先排查效率。
+- Scope (in/out):
+  - in: `worst_max_real_delta` 摘要输出。
+  - out: 告警分级策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.165 已完成 Work Unit
+
+WU-MAINLINE-183: compare 成功摘要增加 worst 最大误差虚部绝对差
+
+- Objective: 提供全局最差点虚部绝对差，补齐误差构成信息。
+- Scope (in/out):
+  - in: `worst_max_imag_delta` 摘要输出。
+  - out: 告警分级策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.166 已完成 Work Unit
+
+WU-MAINLINE-184: comparator 摘要层统一实虚绝对差计算
+
+- Objective: 统一通过 expected/actual 计算实虚绝对差，避免口径漂移。
+- Scope (in/out):
+  - in: `BuildSummary` 内按 `abs(actual-expected)` 输出 real/imag delta。
+  - out: 独立数学库封装。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.167 已完成 Work Unit
+
+WU-MAINLINE-185: raw/comp/sparam 最大误差块补齐实虚差输出
+
+- Objective: 在分类最大误差块内补齐实虚差字段。
+- Scope (in/out):
+  - in: 三类 `*_max_real_delta` / `*_max_imag_delta` 输出。
+  - out: 结构化字段改造。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.168 已完成 Work Unit
+
+WU-MAINLINE-186: worst 诊断块补齐实虚差输出
+
+- Objective: 在 worst 诊断块补齐实虚差字段。
+- Scope (in/out):
+  - in: `worst_max_real_delta` / `worst_max_imag_delta` 输出。
+  - out: 结构化字段改造。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.169 已完成 Work Unit
+
+WU-MAINLINE-187: comparator 回归断言补齐实虚差字段
+
+- Objective: 防止实虚差字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加分类与 worst 实虚差断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.170 已完成 Work Unit
+
+WU-MAINLINE-188: service 回归断言补齐实虚差字段
+
+- Objective: 确保 service compare detail 全链路透传实虚差字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加相关断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.171 已完成 Work Unit
+
+WU-MAINLINE-189: 文档同步实虚差诊断语义
+
+- Objective: 保持文档与实现语义一致。
+- Scope (in/out):
+  - in: README 与 development-plan 更新字段说明。
+  - out: 外部文档站同步。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.172 已完成 Work Unit
+
+WU-MAINLINE-190: 批次测试验证收敛
+
+- Objective: 对本批新增实虚差字段执行定向构建与测试回归。
+- Scope (in/out):
+  - in: 构建 comparator/service 目标并运行 easy 单测。
+  - out: 全量测试矩阵。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.173 已完成 Work Unit
+
+WU-MAINLINE-191: 批次收敛与统一验证（WU176~191）
+
+- Objective: 大批次合并后端 compare 诊断简单 WU，保持高频闭环产出。
+- Scope (in/out):
+  - in: 聚合 WU176~191 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU176~191):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU164~175 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含分类与 worst 的 `*_max_real_delta` / `*_max_imag_delta` 字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU176~191 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

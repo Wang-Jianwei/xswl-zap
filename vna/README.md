@@ -170,6 +170,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU164~WU175 进展）：后端 compare 成功摘要新增分量主导优势幅度字段（如 `receiver_raw_max_component_margin`、`worst_max_component_margin`），用于判断误差是由单一分量明显主导还是实部/虚部接近并列。
 
+补充（WU176~WU191 进展）：后端 compare 成功摘要新增分类与全局最差点的实部/虚部绝对误差拆分字段（如 `receiver_raw_max_real_delta`、`receiver_raw_max_imag_delta`、`worst_max_real_delta`、`worst_max_imag_delta`），便于快速识别误差构成。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

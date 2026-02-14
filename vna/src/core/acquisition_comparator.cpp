@@ -259,6 +259,8 @@ struct ComparisonStats {
               << ", sparameter_rms_delta_ratio=" << sParameterRmsDeltaRatio;
 
             if (hasWorst) {
+              const double worstRealDelta = std::fabs(worstActual.real() - worstExpected.real());
+              const double worstImagDelta = std::fabs(worstActual.imag() - worstExpected.imag());
               stream << ", worst_category=" << worstCategory
                 << ", worst_max_delta=" << worstDelta
                 << ", worst_max_delta_ratio=" << worstDeltaRatio
@@ -266,6 +268,8 @@ struct ComparisonStats {
                 << ", worst_max_component_margin=" << worstComponentMargin
                 << ", worst_max_signed_delta=" << worstSignedDelta
                 << ", worst_max_frequency_hz=" << worstFrequencyHz
+                << ", worst_max_real_delta=" << worstRealDelta
+                << ", worst_max_imag_delta=" << worstImagDelta
                 << ", worst_expected_real=" << worstExpected.real()
                 << ", worst_expected_imag=" << worstExpected.imag()
                 << ", worst_actual_real=" << worstActual.real()
@@ -275,6 +279,10 @@ struct ComparisonStats {
             }
 
             if (hasReceiverRawMax) {
+              const double receiverRawMaxRealDelta =
+                std::fabs(receiverRawMaxActual.real() - receiverRawMaxExpected.real());
+              const double receiverRawMaxImagDelta =
+                std::fabs(receiverRawMaxActual.imag() - receiverRawMaxExpected.imag());
               stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta
                 << ", receiver_raw_max_at=point:" << receiverRawMaxPoint
                 << "/channel:" << receiverRawMaxChannel
@@ -283,12 +291,18 @@ struct ComparisonStats {
                 << ", receiver_raw_max_component=" << (receiverRawMaxIsReal ? "real" : "imag")
                 << ", receiver_raw_max_component_margin=" << receiverRawMaxComponentMargin
                 << ", receiver_raw_max_signed_delta=" << receiverRawMaxSignedDelta
+                << ", receiver_raw_max_real_delta=" << receiverRawMaxRealDelta
+                << ", receiver_raw_max_imag_delta=" << receiverRawMaxImagDelta
                 << ", receiver_raw_max_expected_real=" << receiverRawMaxExpected.real()
                 << ", receiver_raw_max_expected_imag=" << receiverRawMaxExpected.imag()
                 << ", receiver_raw_max_actual_real=" << receiverRawMaxActual.real()
                 << ", receiver_raw_max_actual_imag=" << receiverRawMaxActual.imag();
             }
             if (hasReceiverCompMax) {
+              const double receiverCompMaxRealDelta =
+                std::fabs(receiverCompMaxActual.real() - receiverCompMaxExpected.real());
+              const double receiverCompMaxImagDelta =
+                std::fabs(receiverCompMaxActual.imag() - receiverCompMaxExpected.imag());
               stream << ", receiver_comp_max_delta=" << receiverCompMaxDelta
                 << ", receiver_comp_max_at=point:" << receiverCompMaxPoint
                 << "/channel:" << receiverCompMaxChannel
@@ -297,12 +311,18 @@ struct ComparisonStats {
                 << ", receiver_comp_max_component=" << (receiverCompMaxIsReal ? "real" : "imag")
                 << ", receiver_comp_max_component_margin=" << receiverCompMaxComponentMargin
                 << ", receiver_comp_max_signed_delta=" << receiverCompMaxSignedDelta
+                << ", receiver_comp_max_real_delta=" << receiverCompMaxRealDelta
+                << ", receiver_comp_max_imag_delta=" << receiverCompMaxImagDelta
                 << ", receiver_comp_max_expected_real=" << receiverCompMaxExpected.real()
                 << ", receiver_comp_max_expected_imag=" << receiverCompMaxExpected.imag()
                 << ", receiver_comp_max_actual_real=" << receiverCompMaxActual.real()
                 << ", receiver_comp_max_actual_imag=" << receiverCompMaxActual.imag();
             }
             if (hasSParameterMax) {
+              const double sParameterMaxRealDelta =
+                std::fabs(sParameterMaxActual.real() - sParameterMaxExpected.real());
+              const double sParameterMaxImagDelta =
+                std::fabs(sParameterMaxActual.imag() - sParameterMaxExpected.imag());
               stream << ", sparameter_max_delta=" << sParameterMaxDelta
                 << ", sparameter_max_at=point:" << sParameterMaxPoint
                 << "/value:" << sParameterMaxValue
@@ -311,6 +331,8 @@ struct ComparisonStats {
                 << ", sparameter_max_component=" << (sParameterMaxIsReal ? "real" : "imag")
                 << ", sparameter_max_component_margin=" << sParameterMaxComponentMargin
                 << ", sparameter_max_signed_delta=" << sParameterMaxSignedDelta
+                << ", sparameter_max_real_delta=" << sParameterMaxRealDelta
+                << ", sparameter_max_imag_delta=" << sParameterMaxImagDelta
                 << ", sparameter_max_expected_real=" << sParameterMaxExpected.real()
                 << ", sparameter_max_expected_imag=" << sParameterMaxExpected.imag()
                 << ", sparameter_max_actual_real=" << sParameterMaxActual.real()
