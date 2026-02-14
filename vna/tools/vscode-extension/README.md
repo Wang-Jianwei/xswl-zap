@@ -15,6 +15,8 @@
   - 频域图新增平滑渲染（moving average）与噪声包络阴影（envelope）
   - 频域纵轴改为自适应范围（robust percentile + padding），波动更易观察
   - 多曲线渲染统一使用共享坐标范围，避免各曲线各自缩放导致对比失真
+  - `live` 预览新增 `peak hold` 叠加曲线，持续跟踪最近窗口内峰值
+  - `live` 预览新增最近 N 帧均值曲线（rolling average），用于观察整体趋势
   - 波形坐标轴显示基础刻度文本（x/y 的 min/max）
   - marker 以按曲线分组列表展示，并在图内绘制 min/max 标记点
   - marker 分组按 y 值优先级排序，当前主曲线（primary trace）高亮显示

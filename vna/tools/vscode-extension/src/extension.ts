@@ -7,6 +7,7 @@ import {
   formatValidationResult,
 } from "./statusFormatter";
 import { ServiceClient } from "./serviceClient";
+import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
 import { buildWaveformPreviewHtml } from "./waveformPreview";
 import type { WaveformTraceSource } from "./types";
 
@@ -463,6 +464,7 @@ export function activate(context: vscode.ExtensionContext): void {
       } else {
         const abortController = new AbortController();
         panel.onDidDispose(() => abortController.abort());
+        let liveOverlayState = createLiveWaveformOverlayState();
 
         const finalWaveform = await vscode.window.withProgress(
           {
@@ -483,8 +485,12 @@ export function activate(context: vscode.ExtensionContext): void {
               liveMaxFrames,
               (waveform, frameCount) => {
                 if (frameCount === 1 || frameCount % 3 === 0 || frameCount === liveMaxFrames) {
-                  panel.webview.html = buildWaveformPreviewHtml(waveform);
-                  progress.report({ message: `frames=${frameCount}, points=${waveform.points.length}` });
+                  const enhanced = applyLiveFrequencyOverlays(waveform, liveOverlayState, 8);
+                  liveOverlayState = enhanced.state;
+                  panel.webview.html = buildWaveformPreviewHtml(enhanced.waveform);
+                  progress.report({
+                    message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}`,
+                  });
                 }
               },
               abortController.signal,

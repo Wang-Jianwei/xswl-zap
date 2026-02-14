@@ -5060,6 +5060,56 @@ WU-MAINLINE-283: 批次收敛与统一验证（WU281~283）
 - Validation result (WU281~283 合并提交):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.266 已完成 Work Unit
+
+WU-MAINLINE-284: VS Code live 波形叠加分析增强
+
+- Objective: 在 live 预览中补齐峰值与趋势观测能力。
+- Scope (in/out):
+  - in: 新增 `peak hold` 与最近 N 帧均值叠加曲线。
+  - out: 频谱分析工具页重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.267 已完成 Work Unit
+
+WU-MAINLINE-285: 插件回归补齐 live 叠加逻辑测试
+
+- Objective: 防止 live 叠加能力在后续迭代回归。
+- Scope (in/out):
+  - in: 新增 `liveWaveformOverlay.test.ts` 并接入测试脚本。
+  - out: 端到端 UI 自动化测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.268 已完成 Work Unit
+
+WU-MAINLINE-286: 批次收敛与统一验证（WU284~286）
+
+- Objective: 以粗粒度 WU 完成 live 波形叠加增强闭环。
+- Scope (in/out):
+  - in: 聚合插件代码、测试、文档并统一回归。
+  - out: 插件命令交互流程重构。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU284~286):
+  - `vna/tools/vscode-extension/src/liveWaveformOverlay.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/liveWaveformOverlay.test.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（插件可视化增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本批提交，恢复上一版 live 预览逻辑。
+- Risks: 叠加曲线增多会提高图面信息密度；通过颜色和图例区分降低认知负担。
+- Acceptance criteria:
+  - live 预览包含 `peak hold` 与最近 N 帧均值曲线。
+  - 插件测试通过。
+
+- Validation result (WU284~286 合并提交):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
