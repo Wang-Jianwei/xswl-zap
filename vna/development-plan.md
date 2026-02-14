@@ -5514,6 +5514,38 @@ WU-VSCODE-004: VS Code Canvas 波形预览空白修复
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.287 已完成 Work Unit
+
+WU-VSCODE-005: VS Code 波形预览初始化时序修复
+
+- Objective: 修复波形预览在流式更新早到场景下的 Webview 初始化时序问题，解决“无波形 + 按钮无效”现象。
+- Scope (in/out):
+  - in: 将早期消息路径依赖的函数改为可提升声明；前置 `renderMode` 变量初始化；补充回归断言；同步 UI 文档。
+  - out: 新增采集能力、修改 gRPC 契约、改动后端 core/service 实现。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-005):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件前端脚本时序与测试增强）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+- Rollback plan: 回滚本次提交，恢复修复前脚本结构。
+- Risks: 未来若继续扩展内联脚本并引入新的先后依赖，仍可能出现时序回归；已通过断言与结构调整降低风险。
+- Acceptance criteria:
+  - 波形预览在 `live` 更新场景下稳定显示。
+  - 交互按钮（Mode/Peak Hold/Recent Avg/Envelope/Scan）可响应。
+  - 扩展测试通过。
+
+- Validation result (WU-VSCODE-005):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+
+- Closure notes (WU-VSCODE-005):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

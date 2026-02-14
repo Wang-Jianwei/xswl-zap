@@ -985,6 +985,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
       const emptyHint = document.getElementById("emptyHint");
       const hiddenTraceIds = new Set();
       let currentCanvasModel = initialCanvasModel;
+      let renderMode = "smooth";
       let envelopeHidden = false;
       let pendingWaveformPayload = null;
       let waveformUpdateScheduled = false;
@@ -1325,7 +1326,7 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         finishCopying();
       });
 
-      const setTraceVisible = (traceId, visible) => {
+      function setTraceVisible(traceId, visible) {
         const markerRows = document.querySelectorAll(".marker-row[data-trace-id=\"" + traceId + "\"]");
         const legendItems = document.querySelectorAll(".legend-item[data-trace-id=\"" + traceId + "\"]");
         if (visible) {
@@ -1344,15 +1345,15 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
           }
         });
         drawChart();
-      };
+      }
 
-      const syncOverlayButtonState = (button, traceId) => {
+      function syncOverlayButtonState(button, traceId) {
         if (!(button instanceof HTMLButtonElement)) {
           return;
         }
         const hidden = document.querySelector(".legend-item[data-trace-id=\"" + traceId + "\"]")?.classList.contains("is-hidden");
         button.classList.toggle("is-hidden", Boolean(hidden));
-      };
+      }
 
       if (togglePeakHoldButton instanceof HTMLButtonElement) {
         togglePeakHoldButton.addEventListener("click", () => {
@@ -1370,13 +1371,12 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
         });
       }
 
-      let renderMode = "smooth";
-      const applyRenderMode = () => {
+      function applyRenderMode() {
         if (toggleRenderModeButton instanceof HTMLButtonElement) {
           toggleRenderModeButton.textContent = renderMode === "smooth" ? "Mode: Smooth" : "Mode: Raw";
         }
         drawChart();
-      };
+      }
 
       if (toggleRenderModeButton instanceof HTMLButtonElement) {
         toggleRenderModeButton.addEventListener("click", () => {
