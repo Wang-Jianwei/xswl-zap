@@ -5616,6 +5616,39 @@ WU-VSCODE-007: VS Code 波形预览 UI 自动化冒烟与语法根因修复
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.290 已完成 Work Unit
+
+WU-VSCODE-008: VS Code 波形 Canvas 高清渲染优化
+
+- Objective: 解决高分屏场景下波形 Canvas 显示发糊问题，提升曲线与文字清晰度。
+- Scope (in/out):
+  - in: Canvas 按 `devicePixelRatio` 扩展 backing store，并保持 CSS 逻辑尺寸；补充回归断言；同步 UI 文档。
+  - out: 变更后端采集数据与协议。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-008):
+  - `vna/tools/vscode-extension/src/waveformPreview.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅前端渲染质量优化）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `cd vna/tools/vscode-extension && npm run test:ui`
+- Rollback plan: 回滚本次提交，恢复到固定像素比渲染。
+- Risks: 极高 DPI 下 backing store 增大带来少量显存与重绘开销；已对 dpr 做上限约束（3）。
+- Acceptance criteria:
+  - 高分屏下波形线条与坐标文字清晰度提升。
+  - 扩展测试与 UI 冒烟测试通过。
+
+- Validation result (WU-VSCODE-008):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+  - `cd vna/tools/vscode-extension && npm run test:ui` 通过
+
+- Closure notes (WU-VSCODE-008):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

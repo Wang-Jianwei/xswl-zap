@@ -119,6 +119,7 @@ flowchart LR
 - 新增 Webview 运行时诊断上报（初始化/异常/绘制失败）到扩展输出通道，并在图页显示脚本状态，便于现场快速定位“无波形/无日志”问题。
 - 新增 Playwright 无头 UI 冒烟测试（`npm run test:ui`），自动校验脚本就绪、Canvas 非空绘制与关键按钮交互生效。
 - 修复图例/按钮交互选择器字符串引号转义错误导致的 Webview 脚本语法异常（`missing ) after argument list`）。
+- Canvas 渲染增加高 DPI 缩放适配（`devicePixelRatio` 背板缩放 + CSS 尺寸保持），提升高分屏下波形清晰度。
 - 支持预览类型选择：`snapshot`（单次）/`live`（持续自动刷新，直到取消）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。

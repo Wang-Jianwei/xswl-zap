@@ -1104,19 +1104,31 @@ export function buildWaveformPreviewHtml(data: WaveformPreviewData): string {
 
         const width = Number(currentCanvasModel.width || 900);
         const height = Number(currentCanvasModel.height || 360);
-        if (canvas.width !== width) {
-          canvas.width = width;
+        const rawDpr = typeof window !== "undefined" && typeof window.devicePixelRatio === "number"
+          ? window.devicePixelRatio
+          : 1;
+        const dpr = Math.max(1, Math.min(3, rawDpr));
+
+        const backingWidth = Math.max(1, Math.round(width * dpr));
+        const backingHeight = Math.max(1, Math.round(height * dpr));
+        if (canvas.width !== backingWidth) {
+          canvas.width = backingWidth;
         }
-        if (canvas.height !== height) {
-          canvas.height = height;
+        if (canvas.height !== backingHeight) {
+          canvas.height = backingHeight;
         }
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         const styles = getComputedStyle(document.body);
         const bg = parseColor(styles.getPropertyValue("--vscode-editor-background"), "#1e1e1e");
         const fg = parseColor(styles.getPropertyValue("--vscode-foreground"), "#d4d4d4");
         const desc = parseColor(styles.getPropertyValue("--vscode-descriptionForeground"), "#8a8a8a");
 
-        context.clearRect(0, 0, width, height);
         context.fillStyle = bg;
         context.fillRect(0, 0, width, height);
 

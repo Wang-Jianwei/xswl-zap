@@ -124,6 +124,9 @@ import { buildWaveformPreviewData, buildWaveformPreviewHtml } from "../src/wavef
   assert(html.includes("postUiInteraction"));
   assert(html.includes("scheduleWaveformUpdate"));
   assert(html.includes("requestAnimationFrame"));
+  assert(html.includes("devicePixelRatio"));
+  assert(html.includes("canvas.style.width = width + \"px\""));
+  assert(html.includes("context.setTransform(dpr, 0, 0, dpr, 0, 0)"));
   assert(html.includes("copy-primary-marker"));
   assert(html.includes("timestampNs=123"));
   assert(html.includes("source=frame"));
