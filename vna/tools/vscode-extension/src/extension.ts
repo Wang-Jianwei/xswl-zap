@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import {
   formatAcquisitionSummary,
+  formatInstanceCapabilities,
   formatServiceStatus,
   formatServiceStatusMultiline,
   formatStreamPreviewSummary,
@@ -146,6 +147,39 @@ export function activate(context: vscode.ExtensionContext): void {
       logBlock(outputChannel, "ERROR", `[ValidateTopology][requestId=${requestId}]`, [errorMessage]);
       showOutputIfEnabled(outputChannel, autoOpenOutput);
       vscode.window.showErrorMessage(`ValidateTopology failed: ${errorMessage} | req=${requestId}`);
+    } finally {
+      client.dispose();
+    }
+  });
+
+  const getInstanceCapabilitiesCommand = vscode.commands.registerCommand("xswlZapVna.getInstanceCapabilities", async () => {
+    const instanceIdInput = await vscode.window.showInputBox({
+      prompt: "Instance ID",
+      value: "inst0",
+      ignoreFocusOut: true,
+    });
+    if (!instanceIdInput) {
+      return;
+    }
+
+    const requestId = createRequestId();
+    const { address, deadlineMs, autoOpenOutput } = readConfig();
+    const client = new ServiceClient({ address, deadlineMs });
+
+    try {
+      const capabilities = await client.getInstanceCapabilities(instanceIdInput);
+      const summary = formatInstanceCapabilities(capabilities);
+      logBlock(outputChannel, "INFO", `[GetInstanceCapabilities][requestId=${requestId}]`, [
+        `instanceId=${instanceIdInput}`,
+        summary,
+      ]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showInformationMessage(`InstanceCapabilities: ${summary} | req=${requestId}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      logBlock(outputChannel, "ERROR", `[GetInstanceCapabilities][requestId=${requestId}]`, [errorMessage]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+      vscode.window.showErrorMessage(`GetInstanceCapabilities failed: ${errorMessage} | req=${requestId}`);
     } finally {
       client.dispose();
     }
@@ -318,7 +352,7 @@ export function activate(context: vscode.ExtensionContext): void {
       return;
     }
 
-    const waveformMode = modeSelection.label as "frequency" | "time";
+    let waveformMode = modeSelection.label as "frequency" | "time";
     let traceSource: WaveformTraceSource = "frame";
     let channelIndex = 0;
     let visibleTraceIds: string[] = [];
@@ -405,6 +439,19 @@ export function activate(context: vscode.ExtensionContext): void {
     const client = new ServiceClient({ address, deadlineMs });
 
     try {
+      const capabilities = await client.getInstanceCapabilities(instanceIdInput);
+      const capabilitiesSummary = formatInstanceCapabilities(capabilities);
+      logBlock(outputChannel, "INFO", `[PreviewWaveformCapabilities][requestId=${requestId}]`, [
+        `instanceId=${instanceIdInput}`,
+        capabilitiesSummary,
+      ]);
+      showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+      if (waveformMode === "time" && !capabilities.supportsPulseExcitation) {
+        vscode.window.showWarningMessage("Current instance does not support pulse excitation, fallback to frequency mode.");
+        waveformMode = "frequency";
+      }
+
       const panel = vscode.window.createWebviewPanel(
         "xswlWaveformPreview",
         `XSWL Waveform: ${instanceIdInput}`,
@@ -637,6 +684,7 @@ export function activate(context: vscode.ExtensionContext): void {
     openOutputCommand,
     clearOutputCommand,
     getServiceStatusCommand,
+    getInstanceCapabilitiesCommand,
     validateTopologyCommand,
     acquireOnceCommand,
     streamPreviewCommand,

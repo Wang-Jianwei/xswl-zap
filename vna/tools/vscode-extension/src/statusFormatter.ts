@@ -1,5 +1,6 @@
 import type {
   AcquisitionSummary,
+  InstanceCapabilities,
   ServiceStatus,
   StreamPreviewSummary,
   ValidationResult,
@@ -67,6 +68,17 @@ export function formatStreamPreviewSummary(summary: StreamPreviewSummary): strin
     `lastFrame=${summary.lastFrameType}`,
     `lastPoints=${summary.lastPointCount}`,
     `canceled=${summary.canceled}`,
+  ].join(" | ");
+}
+
+export function formatInstanceCapabilities(capabilities: InstanceCapabilities): string {
+  return [
+    `pulse=${capabilities.supportsPulseExcitation}`,
+    `multiTone=${capabilities.supportsMultiTone}`,
+    `externalClock=${capabilities.supportsExternalClock}`,
+    `minPulseWidthNs=${capabilities.minPulseWidthNs}`,
+    `minPulsePeriodNs=${capabilities.minPulsePeriodNs}`,
+    `maxSamplingRateGhz=${capabilities.maxSamplingRateGhz}`,
   ].join(" | ");
 }
 

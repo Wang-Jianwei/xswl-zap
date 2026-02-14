@@ -18,6 +18,10 @@
         "title": "XSWL: Get Service Status"
       },
       {
+        "command": "xswlZapVna.getInstanceCapabilities",
+        "title": "XSWL: Get Instance Capabilities"
+      },
+      {
         "command": "xswlZapVna.validateTopology",
         "title": "XSWL: Validate Topology"
       },

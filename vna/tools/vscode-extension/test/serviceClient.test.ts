@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { buildCwExcitationFromSampleCount } from "../src/serviceClient";
+import { buildCwExcitationFromSampleCount, parseInstanceCapabilities } from "../src/serviceClient";
 
 (() => {
   const config = buildCwExcitationFromSampleCount(256) as Record<string, number>;
@@ -13,6 +13,21 @@ import { buildCwExcitationFromSampleCount } from "../src/serviceClient";
 
   const huge = buildCwExcitationFromSampleCount(100000) as Record<string, number>;
   assert.equal(huge.sweepPointCount, 4096);
+
+  const capabilities = parseInstanceCapabilities({
+    supportsPulseExcitation: true,
+    supportsMultiTone: false,
+    supportsExternalClock: true,
+    minPulseWidthNs: 120,
+    minPulsePeriodNs: 600,
+    maxSamplingRateGhz: 5.2,
+  });
+  assert.equal(capabilities.supportsPulseExcitation, true);
+  assert.equal(capabilities.supportsMultiTone, false);
+  assert.equal(capabilities.supportsExternalClock, true);
+  assert.equal(capabilities.minPulseWidthNs, 120);
+  assert.equal(capabilities.minPulsePeriodNs, 600);
+  assert.equal(capabilities.maxSamplingRateGhz, 5.2);
 
   process.stdout.write("serviceClient.test passed\n");
 })();

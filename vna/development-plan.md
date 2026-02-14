@@ -5934,6 +5934,47 @@ WU-VSCODE-016: 主线严格门禁预设（StrictMainline）
   - 文档同步：已更新 `vna/README.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.299 已完成 Work Unit
+
+WU-VSCODE-017~018: 扩展接入实例能力查询与预览能力联动
+
+- Objective:
+  - WU-VSCODE-017：在 VS Code 扩展侧接入 `GetInstanceCapabilities` 命令，形成前后端能力探测闭环。
+  - WU-VSCODE-018：在波形预览流程中引入能力探测与模式降级，避免不支持 pulse 的实例触发无效 time 模式。
+- Scope (in/out):
+  - in: `serviceClient` 增加 `getInstanceCapabilities`；新增命令 `xswlZapVna.getInstanceCapabilities`；预览流程增加能力查询与降级提示；补 `statusFormatter`/`serviceClient` 单测。
+  - out: 变更后端能力判定逻辑。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-017~018):
+  - `vna/tools/vscode-extension/src/types.ts`
+  - `vna/tools/vscode-extension/src/statusFormatter.ts`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/package.json`
+  - `vna/tools/vscode-extension/test/statusFormatter.test.ts`
+  - `vna/tools/vscode-extension/test/serviceClient.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（复用既有 `GetInstanceCapabilities` RPC）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe`（注入 MinGW runtime PATH）
+- Rollback plan: 回滚本次提交，恢复扩展原有命令集合与预览流程。
+- Risks: 能力探测 RPC 不可用时会影响预览前探测；当前保留错误提示并中止，避免错误模式继续执行。
+- Acceptance criteria:
+  - 命令面板可执行 `XSWL: Get Instance Capabilities` 并输出能力摘要。
+  - 预览选择 `time` 且实例不支持 pulse 时自动回退 `frequency` 并提示。
+  - 扩展测试与后端映射回归通过。
+
+- Validation result (WU-VSCODE-017~018):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe` 通过（exit=0）
+
+- Closure notes (WU-VSCODE-017~018):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

@@ -3,6 +3,7 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import type {
   AcquisitionSummary,
+  InstanceCapabilities,
   ServiceStatus,
   StreamPreviewFrame,
   StreamPreviewSummary,
@@ -70,6 +71,17 @@ export interface ServiceClientOptions {
   deadlineMs: number;
 }
 
+export function parseInstanceCapabilities(payload: Record<string, unknown>): InstanceCapabilities {
+  return {
+    supportsPulseExcitation: Boolean(payload.supportsPulseExcitation),
+    supportsMultiTone: Boolean(payload.supportsMultiTone),
+    supportsExternalClock: Boolean(payload.supportsExternalClock),
+    minPulseWidthNs: Number(payload.minPulseWidthNs ?? 0),
+    minPulsePeriodNs: Number(payload.minPulsePeriodNs ?? 0),
+    maxSamplingRateGhz: Number(payload.maxSamplingRateGhz ?? 0),
+  };
+}
+
 export class ServiceClient {
   private readonly client: grpc.Client;
   private readonly deadlineMs: number;
@@ -124,6 +136,31 @@ export class ServiceClient {
             instanceCount: Number(payload.instanceCount ?? 0),
             activeLeaseCount: Number(payload.activeLeaseCount ?? 0),
           });
+        },
+      );
+    });
+  }
+
+  getInstanceCapabilities(instanceId: string): Promise<InstanceCapabilities> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<InstanceCapabilities>((resolve, reject) => {
+      (this.client as unknown as {
+        getInstanceCapabilities: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).getInstanceCapabilities(
+        {
+          instanceId,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(parseInstanceCapabilities(response));
         },
       );
     });

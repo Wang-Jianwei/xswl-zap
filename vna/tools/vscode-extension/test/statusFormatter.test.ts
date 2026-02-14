@@ -1,6 +1,7 @@
 import { strict as assert } from "node:assert";
 import {
   formatAcquisitionSummary,
+  formatInstanceCapabilities,
   formatServiceStatusMultiline,
   formatServiceStatus,
   formatStreamPreviewSummary,
@@ -139,6 +140,18 @@ import {
       canceled: true,
     }),
     "frames=18 | latestTimestampNs=9988 | lastFrame=time | lastPoints=64 | canceled=true",
+  );
+
+  assert.equal(
+    formatInstanceCapabilities({
+      supportsPulseExcitation: true,
+      supportsMultiTone: false,
+      supportsExternalClock: true,
+      minPulseWidthNs: 80,
+      minPulsePeriodNs: 200,
+      maxSamplingRateGhz: 2.5,
+    }),
+    "pulse=true | multiTone=false | externalClock=true | minPulseWidthNs=80 | minPulsePeriodNs=200 | maxSamplingRateGhz=2.5",
   );
 
   process.stdout.write("statusFormatter.test passed\n");

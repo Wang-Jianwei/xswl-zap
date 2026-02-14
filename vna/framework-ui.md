@@ -126,6 +126,8 @@ flowchart LR
 - 修复扫描状态机：`hold` 仅暂停展示不主动中断流，切回 `continuous` 可恢复持续更新。
 - 修复交互区悬停导致刷新停滞问题：按钮/图例交互不再触发渲染暂停门控。
 - 扫描状态语义收敛为“后端主导”：`hold/continuous/single` 通过显式控制 RPC 下发到后端，前端仅在收到后端确认后更新状态显示。
+- 新增命令 `XSWL: Get Instance Capabilities`，可直接查询并展示实例能力（pulse/multi-tone/external-clock 及关键阈值）。
+- 波形预览在打开前会先查询实例能力；若实例不支持 pulse，选择 `time` 模式时自动降级为 `frequency` 并提示。
 - 支持预览类型选择：`snapshot`（单次）/`live`（持续自动刷新，直到取消）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。

@@ -13,6 +13,15 @@ export interface ServiceStatus {
   activeLeaseCount: number;
 }
 
+export interface InstanceCapabilities {
+  supportsPulseExcitation: boolean;
+  supportsMultiTone: boolean;
+  supportsExternalClock: boolean;
+  minPulseWidthNs: number;
+  minPulsePeriodNs: number;
+  maxSamplingRateGhz: number;
+}
+
 export interface TopologyErrorDetail {
   code: string;
   field: string;
