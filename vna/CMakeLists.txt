@@ -46,6 +46,7 @@ target_include_directories(vna_core_bootstrap PUBLIC
 )
 
 add_library(vna_service_bootstrap STATIC
+    src/service/de_embedding_config_parser.cpp
     src/service/process_manager.cpp
     src/service/resource_broker_service.cpp
     src/service/service_config.cpp
@@ -362,6 +363,12 @@ if(XSWL_BUILD_TESTS)
     target_link_libraries(vna_service_config_test PRIVATE vna_service_bootstrap)
     set_target_properties(vna_service_config_test PROPERTIES OUTPUT_NAME "easy_service_config_test")
 
+    add_executable(vna_de_embedding_config_parser_test
+        tests/core/de_embedding_config_parser_test.cpp
+    )
+    target_link_libraries(vna_de_embedding_config_parser_test PRIVATE vna_service_bootstrap)
+    set_target_properties(vna_de_embedding_config_parser_test PROPERTIES OUTPUT_NAME "easy_de_embedding_config_parser_test")
+
     add_executable(vna_service_flow_integration_test
         tests/integration/service_flow_integration_test.cpp
     )
@@ -411,6 +418,7 @@ if(XSWL_BUILD_TESTS)
     add_test(NAME vna_resource_broker_service_test COMMAND $<TARGET_FILE:vna_resource_broker_service_test>)
     add_test(NAME vna_process_manager_test COMMAND $<TARGET_FILE:vna_process_manager_test>)
     add_test(NAME vna_service_config_test COMMAND $<TARGET_FILE:vna_service_config_test>)
+    add_test(NAME vna_de_embedding_config_parser_test COMMAND $<TARGET_FILE:vna_de_embedding_config_parser_test>)
     add_test(NAME vna_service_flow_integration_test COMMAND $<TARGET_FILE:vna_service_flow_integration_test>)
     add_test(NAME vna_service_status_service_test COMMAND $<TARGET_FILE:vna_service_status_service_test>)
     add_test(NAME vna_service_status_concurrency_test COMMAND $<TARGET_FILE:vna_service_status_concurrency_test>)

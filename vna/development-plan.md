@@ -6407,6 +6407,45 @@ WU-MAINLINE-033: 去嵌入与时域采集兼容性修复
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.312 已完成 Work Unit
+
+WU-MAINLINE-034: 去嵌入配置解析器模块化与单测闭环
+
+- Objective:
+  - 将 gRPC 启动流程中的去嵌入配置字符串解析逻辑下沉为 `service` 复用模块，提升可测试性与错误可读性。
+- Scope (in/out):
+  - in: 新增 `de_embedding_config_parser`；替换 `grpc_server_main` 内联解析；新增解析器单测并接入 CMake。
+  - out: 修改去嵌入补偿算法、修改 proto 契约。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-034):
+  - `vna/include/service/de_embedding_config_parser.h`
+  - `vna/src/service/de_embedding_config_parser.cpp`
+  - `vna/src/service/grpc/grpc_server_main.cpp`
+  - `vna/tests/core/de_embedding_config_parser_test.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && ctest -R de_embedding_config_parser_test --output-on-failure --timeout 15`
+  - `cd vna/build && ctest -R vna_control_service_test --output-on-failure --timeout 15`
+- Rollback plan: 回滚本次提交，恢复 `grpc_server_main` 的内联解析实现。
+- Risks: 频点 profile 解析新增“端口数一致性”前置校验，可能提前暴露历史脏配置；属于预期收敛行为。
+- Acceptance criteria:
+  - 去嵌入配置解析可在 service 层独立复用与单元测试。
+  - gRPC 启动路径仍可正确装配去嵌入配置。
+  - 新增解析器测试通过。
+
+- Validation result (WU-MAINLINE-034):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `ctest -R de_embedding_config_parser_test --output-on-failure --timeout 15` 通过
+  - `ctest -R vna_control_service_test --output-on-failure --timeout 15` 通过
+
+- Closure notes (WU-MAINLINE-034):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
