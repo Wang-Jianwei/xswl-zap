@@ -27,6 +27,13 @@ enum ExcitationMode {
   EXCITATION_MODE_PULSE = 2;
 }
 
+enum ScanState {
+  SCAN_STATE_UNSPECIFIED = 0;
+  SCAN_STATE_CONTINUOUS = 1;
+  SCAN_STATE_SINGLE = 2;
+  SCAN_STATE_HOLD = 3;
+}
+
 message CwExcitation {
   double frequency_hz = 1;
   double power_dbm = 2;
@@ -170,6 +177,19 @@ message InstanceCapabilities {
   double max_sampling_rate_ghz = 6;
 }
 
+message ScanStateRequest {
+  string instance_id = 1;
+  ScanState desired_state = 2;
+}
+
+message ScanStateResponse {
+  string instance_id = 1;
+  ScanState state = 2;
+  bool stream_active = 3;
+  string message = 4;
+  uint64 updated_at_ms = 5;
+}
+
 message ServiceStatus {
   bool ready = 1;
   string state = 2;
@@ -189,6 +209,8 @@ service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
   rpc GetServiceStatus(Empty) returns (ServiceStatus);
   rpc GetInstanceCapabilities(InstanceSelector) returns (InstanceCapabilities);
+  rpc SetScanState(ScanStateRequest) returns (ScanStateResponse);
+  rpc GetScanState(InstanceSelector) returns (ScanStateResponse);
   rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
   rpc ImportAcquisition(ImportAcquisitionRequest) returns (AcquisitionResult);
   rpc CompareImportedAcquisition(CompareImportedAcquisitionRequest) returns (CompareImportedAcquisitionResponse);

@@ -62,6 +62,51 @@ export function excitationModeToJSON(object: ExcitationMode): string {
   }
 }
 
+export enum ScanState {
+  SCAN_STATE_UNSPECIFIED = 0,
+  SCAN_STATE_CONTINUOUS = 1,
+  SCAN_STATE_SINGLE = 2,
+  SCAN_STATE_HOLD = 3,
+  UNRECOGNIZED = -1,
+}
+
+export function scanStateFromJSON(object: any): ScanState {
+  switch (object) {
+    case 0:
+    case "SCAN_STATE_UNSPECIFIED":
+      return ScanState.SCAN_STATE_UNSPECIFIED;
+    case 1:
+    case "SCAN_STATE_CONTINUOUS":
+      return ScanState.SCAN_STATE_CONTINUOUS;
+    case 2:
+    case "SCAN_STATE_SINGLE":
+      return ScanState.SCAN_STATE_SINGLE;
+    case 3:
+    case "SCAN_STATE_HOLD":
+      return ScanState.SCAN_STATE_HOLD;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return ScanState.UNRECOGNIZED;
+  }
+}
+
+export function scanStateToJSON(object: ScanState): string {
+  switch (object) {
+    case ScanState.SCAN_STATE_UNSPECIFIED:
+      return "SCAN_STATE_UNSPECIFIED";
+    case ScanState.SCAN_STATE_CONTINUOUS:
+      return "SCAN_STATE_CONTINUOUS";
+    case ScanState.SCAN_STATE_SINGLE:
+      return "SCAN_STATE_SINGLE";
+    case ScanState.SCAN_STATE_HOLD:
+      return "SCAN_STATE_HOLD";
+    case ScanState.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Empty {
 }
 
@@ -216,6 +261,19 @@ export interface InstanceCapabilities {
   minPulseWidthNs: number;
   minPulsePeriodNs: number;
   maxSamplingRateGhz: number;
+}
+
+export interface ScanStateRequest {
+  instanceId: string;
+  desiredState: ScanState;
+}
+
+export interface ScanStateResponse {
+  instanceId: string;
+  state: ScanState;
+  streamActive: boolean;
+  message: string;
+  updatedAtMs: number;
 }
 
 export interface ServiceStatus {
@@ -2916,6 +2974,226 @@ export const InstanceCapabilities: MessageFns<InstanceCapabilities> = {
   },
 };
 
+function createBaseScanStateRequest(): ScanStateRequest {
+  return { instanceId: "", desiredState: 0 };
+}
+
+export const ScanStateRequest: MessageFns<ScanStateRequest> = {
+  encode(message: ScanStateRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.instanceId !== "") {
+      writer.uint32(10).string(message.instanceId);
+    }
+    if (message.desiredState !== 0) {
+      writer.uint32(16).int32(message.desiredState);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ScanStateRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseScanStateRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.instanceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.desiredState = reader.int32() as any;
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ScanStateRequest {
+    return {
+      instanceId: isSet(object.instanceId)
+        ? globalThis.String(object.instanceId)
+        : isSet(object.instance_id)
+        ? globalThis.String(object.instance_id)
+        : "",
+      desiredState: isSet(object.desiredState)
+        ? scanStateFromJSON(object.desiredState)
+        : isSet(object.desired_state)
+        ? scanStateFromJSON(object.desired_state)
+        : 0,
+    };
+  },
+
+  toJSON(message: ScanStateRequest): unknown {
+    const obj: any = {};
+    if (message.instanceId !== "") {
+      obj.instanceId = message.instanceId;
+    }
+    if (message.desiredState !== 0) {
+      obj.desiredState = scanStateToJSON(message.desiredState);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ScanStateRequest>, I>>(base?: I): ScanStateRequest {
+    return ScanStateRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ScanStateRequest>, I>>(object: I): ScanStateRequest {
+    const message = createBaseScanStateRequest();
+    message.instanceId = object.instanceId ?? "";
+    message.desiredState = object.desiredState ?? 0;
+    return message;
+  },
+};
+
+function createBaseScanStateResponse(): ScanStateResponse {
+  return { instanceId: "", state: 0, streamActive: false, message: "", updatedAtMs: 0 };
+}
+
+export const ScanStateResponse: MessageFns<ScanStateResponse> = {
+  encode(message: ScanStateResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.instanceId !== "") {
+      writer.uint32(10).string(message.instanceId);
+    }
+    if (message.state !== 0) {
+      writer.uint32(16).int32(message.state);
+    }
+    if (message.streamActive !== false) {
+      writer.uint32(24).bool(message.streamActive);
+    }
+    if (message.message !== "") {
+      writer.uint32(34).string(message.message);
+    }
+    if (message.updatedAtMs !== 0) {
+      writer.uint32(40).uint64(message.updatedAtMs);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): ScanStateResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseScanStateResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.instanceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.state = reader.int32() as any;
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.streamActive = reader.bool();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.updatedAtMs = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): ScanStateResponse {
+    return {
+      instanceId: isSet(object.instanceId)
+        ? globalThis.String(object.instanceId)
+        : isSet(object.instance_id)
+        ? globalThis.String(object.instance_id)
+        : "",
+      state: isSet(object.state) ? scanStateFromJSON(object.state) : 0,
+      streamActive: isSet(object.streamActive)
+        ? globalThis.Boolean(object.streamActive)
+        : isSet(object.stream_active)
+        ? globalThis.Boolean(object.stream_active)
+        : false,
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+      updatedAtMs: isSet(object.updatedAtMs)
+        ? globalThis.Number(object.updatedAtMs)
+        : isSet(object.updated_at_ms)
+        ? globalThis.Number(object.updated_at_ms)
+        : 0,
+    };
+  },
+
+  toJSON(message: ScanStateResponse): unknown {
+    const obj: any = {};
+    if (message.instanceId !== "") {
+      obj.instanceId = message.instanceId;
+    }
+    if (message.state !== 0) {
+      obj.state = scanStateToJSON(message.state);
+    }
+    if (message.streamActive !== false) {
+      obj.streamActive = message.streamActive;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    if (message.updatedAtMs !== 0) {
+      obj.updatedAtMs = Math.round(message.updatedAtMs);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<ScanStateResponse>, I>>(base?: I): ScanStateResponse {
+    return ScanStateResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<ScanStateResponse>, I>>(object: I): ScanStateResponse {
+    const message = createBaseScanStateResponse();
+    message.instanceId = object.instanceId ?? "";
+    message.state = object.state ?? 0;
+    message.streamActive = object.streamActive ?? false;
+    message.message = object.message ?? "";
+    message.updatedAtMs = object.updatedAtMs ?? 0;
+    return message;
+  },
+};
+
 function createBaseServiceStatus(): ServiceStatus {
   return {
     ready: false,
@@ -3227,6 +3505,24 @@ export const VnaControlService = {
       Buffer.from(InstanceCapabilities.encode(value).finish()),
     responseDeserialize: (value: Buffer): InstanceCapabilities => InstanceCapabilities.decode(value),
   },
+  setScanState: {
+    path: "/vna.VnaControl/SetScanState",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ScanStateRequest): Buffer => Buffer.from(ScanStateRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ScanStateRequest => ScanStateRequest.decode(value),
+    responseSerialize: (value: ScanStateResponse): Buffer => Buffer.from(ScanStateResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ScanStateResponse => ScanStateResponse.decode(value),
+  },
+  getScanState: {
+    path: "/vna.VnaControl/GetScanState",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: InstanceSelector): Buffer => Buffer.from(InstanceSelector.encode(value).finish()),
+    requestDeserialize: (value: Buffer): InstanceSelector => InstanceSelector.decode(value),
+    responseSerialize: (value: ScanStateResponse): Buffer => Buffer.from(ScanStateResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ScanStateResponse => ScanStateResponse.decode(value),
+  },
   acquire: {
     path: "/vna.VnaControl/Acquire",
     requestStream: false,
@@ -3274,6 +3570,8 @@ export interface VnaControlServer extends UntypedServiceImplementation {
   validateTopology: handleUnaryCall<Topology, ValidationResult>;
   getServiceStatus: handleUnaryCall<Empty, ServiceStatus>;
   getInstanceCapabilities: handleUnaryCall<InstanceSelector, InstanceCapabilities>;
+  setScanState: handleUnaryCall<ScanStateRequest, ScanStateResponse>;
+  getScanState: handleUnaryCall<InstanceSelector, ScanStateResponse>;
   acquire: handleUnaryCall<AcquisitionRequest, AcquisitionResult>;
   importAcquisition: handleUnaryCall<ImportAcquisitionRequest, AcquisitionResult>;
   compareImportedAcquisition: handleUnaryCall<CompareImportedAcquisitionRequest, CompareImportedAcquisitionResponse>;
@@ -3325,6 +3623,36 @@ export interface VnaControlClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: InstanceCapabilities) => void,
+  ): ClientUnaryCall;
+  setScanState(
+    request: ScanStateRequest,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
+  ): ClientUnaryCall;
+  setScanState(
+    request: ScanStateRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
+  ): ClientUnaryCall;
+  setScanState(
+    request: ScanStateRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
+  ): ClientUnaryCall;
+  getScanState(
+    request: InstanceSelector,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
+  ): ClientUnaryCall;
+  getScanState(
+    request: InstanceSelector,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
+  ): ClientUnaryCall;
+  getScanState(
+    request: InstanceSelector,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ScanStateResponse) => void,
   ): ClientUnaryCall;
   acquire(
     request: AcquisitionRequest,

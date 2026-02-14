@@ -10,6 +10,7 @@ import type {
   TopologyErrorDetail,
   WaveformMode,
   WaveformPreviewData,
+  WaveformScanState,
   WaveformTraceSource,
 } from "./types";
 import { buildWaveformPreviewData } from "./waveformPreview";
@@ -33,6 +34,35 @@ export function buildCwExcitationFromSampleCount(sampleCount: number): Record<st
     powerDbm: -10,
     dwellTimeMs: 1,
   };
+}
+
+function toWireScanState(state: WaveformScanState): number {
+  if (state === "hold") {
+    return 3;
+  }
+  if (state === "single") {
+    return 2;
+  }
+  return 1;
+}
+
+function fromWireScanState(state: unknown): WaveformScanState {
+  const text = String(state ?? "").toUpperCase();
+  if (text === "SCAN_STATE_HOLD" || text === "3") {
+    return "hold";
+  }
+  if (text === "SCAN_STATE_SINGLE" || text === "2") {
+    return "single";
+  }
+  return "continuous";
+}
+
+export interface ScanStateResult {
+  instanceId: string;
+  scanState: WaveformScanState;
+  streamActive: boolean;
+  message: string;
+  updatedAtMs: number;
 }
 
 export interface ServiceClientOptions {
@@ -247,6 +277,69 @@ export class ServiceClient {
           }
 
           resolve(buildWaveformPreviewData(response, traceSource, channelIndex, visibleTraceIds));
+        },
+      );
+    });
+  }
+
+  setScanState(instanceId: string, state: WaveformScanState): Promise<ScanStateResult> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ScanStateResult>((resolve, reject) => {
+      (this.client as unknown as {
+        setScanState: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).setScanState(
+        {
+          instanceId,
+          desiredState: toWireScanState(state),
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve({
+            instanceId: String(response.instanceId ?? instanceId),
+            scanState: fromWireScanState(response.state),
+            streamActive: Boolean(response.streamActive),
+            message: String(response.message ?? ""),
+            updatedAtMs: Number(response.updatedAtMs ?? 0),
+          });
+        },
+      );
+    });
+  }
+
+  getScanState(instanceId: string): Promise<ScanStateResult> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ScanStateResult>((resolve, reject) => {
+      (this.client as unknown as {
+        getScanState: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).getScanState(
+        {
+          instanceId,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve({
+            instanceId: String(response.instanceId ?? instanceId),
+            scanState: fromWireScanState(response.state),
+            streamActive: Boolean(response.streamActive),
+            message: String(response.message ?? ""),
+            updatedAtMs: Number(response.updatedAtMs ?? 0),
+          });
         },
       );
     });

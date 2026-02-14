@@ -415,9 +415,7 @@ export function activate(context: vscode.ExtensionContext): void {
       let currentScanState: WaveformScanState = previewTypeSelection.label === "live" ? "continuous" : "single";
       let liveFrameCount = 0;
       let liveStreamActive = previewTypeSelection.label === "live";
-      let liveSingleConsumed = false;
       let latestWaveformForUi: WaveformPreviewData | null = null;
-      let liveAbortController: AbortController | undefined;
       let liveOverlayState = createLiveWaveformOverlayState();
       let lastRenderAtMs = 0;
       let webviewInitialized = false;
@@ -486,40 +484,21 @@ export function activate(context: vscode.ExtensionContext): void {
           if (state !== "continuous" && state !== "single" && state !== "hold") {
             return;
           }
-          currentScanState = state;
-          if (state === "single") {
-            liveSingleConsumed = false;
-            if (previewTypeSelection.label === "live" && !liveStreamActive) {
-              const localConfig = readConfig();
-              const singleClient = new ServiceClient({
-                address: localConfig.address,
-                deadlineMs: localConfig.deadlineMs,
-              });
-              try {
-                const singleWaveform = await singleClient.acquireWaveform(
-                  instanceIdInput,
-                  sampleCount,
-                  waveformMode,
-                  traceSource,
-                  channelIndex,
-                  visibleTraceIds,
-                );
-                const enhanced = applyLiveFrequencyOverlays(singleWaveform, liveOverlayState, 8);
-                liveOverlayState = enhanced.state;
-                liveFrameCount += 1;
-                liveStreamActive = false;
-                currentScanState = "hold";
-                latestWaveformForUi = enhanced.waveform;
-                renderWaveform(enhanced.waveform);
-              } catch (error) {
-                const errorMessage = error instanceof Error ? error.message : String(error);
-                vscode.window.showErrorMessage(`Single scan failed: ${errorMessage}`);
-              } finally {
-                singleClient.dispose();
-              }
-              return;
-            }
+          try {
+            const result = await client.setScanState(instanceIdInput, state);
+            currentScanState = result.scanState;
+            liveStreamActive = result.streamActive;
+            logBlock(outputChannel, "INFO", `[PreviewWaveformSetScanState][requestId=${requestId}]`, [
+              `instanceId=${result.instanceId}, state=${result.scanState}, streamActive=${result.streamActive}, message=${result.message}`,
+            ]);
+            showOutputIfEnabled(outputChannel, autoOpenOutput);
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            logBlock(outputChannel, "ERROR", `[PreviewWaveformSetScanState][requestId=${requestId}]`, [errorMessage]);
+            showOutputIfEnabled(outputChannel, autoOpenOutput);
+            vscode.window.showErrorMessage(`Set scan state failed: ${errorMessage}`);
           }
+
           if (latestWaveformForUi) {
             renderWaveform(latestWaveformForUi);
           }
@@ -577,8 +556,16 @@ export function activate(context: vscode.ExtensionContext): void {
         );
       } else {
         const abortController = new AbortController();
-        liveAbortController = abortController;
         panel.onDidDispose(() => abortController.abort());
+
+        try {
+          const current = await client.getScanState(instanceIdInput);
+          currentScanState = current.scanState;
+          liveStreamActive = current.streamActive;
+        } catch (error) {
+          currentScanState = "continuous";
+          liveStreamActive = true;
+        }
 
         const finalWaveform = await vscode.window.withProgress(
           {
@@ -604,23 +591,6 @@ export function activate(context: vscode.ExtensionContext): void {
                 liveStreamActive = true;
                 latestWaveformForUi = enhanced.waveform;
                 const nowMs = Date.now();
-
-                if (currentScanState === "hold") {
-                  return;
-                }
-
-                if (currentScanState === "single") {
-                  if (liveSingleConsumed) {
-                    return;
-                  }
-                  liveSingleConsumed = true;
-                  currentScanState = "hold";
-                  renderWaveform(enhanced.waveform);
-                  progress.report({
-                    message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}, scan=${currentScanState}`,
-                  });
-                  return;
-                }
 
                 if (frameCount === 1 || frameCount % 3 === 0) {
                   const minRenderIntervalMs = estimateRenderIntervalMs(enhanced.waveform);

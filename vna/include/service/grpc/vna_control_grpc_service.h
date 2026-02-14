@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <mutex>
+
 #include "service/service_status_service.h"
 #include "service/vna_control_inproc_handler.h"
 #include "service/vna_control_service.h"
@@ -31,6 +34,14 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
                                          const ::vna::InstanceSelector* request,
                                          ::vna::InstanceCapabilities* response) override;
 
+  ::grpc::Status SetScanState(::grpc::ServerContext* context,
+                              const ::vna::ScanStateRequest* request,
+                              ::vna::ScanStateResponse* response) override;
+
+  ::grpc::Status GetScanState(::grpc::ServerContext* context,
+                              const ::vna::InstanceSelector* request,
+                              ::vna::ScanStateResponse* response) override;
+
   ::grpc::Status Acquire(::grpc::ServerContext* context,
                          const ::vna::AcquisitionRequest* request,
                          ::vna::AcquisitionResult* response) override;
@@ -54,6 +65,8 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
   VnaControlInProcessHandler* inprocHandler_;
   std::uint32_t streamThrottleEveryNFrames_;
   std::uint32_t streamThrottleMs_;
+  mutable std::mutex scanStateMutex_;
+  std::map<std::string, ::vna::ScanState> scanStates_;
 };
 
 }  // namespace service

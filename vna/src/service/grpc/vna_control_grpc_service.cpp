@@ -37,6 +37,22 @@ namespace {
   return ::vna::core::ExcitationMode::kContinuousWave;
 }
 
+::vna::ScanState NormalizeScanState(::vna::ScanState state) {
+  if (state == ::vna::ScanState::SCAN_STATE_HOLD ||
+      state == ::vna::ScanState::SCAN_STATE_SINGLE ||
+      state == ::vna::ScanState::SCAN_STATE_CONTINUOUS) {
+    return state;
+  }
+  return ::vna::ScanState::SCAN_STATE_CONTINUOUS;
+}
+
+std::uint64_t NowMs() {
+  return static_cast<std::uint64_t>(
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::system_clock::now().time_since_epoch())
+          .count());
+}
+
 void FillProtoFromCoreResult(const ::vna::core::AcquisitionResult& in,
                              ::vna::AcquisitionResult* out) {
   out->set_instance_id(in.instanceId);
@@ -302,6 +318,61 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   return ::grpc::Status::OK;
 }
 
+::grpc::Status VnaControlGrpcService::SetScanState(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::ScanStateRequest* request,
+    ::vna::ScanStateResponse* response) {
+  if (request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+  if (request->instance_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "instance_id is required");
+  }
+
+  const ::vna::ScanState desired = NormalizeScanState(request->desired_state());
+  {
+    std::lock_guard<std::mutex> lock(scanStateMutex_);
+    scanStates_[request->instance_id()] = desired;
+  }
+
+  response->set_instance_id(request->instance_id());
+  response->set_state(desired);
+  response->set_stream_active(desired != ::vna::ScanState::SCAN_STATE_HOLD);
+  response->set_message("scan state updated");
+  response->set_updated_at_ms(NowMs());
+  return ::grpc::Status::OK;
+}
+
+::grpc::Status VnaControlGrpcService::GetScanState(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::InstanceSelector* request,
+    ::vna::ScanStateResponse* response) {
+  if (request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+  if (request->instance_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "instance_id is required");
+  }
+
+  ::vna::ScanState state = ::vna::ScanState::SCAN_STATE_CONTINUOUS;
+  {
+    std::lock_guard<std::mutex> lock(scanStateMutex_);
+    const std::map<std::string, ::vna::ScanState>::const_iterator it = scanStates_.find(request->instance_id());
+    if (it != scanStates_.end()) {
+      state = NormalizeScanState(it->second);
+    } else {
+      scanStates_[request->instance_id()] = state;
+    }
+  }
+
+  response->set_instance_id(request->instance_id());
+  response->set_state(state);
+  response->set_stream_active(state != ::vna::ScanState::SCAN_STATE_HOLD);
+  response->set_message("ok");
+  response->set_updated_at_ms(NowMs());
+  return ::grpc::Status::OK;
+}
+
 ::grpc::Status VnaControlGrpcService::Acquire(::grpc::ServerContext* /*context*/,
                                               const ::vna::AcquisitionRequest* request,
                                               ::vna::AcquisitionResult* response) {
@@ -453,9 +524,31 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   const ::vna::core::ExcitationConfig excitation = BuildCoreExcitation(*request);
   LogConfigTransitionIfChanged("STREAM", *request);
   int frameCount = 0;
+
+  {
+    std::lock_guard<std::mutex> lock(scanStateMutex_);
+    if (scanStates_.find(request->instance_id()) == scanStates_.end()) {
+      scanStates_[request->instance_id()] = ::vna::ScanState::SCAN_STATE_CONTINUOUS;
+    }
+  }
+
   std::cout << "[STREAM_STATE] started instance=" << request->instance_id() << "\n";
 
   while (!context->IsCancelled()) {
+    ::vna::ScanState state = ::vna::ScanState::SCAN_STATE_CONTINUOUS;
+    {
+      std::lock_guard<std::mutex> lock(scanStateMutex_);
+      const std::map<std::string, ::vna::ScanState>::const_iterator it = scanStates_.find(request->instance_id());
+      if (it != scanStates_.end()) {
+        state = NormalizeScanState(it->second);
+      }
+    }
+
+    if (state == ::vna::ScanState::SCAN_STATE_HOLD) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(30));
+      continue;
+    }
+
     ::vna::core::AcquisitionResult coreResult;
     const ::vna::core::Status status = controlService_->AcquireOnce(
         request->instance_id(), excitation, request->sample_count(), request->timeout_ms(), coreResult);
@@ -471,6 +564,13 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     }
 
     ++frameCount;
+
+    if (state == ::vna::ScanState::SCAN_STATE_SINGLE) {
+      std::lock_guard<std::mutex> lock(scanStateMutex_);
+      scanStates_[request->instance_id()] = ::vna::ScanState::SCAN_STATE_HOLD;
+      continue;
+    }
+
     if (streamThrottleEveryNFrames_ > 0 && streamThrottleMs_ > 0 &&
         frameCount % static_cast<int>(streamThrottleEveryNFrames_) == 0) {
       std::this_thread::sleep_for(

@@ -57,6 +57,8 @@ extern const ::google::protobuf::internal::DescriptorTable descriptor_table_vna_
 namespace vna {
 enum ExcitationMode : int;
 extern const uint32_t ExcitationMode_internal_data_[];
+enum ScanState : int;
+extern const uint32_t ScanState_internal_data_[];
 class AcquisitionRequest;
 struct AcquisitionRequestDefaultTypeInternal;
 extern AcquisitionRequestDefaultTypeInternal _AcquisitionRequest_default_instance_;
@@ -133,6 +135,14 @@ class SParameterPoint;
 struct SParameterPointDefaultTypeInternal;
 extern SParameterPointDefaultTypeInternal _SParameterPoint_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull SParameterPoint_class_data_;
+class ScanStateRequest;
+struct ScanStateRequestDefaultTypeInternal;
+extern ScanStateRequestDefaultTypeInternal _ScanStateRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ScanStateRequest_class_data_;
+class ScanStateResponse;
+struct ScanStateResponseDefaultTypeInternal;
+extern ScanStateResponseDefaultTypeInternal _ScanStateResponse_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull ScanStateResponse_class_data_;
 class ServiceStatus;
 struct ServiceStatusDefaultTypeInternal;
 extern ServiceStatusDefaultTypeInternal _ServiceStatus_default_instance_;
@@ -163,6 +173,9 @@ namespace protobuf {
 template <>
 internal::EnumTraitsT<::vna::ExcitationMode_internal_data_>
     internal::EnumTraitsImpl::value<::vna::ExcitationMode>;
+template <>
+internal::EnumTraitsT<::vna::ScanState_internal_data_>
+    internal::EnumTraitsImpl::value<::vna::ScanState>;
 }  // namespace protobuf
 }  // namespace google
 
@@ -202,6 +215,44 @@ inline const ::std::string& ExcitationMode_Name(ExcitationMode value) {
 inline bool ExcitationMode_Parse(
     ::absl::string_view name, ExcitationMode* PROTOBUF_NONNULL value) {
   return ::google::protobuf::internal::ParseNamedEnum<ExcitationMode>(ExcitationMode_descriptor(), name,
+                                           value);
+}
+enum ScanState : int {
+  SCAN_STATE_UNSPECIFIED = 0,
+  SCAN_STATE_CONTINUOUS = 1,
+  SCAN_STATE_SINGLE = 2,
+  SCAN_STATE_HOLD = 3,
+  ScanState_INT_MIN_SENTINEL_DO_NOT_USE_ =
+      ::std::numeric_limits<::int32_t>::min(),
+  ScanState_INT_MAX_SENTINEL_DO_NOT_USE_ =
+      ::std::numeric_limits<::int32_t>::max(),
+};
+
+extern const uint32_t ScanState_internal_data_[];
+inline constexpr ScanState ScanState_MIN =
+    static_cast<ScanState>(0);
+inline constexpr ScanState ScanState_MAX =
+    static_cast<ScanState>(3);
+inline bool ScanState_IsValid(int value) {
+  return 0 <= value && value <= 3;
+}
+inline constexpr int ScanState_ARRAYSIZE = 3 + 1;
+const ::google::protobuf::EnumDescriptor* PROTOBUF_NONNULL ScanState_descriptor();
+template <typename T>
+const ::std::string& ScanState_Name(T value) {
+  static_assert(::std::is_same<T, ScanState>::value ||
+                    ::std::is_integral<T>::value,
+                "Incorrect type passed to ScanState_Name().");
+  return ScanState_Name(static_cast<ScanState>(value));
+}
+template <>
+inline const ::std::string& ScanState_Name(ScanState value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<ScanState_descriptor, 0, 3>(
+      static_cast<int>(value));
+}
+inline bool ScanState_Parse(
+    ::absl::string_view name, ScanState* PROTOBUF_NONNULL value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ScanState>(ScanState_descriptor(), name,
                                            value);
 }
 
@@ -920,7 +971,7 @@ class ServiceStatus final : public ::google::protobuf::Message
     return *reinterpret_cast<const ServiceStatus*>(
         &_ServiceStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 24;
+  static constexpr int kIndexInFileMessages = 26;
   friend void swap(ServiceStatus& a, ServiceStatus& b) { a.Swap(&b); }
   inline void Swap(ServiceStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1215,6 +1266,461 @@ class ServiceStatus final : public ::google::protobuf::Message
 };
 
 extern const ::google::protobuf::internal::ClassDataFull ServiceStatus_class_data_;
+// -------------------------------------------------------------------
+
+class ScanStateResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.ScanStateResponse) */ {
+ public:
+  inline ScanStateResponse() : ScanStateResponse(nullptr) {}
+  ~ScanStateResponse() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ScanStateResponse* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ScanStateResponse));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ScanStateResponse(::google::protobuf::internal::ConstantInitialized);
+
+  inline ScanStateResponse(const ScanStateResponse& from) : ScanStateResponse(nullptr, from) {}
+  inline ScanStateResponse(ScanStateResponse&& from) noexcept
+      : ScanStateResponse(nullptr, ::std::move(from)) {}
+  inline ScanStateResponse& operator=(const ScanStateResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ScanStateResponse& operator=(ScanStateResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ScanStateResponse& default_instance() {
+    return *reinterpret_cast<const ScanStateResponse*>(
+        &_ScanStateResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 25;
+  friend void swap(ScanStateResponse& a, ScanStateResponse& b) { a.Swap(&b); }
+  inline void Swap(ScanStateResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ScanStateResponse* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ScanStateResponse* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ScanStateResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ScanStateResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ScanStateResponse& from) { ScanStateResponse::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ScanStateResponse* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.ScanStateResponse"; }
+
+  explicit ScanStateResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ScanStateResponse(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ScanStateResponse& from);
+  ScanStateResponse(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ScanStateResponse&& from) noexcept
+      : ScanStateResponse(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kInstanceIdFieldNumber = 1,
+    kMessageFieldNumber = 4,
+    kStateFieldNumber = 2,
+    kStreamActiveFieldNumber = 3,
+    kUpdatedAtMsFieldNumber = 5,
+  };
+  // string instance_id = 1;
+  void clear_instance_id() ;
+  const ::std::string& instance_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_instance_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_instance_id();
+  void set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_instance_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_instance_id();
+
+  public:
+  // string message = 4;
+  void clear_message() ;
+  const ::std::string& message() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_message(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_message();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_message();
+  void set_allocated_message(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_message() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_message(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_message();
+
+  public:
+  // .vna.ScanState state = 2;
+  void clear_state() ;
+  ::vna::ScanState state() const;
+  void set_state(::vna::ScanState value);
+
+  private:
+  ::vna::ScanState _internal_state() const;
+  void _internal_set_state(::vna::ScanState value);
+
+  public:
+  // bool stream_active = 3;
+  void clear_stream_active() ;
+  bool stream_active() const;
+  void set_stream_active(bool value);
+
+  private:
+  bool _internal_stream_active() const;
+  void _internal_set_stream_active(bool value);
+
+  public:
+  // uint64 updated_at_ms = 5;
+  void clear_updated_at_ms() ;
+  ::uint64_t updated_at_ms() const;
+  void set_updated_at_ms(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_updated_at_ms() const;
+  void _internal_set_updated_at_ms(::uint64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.ScanStateResponse)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 5,
+                                   0, 48,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ScanStateResponse& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    ::google::protobuf::internal::ArenaStringPtr message_;
+    int state_;
+    bool stream_active_;
+    ::uint64_t updated_at_ms_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ScanStateResponse_class_data_;
+// -------------------------------------------------------------------
+
+class ScanStateRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.ScanStateRequest) */ {
+ public:
+  inline ScanStateRequest() : ScanStateRequest(nullptr) {}
+  ~ScanStateRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ScanStateRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ScanStateRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ScanStateRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline ScanStateRequest(const ScanStateRequest& from) : ScanStateRequest(nullptr, from) {}
+  inline ScanStateRequest(ScanStateRequest&& from) noexcept
+      : ScanStateRequest(nullptr, ::std::move(from)) {}
+  inline ScanStateRequest& operator=(const ScanStateRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ScanStateRequest& operator=(ScanStateRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ScanStateRequest& default_instance() {
+    return *reinterpret_cast<const ScanStateRequest*>(
+        &_ScanStateRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 24;
+  friend void swap(ScanStateRequest& a, ScanStateRequest& b) { a.Swap(&b); }
+  inline void Swap(ScanStateRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ScanStateRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ScanStateRequest* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ScanStateRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ScanStateRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ScanStateRequest& from) { ScanStateRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ScanStateRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.ScanStateRequest"; }
+
+  explicit ScanStateRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  ScanStateRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const ScanStateRequest& from);
+  ScanStateRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, ScanStateRequest&& from) noexcept
+      : ScanStateRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kInstanceIdFieldNumber = 1,
+    kDesiredStateFieldNumber = 2,
+  };
+  // string instance_id = 1;
+  void clear_instance_id() ;
+  const ::std::string& instance_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_instance_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_instance_id();
+  void set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_instance_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_instance_id();
+
+  public:
+  // .vna.ScanState desired_state = 2;
+  void clear_desired_state() ;
+  ::vna::ScanState desired_state() const;
+  void set_desired_state(::vna::ScanState value);
+
+  private:
+  ::vna::ScanState _internal_desired_state() const;
+  void _internal_set_desired_state(::vna::ScanState value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.ScanStateRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2,
+                                   0, 40,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const ScanStateRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    int desired_state_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull ScanStateRequest_class_data_;
 // -------------------------------------------------------------------
 
 class SParameterPoint final : public ::google::protobuf::Message
@@ -9697,6 +10203,309 @@ inline void InstanceCapabilities::_internal_set_max_sampling_rate_ghz(double val
 
 // -------------------------------------------------------------------
 
+// ScanStateRequest
+
+// string instance_id = 1;
+inline void ScanStateRequest::clear_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& ScanStateRequest::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ScanStateRequest.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ScanStateRequest::set_instance_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ScanStateRequest.instance_id)
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateRequest::mutable_instance_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:vna.ScanStateRequest.instance_id)
+  return _s;
+}
+inline const ::std::string& ScanStateRequest::_internal_instance_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.instance_id_.Get();
+}
+inline void ScanStateRequest::_internal_set_instance_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateRequest::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ScanStateRequest::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ScanStateRequest.instance_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.instance_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ScanStateRequest::set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ScanStateRequest.instance_id)
+}
+
+// .vna.ScanState desired_state = 2;
+inline void ScanStateRequest::clear_desired_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.desired_state_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline ::vna::ScanState ScanStateRequest::desired_state() const {
+  // @@protoc_insertion_point(field_get:vna.ScanStateRequest.desired_state)
+  return _internal_desired_state();
+}
+inline void ScanStateRequest::set_desired_state(::vna::ScanState value) {
+  _internal_set_desired_state(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.ScanStateRequest.desired_state)
+}
+inline ::vna::ScanState ScanStateRequest::_internal_desired_state() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::vna::ScanState>(_impl_.desired_state_);
+}
+inline void ScanStateRequest::_internal_set_desired_state(::vna::ScanState value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.desired_state_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// ScanStateResponse
+
+// string instance_id = 1;
+inline void ScanStateResponse::clear_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& ScanStateResponse::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ScanStateResponse.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ScanStateResponse::set_instance_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ScanStateResponse.instance_id)
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateResponse::mutable_instance_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:vna.ScanStateResponse.instance_id)
+  return _s;
+}
+inline const ::std::string& ScanStateResponse::_internal_instance_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.instance_id_.Get();
+}
+inline void ScanStateResponse::_internal_set_instance_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateResponse::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ScanStateResponse::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ScanStateResponse.instance_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.instance_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ScanStateResponse::set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ScanStateResponse.instance_id)
+}
+
+// .vna.ScanState state = 2;
+inline void ScanStateResponse::clear_state() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.state_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline ::vna::ScanState ScanStateResponse::state() const {
+  // @@protoc_insertion_point(field_get:vna.ScanStateResponse.state)
+  return _internal_state();
+}
+inline void ScanStateResponse::set_state(::vna::ScanState value) {
+  _internal_set_state(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.ScanStateResponse.state)
+}
+inline ::vna::ScanState ScanStateResponse::_internal_state() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return static_cast<::vna::ScanState>(_impl_.state_);
+}
+inline void ScanStateResponse::_internal_set_state(::vna::ScanState value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.state_ = value;
+}
+
+// bool stream_active = 3;
+inline void ScanStateResponse::clear_stream_active() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.stream_active_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline bool ScanStateResponse::stream_active() const {
+  // @@protoc_insertion_point(field_get:vna.ScanStateResponse.stream_active)
+  return _internal_stream_active();
+}
+inline void ScanStateResponse::set_stream_active(bool value) {
+  _internal_set_stream_active(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:vna.ScanStateResponse.stream_active)
+}
+inline bool ScanStateResponse::_internal_stream_active() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.stream_active_;
+}
+inline void ScanStateResponse::_internal_set_stream_active(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.stream_active_ = value;
+}
+
+// string message = 4;
+inline void ScanStateResponse::clear_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.message_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& ScanStateResponse::message() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.ScanStateResponse.message)
+  return _internal_message();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void ScanStateResponse::set_message(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.ScanStateResponse.message)
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateResponse::mutable_message()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_message();
+  // @@protoc_insertion_point(field_mutable:vna.ScanStateResponse.message)
+  return _s;
+}
+inline const ::std::string& ScanStateResponse::_internal_message() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.message_.Get();
+}
+inline void ScanStateResponse::_internal_set_message(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.message_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL ScanStateResponse::_internal_mutable_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.message_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE ScanStateResponse::release_message() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.ScanStateResponse.message)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.message_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.message_.Set("", GetArena());
+  }
+  return released;
+}
+inline void ScanStateResponse::set_allocated_message(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.message_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.message_.IsDefault()) {
+    _impl_.message_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.ScanStateResponse.message)
+}
+
+// uint64 updated_at_ms = 5;
+inline void ScanStateResponse::clear_updated_at_ms() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.updated_at_ms_ = ::uint64_t{0u};
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline ::uint64_t ScanStateResponse::updated_at_ms() const {
+  // @@protoc_insertion_point(field_get:vna.ScanStateResponse.updated_at_ms)
+  return _internal_updated_at_ms();
+}
+inline void ScanStateResponse::set_updated_at_ms(::uint64_t value) {
+  _internal_set_updated_at_ms(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:vna.ScanStateResponse.updated_at_ms)
+}
+inline ::uint64_t ScanStateResponse::_internal_updated_at_ms() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.updated_at_ms_;
+}
+inline void ScanStateResponse::_internal_set_updated_at_ms(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.updated_at_ms_ = value;
+}
+
+// -------------------------------------------------------------------
+
 // ServiceStatus
 
 // bool ready = 1;
@@ -10255,6 +11064,12 @@ struct is_proto_enum<::vna::ExcitationMode> : std::true_type {};
 template <>
 inline const EnumDescriptor* PROTOBUF_NONNULL GetEnumDescriptor<::vna::ExcitationMode>() {
   return ::vna::ExcitationMode_descriptor();
+}
+template <>
+struct is_proto_enum<::vna::ScanState> : std::true_type {};
+template <>
+inline const EnumDescriptor* PROTOBUF_NONNULL GetEnumDescriptor<::vna::ScanState>() {
+  return ::vna::ScanState_descriptor();
 }
 
 }  // namespace protobuf

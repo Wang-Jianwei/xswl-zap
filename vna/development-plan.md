@@ -5717,6 +5717,51 @@ WU-VSCODE-010: VS Code 波形扫描状态机与交互刷新修复
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.293 已完成 Work Unit
+
+WU-VSCODE-011: 扫描状态后端主导化（Set/GetScanState）
+
+- Objective: 将 `hold/continuous/single` 状态控制收敛为后端单一真值，前端仅展示后端确认态。
+- Scope (in/out):
+  - in: proto 新增 `ScanState`、`SetScanState`、`GetScanState`；gRPC 服务实现实例级扫描状态机；前端改为调用 RPC 并按回包更新状态。
+  - out: 重构硬件驱动底层采样算法。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-011):
+  - `vna/proto/vna.proto`
+  - `vna/generated/cpp/vna.pb.h`
+  - `vna/generated/cpp/vna.pb.cc`
+  - `vna/generated/cpp/vna.grpc.pb.h`
+  - `vna/generated/cpp/vna.grpc.pb.cc`
+  - `vna/generated/ts/vna.ts`
+  - `vna/include/service/grpc/vna_control_grpc_service.h`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/grpc_service_status_mapping_test.cpp`
+  - `vna/tools/vscode-extension/src/serviceClient.ts`
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 有（`VnaControl` 新增 `SetScanState/GetScanState` 与 `ScanState*` 消息/枚举）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `cd vna && cmake --build --preset grpc-mingw64 --target vna_grpc_service_status_mapping_test`
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe`
+- Rollback plan: 回滚本次提交，恢复前端本地状态机方案。
+- Risks: `single` 模式在流内自动切 `hold`，若前端不拉取状态可能存在短暂显示滞后；本次以后端回包为主线规避错误切换。
+- Acceptance criteria:
+  - 点击 `hold/continuous/single` 必须先经后端确认，前端再更新状态。
+  - `hold -> continuous` 可恢复持续更新。
+  - 前后端回归测试通过。
+
+- Validation result (WU-VSCODE-011):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+  - `cd vna && cmake --build --preset grpc-mingw64 --target vna_grpc_service_status_mapping_test` 通过
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe` 通过（exit=0）
+
+- Closure notes (WU-VSCODE-011):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

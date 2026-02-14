@@ -47,6 +47,31 @@ int main() {
       4,
       10);
 
+  vna::ScanStateRequest setHold;
+  setHold.set_instance_id("inst0");
+  setHold.set_desired_state(vna::ScanState::SCAN_STATE_HOLD);
+  vna::ScanStateResponse setHoldResp;
+  grpc::Status setHoldStatus = grpcService.SetScanState(nullptr, &setHold, &setHoldResp);
+  assert(setHoldStatus.ok());
+  assert(setHoldResp.state() == vna::ScanState::SCAN_STATE_HOLD);
+  assert(!setHoldResp.stream_active());
+
+  vna::InstanceSelector stateReq;
+  stateReq.set_instance_id("inst0");
+  vna::ScanStateResponse stateResp;
+  grpc::Status getStateStatus = grpcService.GetScanState(nullptr, &stateReq, &stateResp);
+  assert(getStateStatus.ok());
+  assert(stateResp.state() == vna::ScanState::SCAN_STATE_HOLD);
+
+  vna::ScanStateRequest setContinuous;
+  setContinuous.set_instance_id("inst0");
+  setContinuous.set_desired_state(vna::ScanState::SCAN_STATE_CONTINUOUS);
+  vna::ScanStateResponse setContinuousResp;
+  grpc::Status setContinuousStatus = grpcService.SetScanState(nullptr, &setContinuous, &setContinuousResp);
+  assert(setContinuousStatus.ok());
+  assert(setContinuousResp.state() == vna::ScanState::SCAN_STATE_CONTINUOUS);
+  assert(setContinuousResp.stream_active());
+
     vna::InstanceSelector capsRequest;
     capsRequest.set_instance_id("inst0");
     vna::InstanceCapabilities capsResponse;
