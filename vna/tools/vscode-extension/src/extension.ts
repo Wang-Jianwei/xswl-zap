@@ -419,8 +419,6 @@ export function activate(context: vscode.ExtensionContext): void {
       let latestWaveformForUi: WaveformPreviewData | null = null;
       let liveAbortController: AbortController | undefined;
       let liveOverlayState = createLiveWaveformOverlayState();
-      let suspendRenderUntilMs = 0;
-      let uiInteractionActive = false;
       let lastRenderAtMs = 0;
       let webviewInitialized = false;
       let postMessageInFlight = false;
@@ -522,10 +520,6 @@ export function activate(context: vscode.ExtensionContext): void {
               return;
             }
           }
-          if (state === "hold" && liveAbortController && !liveAbortController.signal.aborted) {
-            liveAbortController.abort();
-            liveStreamActive = false;
-          }
           if (latestWaveformForUi) {
             renderWaveform(latestWaveformForUi);
           }
@@ -533,9 +527,7 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         if (payload.type === "ui-interaction") {
-          const active = Boolean((message as { active?: boolean }).active);
-          uiInteractionActive = active;
-          suspendRenderUntilMs = Date.now() + (active ? 1500 : 250);
+          // keep channel for compatibility; rendering no longer pauses on hover/interaction.
           return;
         }
 
@@ -623,10 +615,6 @@ export function activate(context: vscode.ExtensionContext): void {
                   }
                   liveSingleConsumed = true;
                   currentScanState = "hold";
-                  if (liveAbortController && !liveAbortController.signal.aborted) {
-                    liveAbortController.abort();
-                    liveStreamActive = false;
-                  }
                   renderWaveform(enhanced.waveform);
                   progress.report({
                     message: `frames=${frameCount}, points=${enhanced.waveform.points.length}, traces=${enhanced.waveform.traces.length}, scan=${currentScanState}`,
@@ -635,9 +623,6 @@ export function activate(context: vscode.ExtensionContext): void {
                 }
 
                 if (frameCount === 1 || frameCount % 3 === 0) {
-                  if (uiInteractionActive || nowMs < suspendRenderUntilMs) {
-                    return;
-                  }
                   const minRenderIntervalMs = estimateRenderIntervalMs(enhanced.waveform);
                   if (nowMs - lastRenderAtMs < minRenderIntervalMs) {
                     return;

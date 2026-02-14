@@ -133,6 +133,60 @@ function resolveBrowserExecutable(): string {
     const s11Class = (await s11Legend.getAttribute("class")) ?? "";
     assert(s11Class.includes("is-hidden"));
 
+    const scanHold = page.locator("#scanHold");
+    const scanContinuous = page.locator("#scanContinuous");
+    const scanStatus = page.locator("#scanStatus");
+    await scanHold.click();
+    await page.waitForTimeout(30);
+
+    await page.evaluate(() => {
+      const global = globalThis as unknown as { postMessage: (message: unknown) => void };
+      global.postMessage({
+        type: "waveform-update",
+        payload: {
+          scanState: "hold",
+          scanStatusClass: "scan-status is-hold",
+          scanStatusText: "scan=hold | stream=running | frames=7",
+          canvasModel: {
+            width: 900,
+            height: 360,
+            bounds: { minX: 1, maxX: 2, minY: 0, maxY: 3 },
+            enableSmoothing: true,
+            enableEnvelope: true,
+            traces: [],
+          },
+        },
+      });
+    });
+    await page.waitForTimeout(30);
+    const holdText = (await scanStatus.textContent()) ?? "";
+    assert(holdText.includes("scan=hold"));
+
+    await scanContinuous.click();
+    await page.evaluate(() => {
+      const global = globalThis as unknown as { postMessage: (message: unknown) => void };
+      global.postMessage({
+        type: "waveform-update",
+        payload: {
+          scanState: "continuous",
+          scanStatusClass: "scan-status is-continuous",
+          scanStatusText: "scan=continuous | stream=running | frames=8",
+          canvasModel: {
+            width: 900,
+            height: 360,
+            bounds: { minX: 1, maxX: 2, minY: 0, maxY: 3 },
+            enableSmoothing: true,
+            enableEnvelope: true,
+            traces: [],
+          },
+        },
+      });
+    });
+    await page.waitForTimeout(30);
+    const continueText = (await scanStatus.textContent()) ?? "";
+    assert(continueText.includes("scan=continuous"));
+    assert(continueText.includes("frames=8"));
+
     assert.equal(pageErrors.length, 0, `webview page errors: ${pageErrors.join(" | ")}`);
 
     process.stdout.write("waveformPreview.ui.test passed\n");

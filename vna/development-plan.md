@@ -5683,6 +5683,40 @@ WU-VSCODE-009: VS Code 波形预览页面自适应无滚动改造
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.292 已完成 Work Unit
+
+WU-VSCODE-010: VS Code 波形扫描状态机与交互刷新修复
+
+- Objective: 修复 `hold -> continuous` 无法恢复持续更新与鼠标进入按钮区导致刷新停滞的问题。
+- Scope (in/out):
+  - in: 调整前端状态机（hold 不再取消流）；移除交互悬停渲染暂停门控；补充 UI 回归用例；同步文档。
+  - out: 后端采集算法与协议改动。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-010):
+  - `vna/tools/vscode-extension/src/extension.ts`
+  - `vna/tools/vscode-extension/test/waveformPreview.ui.test.ts`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅插件状态机与渲染调度策略修复）。
+- Test plan:
+  - `cd vna/tools/vscode-extension && npm run test`
+  - `cd vna/tools/vscode-extension && npm run test:ui`
+- Rollback plan: 回滚本次提交，恢复修复前行为。
+- Risks: hold 模式下流仍保持连接，可能带来轻微后台负载；但可保证 continue 快速恢复展示。
+- Acceptance criteria:
+  - `hold -> continuous` 可恢复持续刷新。
+  - 鼠标进入按钮/图例区域不再导致刷新停滞。
+  - 扩展回归与 UI 冒烟通过。
+
+- Validation result (WU-VSCODE-010):
+  - `cd vna/tools/vscode-extension && npm run test` 通过
+  - `cd vna/tools/vscode-extension && npm run test:ui` 通过
+
+- Closure notes (WU-VSCODE-010):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

@@ -121,6 +121,8 @@ flowchart LR
 - 修复图例/按钮交互选择器字符串引号转义错误导致的 Webview 脚本语法异常（`missing ) after argument list`）。
 - Canvas 渲染增加高 DPI 缩放适配（`devicePixelRatio` 背板缩放 + CSS 尺寸保持），提升高分屏下波形清晰度。
 - 预览页面改为响应式无滚动布局：波形区域占满剩余空间并随窗口尺寸自动重绘（`ResizeObserver` + `window.resize`），避免出现滚动条。
+- 修复扫描状态机：`hold` 仅暂停展示不主动中断流，切回 `continuous` 可恢复持续更新。
+- 修复交互区悬停导致刷新停滞问题：按钮/图例交互不再触发渲染暂停门控。
 - 支持预览类型选择：`snapshot`（单次）/`live`（持续自动刷新，直到取消）。
 - 当前渲染范围：
   - 频域帧：`|real + j imag|` 作为纵轴，`frequency_hz` 作为横轴。
