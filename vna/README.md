@@ -194,6 +194,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU275~WU277 进展）：后端 compare 成功摘要新增加速批次字段（`summary_token`、`summary_primary_profile`、`summary_health_level`），用于更快进行版本识别、主风险画像与健康等级判读。
 
+补充（WU278~WU280 进展）：已完善仿真模式波形生成链路（PXI/USB mock 信号模型引入频率相关起伏与帧间动态），并新增服务层“多点扫频非平坦”回归断言，确保 VS Code 插件端可见真实波动。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

@@ -36,6 +36,7 @@ class PXIDriver : public core::HardwareDriver {
   bool initialized_;
   double currentFrequencyHz_;
   double currentPowerDbm_;
+    std::uint64_t acquisitionCounter_;
   core::TriggerMode triggerMode_;
   core::TriggerEdge triggerEdge_;
 };

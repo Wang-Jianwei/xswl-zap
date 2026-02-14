@@ -1,5 +1,6 @@
 #include "drivers/pxi_driver.h"
 
+#include <algorithm>
 #include <cmath>
 
 namespace vna {
@@ -10,6 +11,7 @@ PXIDriver::PXIDriver(const std::string& sessionHandle)
       initialized_(false),
       currentFrequencyHz_(1e9),
       currentPowerDbm_(0.0),
+  acquisitionCounter_(0),
       triggerMode_(core::TriggerMode::kInternal),
       triggerEdge_(core::TriggerEdge::kRising) {}
 
@@ -81,12 +83,31 @@ core::DriverStatus PXIDriver::AcquireIq(std::vector<std::complex<double>>& sampl
   samples.clear();
   samples.reserve(sampleCount);
 
-  const double amplitude = std::pow(10.0, currentPowerDbm_ / 20.0);
+  const double kTwoPi = 6.283185307179586;
+  const double frequencyGhz = currentFrequencyHz_ / 1.0e9;
+  const double acquisitionPhase = static_cast<double>(acquisitionCounter_);
+  const double baseAmplitude = std::pow(10.0, currentPowerDbm_ / 20.0);
+  const double amplitudeRipple =
+      1.0 + 0.18 * std::sin(kTwoPi * 0.90 * frequencyGhz + acquisitionPhase * 0.13) +
+      0.05 * std::cos(kTwoPi * 2.10 * frequencyGhz);
+  const double envelope = std::max(1e-6, baseAmplitude * amplitudeRipple);
+  const double cycleCount = 1.1 + 0.45 * std::sin(kTwoPi * 0.42 * frequencyGhz + acquisitionPhase * 0.17);
+  const double phaseOffset = kTwoPi * 0.26 * frequencyGhz + acquisitionPhase * 0.12;
+  const double dcI = baseAmplitude * 0.05 * std::cos(kTwoPi * 0.37 * frequencyGhz + acquisitionPhase * 0.06);
+  const double dcQ = baseAmplitude * 0.04 * std::sin(kTwoPi * 0.41 * frequencyGhz + acquisitionPhase * 0.08);
+
   for (std::uint32_t index = 0; index < sampleCount; ++index) {
-    const double phase = (2.0 * 3.141592653589793 * static_cast<double>(index)) /
-                         static_cast<double>(sampleCount);
-    samples.push_back(std::complex<double>(amplitude * std::cos(phase), amplitude * std::sin(phase)));
+    const double t = static_cast<double>(index) / static_cast<double>(sampleCount);
+    const double phase = kTwoPi * cycleCount * t + phaseOffset;
+    const double burstModulation = 1.0 + 0.10 * std::sin(kTwoPi * 3.0 * t + kTwoPi * 0.15 * frequencyGhz);
+    const double harmonicPhase = phase * 2.8 + 0.65;
+    const double i = burstModulation * envelope * std::cos(phase) +
+                     0.12 * envelope * std::cos(harmonicPhase) + dcI;
+    const double q = burstModulation * envelope * std::sin(phase) +
+                     0.12 * envelope * std::sin(harmonicPhase * 0.92) + dcQ;
+    samples.push_back(std::complex<double>(i, q));
   }
+  acquisitionCounter_ += 1;
   return core::DriverStatus::kOk;
 }
 

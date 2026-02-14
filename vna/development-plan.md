@@ -4957,6 +4957,61 @@ WU-MAINLINE-277: 批次收敛与统一验证（WU275~277）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.260 已完成 Work Unit
+
+WU-MAINLINE-278: 仿真波形生成模型动态化增强
+
+- Objective: 解决仿真模式波形“平直无波动”的体验问题。
+- Scope (in/out):
+  - in: PXI/USB mock 驱动引入频率相关起伏、谐波成分与帧间动态。
+  - out: 真实硬件驱动行为重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.261 已完成 Work Unit
+
+WU-MAINLINE-279: 服务层新增非平坦波形回归断言
+
+- Objective: 防止仿真波形再次退化为近似常量曲线。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加多点扫频起伏断言。
+  - out: 插件端视觉快照测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.262 已完成 Work Unit
+
+WU-MAINLINE-280: 批次收敛与统一验证（WU278~280）
+
+- Objective: 以粗粒度 WU 完成仿真波形端到端增强闭环。
+- Scope (in/out):
+  - in: 聚合 mock 驱动、服务测试、文档并完成定向回归。
+  - out: gRPC/插件契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU278~280):
+  - `vna/include/drivers/pxi_driver.h`
+  - `vna/include/drivers/usb_vna_driver.h`
+  - `vna/src/drivers/pxi_driver.cpp`
+  - `vna/src/drivers/usb_vna_driver.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（仿真数据语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复上一版 mock 信号模型。
+- Risks: 仿真数据形态变化可能影响依赖“固定曲线”的外部截图比对。
+- Acceptance criteria:
+  - 仿真扫频结果在服务层可观测到非平坦起伏。
+  - 核心定向测试通过。
+
+- Validation result (WU278~280 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

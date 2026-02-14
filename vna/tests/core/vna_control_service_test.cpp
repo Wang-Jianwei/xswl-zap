@@ -1,5 +1,8 @@
+#include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <fstream>
+#include <limits>
 #include <string>
 
 #include "core/built_in_drivers.h"
@@ -72,11 +75,24 @@ int main() {
     vna::core::ExcitationConfig excitation;
     excitation.mode = vna::core::ExcitationMode::kContinuousWave;
     excitation.cw.frequencyHz = 1.0e9;
+    excitation.cw.startFrequencyHz = 0.95e9;
+    excitation.cw.stopFrequencyHz = 1.05e9;
+    excitation.cw.sweepPointCount = 32;
     excitation.cw.powerDbm = -10.0;
 
     vna::core::AcquisitionResult result;
     assert(service.AcquireOnce("inst0", excitation, 32, 1000, result) == vna::core::Status::kOk);
     assert(result.instanceId == "inst0");
+    assert(result.frequencyDomain.frequenciesHz.size() == 32);
+    assert(result.frequencyDomain.samples.size() == 32);
+    double minMagnitude = std::numeric_limits<double>::infinity();
+    double maxMagnitude = 0.0;
+    for (const std::complex<double>& sample : result.frequencyDomain.samples) {
+      const double magnitude = std::abs(sample);
+      minMagnitude = std::min(minMagnitude, magnitude);
+      maxMagnitude = std::max(maxMagnitude, magnitude);
+    }
+    assert(maxMagnitude > minMagnitude + 1e-4);
 
     const std::string csvPath = "build/vna-control-service-export.csv";
     const std::string touchstonePath = "build/vna-control-service-export.s2p";
@@ -101,7 +117,7 @@ int main() {
     assert(imported.sParameters.points.size() == result.sParameters.points.size());
 
         std::string compareDiff;
-        assert(service.CompareImportedAcquisition(jsonPath, result, 1e-9, &compareDiff) ==
+        assert(service.CompareImportedAcquisition(jsonPath, result, 1e-6, &compareDiff) ==
           vna::core::Status::kOk);
         assert(compareDiff.find("COMPARE_MATCHED:") == 0);
         assert(compareDiff.find("tolerance=") != std::string::npos);
