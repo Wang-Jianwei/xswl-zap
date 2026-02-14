@@ -89,5 +89,32 @@ int main() {
   assert(processor.ApplyFrequencyDependentDiagonalFixtureCompensation(frequencyData, profiles) ==
          vna::core::Status::kInvalidArgument);
 
+  // Unsorted profile input should still be handled correctly via internal sort.
+  vna::core::SParameterData unsortedData;
+  vna::core::SParameterFrequencyPoint unsortedPoint = pointA;
+  unsortedPoint.frequencyHz = 2.0e9;
+       unsortedPoint.matrix[0] = s11Ideal * std::complex<double>(4.0, 0.0) * std::complex<double>(4.0, 0.0);
+       unsortedPoint.matrix[1] = s12Ideal * std::complex<double>(4.0, 0.0) * std::complex<double>(2.0, 0.0);
+       unsortedPoint.matrix[2] = s21Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(4.0, 0.0);
+       unsortedPoint.matrix[3] = s22Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(2.0, 0.0);
+  unsortedData.points.push_back(unsortedPoint);
+
+  std::vector<vna::core::processors::FrequencyPortTransferProfile> unsortedProfiles;
+  vna::core::processors::FrequencyPortTransferProfile high;
+  high.frequencyHz = 3.0e9;
+  high.portTransfer.push_back(std::complex<double>(6.0, 0.0));
+  high.portTransfer.push_back(std::complex<double>(3.0, 0.0));
+  unsortedProfiles.push_back(high);
+
+  vna::core::processors::FrequencyPortTransferProfile low;
+  low.frequencyHz = 1.0e9;
+  low.portTransfer.push_back(std::complex<double>(2.0, 0.0));
+  low.portTransfer.push_back(std::complex<double>(1.0, 0.0));
+  unsortedProfiles.push_back(low);
+
+  assert(processor.ApplyFrequencyDependentDiagonalFixtureCompensation(unsortedData, unsortedProfiles) ==
+         vna::core::Status::kOk);
+  assert(std::abs(unsortedData.points[0].matrix[0] - s11Ideal) < 1e-12);
+
   return 0;
 }

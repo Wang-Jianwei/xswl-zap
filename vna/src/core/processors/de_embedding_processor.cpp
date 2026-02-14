@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cmath>
+#include <algorithm>
 
 namespace {
 
@@ -30,21 +31,28 @@ bool BuildInterpolatedPortTransfer(
     return false;
   }
 
-  std::size_t lowerIndex = 0;
-  std::size_t upperIndex = profiles.size() - 1;
+  std::vector<vna::core::processors::FrequencyPortTransferProfile> sortedProfiles = profiles;
+  std::sort(sortedProfiles.begin(), sortedProfiles.end(),
+            [](const vna::core::processors::FrequencyPortTransferProfile& lhs,
+               const vna::core::processors::FrequencyPortTransferProfile& rhs) {
+              return lhs.frequencyHz < rhs.frequencyHz;
+            });
 
-  for (std::size_t i = 0; i < profiles.size(); ++i) {
-    if (profiles[i].frequencyHz <= frequencyHz) {
+  std::size_t lowerIndex = 0;
+  std::size_t upperIndex = sortedProfiles.size() - 1;
+
+  for (std::size_t i = 0; i < sortedProfiles.size(); ++i) {
+    if (sortedProfiles[i].frequencyHz <= frequencyHz) {
       lowerIndex = i;
     }
-    if (profiles[i].frequencyHz >= frequencyHz) {
+    if (sortedProfiles[i].frequencyHz >= frequencyHz) {
       upperIndex = i;
       break;
     }
   }
 
-  const vna::core::processors::FrequencyPortTransferProfile& lower = profiles[lowerIndex];
-  const vna::core::processors::FrequencyPortTransferProfile& upper = profiles[upperIndex];
+  const vna::core::processors::FrequencyPortTransferProfile& lower = sortedProfiles[lowerIndex];
+  const vna::core::processors::FrequencyPortTransferProfile& upper = sortedProfiles[upperIndex];
 
   if (!IsValidPortTransfer(lower.portTransfer, portCount) ||
       !IsValidPortTransfer(upper.portTransfer, portCount)) {

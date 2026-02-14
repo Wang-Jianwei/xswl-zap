@@ -6341,6 +6341,39 @@ WU-MAINLINE-031: 频点去嵌入插值增强
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.310 已完成 Work Unit
+
+WU-MAINLINE-032: 频点 profile 无序输入鲁棒性增强
+
+- Objective:
+  - 消除 frequency profile 对输入顺序的依赖，支持无序配置下仍可稳定完成插值去嵌入。
+- Scope (in/out):
+  - in: 去嵌入插值内部按频点排序；新增无序输入回归测试。
+  - out: 新增配置字段或修改 gRPC 契约。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-032):
+  - `vna/src/core/processors/de_embedding_processor.cpp`
+  - `vna/tests/core/de_embedding_processor_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\\easy_de_embedding_processor_test.exe`
+- Rollback plan: 回滚本次提交，恢复插值逻辑对输入顺序敏感的实现。
+- Risks: 内部排序引入极小额外开销；当前 profile 规模小，影响可忽略。
+- Acceptance criteria:
+  - 无序 frequency profiles 输入下去嵌入插值结果正确。
+  - 处理器测试通过。
+
+- Validation result (WU-MAINLINE-032):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_de_embedding_processor_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-032):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
