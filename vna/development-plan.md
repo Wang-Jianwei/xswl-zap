@@ -3237,6 +3237,148 @@ WU-MAINLINE-139: 批次收敛与统一验证（WU128~139）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.122 已完成 Work Unit
+
+WU-MAINLINE-140: compare 成功摘要增加全局最差类别标识
+
+- Objective: 在 matched 场景下快速识别最应优先排查的数据类别。
+- Scope (in/out):
+  - in: `worst_category` 摘要输出。
+  - out: 自动处置建议。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.123 已完成 Work Unit
+
+WU-MAINLINE-141: compare 成功摘要增加全局最差点位索引
+
+- Objective: 在 matched 场景下直接定位全局最差误差点。
+- Scope (in/out):
+  - in: `worst_max_at=point:<i>/<channel|value>:<j>` 摘要输出。
+  - out: 可视化高亮。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.124 已完成 Work Unit
+
+WU-MAINLINE-142: compare 成功摘要增加全局最差频点
+
+- Objective: 在 matched 场景下直接定位全局最差误差频点。
+- Scope (in/out):
+  - in: `worst_max_frequency_hz` 摘要输出。
+  - out: 频段聚合告警。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.125 已完成 Work Unit
+
+WU-MAINLINE-143: compare 成功摘要增加全局最差容差比
+
+- Objective: 快速判断全局最差误差相对容差的裕量。
+- Scope (in/out):
+  - in: `worst_max_delta_ratio` 摘要输出。
+  - out: 动态阈值策略。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.126 已完成 Work Unit
+
+WU-MAINLINE-144: compare 成功摘要增加全局最差分量方向
+
+- Objective: 指明全局最差误差主导于实部还是虚部。
+- Scope (in/out):
+  - in: `worst_max_component` 摘要输出。
+  - out: 分量级补偿建议。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.127 已完成 Work Unit
+
+WU-MAINLINE-145: compare 成功摘要增加全局最差有符号偏差
+
+- Objective: 指示全局最差误差方向，缩短排查路径。
+- Scope (in/out):
+  - in: `worst_max_signed_delta` 摘要输出。
+  - out: 历史漂移追踪。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.128 已完成 Work Unit
+
+WU-MAINLINE-146: comparator 全局最差选择逻辑统一
+
+- Objective: 统一从三类最大误差中选取全局最差项。
+- Scope (in/out):
+  - in: `BuildSummary` 内部按最大 delta 选择 worst。
+  - out: 独立评分模型。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.129 已完成 Work Unit
+
+WU-MAINLINE-147: comparator 回归断言补齐 worst 字段
+
+- Objective: 防止 worst 字段在后续迭代回归丢失。
+- Scope (in/out):
+  - in: `acquisition_comparator_test` 增加 `worst_*` 断言。
+  - out: 随机数据 fuzz。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.130 已完成 Work Unit
+
+WU-MAINLINE-148: service 回归断言补齐 worst 字段
+
+- Objective: 确保 service compare detail 全链路透传 worst 字段。
+- Scope (in/out):
+  - in: `vna_control_service_test` 增加 `worst_*` 断言。
+  - out: gRPC 客户端展示断言。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.131 已完成 Work Unit
+
+WU-MAINLINE-149: compare 成功摘要增强可读性（worst 分组）
+
+- Objective: 将全局最差信息集中输出，提升日志可读性。
+- Scope (in/out):
+  - in: `worst_*` 字段集中出现在 matched 摘要。
+  - out: 结构化 proto 字段重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.132 已完成 Work Unit
+
+WU-MAINLINE-150: 文档同步 worst 诊断语义
+
+- Objective: 保持 README 与计划文档和实现语义一致。
+- Scope (in/out):
+  - in: README 与 development-plan 更新本批诊断字段。
+  - out: 外部文档站同步。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.133 已完成 Work Unit
+
+WU-MAINLINE-151: 批次收敛与统一验证（WU140~151）
+
+- Objective: 大批次合并后端 compare 诊断简单 WU，提升单轮闭环效率。
+- Scope (in/out):
+  - in: 聚合 WU140~151 代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU140~151):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU128~139 诊断粒度。
+- Risks: detail 文本继续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情包含全局最差 `worst_*` 诊断字段。
+  - core/service 定向测试通过。
+
+- Validation result (WU140~151 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

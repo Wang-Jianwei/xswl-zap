@@ -165,6 +165,52 @@ struct ComparisonStats {
       tolerance == 0.0 ? 0.0 : (receiverCompRmsDelta / tolerance);
     const double sParameterRmsDeltaRatio =
       tolerance == 0.0 ? 0.0 : (sParameterRmsDelta / tolerance);
+
+    bool hasWorst = false;
+    const char* worstCategory = "none";
+    const char* worstComponent = "real";
+    const char* worstLocationLabel = "channel";
+    std::size_t worstPoint = 0;
+    std::size_t worstSubIndex = 0;
+    double worstFrequencyHz = 0.0;
+    double worstDelta = 0.0;
+    double worstSignedDelta = 0.0;
+
+    if (hasReceiverRawMax) {
+      hasWorst = true;
+      worstCategory = "receiver_raw";
+      worstComponent = receiverRawMaxIsReal ? "real" : "imag";
+      worstLocationLabel = "channel";
+      worstPoint = receiverRawMaxPoint;
+      worstSubIndex = receiverRawMaxChannel;
+      worstFrequencyHz = receiverRawMaxFrequencyHz;
+      worstDelta = receiverRawMaxDelta;
+      worstSignedDelta = receiverRawMaxSignedDelta;
+    }
+    if (hasReceiverCompMax && (!hasWorst || receiverCompMaxDelta > worstDelta)) {
+      hasWorst = true;
+      worstCategory = "receiver_comp";
+      worstComponent = receiverCompMaxIsReal ? "real" : "imag";
+      worstLocationLabel = "channel";
+      worstPoint = receiverCompMaxPoint;
+      worstSubIndex = receiverCompMaxChannel;
+      worstFrequencyHz = receiverCompMaxFrequencyHz;
+      worstDelta = receiverCompMaxDelta;
+      worstSignedDelta = receiverCompMaxSignedDelta;
+    }
+    if (hasSParameterMax && (!hasWorst || sParameterMaxDelta > worstDelta)) {
+      hasWorst = true;
+      worstCategory = "sparameter";
+      worstComponent = sParameterMaxIsReal ? "real" : "imag";
+      worstLocationLabel = "value";
+      worstPoint = sParameterMaxPoint;
+      worstSubIndex = sParameterMaxValue;
+      worstFrequencyHz = sParameterMaxFrequencyHz;
+      worstDelta = sParameterMaxDelta;
+      worstSignedDelta = sParameterMaxSignedDelta;
+    }
+    const double worstDeltaRatio = tolerance == 0.0 ? 0.0 : (worstDelta / tolerance);
+
         stream << "tolerance=" << tolerance
           << ", samples=" << sampleCount
           << ", receiver_raw_samples=" << receiverRawSamples
@@ -180,6 +226,17 @@ struct ComparisonStats {
               << ", receiver_comp_rms_delta_ratio=" << receiverCompRmsDeltaRatio
               << ", sparameter_rms_delta=" << sParameterRmsDelta
               << ", sparameter_rms_delta_ratio=" << sParameterRmsDeltaRatio;
+
+            if (hasWorst) {
+              stream << ", worst_category=" << worstCategory
+                << ", worst_max_delta=" << worstDelta
+                << ", worst_max_delta_ratio=" << worstDeltaRatio
+                << ", worst_max_component=" << worstComponent
+                << ", worst_max_signed_delta=" << worstSignedDelta
+                << ", worst_max_frequency_hz=" << worstFrequencyHz
+                << ", worst_max_at=point:" << worstPoint
+                << "/" << worstLocationLabel << ":" << worstSubIndex;
+            }
 
             if (hasReceiverRawMax) {
               stream << ", receiver_raw_max_delta=" << receiverRawMaxDelta

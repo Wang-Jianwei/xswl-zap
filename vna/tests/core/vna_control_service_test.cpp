@@ -124,6 +124,10 @@ int main() {
         assert(compareDiff.find("sparameter_max_delta_ratio=") != std::string::npos);
         assert(compareDiff.find("receiver_raw_max_signed_delta=") != std::string::npos);
         assert(compareDiff.find("sparameter_max_signed_delta=") != std::string::npos);
+        assert(compareDiff.find("worst_category=") != std::string::npos);
+        assert(compareDiff.find("worst_max_delta_ratio=") != std::string::npos);
+        assert(compareDiff.find("worst_max_frequency_hz=") != std::string::npos);
+        assert(compareDiff.find("worst_max_at=point:") != std::string::npos);
 
         vna::core::AcquisitionResult altered = result;
         altered.sParameters.points[0].matrix[0] = std::complex<double>(123.0, 456.0);
