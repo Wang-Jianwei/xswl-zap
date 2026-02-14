@@ -274,6 +274,34 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
   return ::grpc::Status::OK;
 }
 
+::grpc::Status VnaControlGrpcService::GetInstanceCapabilities(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::InstanceSelector* request,
+    ::vna::InstanceCapabilities* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->instance_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "instance_id is required");
+  }
+
+  ::vna::core::HardwareCapabilities capabilities;
+  const ::vna::core::Status status = controlService_->GetInstanceCapabilities(
+      request->instance_id(), capabilities);
+  if (status != ::vna::core::Status::kOk) {
+    return ToGrpcStatus(status, "failed to get instance capabilities");
+  }
+
+  response->set_supports_pulse_excitation(capabilities.supportsPulseExcitation);
+  response->set_supports_multi_tone(capabilities.supportsMultiTone);
+  response->set_supports_external_clock(capabilities.supportsExternalClock);
+  response->set_min_pulse_width_ns(capabilities.minPulseWidthNs);
+  response->set_min_pulse_period_ns(capabilities.minPulsePeriodNs);
+  response->set_max_sampling_rate_ghz(capabilities.maxSamplingRateGhz);
+  return ::grpc::Status::OK;
+}
+
 ::grpc::Status VnaControlGrpcService::Acquire(::grpc::ServerContext* /*context*/,
                                               const ::vna::AcquisitionRequest* request,
                                               ::vna::AcquisitionResult* response) {

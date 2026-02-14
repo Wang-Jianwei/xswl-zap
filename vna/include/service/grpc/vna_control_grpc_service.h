@@ -27,6 +27,10 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
                                   const ::vna::Empty* request,
                                   ::vna::ServiceStatus* response) override;
 
+  ::grpc::Status GetInstanceCapabilities(::grpc::ServerContext* context,
+                                         const ::vna::InstanceSelector* request,
+                                         ::vna::InstanceCapabilities* response) override;
+
   ::grpc::Status Acquire(::grpc::ServerContext* context,
                          const ::vna::AcquisitionRequest* request,
                          ::vna::AcquisitionResult* response) override;

@@ -69,6 +69,16 @@ int main() {
     assert(service.ApplyTopology(topology, "ws0", 2) == vna::core::Status::kOk);
     assert(service.InstanceCount() == 1);
 
+    vna::core::HardwareCapabilities caps;
+    assert(service.GetInstanceCapabilities("inst0", caps) == vna::core::Status::kOk);
+    assert(caps.supportsPulseExcitation);
+    assert(caps.supportsMultiTone);
+    assert(caps.supportsExternalClock);
+    assert(caps.minPulseWidthNs > 0);
+    assert(caps.maxSamplingRateGhz > 0.0);
+
+    assert(service.GetInstanceCapabilities("missing-inst", caps) == vna::core::Status::kInvalidArgument);
+
     assert(service.Start() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 1);
 

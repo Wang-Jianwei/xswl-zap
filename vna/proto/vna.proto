@@ -157,6 +157,19 @@ message LeaseInfo {
   uint32 ttl_seconds = 3;
 }
 
+message InstanceSelector {
+  string instance_id = 1;
+}
+
+message InstanceCapabilities {
+  bool supports_pulse_excitation = 1;
+  bool supports_multi_tone = 2;
+  bool supports_external_clock = 3;
+  uint32 min_pulse_width_ns = 4;
+  uint32 min_pulse_period_ns = 5;
+  double max_sampling_rate_ghz = 6;
+}
+
 message ServiceStatus {
   bool ready = 1;
   string state = 2;
@@ -175,6 +188,7 @@ message ServiceStatus {
 service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
   rpc GetServiceStatus(Empty) returns (ServiceStatus);
+  rpc GetInstanceCapabilities(InstanceSelector) returns (InstanceCapabilities);
   rpc Acquire(AcquisitionRequest) returns (AcquisitionResult);
   rpc ImportAcquisition(ImportAcquisitionRequest) returns (AcquisitionResult);
   rpc CompareImportedAcquisition(CompareImportedAcquisitionRequest) returns (CompareImportedAcquisitionResponse);

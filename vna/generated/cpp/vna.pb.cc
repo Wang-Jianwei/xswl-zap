@@ -314,6 +314,63 @@ struct LeaseInfoDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LeaseInfoDefaultTypeInternal _LeaseInfo_default_instance_;
 
+inline constexpr InstanceSelector::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        instance_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+PROTOBUF_CONSTEXPR InstanceSelector::InstanceSelector(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(InstanceSelector_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct InstanceSelectorDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR InstanceSelectorDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~InstanceSelectorDefaultTypeInternal() {}
+  union {
+    InstanceSelector _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 InstanceSelectorDefaultTypeInternal _InstanceSelector_default_instance_;
+
+inline constexpr InstanceCapabilities::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        supports_pulse_excitation_{false},
+        supports_multi_tone_{false},
+        supports_external_clock_{false},
+        min_pulse_width_ns_{0u},
+        max_sampling_rate_ghz_{0},
+        min_pulse_period_ns_{0u} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR InstanceCapabilities::InstanceCapabilities(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(InstanceCapabilities_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct InstanceCapabilitiesDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR InstanceCapabilitiesDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~InstanceCapabilitiesDefaultTypeInternal() {}
+  union {
+    InstanceCapabilities _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 InstanceCapabilitiesDefaultTypeInternal _InstanceCapabilities_default_instance_;
+
 inline constexpr ImportAcquisitionRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -939,6 +996,26 @@ const ::uint32_t
         1,
         2,
         0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceSelector, _impl_._has_bits_),
+        4, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceSelector, _impl_.instance_id_),
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_._has_bits_),
+        9, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.supports_pulse_excitation_),
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.supports_multi_tone_),
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.supports_external_clock_),
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.min_pulse_width_ns_),
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.min_pulse_period_ns_),
+        PROTOBUF_FIELD_OFFSET(::vna::InstanceCapabilities, _impl_.max_sampling_rate_ghz_),
+        0,
+        1,
+        2,
+        3,
+        5,
+        4,
+        0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_._has_bits_),
         15, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::ServiceStatus, _impl_.ready_),
@@ -991,7 +1068,9 @@ static const ::_pbi::MigrationSchema
         {195, sizeof(::vna::TimeDomainFrame)},
         {202, sizeof(::vna::ResourceRequest)},
         {213, sizeof(::vna::LeaseInfo)},
-        {222, sizeof(::vna::ServiceStatus)},
+        {222, sizeof(::vna::InstanceSelector)},
+        {227, sizeof(::vna::InstanceCapabilities)},
+        {242, sizeof(::vna::ServiceStatus)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_Empty_default_instance_._instance,
@@ -1016,6 +1095,8 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_TimeDomainFrame_default_instance_._instance,
     &::vna::_ResourceRequest_default_instance_._instance,
     &::vna::_LeaseInfo_default_instance_._instance,
+    &::vna::_InstanceSelector_default_instance_._instance,
+    &::vna::_InstanceCapabilities_default_instance_._instance,
     &::vna::_ServiceStatus_default_instance_._instance,
 };
 const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
@@ -1081,44 +1162,52 @@ const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "urce_id\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022\021\n\te"
     "xclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G\n\tLe"
     "aseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resource_id"
-    "\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\376\001\n\rServiceS"
-    "tatus\022\r\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007m"
-    "essage\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_"
-    "address\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabl"
-    "ed\030\007 \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016instance_"
-    "count\030\t \001(\r\022\032\n\022active_lease_count\030\n \001(\r\022"
-    "\026\n\016bootstrap_mode\030\013 \001(\t\022\023\n\013config_path\030\014"
-    " \001(\t*d\n\016ExcitationMode\022\037\n\033EXCITATION_MOD"
-    "E_UNSPECIFIED\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022"
-    "\031\n\025EXCITATION_MODE_PULSE\020\0022\271\003\n\nVnaContro"
-    "l\0228\n\020ValidateTopology\022\r.vna.Topology\032\025.v"
-    "na.ValidationResult\0222\n\020GetServiceStatus\022"
-    "\n.vna.Empty\032\022.vna.ServiceStatus\022:\n\007Acqui"
-    "re\022\027.vna.AcquisitionRequest\032\026.vna.Acquis"
-    "itionResult\022J\n\021ImportAcquisition\022\035.vna.I"
-    "mportAcquisitionRequest\032\026.vna.Acquisitio"
-    "nResult\022m\n\032CompareImportedAcquisition\022&."
-    "vna.CompareImportedAcquisitionRequest\032\'."
-    "vna.CompareImportedAcquisitionResponse\022F"
-    "\n\021StreamAcquisition\022\027.vna.AcquisitionReq"
-    "uest\032\026.vna.AcquisitionResult0\0012\243\001\n\016Resou"
-    "rceBroker\022/\n\007Acquire\022\024.vna.ResourceReque"
-    "st\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vna.LeaseI"
-    "nfo\032\025.vna.ValidationResult\0220\n\007Release\022\016."
-    "vna.LeaseInfo\032\025.vna.ValidationResultb\006pr"
-    "oto3"
+    "\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\'\n\020InstanceS"
+    "elector\022\023\n\013instance_id\030\001 \001(\t\"\317\001\n\024Instanc"
+    "eCapabilities\022!\n\031supports_pulse_excitati"
+    "on\030\001 \001(\010\022\033\n\023supports_multi_tone\030\002 \001(\010\022\037\n"
+    "\027supports_external_clock\030\003 \001(\010\022\032\n\022min_pu"
+    "lse_width_ns\030\004 \001(\r\022\033\n\023min_pulse_period_n"
+    "s\030\005 \001(\r\022\035\n\025max_sampling_rate_ghz\030\006 \001(\001\"\376"
+    "\001\n\rServiceStatus\022\r\n\005ready\030\001 \001(\010\022\r\n\005state"
+    "\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001"
+    "(\004\022\024\n\014bind_address\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023"
+    "\n\013tls_enabled\030\007 \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026"
+    "\n\016instance_count\030\t \001(\r\022\032\n\022active_lease_c"
+    "ount\030\n \001(\r\022\026\n\016bootstrap_mode\030\013 \001(\t\022\023\n\013co"
+    "nfig_path\030\014 \001(\t*d\n\016ExcitationMode\022\037\n\033EXC"
+    "ITATION_MODE_UNSPECIFIED\020\000\022\026\n\022EXCITATION"
+    "_MODE_CW\020\001\022\031\n\025EXCITATION_MODE_PULSE\020\0022\206\004"
+    "\n\nVnaControl\0228\n\020ValidateTopology\022\r.vna.T"
+    "opology\032\025.vna.ValidationResult\0222\n\020GetSer"
+    "viceStatus\022\n.vna.Empty\032\022.vna.ServiceStat"
+    "us\022K\n\027GetInstanceCapabilities\022\025.vna.Inst"
+    "anceSelector\032\031.vna.InstanceCapabilities\022"
+    ":\n\007Acquire\022\027.vna.AcquisitionRequest\032\026.vn"
+    "a.AcquisitionResult\022J\n\021ImportAcquisition"
+    "\022\035.vna.ImportAcquisitionRequest\032\026.vna.Ac"
+    "quisitionResult\022m\n\032CompareImportedAcquis"
+    "ition\022&.vna.CompareImportedAcquisitionRe"
+    "quest\032\'.vna.CompareImportedAcquisitionRe"
+    "sponse\022F\n\021StreamAcquisition\022\027.vna.Acquis"
+    "itionRequest\032\026.vna.AcquisitionResult0\0012\243"
+    "\001\n\016ResourceBroker\022/\n\007Acquire\022\024.vna.Resou"
+    "rceRequest\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vn"
+    "a.LeaseInfo\032\025.vna.ValidationResult\0220\n\007Re"
+    "lease\022\016.vna.LeaseInfo\032\025.vna.ValidationRe"
+    "sultb\006proto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    3444,
+    3772,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
     nullptr,
     0,
-    23,
+    25,
     schemas,
     file_default_instances,
     TableStruct_vna_2eproto::offsets,
@@ -9126,6 +9215,680 @@ void LeaseInfo::InternalSwap(LeaseInfo* PROTOBUF_RESTRICT PROTOBUF_NONNULL other
 }
 
 ::google::protobuf::Metadata LeaseInfo::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class InstanceSelector::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<InstanceSelector>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(InstanceSelector, _impl_._has_bits_);
+};
+
+InstanceSelector::InstanceSelector(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, InstanceSelector_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.InstanceSelector)
+}
+PROTOBUF_NDEBUG_INLINE InstanceSelector::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::InstanceSelector& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        instance_id_(arena, from.instance_id_) {}
+
+InstanceSelector::InstanceSelector(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const InstanceSelector& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, InstanceSelector_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  InstanceSelector* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:vna.InstanceSelector)
+}
+PROTOBUF_NDEBUG_INLINE InstanceSelector::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        instance_id_(arena) {}
+
+inline void InstanceSelector::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+InstanceSelector::~InstanceSelector() {
+  // @@protoc_insertion_point(destructor:vna.InstanceSelector)
+  SharedDtor(*this);
+}
+inline void InstanceSelector::SharedDtor(MessageLite& self) {
+  InstanceSelector& this_ = static_cast<InstanceSelector&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.instance_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL InstanceSelector::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) InstanceSelector(arena);
+}
+constexpr auto InstanceSelector::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(InstanceSelector),
+                                            alignof(InstanceSelector));
+}
+constexpr auto InstanceSelector::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_InstanceSelector_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &InstanceSelector::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<InstanceSelector>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &InstanceSelector::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<InstanceSelector>(), &InstanceSelector::ByteSizeLong,
+              &InstanceSelector::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(InstanceSelector, _impl_._cached_size_),
+          false,
+      },
+      &InstanceSelector::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull InstanceSelector_class_data_ =
+        InstanceSelector::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+InstanceSelector::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&InstanceSelector_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(InstanceSelector_class_data_.tc_table);
+  return InstanceSelector_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 0, 40, 2>
+InstanceSelector::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(InstanceSelector, _impl_._has_bits_),
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    InstanceSelector_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::InstanceSelector>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string instance_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceSelector, _impl_.instance_id_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string instance_id = 1;
+    {PROTOBUF_FIELD_OFFSET(InstanceSelector, _impl_.instance_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\24\13\0\0\0\0\0\0"
+    "vna.InstanceSelector"
+    "instance_id"
+  }},
+};
+PROTOBUF_NOINLINE void InstanceSelector::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.InstanceSelector)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.instance_id_.ClearNonDefaultToEmpty();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL InstanceSelector::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const InstanceSelector& this_ = static_cast<const InstanceSelector&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL InstanceSelector::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const InstanceSelector& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.InstanceSelector)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string instance_id = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_instance_id().empty()) {
+      const ::std::string& _s = this_._internal_instance_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.InstanceSelector.instance_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.InstanceSelector)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t InstanceSelector::ByteSizeLong(const MessageLite& base) {
+  const InstanceSelector& this_ = static_cast<const InstanceSelector&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t InstanceSelector::ByteSizeLong() const {
+  const InstanceSelector& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.InstanceSelector)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+   {
+    // string instance_id = 1;
+    cached_has_bits = this_._impl_._has_bits_[0];
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_instance_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_instance_id());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void InstanceSelector::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<InstanceSelector*>(&to_msg);
+  auto& from = static_cast<const InstanceSelector&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.InstanceSelector)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!from._internal_instance_id().empty()) {
+      _this->_internal_set_instance_id(from._internal_instance_id());
+    } else {
+      if (_this->_impl_.instance_id_.IsDefault()) {
+        _this->_internal_set_instance_id("");
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void InstanceSelector::CopyFrom(const InstanceSelector& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.InstanceSelector)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void InstanceSelector::InternalSwap(InstanceSelector* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
+}
+
+::google::protobuf::Metadata InstanceSelector::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class InstanceCapabilities::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<InstanceCapabilities>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_._has_bits_);
+};
+
+InstanceCapabilities::InstanceCapabilities(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, InstanceCapabilities_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.InstanceCapabilities)
+}
+InstanceCapabilities::InstanceCapabilities(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const InstanceCapabilities& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, InstanceCapabilities_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+PROTOBUF_NDEBUG_INLINE InstanceCapabilities::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0} {}
+
+inline void InstanceCapabilities::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, supports_pulse_excitation_),
+           0,
+           offsetof(Impl_, min_pulse_period_ns_) -
+               offsetof(Impl_, supports_pulse_excitation_) +
+               sizeof(Impl_::min_pulse_period_ns_));
+}
+InstanceCapabilities::~InstanceCapabilities() {
+  // @@protoc_insertion_point(destructor:vna.InstanceCapabilities)
+  SharedDtor(*this);
+}
+inline void InstanceCapabilities::SharedDtor(MessageLite& self) {
+  InstanceCapabilities& this_ = static_cast<InstanceCapabilities&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL InstanceCapabilities::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) InstanceCapabilities(arena);
+}
+constexpr auto InstanceCapabilities::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(InstanceCapabilities),
+                                            alignof(InstanceCapabilities));
+}
+constexpr auto InstanceCapabilities::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_InstanceCapabilities_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &InstanceCapabilities::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<InstanceCapabilities>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &InstanceCapabilities::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<InstanceCapabilities>(), &InstanceCapabilities::ByteSizeLong,
+              &InstanceCapabilities::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_._cached_size_),
+          false,
+      },
+      &InstanceCapabilities::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull InstanceCapabilities_class_data_ =
+        InstanceCapabilities::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+InstanceCapabilities::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&InstanceCapabilities_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(InstanceCapabilities_class_data_.tc_table);
+  return InstanceCapabilities_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<3, 6, 0, 0, 2>
+InstanceCapabilities::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_._has_bits_),
+    0, // no _extensions_
+    6, 56,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967232,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    6,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    InstanceCapabilities_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::InstanceCapabilities>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // bool supports_pulse_excitation = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(InstanceCapabilities, _impl_.supports_pulse_excitation_), 0>(),
+     {8, 0, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_pulse_excitation_)}},
+    // bool supports_multi_tone = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(InstanceCapabilities, _impl_.supports_multi_tone_), 1>(),
+     {16, 1, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_multi_tone_)}},
+    // bool supports_external_clock = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(InstanceCapabilities, _impl_.supports_external_clock_), 2>(),
+     {24, 2, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_external_clock_)}},
+    // uint32 min_pulse_width_ns = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InstanceCapabilities, _impl_.min_pulse_width_ns_), 3>(),
+     {32, 3, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.min_pulse_width_ns_)}},
+    // uint32 min_pulse_period_ns = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(InstanceCapabilities, _impl_.min_pulse_period_ns_), 5>(),
+     {40, 5, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.min_pulse_period_ns_)}},
+    // double max_sampling_rate_ghz = 6;
+    {::_pbi::TcParser::FastF64S1,
+     {49, 4, 0,
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.max_sampling_rate_ghz_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // bool supports_pulse_excitation = 1;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_pulse_excitation_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool supports_multi_tone = 2;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_multi_tone_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // bool supports_external_clock = 3;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_external_clock_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // uint32 min_pulse_width_ns = 4;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.min_pulse_width_ns_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // uint32 min_pulse_period_ns = 5;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.min_pulse_period_ns_), _Internal::kHasBitsOffset + 5, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt32)},
+    // double max_sampling_rate_ghz = 6;
+    {PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.max_sampling_rate_ghz_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kDouble)},
+  }},
+  // no aux_entries
+  {{
+  }},
+};
+PROTOBUF_NOINLINE void InstanceCapabilities::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.InstanceCapabilities)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
+    ::memset(&_impl_.supports_pulse_excitation_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.min_pulse_period_ns_) -
+        reinterpret_cast<char*>(&_impl_.supports_pulse_excitation_)) + sizeof(_impl_.min_pulse_period_ns_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL InstanceCapabilities::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const InstanceCapabilities& this_ = static_cast<const InstanceCapabilities&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL InstanceCapabilities::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const InstanceCapabilities& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.InstanceCapabilities)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // bool supports_pulse_excitation = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (this_._internal_supports_pulse_excitation() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          1, this_._internal_supports_pulse_excitation(), target);
+    }
+  }
+
+  // bool supports_multi_tone = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (this_._internal_supports_multi_tone() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          2, this_._internal_supports_multi_tone(), target);
+    }
+  }
+
+  // bool supports_external_clock = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_supports_external_clock() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          3, this_._internal_supports_external_clock(), target);
+    }
+  }
+
+  // uint32 min_pulse_width_ns = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (this_._internal_min_pulse_width_ns() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          4, this_._internal_min_pulse_width_ns(), target);
+    }
+  }
+
+  // uint32 min_pulse_period_ns = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+    if (this_._internal_min_pulse_period_ns() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
+          5, this_._internal_min_pulse_period_ns(), target);
+    }
+  }
+
+  // double max_sampling_rate_ghz = 6;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    if (::absl::bit_cast<::uint64_t>(this_._internal_max_sampling_rate_ghz()) != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteDoubleToArray(
+          6, this_._internal_max_sampling_rate_ghz(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.InstanceCapabilities)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t InstanceCapabilities::ByteSizeLong(const MessageLite& base) {
+  const InstanceCapabilities& this_ = static_cast<const InstanceCapabilities&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t InstanceCapabilities::ByteSizeLong() const {
+  const InstanceCapabilities& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.InstanceCapabilities)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
+    // bool supports_pulse_excitation = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (this_._internal_supports_pulse_excitation() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool supports_multi_tone = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (this_._internal_supports_multi_tone() != 0) {
+        total_size += 2;
+      }
+    }
+    // bool supports_external_clock = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_supports_external_clock() != 0) {
+        total_size += 2;
+      }
+    }
+    // uint32 min_pulse_width_ns = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (this_._internal_min_pulse_width_ns() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_min_pulse_width_ns());
+      }
+    }
+    // double max_sampling_rate_ghz = 6;
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (::absl::bit_cast<::uint64_t>(this_._internal_max_sampling_rate_ghz()) != 0) {
+        total_size += 9;
+      }
+    }
+    // uint32 min_pulse_period_ns = 5;
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (this_._internal_min_pulse_period_ns() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
+            this_._internal_min_pulse_period_ns());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void InstanceCapabilities::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<InstanceCapabilities*>(&to_msg);
+  auto& from = static_cast<const InstanceCapabilities&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.InstanceCapabilities)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000003fU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (from._internal_supports_pulse_excitation() != 0) {
+        _this->_impl_.supports_pulse_excitation_ = from._impl_.supports_pulse_excitation_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (from._internal_supports_multi_tone() != 0) {
+        _this->_impl_.supports_multi_tone_ = from._impl_.supports_multi_tone_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_supports_external_clock() != 0) {
+        _this->_impl_.supports_external_clock_ = from._impl_.supports_external_clock_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (from._internal_min_pulse_width_ns() != 0) {
+        _this->_impl_.min_pulse_width_ns_ = from._impl_.min_pulse_width_ns_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      if (::absl::bit_cast<::uint64_t>(from._internal_max_sampling_rate_ghz()) != 0) {
+        _this->_impl_.max_sampling_rate_ghz_ = from._impl_.max_sampling_rate_ghz_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000020U)) {
+      if (from._internal_min_pulse_period_ns() != 0) {
+        _this->_impl_.min_pulse_period_ns_ = from._impl_.min_pulse_period_ns_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void InstanceCapabilities::CopyFrom(const InstanceCapabilities& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.InstanceCapabilities)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void InstanceCapabilities::InternalSwap(InstanceCapabilities* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.min_pulse_period_ns_)
+      + sizeof(InstanceCapabilities::_impl_.min_pulse_period_ns_)
+      - PROTOBUF_FIELD_OFFSET(InstanceCapabilities, _impl_.supports_pulse_excitation_)>(
+          reinterpret_cast<char*>(&_impl_.supports_pulse_excitation_),
+          reinterpret_cast<char*>(&other->_impl_.supports_pulse_excitation_));
+}
+
+::google::protobuf::Metadata InstanceCapabilities::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

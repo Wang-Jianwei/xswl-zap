@@ -156,6 +156,11 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
   return runtime_.AcquireOnce(instanceId, excitation, sampleCount, timeoutMs, out);
 }
 
+core::Status VnaControlService::GetInstanceCapabilities(const std::string& instanceId,
+                                                        core::HardwareCapabilities& out) const {
+  return runtime_.GetInstanceCapabilities(instanceId, out);
+}
+
 core::Status VnaControlService::ExportAcquisitionResult(const core::AcquisitionResult& result,
                                                        const std::string& csvPath,
                                                        const std::string& touchstonePath,

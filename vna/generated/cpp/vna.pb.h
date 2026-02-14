@@ -97,6 +97,14 @@ class ImportAcquisitionRequest;
 struct ImportAcquisitionRequestDefaultTypeInternal;
 extern ImportAcquisitionRequestDefaultTypeInternal _ImportAcquisitionRequest_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ImportAcquisitionRequest_class_data_;
+class InstanceCapabilities;
+struct InstanceCapabilitiesDefaultTypeInternal;
+extern InstanceCapabilitiesDefaultTypeInternal _InstanceCapabilities_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull InstanceCapabilities_class_data_;
+class InstanceSelector;
+struct InstanceSelectorDefaultTypeInternal;
+extern InstanceSelectorDefaultTypeInternal _InstanceSelector_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull InstanceSelector_class_data_;
 class LeaseInfo;
 struct LeaseInfoDefaultTypeInternal;
 extern LeaseInfoDefaultTypeInternal _LeaseInfo_default_instance_;
@@ -912,7 +920,7 @@ class ServiceStatus final : public ::google::protobuf::Message
     return *reinterpret_cast<const ServiceStatus*>(
         &_ServiceStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 22;
+  static constexpr int kIndexInFileMessages = 24;
   friend void swap(ServiceStatus& a, ServiceStatus& b) { a.Swap(&b); }
   inline void Swap(ServiceStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2362,6 +2370,451 @@ class LeaseInfo final : public ::google::protobuf::Message
 };
 
 extern const ::google::protobuf::internal::ClassDataFull LeaseInfo_class_data_;
+// -------------------------------------------------------------------
+
+class InstanceSelector final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.InstanceSelector) */ {
+ public:
+  inline InstanceSelector() : InstanceSelector(nullptr) {}
+  ~InstanceSelector() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(InstanceSelector* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(InstanceSelector));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR InstanceSelector(::google::protobuf::internal::ConstantInitialized);
+
+  inline InstanceSelector(const InstanceSelector& from) : InstanceSelector(nullptr, from) {}
+  inline InstanceSelector(InstanceSelector&& from) noexcept
+      : InstanceSelector(nullptr, ::std::move(from)) {}
+  inline InstanceSelector& operator=(const InstanceSelector& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline InstanceSelector& operator=(InstanceSelector&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const InstanceSelector& default_instance() {
+    return *reinterpret_cast<const InstanceSelector*>(
+        &_InstanceSelector_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 22;
+  friend void swap(InstanceSelector& a, InstanceSelector& b) { a.Swap(&b); }
+  inline void Swap(InstanceSelector* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(InstanceSelector* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  InstanceSelector* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<InstanceSelector>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const InstanceSelector& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const InstanceSelector& from) { InstanceSelector::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(InstanceSelector* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.InstanceSelector"; }
+
+  explicit InstanceSelector(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  InstanceSelector(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const InstanceSelector& from);
+  InstanceSelector(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, InstanceSelector&& from) noexcept
+      : InstanceSelector(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kInstanceIdFieldNumber = 1,
+  };
+  // string instance_id = 1;
+  void clear_instance_id() ;
+  const ::std::string& instance_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_instance_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_instance_id();
+  void set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_instance_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_instance_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.InstanceSelector)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1,
+                                   0, 40,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const InstanceSelector& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull InstanceSelector_class_data_;
+// -------------------------------------------------------------------
+
+class InstanceCapabilities final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.InstanceCapabilities) */ {
+ public:
+  inline InstanceCapabilities() : InstanceCapabilities(nullptr) {}
+  ~InstanceCapabilities() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(InstanceCapabilities* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(InstanceCapabilities));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR InstanceCapabilities(::google::protobuf::internal::ConstantInitialized);
+
+  inline InstanceCapabilities(const InstanceCapabilities& from) : InstanceCapabilities(nullptr, from) {}
+  inline InstanceCapabilities(InstanceCapabilities&& from) noexcept
+      : InstanceCapabilities(nullptr, ::std::move(from)) {}
+  inline InstanceCapabilities& operator=(const InstanceCapabilities& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline InstanceCapabilities& operator=(InstanceCapabilities&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const InstanceCapabilities& default_instance() {
+    return *reinterpret_cast<const InstanceCapabilities*>(
+        &_InstanceCapabilities_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 23;
+  friend void swap(InstanceCapabilities& a, InstanceCapabilities& b) { a.Swap(&b); }
+  inline void Swap(InstanceCapabilities* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(InstanceCapabilities* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  InstanceCapabilities* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<InstanceCapabilities>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const InstanceCapabilities& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const InstanceCapabilities& from) { InstanceCapabilities::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(InstanceCapabilities* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.InstanceCapabilities"; }
+
+  explicit InstanceCapabilities(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  InstanceCapabilities(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const InstanceCapabilities& from);
+  InstanceCapabilities(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, InstanceCapabilities&& from) noexcept
+      : InstanceCapabilities(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kSupportsPulseExcitationFieldNumber = 1,
+    kSupportsMultiToneFieldNumber = 2,
+    kSupportsExternalClockFieldNumber = 3,
+    kMinPulseWidthNsFieldNumber = 4,
+    kMaxSamplingRateGhzFieldNumber = 6,
+    kMinPulsePeriodNsFieldNumber = 5,
+  };
+  // bool supports_pulse_excitation = 1;
+  void clear_supports_pulse_excitation() ;
+  bool supports_pulse_excitation() const;
+  void set_supports_pulse_excitation(bool value);
+
+  private:
+  bool _internal_supports_pulse_excitation() const;
+  void _internal_set_supports_pulse_excitation(bool value);
+
+  public:
+  // bool supports_multi_tone = 2;
+  void clear_supports_multi_tone() ;
+  bool supports_multi_tone() const;
+  void set_supports_multi_tone(bool value);
+
+  private:
+  bool _internal_supports_multi_tone() const;
+  void _internal_set_supports_multi_tone(bool value);
+
+  public:
+  // bool supports_external_clock = 3;
+  void clear_supports_external_clock() ;
+  bool supports_external_clock() const;
+  void set_supports_external_clock(bool value);
+
+  private:
+  bool _internal_supports_external_clock() const;
+  void _internal_set_supports_external_clock(bool value);
+
+  public:
+  // uint32 min_pulse_width_ns = 4;
+  void clear_min_pulse_width_ns() ;
+  ::uint32_t min_pulse_width_ns() const;
+  void set_min_pulse_width_ns(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_min_pulse_width_ns() const;
+  void _internal_set_min_pulse_width_ns(::uint32_t value);
+
+  public:
+  // double max_sampling_rate_ghz = 6;
+  void clear_max_sampling_rate_ghz() ;
+  double max_sampling_rate_ghz() const;
+  void set_max_sampling_rate_ghz(double value);
+
+  private:
+  double _internal_max_sampling_rate_ghz() const;
+  void _internal_set_max_sampling_rate_ghz(double value);
+
+  public:
+  // uint32 min_pulse_period_ns = 5;
+  void clear_min_pulse_period_ns() ;
+  ::uint32_t min_pulse_period_ns() const;
+  void set_min_pulse_period_ns(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_min_pulse_period_ns() const;
+  void _internal_set_min_pulse_period_ns(::uint32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.InstanceCapabilities)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 6,
+                                   0, 0,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const InstanceCapabilities& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    bool supports_pulse_excitation_;
+    bool supports_multi_tone_;
+    bool supports_external_clock_;
+    ::uint32_t min_pulse_width_ns_;
+    double max_sampling_rate_ghz_;
+    ::uint32_t min_pulse_period_ns_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull InstanceCapabilities_class_data_;
 // -------------------------------------------------------------------
 
 class ImportAcquisitionRequest final : public ::google::protobuf::Message
@@ -9017,6 +9470,229 @@ inline ::uint32_t LeaseInfo::_internal_ttl_seconds() const {
 inline void LeaseInfo::_internal_set_ttl_seconds(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.ttl_seconds_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// InstanceSelector
+
+// string instance_id = 1;
+inline void InstanceSelector::clear_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& InstanceSelector::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.InstanceSelector.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void InstanceSelector::set_instance_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.InstanceSelector.instance_id)
+}
+inline ::std::string* PROTOBUF_NONNULL InstanceSelector::mutable_instance_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:vna.InstanceSelector.instance_id)
+  return _s;
+}
+inline const ::std::string& InstanceSelector::_internal_instance_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.instance_id_.Get();
+}
+inline void InstanceSelector::_internal_set_instance_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL InstanceSelector::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE InstanceSelector::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.InstanceSelector.instance_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.instance_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void InstanceSelector::set_allocated_instance_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.InstanceSelector.instance_id)
+}
+
+// -------------------------------------------------------------------
+
+// InstanceCapabilities
+
+// bool supports_pulse_excitation = 1;
+inline void InstanceCapabilities::clear_supports_pulse_excitation() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_pulse_excitation_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline bool InstanceCapabilities::supports_pulse_excitation() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.supports_pulse_excitation)
+  return _internal_supports_pulse_excitation();
+}
+inline void InstanceCapabilities::set_supports_pulse_excitation(bool value) {
+  _internal_set_supports_pulse_excitation(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.supports_pulse_excitation)
+}
+inline bool InstanceCapabilities::_internal_supports_pulse_excitation() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.supports_pulse_excitation_;
+}
+inline void InstanceCapabilities::_internal_set_supports_pulse_excitation(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_pulse_excitation_ = value;
+}
+
+// bool supports_multi_tone = 2;
+inline void InstanceCapabilities::clear_supports_multi_tone() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_multi_tone_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline bool InstanceCapabilities::supports_multi_tone() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.supports_multi_tone)
+  return _internal_supports_multi_tone();
+}
+inline void InstanceCapabilities::set_supports_multi_tone(bool value) {
+  _internal_set_supports_multi_tone(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.supports_multi_tone)
+}
+inline bool InstanceCapabilities::_internal_supports_multi_tone() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.supports_multi_tone_;
+}
+inline void InstanceCapabilities::_internal_set_supports_multi_tone(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_multi_tone_ = value;
+}
+
+// bool supports_external_clock = 3;
+inline void InstanceCapabilities::clear_supports_external_clock() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_external_clock_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline bool InstanceCapabilities::supports_external_clock() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.supports_external_clock)
+  return _internal_supports_external_clock();
+}
+inline void InstanceCapabilities::set_supports_external_clock(bool value) {
+  _internal_set_supports_external_clock(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.supports_external_clock)
+}
+inline bool InstanceCapabilities::_internal_supports_external_clock() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.supports_external_clock_;
+}
+inline void InstanceCapabilities::_internal_set_supports_external_clock(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.supports_external_clock_ = value;
+}
+
+// uint32 min_pulse_width_ns = 4;
+inline void InstanceCapabilities::clear_min_pulse_width_ns() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.min_pulse_width_ns_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline ::uint32_t InstanceCapabilities::min_pulse_width_ns() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.min_pulse_width_ns)
+  return _internal_min_pulse_width_ns();
+}
+inline void InstanceCapabilities::set_min_pulse_width_ns(::uint32_t value) {
+  _internal_set_min_pulse_width_ns(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.min_pulse_width_ns)
+}
+inline ::uint32_t InstanceCapabilities::_internal_min_pulse_width_ns() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.min_pulse_width_ns_;
+}
+inline void InstanceCapabilities::_internal_set_min_pulse_width_ns(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.min_pulse_width_ns_ = value;
+}
+
+// uint32 min_pulse_period_ns = 5;
+inline void InstanceCapabilities::clear_min_pulse_period_ns() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.min_pulse_period_ns_ = 0u;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000020U);
+}
+inline ::uint32_t InstanceCapabilities::min_pulse_period_ns() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.min_pulse_period_ns)
+  return _internal_min_pulse_period_ns();
+}
+inline void InstanceCapabilities::set_min_pulse_period_ns(::uint32_t value) {
+  _internal_set_min_pulse_period_ns(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000020U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.min_pulse_period_ns)
+}
+inline ::uint32_t InstanceCapabilities::_internal_min_pulse_period_ns() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.min_pulse_period_ns_;
+}
+inline void InstanceCapabilities::_internal_set_min_pulse_period_ns(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.min_pulse_period_ns_ = value;
+}
+
+// double max_sampling_rate_ghz = 6;
+inline void InstanceCapabilities::clear_max_sampling_rate_ghz() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.max_sampling_rate_ghz_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline double InstanceCapabilities::max_sampling_rate_ghz() const {
+  // @@protoc_insertion_point(field_get:vna.InstanceCapabilities.max_sampling_rate_ghz)
+  return _internal_max_sampling_rate_ghz();
+}
+inline void InstanceCapabilities::set_max_sampling_rate_ghz(double value) {
+  _internal_set_max_sampling_rate_ghz(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:vna.InstanceCapabilities.max_sampling_rate_ghz)
+}
+inline double InstanceCapabilities::_internal_max_sampling_rate_ghz() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.max_sampling_rate_ghz_;
+}
+inline void InstanceCapabilities::_internal_set_max_sampling_rate_ghz(double value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.max_sampling_rate_ghz_ = value;
 }
 
 // -------------------------------------------------------------------

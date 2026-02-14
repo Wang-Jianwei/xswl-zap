@@ -205,6 +205,19 @@ export interface LeaseInfo {
   ttlSeconds: number;
 }
 
+export interface InstanceSelector {
+  instanceId: string;
+}
+
+export interface InstanceCapabilities {
+  supportsPulseExcitation: boolean;
+  supportsMultiTone: boolean;
+  supportsExternalClock: boolean;
+  minPulseWidthNs: number;
+  minPulsePeriodNs: number;
+  maxSamplingRateGhz: number;
+}
+
 export interface ServiceStatus {
   ready: boolean;
   state: string;
@@ -2668,6 +2681,241 @@ export const LeaseInfo: MessageFns<LeaseInfo> = {
   },
 };
 
+function createBaseInstanceSelector(): InstanceSelector {
+  return { instanceId: "" };
+}
+
+export const InstanceSelector: MessageFns<InstanceSelector> = {
+  encode(message: InstanceSelector, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.instanceId !== "") {
+      writer.uint32(10).string(message.instanceId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): InstanceSelector {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseInstanceSelector();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.instanceId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): InstanceSelector {
+    return {
+      instanceId: isSet(object.instanceId)
+        ? globalThis.String(object.instanceId)
+        : isSet(object.instance_id)
+        ? globalThis.String(object.instance_id)
+        : "",
+    };
+  },
+
+  toJSON(message: InstanceSelector): unknown {
+    const obj: any = {};
+    if (message.instanceId !== "") {
+      obj.instanceId = message.instanceId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<InstanceSelector>, I>>(base?: I): InstanceSelector {
+    return InstanceSelector.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<InstanceSelector>, I>>(object: I): InstanceSelector {
+    const message = createBaseInstanceSelector();
+    message.instanceId = object.instanceId ?? "";
+    return message;
+  },
+};
+
+function createBaseInstanceCapabilities(): InstanceCapabilities {
+  return {
+    supportsPulseExcitation: false,
+    supportsMultiTone: false,
+    supportsExternalClock: false,
+    minPulseWidthNs: 0,
+    minPulsePeriodNs: 0,
+    maxSamplingRateGhz: 0,
+  };
+}
+
+export const InstanceCapabilities: MessageFns<InstanceCapabilities> = {
+  encode(message: InstanceCapabilities, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.supportsPulseExcitation !== false) {
+      writer.uint32(8).bool(message.supportsPulseExcitation);
+    }
+    if (message.supportsMultiTone !== false) {
+      writer.uint32(16).bool(message.supportsMultiTone);
+    }
+    if (message.supportsExternalClock !== false) {
+      writer.uint32(24).bool(message.supportsExternalClock);
+    }
+    if (message.minPulseWidthNs !== 0) {
+      writer.uint32(32).uint32(message.minPulseWidthNs);
+    }
+    if (message.minPulsePeriodNs !== 0) {
+      writer.uint32(40).uint32(message.minPulsePeriodNs);
+    }
+    if (message.maxSamplingRateGhz !== 0) {
+      writer.uint32(49).double(message.maxSamplingRateGhz);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): InstanceCapabilities {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseInstanceCapabilities();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.supportsPulseExcitation = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.supportsMultiTone = reader.bool();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.supportsExternalClock = reader.bool();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.minPulseWidthNs = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.minPulsePeriodNs = reader.uint32();
+          continue;
+        }
+        case 6: {
+          if (tag !== 49) {
+            break;
+          }
+
+          message.maxSamplingRateGhz = reader.double();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): InstanceCapabilities {
+    return {
+      supportsPulseExcitation: isSet(object.supportsPulseExcitation)
+        ? globalThis.Boolean(object.supportsPulseExcitation)
+        : isSet(object.supports_pulse_excitation)
+        ? globalThis.Boolean(object.supports_pulse_excitation)
+        : false,
+      supportsMultiTone: isSet(object.supportsMultiTone)
+        ? globalThis.Boolean(object.supportsMultiTone)
+        : isSet(object.supports_multi_tone)
+        ? globalThis.Boolean(object.supports_multi_tone)
+        : false,
+      supportsExternalClock: isSet(object.supportsExternalClock)
+        ? globalThis.Boolean(object.supportsExternalClock)
+        : isSet(object.supports_external_clock)
+        ? globalThis.Boolean(object.supports_external_clock)
+        : false,
+      minPulseWidthNs: isSet(object.minPulseWidthNs)
+        ? globalThis.Number(object.minPulseWidthNs)
+        : isSet(object.min_pulse_width_ns)
+        ? globalThis.Number(object.min_pulse_width_ns)
+        : 0,
+      minPulsePeriodNs: isSet(object.minPulsePeriodNs)
+        ? globalThis.Number(object.minPulsePeriodNs)
+        : isSet(object.min_pulse_period_ns)
+        ? globalThis.Number(object.min_pulse_period_ns)
+        : 0,
+      maxSamplingRateGhz: isSet(object.maxSamplingRateGhz)
+        ? globalThis.Number(object.maxSamplingRateGhz)
+        : isSet(object.max_sampling_rate_ghz)
+        ? globalThis.Number(object.max_sampling_rate_ghz)
+        : 0,
+    };
+  },
+
+  toJSON(message: InstanceCapabilities): unknown {
+    const obj: any = {};
+    if (message.supportsPulseExcitation !== false) {
+      obj.supportsPulseExcitation = message.supportsPulseExcitation;
+    }
+    if (message.supportsMultiTone !== false) {
+      obj.supportsMultiTone = message.supportsMultiTone;
+    }
+    if (message.supportsExternalClock !== false) {
+      obj.supportsExternalClock = message.supportsExternalClock;
+    }
+    if (message.minPulseWidthNs !== 0) {
+      obj.minPulseWidthNs = Math.round(message.minPulseWidthNs);
+    }
+    if (message.minPulsePeriodNs !== 0) {
+      obj.minPulsePeriodNs = Math.round(message.minPulsePeriodNs);
+    }
+    if (message.maxSamplingRateGhz !== 0) {
+      obj.maxSamplingRateGhz = message.maxSamplingRateGhz;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<InstanceCapabilities>, I>>(base?: I): InstanceCapabilities {
+    return InstanceCapabilities.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<InstanceCapabilities>, I>>(object: I): InstanceCapabilities {
+    const message = createBaseInstanceCapabilities();
+    message.supportsPulseExcitation = object.supportsPulseExcitation ?? false;
+    message.supportsMultiTone = object.supportsMultiTone ?? false;
+    message.supportsExternalClock = object.supportsExternalClock ?? false;
+    message.minPulseWidthNs = object.minPulseWidthNs ?? 0;
+    message.minPulsePeriodNs = object.minPulsePeriodNs ?? 0;
+    message.maxSamplingRateGhz = object.maxSamplingRateGhz ?? 0;
+    return message;
+  },
+};
+
 function createBaseServiceStatus(): ServiceStatus {
   return {
     ready: false,
@@ -2969,6 +3217,16 @@ export const VnaControlService = {
     responseSerialize: (value: ServiceStatus): Buffer => Buffer.from(ServiceStatus.encode(value).finish()),
     responseDeserialize: (value: Buffer): ServiceStatus => ServiceStatus.decode(value),
   },
+  getInstanceCapabilities: {
+    path: "/vna.VnaControl/GetInstanceCapabilities",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: InstanceSelector): Buffer => Buffer.from(InstanceSelector.encode(value).finish()),
+    requestDeserialize: (value: Buffer): InstanceSelector => InstanceSelector.decode(value),
+    responseSerialize: (value: InstanceCapabilities): Buffer =>
+      Buffer.from(InstanceCapabilities.encode(value).finish()),
+    responseDeserialize: (value: Buffer): InstanceCapabilities => InstanceCapabilities.decode(value),
+  },
   acquire: {
     path: "/vna.VnaControl/Acquire",
     requestStream: false,
@@ -3015,6 +3273,7 @@ export const VnaControlService = {
 export interface VnaControlServer extends UntypedServiceImplementation {
   validateTopology: handleUnaryCall<Topology, ValidationResult>;
   getServiceStatus: handleUnaryCall<Empty, ServiceStatus>;
+  getInstanceCapabilities: handleUnaryCall<InstanceSelector, InstanceCapabilities>;
   acquire: handleUnaryCall<AcquisitionRequest, AcquisitionResult>;
   importAcquisition: handleUnaryCall<ImportAcquisitionRequest, AcquisitionResult>;
   compareImportedAcquisition: handleUnaryCall<CompareImportedAcquisitionRequest, CompareImportedAcquisitionResponse>;
@@ -3051,6 +3310,21 @@ export interface VnaControlClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ServiceStatus) => void,
+  ): ClientUnaryCall;
+  getInstanceCapabilities(
+    request: InstanceSelector,
+    callback: (error: ServiceError | null, response: InstanceCapabilities) => void,
+  ): ClientUnaryCall;
+  getInstanceCapabilities(
+    request: InstanceSelector,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: InstanceCapabilities) => void,
+  ): ClientUnaryCall;
+  getInstanceCapabilities(
+    request: InstanceSelector,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: InstanceCapabilities) => void,
   ): ClientUnaryCall;
   acquire(
     request: AcquisitionRequest,

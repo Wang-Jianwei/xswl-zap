@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "core/excitation_mode.h"
+#include "core/hardware_driver.h"
 #include "core/measurement_data.h"
 #include "core/status.h"
 #include "core/topology_types.h"
@@ -47,6 +48,9 @@ class VnaControlService {
                           std::uint32_t sampleCount,
                           std::uint32_t timeoutMs,
                           core::AcquisitionResult& out);
+
+  core::Status GetInstanceCapabilities(const std::string& instanceId,
+                                       core::HardwareCapabilities& out) const;
 
   core::Status ExportAcquisitionResult(const core::AcquisitionResult& result,
                                        const std::string& csvPath,

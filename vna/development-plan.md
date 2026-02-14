@@ -5430,6 +5430,59 @@ WU-MAINLINE-302: 波形预览渲染引擎切换为 Canvas
 - Validation result (WU302):
   - `cd vna/tools/vscode-extension && npm run test` 通过
 
+### 8.285 已完成 Work Unit
+
+WU-MAINLINE-303: gRPC 新增实例能力探测接口
+
+- Objective: 将实例级硬件能力（pulse/multi-tone/external clock）从 core 上提到 gRPC 契约，供上层工具直接探测。
+- Scope (in/out):
+  - in: `proto` 新增 `GetInstanceCapabilities` 与能力消息；runtime/service/grpc 贯通实现；补充回归测试。
+  - out: 插件 UI 新命令与设置页展示。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU303):
+  - `vna/proto/vna.proto`
+  - `vna/include/core/instance_manager.h`
+  - `vna/src/core/instance_manager.cpp`
+  - `vna/include/core/vna_runtime.h`
+  - `vna/src/core/vna_runtime.cpp`
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/include/service/grpc/vna_control_grpc_service.h`
+  - `vna/src/service/grpc/vna_control_grpc_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/tests/core/grpc_service_status_mapping_test.cpp`
+  - `vna/generated/cpp/vna.pb.h`
+  - `vna/generated/cpp/vna.pb.cc`
+  - `vna/generated/cpp/vna.grpc.pb.h`
+  - `vna/generated/cpp/vna.grpc.pb.cc`
+  - `vna/generated/ts/vna.ts`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 有（`VnaControl` 新增 `GetInstanceCapabilities` RPC；新增 `InstanceSelector` / `InstanceCapabilities`）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_vna_control_service_test`
+  - `cd vna && cmake --build --preset grpc-mingw64 --target vna_grpc_service_status_mapping_test`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe`
+- Rollback plan: 回滚 WU303 相关提交，移除新增 RPC 与 service/runtime 能力查询接口，恢复原契约。
+- Risks: 新增 RPC 会要求客户端更新到新 stub；未更新客户端若使用旧方法不受影响（向后兼容新增方法）。
+- Acceptance criteria:
+  - `GetInstanceCapabilities` 可返回实例能力标志与阈值字段。
+  - 缺失实例 id 返回 `INVALID_ARGUMENT`。
+  - core 与 grpc 回归测试通过。
+
+- Validation result (WU303):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_vna_control_service_test` 通过
+  - `cd vna && cmake --build --preset grpc-mingw64 --target vna_grpc_service_status_mapping_test` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过（exit=0）
+  - `cd vna && .\build-grpc\easy_grpc_service_status_mapping_test.exe` 通过（exit=0）
+
+- Closure notes (WU303):
+  - Git baseline hash（收尾记录时）: `26b5859`
+  - 文档同步：已更新 `vna/README.md` 的 WU303 进展摘要。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

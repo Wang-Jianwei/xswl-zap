@@ -7,6 +7,7 @@
 #include <string>
 
 #include "core/excitation_mode.h"
+#include "core/hardware_driver.h"
 #include "core/instance_types.h"
 #include "core/measurement_data.h"
 #include "core/measurement_pipeline.h"
@@ -36,6 +37,9 @@ class InstanceManager {
                      std::uint32_t sampleCount,
                      std::uint32_t timeoutMs,
                      AcquisitionResult& out);
+
+  Status GetInstanceCapabilities(const std::string& instanceId,
+                                 HardwareCapabilities& out) const;
 
   std::size_t InstanceCount() const;
 

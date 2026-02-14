@@ -100,6 +100,11 @@ Status VnaRuntime::AcquireOnce(const std::string& instanceId,
   return instanceManager_.AcquireOnce(instanceId, excitation, sampleCount, timeoutMs, out);
 }
 
+Status VnaRuntime::GetInstanceCapabilities(const std::string& instanceId,
+                                           HardwareCapabilities& out) const {
+  return instanceManager_.GetInstanceCapabilities(instanceId, out);
+}
+
 std::size_t VnaRuntime::InstanceCount() const {
   return instanceManager_.InstanceCount();
 }

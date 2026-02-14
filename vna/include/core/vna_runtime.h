@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "core/excitation_mode.h"
+#include "core/hardware_driver.h"
 #include "core/instance_manager.h"
 #include "core/measurement_data.h"
 #include "core/resource_manager.h"
@@ -39,6 +40,9 @@ class VnaRuntime {
                      std::uint32_t sampleCount,
                      std::uint32_t timeoutMs,
                      AcquisitionResult& out);
+
+  Status GetInstanceCapabilities(const std::string& instanceId,
+                                 HardwareCapabilities& out) const;
 
   std::size_t InstanceCount() const;
   std::size_t ActiveLeaseCount() const;

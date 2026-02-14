@@ -14,7 +14,6 @@ InstanceManager::InstanceManager(ResourceManager* resourceManager)
 Status InstanceManager::CreateInstancesFromTopology(const Topology& topology,
                                                     const std::string& workspaceId,
                                                     std::uint32_t defaultLeaseTtlSeconds) {
-  std::lock_guard<std::mutex> lock(mutex_);
   TopologyManager topoManager;
   std::vector<InstanceConfig> configs;
   std::vector<std::string> errors;
@@ -164,6 +163,30 @@ Status InstanceManager::AcquireOnce(const std::string& instanceId,
 
   // Pre-GA: simplified lease handling - renew not automatic.
   return entry.pipeline->Acquire(instanceId, excitation, sampleCount, timeoutMs, out);
+}
+
+Status InstanceManager::GetInstanceCapabilities(const std::string& instanceId,
+                                                HardwareCapabilities& out) const {
+  std::lock_guard<std::mutex> lock(mutex_);
+  std::map<std::string, InstanceEntry>::const_iterator it = instances_.find(instanceId);
+  if (it == instances_.end()) {
+    return Status::kInvalidArgument;
+  }
+
+  if (it->second.coordinator && it->second.coordinator->GetDriver()) {
+    out = it->second.coordinator->GetDriver()->GetCapabilities();
+    return Status::kOk;
+  }
+
+  std::unique_ptr<HardwareDriver> driver = HardwareDriverFactory::CreateDriver(
+      it->second.config.driverType,
+      it->second.config.deviceIdentifier);
+  if (!driver) {
+    return Status::kInvalidArgument;
+  }
+
+  out = driver->GetCapabilities();
+  return Status::kOk;
 }
 
 std::size_t InstanceManager::InstanceCount() const {

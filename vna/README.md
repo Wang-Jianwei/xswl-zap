@@ -156,6 +156,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU302 进展）：波形图主渲染路径切换到 Canvas（替代 SVG），在上万点与多曲线高频刷新场景下降低 DOM 重排与重绘开销。
 
+补充（WU303 进展）：gRPC 已新增 `GetInstanceCapabilities` 接口（`InstanceSelector` -> `InstanceCapabilities`），可按实例查询 pulse/multi-tone/external-clock 能力及关键阈值，供上层工具在采集前做能力探测与降级决策。
+
 补充（WU91 进展）：后端 core 回放比对能力增强，`AcquisitionComparator` 增加 `max/rms` 误差统计与精确 mismatch 上下文（point/channel/value + delta），并贯通到 service/gRPC compare detail。
 
 补充（WU92~WU97 进展）：后端 compare 诊断继续增强，新增 tolerance/分组样本计数摘要、非有限值检测（NaN/Inf），并在 core/service 测试中覆盖成功与异常路径。
