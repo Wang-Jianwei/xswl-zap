@@ -6082,6 +6082,41 @@ WU-MAINLINE-024: 采集参数默认化（sample_count/timeout_ms）
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.303 已完成 Work Unit
+
+WU-MAINLINE-025: 去嵌入处理器 MVP（端口对角复数校正）
+
+- Objective:
+  - 新增 `DeEmbeddingProcessor`，提供 S 参数最小去嵌入能力：按端口对角复数传输系数对矩阵元素执行去夹具校正。
+- Scope (in/out):
+  - in: `core/processors` 新增去嵌入处理器实现、接入构建、独立单元测试。
+  - out: 修改 gRPC/proto 契约、引入完整 SOLT/TRL 标定流程。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-025):
+  - `vna/include/core/processors/de_embedding_processor.h`
+  - `vna/src/core/processors/de_embedding_processor.cpp`
+  - `vna/tests/core/de_embedding_processor_test.cpp`
+  - `vna/CMakeLists.txt`
+  - `vna/development-plan.md`
+- Contract impact: 无（仅新增 core 内部处理能力）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\easy_de_embedding_processor_test.exe`
+- Rollback plan: 回滚本次提交并移除新增测试目标。
+- Risks: 当前模型为简化端口对角校正，尚未覆盖频点相关夹具网络与交叉耦合；后续可在此基础扩展。
+- Acceptance criteria:
+  - 给定端口传输系数后，去嵌入结果可恢复预期 S 参数矩阵。
+  - 非法输入（空点集、端口系数数量不匹配、零系数）返回 `kInvalidArgument`。
+
+- Validation result (WU-MAINLINE-025):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_de_embedding_processor_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-025):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

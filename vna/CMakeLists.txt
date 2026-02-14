@@ -35,6 +35,7 @@ add_library(vna_core_bootstrap STATIC
     src/core/topology_parser.cpp
     src/core/vna_runtime.cpp
     src/core/trigger_chain_validator.cpp
+    src/core/processors/de_embedding_processor.cpp
     src/core/processors/time_domain_processor.cpp
     src/drivers/pxi_driver.cpp
     src/drivers/usb_vna_driver.cpp
@@ -233,6 +234,12 @@ if(XSWL_BUILD_TESTS)
     )
     target_link_libraries(vna_time_domain_processor_test PRIVATE vna_core_bootstrap)
     set_target_properties(vna_time_domain_processor_test PROPERTIES OUTPUT_NAME "easy_time_domain_processor_test")
+
+    add_executable(vna_de_embedding_processor_test
+        tests/core/de_embedding_processor_test.cpp
+    )
+    target_link_libraries(vna_de_embedding_processor_test PRIVATE vna_core_bootstrap)
+    set_target_properties(vna_de_embedding_processor_test PROPERTIES OUTPUT_NAME "easy_de_embedding_processor_test")
 
     add_executable(vna_trigger_chain_validator_test
         tests/core/trigger_chain_validator_test.cpp
