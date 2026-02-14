@@ -188,6 +188,8 @@ xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支�
 
 补充（WU256~WU263 进展）：后端 compare 成功摘要新增分类 digest（`receiver_raw_digest`、`receiver_comp_digest`、`sparameter_digest`）与 `overall_digest`，形成一致化短串体系用于日志检索与聚合。
 
+补充（WU264~WU271 进展）：后端 compare 成功摘要对 digest 关键字段实施固定键序输出（`receiver_raw/receiver_comp/sparameter/worst/overall`），降低日志文本 diff 噪声并提升回归稳定性。
+
 ### 非功能需求（SHOULD/CAN）
 
 1. 性能与响应：GUI 响应 < 200ms（一般交互），测量吞吐满足指定扫点配置

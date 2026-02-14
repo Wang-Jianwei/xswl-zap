@@ -160,6 +160,16 @@ int main() {
         assert(compareDiff.find("worst_max_point_zone=") != std::string::npos);
         assert(compareDiff.find("worst_max_profile=") != std::string::npos);
         assert(compareDiff.find("worst_digest=") != std::string::npos);
+
+        const std::size_t receiverRawDigestPos = compareDiff.find("receiver_raw_digest=");
+        const std::size_t receiverCompDigestPos = compareDiff.find("receiver_comp_digest=");
+        const std::size_t sParameterDigestPos = compareDiff.find("sparameter_digest=");
+        const std::size_t worstDigestPos = compareDiff.find("worst_digest=");
+        const std::size_t overallDigestPos = compareDiff.find("overall_digest=");
+        assert(receiverRawDigestPos < receiverCompDigestPos);
+        assert(receiverCompDigestPos < sParameterDigestPos);
+        assert(sParameterDigestPos < worstDigestPos);
+        assert(worstDigestPos < overallDigestPos);
         assert(compareDiff.find("worst_max_real_delta=") != std::string::npos);
         assert(compareDiff.find("worst_max_imag_delta=") != std::string::npos);
         assert(compareDiff.find("worst_max_at=point:") != std::string::npos);

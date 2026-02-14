@@ -4742,6 +4742,108 @@ WU-MAINLINE-263: 批次收敛与统一验证（WU256~263）
   - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
   - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
 
+### 8.246 已完成 Work Unit
+
+WU-MAINLINE-264: compare 成功摘要固定输出 receiver raw digest 键序
+
+- Objective: 固定 digest 关键字段顺序，减少文本 diff 噪声。
+- Scope (in/out):
+  - in: `receiver_raw_digest` 固定在 digest 区段首位输出。
+  - out: 全量字段排序重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.247 已完成 Work Unit
+
+WU-MAINLINE-265: compare 成功摘要固定输出 receiver compensated digest 键序
+
+- Objective: 保持 digest 区段中 receiver compensated 字段位置稳定。
+- Scope (in/out):
+  - in: `receiver_comp_digest` 固定位置输出。
+  - out: 全量字段排序重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.248 已完成 Work Unit
+
+WU-MAINLINE-266: compare 成功摘要固定输出 s-parameter digest 键序
+
+- Objective: 保持 digest 区段中 s-parameter 字段位置稳定。
+- Scope (in/out):
+  - in: `sparameter_digest` 固定位置输出。
+  - out: 全量字段排序重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.249 已完成 Work Unit
+
+WU-MAINLINE-267: compare 成功摘要固定输出 worst digest 键序
+
+- Objective: 保持 digest 区段中 worst 字段位置稳定。
+- Scope (in/out):
+  - in: `worst_digest` 固定位置输出。
+  - out: 全量字段排序重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.250 已完成 Work Unit
+
+WU-MAINLINE-268: compare 成功摘要固定输出 overall digest 键序
+
+- Objective: 保持 digest 区段中 overall 字段位置稳定并作为收束键。
+- Scope (in/out):
+  - in: `overall_digest` 固定末位输出。
+  - out: 全量字段排序重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.251 已完成 Work Unit
+
+WU-MAINLINE-269: comparator 去除条件分支内重复 digest 输出
+
+- Objective: 避免重复输出导致的键序漂移与噪声。
+- Scope (in/out):
+  - in: digest 输出统一收敛到基础区段。
+  - out: 其它字段重构。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.252 已完成 Work Unit
+
+WU-MAINLINE-270: core/service 回归补齐 digest 键序断言
+
+- Objective: 防止后续迭代破坏固定键序约束。
+- Scope (in/out):
+  - in: core/service 测试新增 digest 键顺序断言。
+  - out: 全字段顺序快照测试。
+- Status: ✅ Completed (2026-02-14)
+
+### 8.253 已完成 Work Unit
+
+WU-MAINLINE-271: 批次收敛与统一验证（WU264~271）
+
+- Objective: 合并 digest 键序稳定化轻量 WU，保持主线高频闭环。
+- Scope (in/out):
+  - in: 聚合 WU264~271 的代码/测试/文档并统一回归。
+  - out: compare RPC 契约升级。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU264~271):
+  - `vna/src/core/acquisition_comparator.cpp`
+  - `vna/tests/core/acquisition_comparator_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无（detail 文本语义增强）。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test`
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe`
+  - `cd vna && .\build\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本批提交，恢复 WU256~263 输出形态。
+- Risks: detail 文本持续增长；当前仍维持单字段透传，兼容性风险低。
+- Acceptance criteria:
+  - compare 成功详情中的 digest 字段保持固定顺序输出。
+  - core/service 定向测试通过。
+
+- Validation result (WU264~271 合并提交):
+  - `cd vna && cmake --build --preset ninja-mingw --target vna_acquisition_comparator_test vna_vna_control_service_test` 通过
+  - `cd vna && .\build\easy_acquisition_comparator_test.exe` 通过
+  - `cd vna && .\build\easy_vna_control_service_test.exe` 通过
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
