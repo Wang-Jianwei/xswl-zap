@@ -1,6 +1,7 @@
 param(
   [switch]$SkipBuild,
   [switch]$FailOnUnknownStderr,
+  [switch]$StrictMainline,
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
   [switch]$RunUiGrpcE2E,
@@ -81,6 +82,12 @@ $failureMessage = ""
 $resolvedResultJsonPath = Resolve-PathPlaceholders $ResultJsonPath
 $startedAtUtc = [DateTime]::UtcNow
 
+if ($StrictMainline) {
+  $RunUiGrpcE2E = $true
+  $FailOnUnknownStderr = $true
+  Write-Host "[GATE] strict mainline preset enabled: RunUiGrpcE2E=True, FailOnUnknownStderr=True"
+}
+
 try {
   if (-not [System.IO.Path]::IsPathRooted($resolvedReportPath)) {
     $resolvedReportPath = Join-Path $projectRoot $resolvedReportPath
@@ -151,6 +158,7 @@ try {
     finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
     resultJsonPath = $resolvedResultJsonPath
+    strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
@@ -165,7 +173,7 @@ try {
     $gateResult | ConvertTo-Json -Depth 6
   }
   else {
-    Write-Host "[GATE][RESULT] status=PASS reportPath=$resolvedReportPath runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec"
+    Write-Host "[GATE][RESULT] status=PASS reportPath=$resolvedReportPath strictMainline=$([bool]$StrictMainline) runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec"
   }
 
   Write-Host "[GATE][PASS] smoke report gate passed"
@@ -181,6 +189,7 @@ catch {
     finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
     resultJsonPath = $resolvedResultJsonPath
+    strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
@@ -195,7 +204,7 @@ catch {
     $gateResult | ConvertTo-Json -Depth 6
   }
   else {
-    Write-Host "[GATE][RESULT] status=FAIL reportPath=$resolvedReportPath runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec error=$failureMessage"
+    Write-Host "[GATE][RESULT] status=FAIL reportPath=$resolvedReportPath strictMainline=$([bool]$StrictMainline) runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec error=$failureMessage"
   }
 
   Write-Host "[GATE][FAIL] $failureMessage"

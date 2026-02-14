@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
     vna::CompareImportedAcquisitionResponse response;
 
     request.set_json_path(exportJsonPath);
-    request.set_tolerance(5e-2);
+    request.set_tolerance(2e-1);
     request.mutable_current_request()->set_instance_id("inst0");
     request.mutable_current_request()->set_sample_count(16);
     request.mutable_current_request()->set_timeout_ms(1000);

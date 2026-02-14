@@ -472,6 +472,7 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 - `durationMs`
 - `startedAtUtc` / `finishedAtUtc`
 - `reportPath` / `resultJsonPath`
+- `strictMainline` / `runUiGrpcE2E`
 - `failOnUnknownStderr` / `smokeTimeoutSec`
 - `failOnWarningCodes` / `matchedWarningCodes`
 - `error`
@@ -480,6 +481,23 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 
 ```powershell
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild -FailOnWarningCodes known_noise_suppressed
+```
+
+主线严格门禁预设（推荐主线分支/预提交）：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild -StrictMainline
+```
+
+`-StrictMainline` 会自动启用：
+
+- `-RunUiGrpcE2E`
+- `-FailOnUnknownStderr`
+
+如需在严格门禁中同时将 compare 告警升级为失败，可叠加：
+
+```powershell
+.\scripts\run_smoke_report_gate.ps1 -SkipBuild -StrictMainline -FailOnWarningCodes compare_mismatch_nonfatal
 ```
 
 输出报告摘要（适合 CI 日志单行展示）：
