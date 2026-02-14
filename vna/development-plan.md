@@ -6374,6 +6374,39 @@ WU-MAINLINE-032: 频点 profile 无序输入鲁棒性增强
   - 文档同步：已更新 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.311 已完成 Work Unit
+
+WU-MAINLINE-033: 去嵌入与时域采集兼容性修复
+
+- Objective:
+  - 修复去嵌入开启时对时域（pulse）采集的误伤：仅频域且存在 S 参数时才执行去嵌入处理。
+- Scope (in/out):
+  - in: `VnaControlService::AcquireOnce` 去嵌入触发条件收敛；新增 pulse 路径回归测试。
+  - out: 修改去嵌入算法本身或 gRPC 契约。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-033):
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本次提交，恢复去嵌入在所有采集结果上的强制执行行为。
+- Risks: 去嵌入在无 S 参数结果上不再报错，行为从“显式失败”改为“按数据类型自动跳过”；与业务语义一致。
+- Acceptance criteria:
+  - 去嵌入开启时，pulse/time-domain 采集仍可成功返回。
+  - 频域路径去嵌入行为保持不变。
+
+- Validation result (WU-MAINLINE-033):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_vna_control_service_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-033):
+  - 文档同步：已更新 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

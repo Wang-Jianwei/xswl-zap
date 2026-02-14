@@ -172,6 +172,11 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
   }
 
   if (deEmbeddingEnabled_) {
+    if (out.dataType != core::AcquisitionDataType::kFrequencyDomain ||
+        out.sParameters.points.empty()) {
+      return core::Status::kOk;
+    }
+
     if (!deEmbeddingFrequencyProfiles_.empty()) {
       return deEmbeddingProcessor_.ApplyFrequencyDependentDiagonalFixtureCompensation(
           out.sParameters, deEmbeddingFrequencyProfiles_);

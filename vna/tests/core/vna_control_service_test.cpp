@@ -264,6 +264,20 @@ int main() {
          assert(service.CompareImportedAcquisition(jsonPath, result, 1e-6, &deembedCompare) ==
            vna::core::Status::kOk);
          assert(deembedCompare.find("deembedding=on,mode=frequency") != std::string::npos);
+
+         vna::core::ExcitationConfig pulseExcitation;
+         pulseExcitation.mode = vna::core::ExcitationMode::kPulse;
+         pulseExcitation.pulse.centerFrequencyHz = 1.0e9;
+         pulseExcitation.pulse.powerDbm = -5.0;
+         pulseExcitation.pulse.pulseWidthNs = 20.0;
+         pulseExcitation.pulse.pulsePeriodNs = 100.0;
+         pulseExcitation.pulse.riseTimeNs = 2.0;
+         vna::core::AcquisitionResult pulseResult;
+         assert(service.AcquireOnce("inst0", pulseExcitation, 32, 1000, pulseResult) ==
+           vna::core::Status::kOk);
+         assert(pulseResult.dataType == vna::core::AcquisitionDataType::kTimeDomain);
+         assert(pulseResult.timeDomain.magnitude.size() == 32);
+
          service.SetDeEmbeddingEnabled(false);
 
         vna::core::AcquisitionResult altered = result;
