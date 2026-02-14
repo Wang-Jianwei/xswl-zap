@@ -474,6 +474,7 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 - `reportPath` / `resultJsonPath`
 - `strictMainline` / `runUiGrpcE2E`
 - `failOnUnknownStderr` / `smokeTimeoutSec`
+- `requireBatchCompareReport`
 - `failOnBatchCompareMismatch` / `failOnBatchCompareFailed`
 - `failOnWarningCodes` / `matchedWarningCodes`
 - `batchCompareReportPath` / `batchCompareSummary`
@@ -490,9 +491,12 @@ CI 门禁一键执行（生成报告 + 校验报告）：
 ```powershell
 .\scripts\run_smoke_report_gate.ps1 -SkipBuild `
    -BatchCompareReportPath .\build-grpc\batch-compare-report.json `
+   -RequireBatchCompareReport `
    -FailOnBatchCompareMismatch `
    -FailOnBatchCompareFailed
 ```
+
+`-BatchCompareReportPath` 也支持 `{latest}` / `{latestBatchCompareReport}`，用于自动发现 `build-grpc` 下最新报告。
 
 主线严格门禁预设（推荐主线分支/预提交）：
 
@@ -512,6 +516,8 @@ CI 推荐 profile（等价 strict，并固定 CI 报告输出命名）：
 .\scripts\run_mainline_gate.ps1 -Profile ci -SkipBuild
 ```
 
+`-Profile strict/ci` 会默认要求 batch compare 报告（`requireBatchCompareReport=true`）；其中 `ci` 在未显式传参时默认使用 `{latestBatchCompareReport}` 自动发现。
+
 可选标准模式（不启用 UI E2E 与 strict unknown-stderr）：
 
 ```powershell
@@ -529,6 +535,7 @@ CI 推荐 profile（等价 strict，并固定 CI 报告输出命名）：
 
 - `-RunUiGrpcE2E`
 - `-FailOnUnknownStderr`
+- `-RequireBatchCompareReport`
 - `-FailOnBatchCompareMismatch`
 - `-FailOnBatchCompareFailed`
 

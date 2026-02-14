@@ -5,6 +5,7 @@ param(
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
   [string]$BatchCompareReportPath = "",
+  [switch]$RequireBatchCompareReport,
   [switch]$FailOnBatchCompareMismatch,
   [switch]$FailOnBatchCompareFailed,
   [switch]$RunUiGrpcE2E,
@@ -64,6 +65,47 @@ function Resolve-PathPlaceholders {
   return $resolved
 }
 
+function Resolve-BatchCompareReportPath {
+  param(
+    [string]$PathValue,
+    [bool]$Require,
+    [string]$RootDir
+  )
+
+  $sentinelValues = @("{latest}", "{latestBatchCompareReport}")
+  $needsAutoDetect = [string]::IsNullOrWhiteSpace($PathValue) -or ($sentinelValues -contains $PathValue)
+
+  if (-not $needsAutoDetect) {
+    $resolved = Resolve-PathPlaceholders $PathValue
+    if (-not [System.IO.Path]::IsPathRooted($resolved)) {
+      $resolved = Join-Path $RootDir $resolved
+    }
+    return $resolved
+  }
+
+  $searchDir = Join-Path $RootDir "build-grpc"
+  if (-not (Test-Path $searchDir)) {
+    if ($Require) {
+      throw "RequireBatchCompareReport enabled but build-grpc directory is missing: $searchDir"
+    }
+    return ""
+  }
+
+  $candidates = @(
+    @(Get-ChildItem -Path $searchDir -Filter "batch_compare_report_*.json" -ErrorAction SilentlyContinue),
+    @(Get-ChildItem -Path $searchDir -Filter "batch-compare-report*.json" -ErrorAction SilentlyContinue)
+  ) | ForEach-Object { $_ } | Sort-Object LastWriteTime -Descending
+
+  if ($candidates.Count -eq 0) {
+    if ($Require) {
+      throw "RequireBatchCompareReport enabled but no batch compare report found under $searchDir"
+    }
+    return ""
+  }
+
+  return $candidates[0].FullName
+}
+
 function Write-ResultJsonIfNeeded {
   param(
     [Parameter(Mandatory = $true)]
@@ -96,9 +138,10 @@ $startedAtUtc = [DateTime]::UtcNow
 if ($StrictMainline) {
   $RunUiGrpcE2E = $true
   $FailOnUnknownStderr = $true
+  $RequireBatchCompareReport = $true
   $FailOnBatchCompareMismatch = $true
   $FailOnBatchCompareFailed = $true
-  Write-Host "[GATE] strict mainline preset enabled: RunUiGrpcE2E=True, FailOnUnknownStderr=True, FailOnBatchCompareMismatch=True, FailOnBatchCompareFailed=True"
+  Write-Host "[GATE] strict mainline preset enabled: RunUiGrpcE2E=True, FailOnUnknownStderr=True, RequireBatchCompareReport=True, FailOnBatchCompareMismatch=True, FailOnBatchCompareFailed=True"
 }
 
 try {
@@ -146,12 +189,9 @@ try {
     }
   }
 
-  if (-not [string]::IsNullOrWhiteSpace($BatchCompareReportPath)) {
-    $resolvedBatchCompareReportPath = Resolve-PathPlaceholders $BatchCompareReportPath
-    if (-not [System.IO.Path]::IsPathRooted($resolvedBatchCompareReportPath)) {
-      $resolvedBatchCompareReportPath = Join-Path $projectRoot $resolvedBatchCompareReportPath
-    }
+  $resolvedBatchCompareReportPath = Resolve-BatchCompareReportPath -PathValue $BatchCompareReportPath -Require:([bool]$RequireBatchCompareReport) -RootDir $projectRoot
 
+  if (-not [string]::IsNullOrWhiteSpace($resolvedBatchCompareReportPath)) {
     Write-Host "[GATE] validating batch compare report: $resolvedBatchCompareReportPath"
     & $batchCompareValidatorScript -ReportPath $resolvedBatchCompareReportPath -SchemaPath $batchCompareSchemaPath
     if ($LASTEXITCODE -ne 0) {
@@ -210,6 +250,7 @@ try {
     strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
+    requireBatchCompareReport = [bool]$RequireBatchCompareReport
     failOnBatchCompareMismatch = [bool]$FailOnBatchCompareMismatch
     failOnBatchCompareFailed = [bool]$FailOnBatchCompareFailed
     smokeTimeoutSec = $SmokeTimeoutSec
@@ -247,6 +288,7 @@ catch {
     strictMainline = [bool]$StrictMainline
     runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
+    requireBatchCompareReport = [bool]$RequireBatchCompareReport
     failOnBatchCompareMismatch = [bool]$FailOnBatchCompareMismatch
     failOnBatchCompareFailed = [bool]$FailOnBatchCompareFailed
     smokeTimeoutSec = $SmokeTimeoutSec

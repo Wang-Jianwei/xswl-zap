@@ -5,6 +5,7 @@ param(
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
   [string]$BatchCompareReportPath = "",
+  [switch]$RequireBatchCompareReport,
   [switch]$FailOnBatchCompareMismatch,
   [switch]$FailOnBatchCompareFailed,
   [string]$ResultJsonPath = ".\build-grpc\mainline-gate-result-{timestamp}.json",
@@ -31,6 +32,10 @@ if (-not [string]::IsNullOrWhiteSpace($BatchCompareReportPath)) {
   $gateParams.BatchCompareReportPath = $BatchCompareReportPath
 }
 
+if ($RequireBatchCompareReport) {
+  $gateParams.RequireBatchCompareReport = $true
+}
+
 if ($FailOnBatchCompareMismatch) {
   $gateParams.FailOnBatchCompareMismatch = $true
 }
@@ -45,6 +50,11 @@ if ($AsJson) {
 
 if ($Profile -eq "strict" -or $Profile -eq "ci") {
   $gateParams.StrictMainline = $true
+  $gateParams.RequireBatchCompareReport = $true
+}
+
+if ($Profile -eq "ci" -and [string]::IsNullOrWhiteSpace($BatchCompareReportPath)) {
+  $gateParams.BatchCompareReportPath = "{latestBatchCompareReport}"
 }
 
 if ($Profile -eq "ci" -and $ResultJsonPath -eq ".\build-grpc\mainline-gate-result-{timestamp}.json") {

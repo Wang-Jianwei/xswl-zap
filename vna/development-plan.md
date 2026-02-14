@@ -6618,6 +6618,39 @@ WU-MAINLINE-039: 主线门禁入口透传 batch compare 报告策略
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.318 已完成 Work Unit
+
+WU-MAINLINE-040: strict/ci 门禁默认要求 batch compare 报告
+
+- Objective:
+  - 收敛 strict/ci 主线门禁语义：默认要求 batch compare 报告，并支持自动发现最新报告，避免“启用严格模式但未消费 batch 报告”的空洞门禁。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 新增 `RequireBatchCompareReport` 与 latest 自动发现；`run_mainline_gate.ps1` 在 strict/ci 默认启用该策略；README 同步。
+  - out: 修改批量比对报告生成逻辑或 gRPC 服务实现。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-040):
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/scripts/run_mainline_gate.ps1`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `powershell -NoProfile -Command "[void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_smoke_report_gate.ps1' -Raw)); [void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_mainline_gate.ps1' -Raw)); Write-Host 'gate syntax ok'"`
+- Rollback plan: 回滚本次提交，恢复 strict/ci 对 batch compare 报告的非强制行为。
+- Risks: strict/ci 在无 batch compare 报告时会更早失败；这是预期的门禁强化行为。
+- Acceptance criteria:
+  - strict/ci 默认要求 batch compare 报告。
+  - `BatchCompareReportPath` 支持 `{latest}`/`{latestBatchCompareReport}` 自动发现。
+  - 主线封装脚本与 gate 结果字段保持一致。
+
+- Validation result (WU-MAINLINE-040):
+  - gate 脚本语法检查通过
+
+- Closure notes (WU-MAINLINE-040):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
