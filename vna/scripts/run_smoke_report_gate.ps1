@@ -3,6 +3,7 @@ param(
   [switch]$FailOnUnknownStderr,
   [int]$SmokeTimeoutSec = 20,
   [string]$ReportPath = ".\build-grpc\smoke-matrix-gate-{timestamp}.json",
+  [switch]$RunUiGrpcE2E,
   [string[]]$FailOnWarningCodes = @(),
   [switch]$AsJson,
   [string]$ResultJsonPath = ""
@@ -36,6 +37,11 @@ $schemaPath = Join-Path $scriptDir "smoke_matrix_report.schema.json"
 if (-not (Test-Path $matrixScript)) { throw "Missing script: $matrixScript" }
 if (-not (Test-Path $validatorScript)) { throw "Missing script: $validatorScript" }
 if (-not (Test-Path $schemaPath)) { throw "Missing schema: $schemaPath" }
+
+$startGrpcScript = Join-Path $scriptDir "start_grpc_for_vscode.ps1"
+if ($RunUiGrpcE2E -and -not (Test-Path $startGrpcScript)) {
+  throw "Missing script required by -RunUiGrpcE2E: $startGrpcScript"
+}
 
 function Resolve-PathPlaceholders {
   param([string]$PathValue)
@@ -105,6 +111,30 @@ try {
     }
   }
 
+  if ($RunUiGrpcE2E) {
+    Write-Host "[GATE] running grpc-backed UI E2E..."
+    & $startGrpcScript
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to start grpc service for UI E2E. Exit code: $LASTEXITCODE"
+    }
+
+    $extensionDir = Join-Path $projectRoot "tools\vscode-extension"
+    if (-not (Test-Path $extensionDir)) {
+      throw "Missing vscode extension directory: $extensionDir"
+    }
+
+    Push-Location $extensionDir
+    try {
+      npm run test:ui:grpc
+      if ($LASTEXITCODE -ne 0) {
+        throw "UI grpc E2E failed with exit code: $LASTEXITCODE"
+      }
+    }
+    finally {
+      Pop-Location
+    }
+  }
+
   $gateResult = [PSCustomObject]@{
     status = "PASS"
     exitCode = 0
@@ -113,6 +143,7 @@ try {
     finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
     resultJsonPath = $resolvedResultJsonPath
+    runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
@@ -126,7 +157,7 @@ try {
     $gateResult | ConvertTo-Json -Depth 6
   }
   else {
-    Write-Host "[GATE][RESULT] status=PASS reportPath=$resolvedReportPath failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec"
+    Write-Host "[GATE][RESULT] status=PASS reportPath=$resolvedReportPath runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec"
   }
 
   Write-Host "[GATE][PASS] smoke report gate passed"
@@ -142,6 +173,7 @@ catch {
     finishedAtUtc = [DateTime]::UtcNow.ToString("o")
     reportPath = $resolvedReportPath
     resultJsonPath = $resolvedResultJsonPath
+    runUiGrpcE2E = [bool]$RunUiGrpcE2E
     failOnUnknownStderr = [bool]$FailOnUnknownStderr
     smokeTimeoutSec = $SmokeTimeoutSec
     failOnWarningCodes = @($FailOnWarningCodes)
@@ -155,7 +187,7 @@ catch {
     $gateResult | ConvertTo-Json -Depth 6
   }
   else {
-    Write-Host "[GATE][RESULT] status=FAIL reportPath=$resolvedReportPath failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec error=$failureMessage"
+    Write-Host "[GATE][RESULT] status=FAIL reportPath=$resolvedReportPath runUiGrpcE2E=$([bool]$RunUiGrpcE2E) failOnUnknownStderr=$([bool]$FailOnUnknownStderr) smokeTimeoutSec=$SmokeTimeoutSec error=$failureMessage"
   }
 
   Write-Host "[GATE][FAIL] $failureMessage"

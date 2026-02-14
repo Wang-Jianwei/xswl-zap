@@ -5796,6 +5796,38 @@ WU-VSCODE-012: 新增真实 gRPC 实流 UI E2E（Playwright）
   - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.295 已完成 Work Unit
+
+WU-VSCODE-013: 将 gRPC UI E2E 接入 smoke gate（可选阶段）
+
+- Objective: 在一键门禁脚本中增加可选 `RunUiGrpcE2E` 阶段，使 smoke 通过后可自动串行执行真实 gRPC UI E2E。
+- Scope (in/out):
+  - in: `run_smoke_report_gate.ps1` 新增 `-RunUiGrpcE2E` 开关；在结果对象与日志中输出执行标志；补充文档。
+  - out: 修改 `run_grpc_smoke_matrix.ps1` 的用例判定逻辑。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-VSCODE-013):
+  - `vna/scripts/run_smoke_report_gate.ps1`
+  - `vna/framework-ui.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna/scripts && .\run_smoke_report_gate.ps1 -SkipBuild -RunUiGrpcE2E -SmokeTimeoutSec 20`
+  - `cd vna/tools/vscode-extension && npm run test:ui:grpc`
+- Rollback plan: 回滚本次提交，移除 gate 脚本中的 `-RunUiGrpcE2E` 路径。
+- Risks: 当前 smoke matrix 在本机存在既有失败（`Acquire validation failed: export files are missing`），会在到达 UI E2E 阶段前提前失败；本次保持 gate 失败优先语义不变。
+- Acceptance criteria:
+  - gate 支持 `-RunUiGrpcE2E` 参数并可在 PASS 路径触发 UI E2E。
+  - gate 结果对象包含 `runUiGrpcE2E` 字段。
+
+- Validation result (WU-VSCODE-013):
+  - `cd vna/scripts && .\run_smoke_report_gate.ps1 -SkipBuild -RunUiGrpcE2E -SmokeTimeoutSec 20` 已执行；当前环境在 smoke matrix 阶段失败（既有问题），日志确认 `runUiGrpcE2E=True` 已纳入 gate 输出。
+  - `cd vna/tools/vscode-extension && npm run test:ui:grpc` 通过。
+
+- Closure notes (WU-VSCODE-013):
+  - 文档同步：已更新 `vna/framework-ui.md` 与 `vna/development-plan.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
