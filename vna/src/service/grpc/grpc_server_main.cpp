@@ -69,6 +69,63 @@ bool ParsePortTransferList(const std::string& text,
   return true;
 }
 
+bool ParseFrequencyPortTransferProfiles(
+    const std::string& text,
+    std::vector<vna::core::processors::FrequencyPortTransferProfile>& out,
+    std::string& error) {
+  out.clear();
+  error.clear();
+  if (text.empty()) {
+    error = "de_embedding_frequency_profiles is empty";
+    return false;
+  }
+
+  std::stringstream profileStream(text);
+  std::string profileToken;
+  while (std::getline(profileStream, profileToken, ';')) {
+    const std::string trimmedProfile = TrimText(profileToken);
+    if (trimmedProfile.empty()) {
+      continue;
+    }
+
+    const std::size_t colonPos = trimmedProfile.find(':');
+    if (colonPos == std::string::npos) {
+      error = "profile must use '<frequency>:<transfer-list>' format";
+      return false;
+    }
+
+    const std::string freqText = TrimText(trimmedProfile.substr(0, colonPos));
+    const std::string transferText = TrimText(trimmedProfile.substr(colonPos + 1));
+
+    std::stringstream freqParser(freqText);
+    double frequencyHz = 0.0;
+    freqParser >> frequencyHz;
+    if (freqParser.fail() || !freqParser.eof() || frequencyHz <= 0.0) {
+      error = "profile frequency must be positive double";
+      return false;
+    }
+
+    std::vector<std::complex<double> > transfer;
+    std::string transferError;
+    if (!ParsePortTransferList(transferText, transfer, transferError)) {
+      error = transferError;
+      return false;
+    }
+
+    vna::core::processors::FrequencyPortTransferProfile profile;
+    profile.frequencyHz = frequencyHz;
+    profile.portTransfer = transfer;
+    out.push_back(profile);
+  }
+
+  if (out.empty()) {
+    error = "de_embedding_frequency_profiles produced no valid profiles";
+    return false;
+  }
+
+  return true;
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -125,19 +182,35 @@ int main(int argc, char** argv) {
   vna::service::VnaControlInProcessHandler inprocHandler;
 
   if (config.deEmbeddingEnabled) {
-    std::vector<std::complex<double> > portTransfer;
-    std::string parseError;
-    if (!ParsePortTransferList(config.deEmbeddingPortTransfer, portTransfer, parseError)) {
-      std::cout << "grpc de-embedding config invalid: " << parseError << "\n";
-      return 1;
+    if (!config.deEmbeddingFrequencyProfiles.empty()) {
+      std::vector<vna::core::processors::FrequencyPortTransferProfile> profiles;
+      std::string parseError;
+      if (!ParseFrequencyPortTransferProfiles(config.deEmbeddingFrequencyProfiles, profiles, parseError)) {
+        std::cout << "grpc de-embedding frequency config invalid: " << parseError << "\n";
+        return 1;
+      }
+
+      if (controlService.SetDeEmbeddingFrequencyPortTransferProfiles(profiles) != vna::core::Status::kOk) {
+        std::cout << "grpc de-embedding frequency config rejected\n";
+        return 1;
+      }
+      std::cout << "grpc de-embedding frequency profiles enabled: profile_count=" << profiles.size() << "\n";
+    } else {
+      std::vector<std::complex<double> > portTransfer;
+      std::string parseError;
+      if (!ParsePortTransferList(config.deEmbeddingPortTransfer, portTransfer, parseError)) {
+        std::cout << "grpc de-embedding config invalid: " << parseError << "\n";
+        return 1;
+      }
+
+      if (controlService.SetDeEmbeddingPortTransfer(portTransfer) != vna::core::Status::kOk) {
+        std::cout << "grpc de-embedding config rejected: invalid port transfer values\n";
+        return 1;
+      }
+      std::cout << "grpc de-embedding enabled: port_count=" << portTransfer.size() << "\n";
     }
 
-    if (controlService.SetDeEmbeddingPortTransfer(portTransfer) != vna::core::Status::kOk) {
-      std::cout << "grpc de-embedding config rejected: invalid port transfer values\n";
-      return 1;
-    }
     controlService.SetDeEmbeddingEnabled(true);
-    std::cout << "grpc de-embedding enabled: port_count=" << portTransfer.size() << "\n";
   }
 
   vna::core::Topology topology;

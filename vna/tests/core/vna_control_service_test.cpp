@@ -131,9 +131,23 @@ int main() {
         }
         assert(service.SetDeEmbeddingPortTransfer(validTransfer) == vna::core::Status::kOk);
 
+        std::vector<vna::core::processors::FrequencyPortTransferProfile> profiles;
+        vna::core::processors::FrequencyPortTransferProfile p0;
+        p0.frequencyHz = result.sParameters.points[0].frequencyHz;
+        for (std::size_t i = 0; i < portCount; ++i) {
+          p0.portTransfer.push_back(std::complex<double>(2.0, 0.0));
+        }
+        profiles.push_back(p0);
+        assert(service.SetDeEmbeddingFrequencyPortTransferProfiles(profiles) == vna::core::Status::kOk);
+
         vna::core::AcquisitionResult deembedValidResult;
         assert(service.AcquireOnce("inst0", excitation, 32, 1000, deembedValidResult) ==
           vna::core::Status::kOk);
+        assert(!deembedValidResult.sParameters.points.empty());
+        const std::complex<double> rawS11 = result.sParameters.points[0].matrix[0];
+        const std::complex<double> deembeddedS11 = deembedValidResult.sParameters.points[0].matrix[0];
+        assert(std::abs(rawS11) > 1e-12);
+        assert(std::abs(deembeddedS11) < std::abs(rawS11));
         service.SetDeEmbeddingEnabled(false);
 
     const std::string csvPath = "build/vna-control-service-export.csv";

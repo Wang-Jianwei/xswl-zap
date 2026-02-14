@@ -18,6 +18,7 @@ struct ServiceConfig {
   std::uint32_t streamThrottleMs = 10;
   bool deEmbeddingEnabled = false;
   std::string deEmbeddingPortTransfer = "";
+  std::string deEmbeddingFrequencyProfiles = "";
 };
 
 class ServiceConfigLoader {

@@ -160,6 +160,11 @@ core::Status ServiceConfigLoader::LoadFromFile(const std::string& filePath,
       parsed.deEmbeddingPortTransfer = value;
       continue;
     }
+
+    if (key == "de_embedding_frequency_profiles") {
+      parsed.deEmbeddingFrequencyProfiles = value;
+      continue;
+    }
   }
 
   if (!outErrors.empty()) {

@@ -47,5 +47,46 @@ int main() {
   assert(processor.ApplyDiagonalFixtureCompensation(sParameters, zeroTransfer) ==
          vna::core::Status::kInvalidArgument);
 
+  vna::core::SParameterData frequencyData;
+  vna::core::SParameterFrequencyPoint pointA;
+  pointA.frequencyHz = 1.0e9;
+  pointA.portCount = 2;
+  pointA.matrix.push_back(s11Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(2.0, 0.0));
+  pointA.matrix.push_back(s12Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(1.0, 0.0));
+  pointA.matrix.push_back(s21Ideal * std::complex<double>(1.0, 0.0) * std::complex<double>(2.0, 0.0));
+  pointA.matrix.push_back(s22Ideal * std::complex<double>(1.0, 0.0) * std::complex<double>(1.0, 0.0));
+
+  vna::core::SParameterFrequencyPoint pointB = pointA;
+  pointB.frequencyHz = 2.0e9;
+  pointB.matrix[0] = s11Ideal * std::complex<double>(4.0, 0.0) * std::complex<double>(4.0, 0.0);
+  pointB.matrix[1] = s12Ideal * std::complex<double>(4.0, 0.0) * std::complex<double>(2.0, 0.0);
+  pointB.matrix[2] = s21Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(4.0, 0.0);
+  pointB.matrix[3] = s22Ideal * std::complex<double>(2.0, 0.0) * std::complex<double>(2.0, 0.0);
+
+  frequencyData.points.push_back(pointA);
+  frequencyData.points.push_back(pointB);
+
+  std::vector<vna::core::processors::FrequencyPortTransferProfile> profiles;
+  vna::core::processors::FrequencyPortTransferProfile profileA;
+  profileA.frequencyHz = 1.0e9;
+  profileA.portTransfer.push_back(std::complex<double>(2.0, 0.0));
+  profileA.portTransfer.push_back(std::complex<double>(1.0, 0.0));
+  profiles.push_back(profileA);
+
+  vna::core::processors::FrequencyPortTransferProfile profileB;
+  profileB.frequencyHz = 2.0e9;
+  profileB.portTransfer.push_back(std::complex<double>(4.0, 0.0));
+  profileB.portTransfer.push_back(std::complex<double>(2.0, 0.0));
+  profiles.push_back(profileB);
+
+  assert(processor.ApplyFrequencyDependentDiagonalFixtureCompensation(frequencyData, profiles) ==
+         vna::core::Status::kOk);
+  assert(std::abs(frequencyData.points[0].matrix[0] - s11Ideal) < 1e-12);
+  assert(std::abs(frequencyData.points[1].matrix[0] - s11Ideal) < 1e-12);
+
+  profiles[1].portTransfer.clear();
+  assert(processor.ApplyFrequencyDependentDiagonalFixtureCompensation(frequencyData, profiles) ==
+         vna::core::Status::kInvalidArgument);
+
   return 0;
 }

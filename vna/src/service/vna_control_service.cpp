@@ -172,6 +172,10 @@ core::Status VnaControlService::AcquireOnce(const std::string& instanceId,
   }
 
   if (deEmbeddingEnabled_) {
+    if (!deEmbeddingFrequencyProfiles_.empty()) {
+      return deEmbeddingProcessor_.ApplyFrequencyDependentDiagonalFixtureCompensation(
+          out.sParameters, deEmbeddingFrequencyProfiles_);
+    }
     return deEmbeddingProcessor_.ApplyDiagonalFixtureCompensation(
         out.sParameters, deEmbeddingPortTransfer_);
   }
@@ -197,6 +201,29 @@ core::Status VnaControlService::SetDeEmbeddingPortTransfer(
   }
 
   deEmbeddingPortTransfer_ = portTransfer;
+  deEmbeddingFrequencyProfiles_.clear();
+  return core::Status::kOk;
+}
+
+core::Status VnaControlService::SetDeEmbeddingFrequencyPortTransferProfiles(
+    const std::vector<core::processors::FrequencyPortTransferProfile>& profiles) {
+  if (profiles.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  for (std::size_t i = 0; i < profiles.size(); ++i) {
+    if (profiles[i].frequencyHz <= 0.0 || profiles[i].portTransfer.empty()) {
+      return core::Status::kInvalidArgument;
+    }
+    for (std::size_t j = 0; j < profiles[i].portTransfer.size(); ++j) {
+      if (std::abs(profiles[i].portTransfer[j]) <= 1e-15) {
+        return core::Status::kInvalidArgument;
+      }
+    }
+  }
+
+  deEmbeddingFrequencyProfiles_ = profiles;
+  deEmbeddingPortTransfer_.clear();
   return core::Status::kOk;
 }
 

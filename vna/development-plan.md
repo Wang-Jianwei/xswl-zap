@@ -6159,6 +6159,53 @@ WU-MAINLINE-026: 去嵌入能力接入采集主链路（service 配置开关）
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/config/service.yaml`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.305 已完成 Work Unit
+
+WU-MAINLINE-027: 频点相关去嵌入系数（core + service 配置）
+
+- Objective:
+  - 在去嵌入链路中支持“按频点配置端口传输系数”，使不同频段可使用不同校正参数（不改 proto）。
+- Scope (in/out):
+  - in: `DeEmbeddingProcessor` 新增 frequency-profile 接口、`VnaControlService` 主链路优先应用 frequency profiles、service 配置解析和 grpc 启动接线、回归测试扩展。
+  - out: 引入复数格式配置语法、修改 gRPC 请求字段。
+- Status: ✅ Completed (2026-02-14)
+
+- Files to change (WU-MAINLINE-027):
+  - `vna/include/core/processors/de_embedding_processor.h`
+  - `vna/src/core/processors/de_embedding_processor.cpp`
+  - `vna/include/service/vna_control_service.h`
+  - `vna/src/service/vna_control_service.cpp`
+  - `vna/include/service/service_config.h`
+  - `vna/src/service/service_config.cpp`
+  - `vna/src/service/grpc/grpc_server_main.cpp`
+  - `vna/config/service.yaml`
+  - `vna/tests/core/de_embedding_processor_test.cpp`
+  - `vna/tests/core/service_config_test.cpp`
+  - `vna/tests/core/vna_control_service_test.cpp`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `cd vna && cmake --build --preset ninja-mingw`
+  - `cd vna/build && .\easy_de_embedding_processor_test.exe`
+  - `cd vna/build && .\easy_service_config_test.exe`
+  - `cd vna/build && .\easy_vna_control_service_test.exe`
+- Rollback plan: 回滚本次提交，恢复仅支持单组端口系数的去嵌入模式。
+- Risks: 频点配置采用字符串解析（`f1:h...;f2:h...`），格式错误会在启动阶段失败；行为可观测且可快速回滚。
+- Acceptance criteria:
+  - 可配置多个频点 profile，并按最近频点匹配去嵌入系数。
+  - 启用去嵌入时，frequency profiles 优先于全局端口系数。
+  - 处理器、配置、主链路测试通过。
+
+- Validation result (WU-MAINLINE-027):
+  - `cmake --build --preset ninja-mingw` 通过
+  - `easy_de_embedding_processor_test.exe` 通过
+  - `easy_service_config_test.exe` 通过
+  - `easy_vna_control_service_test.exe` 通过
+
+- Closure notes (WU-MAINLINE-027):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/config/service.yaml`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*

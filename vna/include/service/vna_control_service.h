@@ -56,6 +56,8 @@ class VnaControlService {
 
   core::Status SetDeEmbeddingPortTransfer(
       const std::vector<std::complex<double> >& portTransfer);
+    core::Status SetDeEmbeddingFrequencyPortTransferProfiles(
+      const std::vector<core::processors::FrequencyPortTransferProfile>& profiles);
   void SetDeEmbeddingEnabled(bool enabled);
 
   core::Status ExportAcquisitionResult(const core::AcquisitionResult& result,
@@ -83,6 +85,7 @@ class VnaControlService {
   bool started_;
   bool deEmbeddingEnabled_;
   std::vector<std::complex<double> > deEmbeddingPortTransfer_;
+  std::vector<core::processors::FrequencyPortTransferProfile> deEmbeddingFrequencyProfiles_;
   core::processors::DeEmbeddingProcessor deEmbeddingProcessor_;
 };
 

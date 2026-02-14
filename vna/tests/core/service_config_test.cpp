@@ -25,6 +25,7 @@ int main() {
     assert(cfg.streamThrottleMs == 10);
     assert(!cfg.deEmbeddingEnabled);
     assert(cfg.deEmbeddingPortTransfer == "1.0,1.0,1.0,1.0");
+    assert(cfg.deEmbeddingFrequencyProfiles.empty());
   }
 
   {
@@ -35,6 +36,7 @@ int main() {
     out << "stream_throttle_every_n_frames: 0\n";
     out << "stream_throttle_ms: xyz\n";
     out << "de_embedding_enabled: maybe\n";
+    out << "de_embedding_frequency_profiles: 1e9:1,1;2e9:1,1\n";
     out.close();
 
     vna::service::ServiceConfig cfg;
