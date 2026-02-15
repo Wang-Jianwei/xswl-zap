@@ -30,6 +30,10 @@
         "title": "XSWL: Edit Workspace Topology"
       },
       {
+        "command": "xswlZapVna.openControlCenter",
+        "title": "XSWL: Open Control Center"
+      },
+      {
         "command": "xswlZapVna.acquireOnce",
         "title": "XSWL: Acquire Once"
       },
@@ -109,7 +113,7 @@
   "scripts": {
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
-    "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js && node ./out/test/liveWaveformOverlay.test.js && node ./out/test/serviceClient.test.js",
+    "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js && node ./out/test/liveWaveformOverlay.test.js && node ./out/test/serviceClient.test.js && node ./out/test/unifiedControlCenter.test.js",
     "test:ui": "npm run build && node ./out/test/waveformPreview.ui.test.js",
     "test:ui:grpc": "npm run build && node ./out/test/waveformPreview.grpc.ui.e2e.test.js",
     "package": "vsce package"

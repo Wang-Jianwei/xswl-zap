@@ -23,11 +23,11 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       align-items: center;
     }
     .row label {
-      min-width: 92px;
+      min-width: 120px;
       font-size: 12px;
       opacity: 0.9;
     }
-    .row input, .row select, .row button, .row textarea {
+    input, select, textarea, button {
       font-family: var(--vscode-font-family);
       font-size: 12px;
     }
@@ -40,7 +40,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       padding: 6px 8px;
     }
     textarea {
-      min-height: 320px;
+      min-height: 280px;
       resize: vertical;
       line-height: 1.35;
     }
@@ -50,29 +50,82 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       border: none;
       padding: 6px 10px;
       cursor: pointer;
+      white-space: nowrap;
     }
     button.secondary {
       background: var(--vscode-button-secondaryBackground);
       color: var(--vscode-button-secondaryForeground);
     }
-    .hint {
-      margin-top: 8px;
-      font-size: 12px;
-      opacity: 0.85;
-      white-space: pre-wrap;
-    }
     .section-title {
       font-size: 12px;
-      opacity: 0.9;
-      margin: 10px 0 6px 0;
       font-weight: 600;
+      margin: 10px 0 6px;
+      opacity: 0.92;
     }
     .mode-toggle {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
       flex-wrap: wrap;
+      margin-bottom: 8px;
     }
+    .hidden { display: none; }
+
+    .mapping-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .panel {
+      border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
+      border-radius: 4px;
+      padding: 8px;
+      background: color-mix(in srgb, var(--vscode-editor-background) 95%, var(--vscode-sideBar-background) 5%);
+    }
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--vscode-input-border);
+      background: var(--vscode-input-background);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      user-select: none;
+    }
+    .chip.bound {
+      border-color: var(--vscode-charts-blue);
+    }
+    .chip[draggable="true"] {
+      cursor: grab;
+    }
+    .tiny-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 0 6px;
+      font-size: 11px;
+      line-height: 16px;
+      height: 16px;
+      cursor: pointer;
+      background: var(--vscode-button-secondaryBackground);
+      color: var(--vscode-button-secondaryForeground);
+    }
+    .muted {
+      font-size: 11px;
+      opacity: 0.72;
+    }
+    .diagram {
+      white-space: pre-wrap;
+      font-size: 11px;
+      opacity: 0.86;
+      line-height: 1.4;
+    }
+
     .cards {
       display: flex;
       flex-direction: column;
@@ -81,8 +134,8 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     }
     .card {
       border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
-      padding: 8px;
       border-radius: 4px;
+      padding: 8px;
       background: color-mix(in srgb, var(--vscode-editor-background) 92%, var(--vscode-sideBar-background) 8%);
     }
     .card-head {
@@ -94,9 +147,8 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     .card-title {
       font-size: 12px;
       font-weight: 600;
-      opacity: 0.95;
     }
-    .card-grid {
+    .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
@@ -107,86 +159,45 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       gap: 4px;
       min-width: 0;
     }
-    .field label {
+    .field > label {
       font-size: 11px;
       opacity: 0.85;
     }
-    .full {
-      grid-column: 1 / span 2;
-    }
-    .mini-map {
-      font-size: 11px;
-      opacity: 0.82;
-      margin-top: 6px;
-      white-space: pre-wrap;
-    }
-    .hidden {
-      display: none;
-    }
-    .mapping-layout {
-      display: grid;
-      grid-template-columns: minmax(220px, 0.75fr) 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .mapping-panel {
-      border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
-      border-radius: 4px;
-      padding: 8px;
-      background: color-mix(in srgb, var(--vscode-editor-background) 96%, var(--vscode-sideBar-background) 4%);
-    }
-    .port-input-row {
+    .full { grid-column: 1 / span 2; }
+
+    .port-slot-list {
       display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .chip-list {
-      display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 6px;
     }
-    .port-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid var(--vscode-input-border);
-      background: var(--vscode-input-background);
-      color: var(--vscode-input-foreground);
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 11px;
-      user-select: none;
-    }
-    .port-chip[draggable="true"] {
-      cursor: grab;
-    }
-    .port-chip.bound {
-      border-color: var(--vscode-charts-blue);
-    }
-    .drop-zone {
-      min-height: 34px;
+    .port-slot {
       border: 1px dashed var(--vscode-input-border);
       border-radius: 4px;
       padding: 6px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
       background: color-mix(in srgb, var(--vscode-editor-background) 95%, var(--vscode-sideBar-background) 5%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 30px;
     }
-    .drop-zone.active {
+    .port-slot.active {
       border-color: var(--vscode-button-background);
       background: color-mix(in srgb, var(--vscode-button-background) 15%, var(--vscode-editor-background) 85%);
     }
-    .muted {
+    .slot-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 11px;
-      opacity: 0.72;
+      min-width: 0;
     }
-    .link-diagram {
-      font-size: 11px;
+
+    .hint {
+      margin-top: 8px;
+      font-size: 12px;
       opacity: 0.85;
       white-space: pre-wrap;
-      margin-top: 6px;
     }
   </style>
 </head>
@@ -210,34 +221,37 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
   <div class="mode-toggle">
     <button id="visualModeBtn">Visual Mode</button>
     <button id="yamlModeBtn" class="secondary">YAML Mode (advanced)</button>
-    <button id="addCardBtn" class="secondary">+ Add Card</button>
-    <button id="autoAssignBtn" class="secondary">Auto Assign Ports</button>
+    <button id="addCardBtn" class="secondary">+ Add Board Card</button>
+    <button id="autoAssignBtn" class="secondary">Auto Assign</button>
+    <select id="selectedCardSelect" style="max-width:180px;"></select>
+    <button id="assignSelectedBtn" class="secondary">Assign To Selected</button>
+    <button id="clearAssignBtn" class="secondary">Clear Assignments</button>
   </div>
 
   <div id="visualSection">
-    <div class="section-title">Port ↔ Card Visual Mapping</div>
+    <div class="section-title">Virtual VNA Ports ↔ Board Ports Binding</div>
     <div class="mapping-layout">
-      <div class="mapping-panel">
-        <div class="port-input-row">
-          <input id="newPortInput" placeholder="vna-port3" />
-          <button id="addPortBtn" class="secondary">+ Port</button>
+      <div class="panel">
+        <div class="row" style="margin-bottom:8px;">
+          <input id="newVirtualPortInput" placeholder="virtual vna port, e.g. vna-port3" />
+          <button id="addVirtualPortBtn" class="secondary">+ Virtual Port</button>
         </div>
-        <div id="portPool" class="chip-list"></div>
-        <div class="muted" style="margin-top:8px;">Drag ports to card drop zones on the right.</div>
+        <div id="virtualPortPool" class="chip-list"></div>
+        <div class="muted" style="margin-top:8px;">Drag virtual ports to board port slots on cards.</div>
       </div>
-      <div class="mapping-panel">
-        <div class="section-title" style="margin-top:0;">Mapping Preview</div>
-        <div id="mappingPreview" class="link-diagram"></div>
+      <div class="panel">
+        <div class="section-title" style="margin-top:0;">Binding Preview</div>
+        <div id="bindingPreview" class="diagram"></div>
       </div>
     </div>
 
-    <div class="section-title">Topology Cards</div>
+    <div class="section-title">VNA Boards (board can also be virtual-vna)</div>
     <div id="cards" class="cards"></div>
   </div>
 
   <div id="yamlSection" class="hidden">
     <div class="section-title">Raw Topology YAML (advanced)</div>
-    <textarea id="topologyYaml" spellcheck="false" placeholder="instances:\n  - id: inst0\n    driver: pxi\n    device: pxi-mock-0\n    resource: dev0\n    ports:\n      - vna-port1\n      - vna-port2"></textarea>
+    <textarea id="topologyYaml" spellcheck="false" placeholder="virtual_vna:\n  ports:\n    - vna-port1\nboards:\n  - id: card1\n    kind: board\n    ports:\n      - p1\nbindings:\n  - vna_port: vna-port1\n    board_id: card1\n    board_port: p1\ninstances:\n  - id: card1\n    driver: pxi\n    device: pxi-mock-0\n    resource: dev0"></textarea>
   </div>
 
   <div class="row">
@@ -259,20 +273,25 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     const yamlSection = document.getElementById('yamlSection');
     const cardsContainer = document.getElementById('cards');
     const hint = document.getElementById('hint');
-    const addCardBtn = document.getElementById('addCardBtn');
-    const autoAssignBtn = document.getElementById('autoAssignBtn');
+
     const visualModeBtn = document.getElementById('visualModeBtn');
     const yamlModeBtn = document.getElementById('yamlModeBtn');
-    const newPortInput = document.getElementById('newPortInput');
-    const addPortBtn = document.getElementById('addPortBtn');
-    const portPool = document.getElementById('portPool');
-    const mappingPreview = document.getElementById('mappingPreview');
+    const addCardBtn = document.getElementById('addCardBtn');
+    const autoAssignBtn = document.getElementById('autoAssignBtn');
+    const selectedCardSelect = document.getElementById('selectedCardSelect');
+    const assignSelectedBtn = document.getElementById('assignSelectedBtn');
+    const clearAssignBtn = document.getElementById('clearAssignBtn');
+
+    const newVirtualPortInput = document.getElementById('newVirtualPortInput');
+    const addVirtualPortBtn = document.getElementById('addVirtualPortBtn');
+    const virtualPortPool = document.getElementById('virtualPortPool');
+    const bindingPreview = document.getElementById('bindingPreview');
 
     let visualMode = true;
     let cards = [];
-    let availablePorts = [];
-    let portBindings = {};
-    let draggingPort = '';
+    let virtualPorts = [];
+    let bindings = {};
+    let draggingVirtualPort = '';
 
     function escapeHtml(value) {
       return String(value || '')
@@ -282,24 +301,15 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
         .replaceAll('"', '&quot;');
     }
 
-    function createCard(seed) {
-      const card = seed || {};
-      return {
-        id: String(card.id || ''),
-        driver: String(card.driver || ''),
-        device: String(card.device || ''),
-        resource: String(card.resource || ''),
-        cardIndex: String(card.cardIndex || ''),
-        portsCsv: String(card.portsCsv || ''),
-        detail: String(card.detail || ''),
-      };
-    }
-
-    function parsePortsCsv(csv) {
-      return String(csv || '')
-        .split(',')
-        .map((item) => item.trim())
-        .filter((item) => item.length > 0);
+    function dequote(value) {
+      const text = String(value || '').trim();
+      if (text.length >= 2 && text.startsWith("'") && text.endsWith("'")) {
+        return text.substring(1, text.length - 1).replaceAll("''", "'");
+      }
+      if (text.length >= 2 && text.startsWith('"') && text.endsWith('"')) {
+        return text.substring(1, text.length - 1);
+      }
+      return text;
     }
 
     function scalar(text) {
@@ -314,280 +324,184 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       return '\'' + raw.replaceAll('\'', '\'\'') + '\'';
     }
 
-    function toYamlFromCards(cardItems) {
-      const lines = ['instances:'];
-      for (const card of cardItems) {
-        lines.push('  - id: ' + scalar(card.id));
-        lines.push('    driver: ' + scalar(card.driver));
-        lines.push('    device: ' + scalar(card.device));
-        lines.push('    resource: ' + scalar(card.resource));
-        if (String(card.cardIndex || '').trim().length > 0) {
-          lines.push('    cardIndex: ' + scalar(card.cardIndex));
-        }
-        const ports = parsePortsCsv(card.portsCsv);
-        if (ports.length > 0) {
-          lines.push('    ports:');
-          for (const p of ports) {
-            lines.push('      - ' + scalar(p));
-          }
-        }
-        if (String(card.detail || '').trim().length > 0) {
-          lines.push('    detail: ' + scalar(card.detail));
-        }
-      }
-      return lines.join('\n');
+    function parseCsv(value) {
+      return String(value || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
     }
 
-    function dequote(value) {
-      const text = String(value || '').trim();
-      if (text.length >= 2 && text.startsWith("'") && text.endsWith("'")) {
-        return text.substring(1, text.length - 1).replaceAll("''", "'");
-      }
-      if (text.length >= 2 && text.startsWith('"') && text.endsWith('"')) {
-        return text.substring(1, text.length - 1);
-      }
-      return text;
+    function createCard(seed) {
+      const card = seed || {};
+      return {
+        id: String(card.id || ''),
+        driver: String(card.driver || ''),
+        device: String(card.device || ''),
+        resource: String(card.resource || ''),
+        cardIndex: String(card.cardIndex || ''),
+        boardKind: String(card.boardKind || 'board'),
+        boardPortsCsv: String(card.boardPortsCsv || 'p1,p2'),
+        detail: String(card.detail || ''),
+      };
     }
 
-    function parseCardsFromYaml(yamlText) {
-      const text = String(yamlText || '');
-      if (text.trim().length === 0) {
-        return [createCard({ id: 'inst0', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1', portsCsv: 'vna-port1,vna-port2' })];
-      }
-
-      const lines = text.split(/\r?\n/);
-      const result = [];
-      let inInstances = false;
-      let i = 0;
-
-      function parseKeyValue(line) {
-        const kv = line.split(':');
-        if (kv.length < 2) {
-          return null;
-        }
-        const key = kv.shift().trim();
-        const value = kv.join(':').trim();
-        return { key, value: dequote(value) };
-      }
-
-      while (i < lines.length) {
-        const line = lines[i];
-        const trimmed = line.trim();
-        if (!inInstances) {
-          if (trimmed === 'instances:') {
-            inInstances = true;
-          }
-          i += 1;
-          continue;
-        }
-
-        if (trimmed.length === 0) {
-          i += 1;
-          continue;
-        }
-
-        const cardStart = /^\s*-\s*/.test(line);
-        if (!cardStart) {
-          i += 1;
-          continue;
-        }
-
-        const card = createCard({});
-        const first = line.replace(/^\s*-\s*/, '').trim();
-        if (first.length > 0) {
-          const kv = parseKeyValue(first);
-          if (kv && kv.key === 'id') {
-            card.id = kv.value;
-          }
-        }
-
-        i += 1;
-        while (i < lines.length) {
-          const next = lines[i];
-          const nextTrim = next.trim();
-          if (nextTrim.length === 0) {
-            i += 1;
-            continue;
-          }
-          if (/^\s*-\s*/.test(next)) {
-            break;
-          }
-
-          const kv = parseKeyValue(nextTrim);
-          if (!kv) {
-            i += 1;
-            continue;
-          }
-          if (kv.key === 'ports' && kv.value.length === 0) {
-            const ports = [];
-            i += 1;
-            while (i < lines.length) {
-              const portLine = lines[i];
-              const portTrim = portLine.trim();
-              if (!portTrim.startsWith('- ')) {
-                break;
-              }
-              ports.push(dequote(portTrim.substring(2).trim()));
-              i += 1;
-            }
-            card.portsCsv = ports.join(',');
-            continue;
-          }
-
-          if (kv.key === 'driver') {
-            card.driver = kv.value;
-          } else if (kv.key === 'device') {
-            card.device = kv.value;
-          } else if (kv.key === 'resource') {
-            card.resource = kv.value;
-          } else if (kv.key === 'cardIndex') {
-            card.cardIndex = kv.value;
-          } else if (kv.key === 'detail') {
-            card.detail = kv.value;
-          }
-
-          i += 1;
-        }
-
-        result.push(card);
-      }
-
-      if (result.length === 0) {
-        throw new Error('Unable to parse topology YAML into visual cards.');
-      }
-      return result;
+    function getBoardPorts(card) {
+      return parseCsv(card.boardPortsCsv);
     }
 
-    function syncPortsAndBindingsFromCards(cardItems) {
-      const nextPorts = [];
-      const nextBindings = {};
-      for (let index = 0; index < cardItems.length; index += 1) {
-        const ports = parsePortsCsv(cardItems[index].portsCsv);
-        for (const p of ports) {
-          if (!nextPorts.includes(p)) {
-            nextPorts.push(p);
-          }
-          nextBindings[p] = index;
+    function getBindingForEndpoint(cardIndex, boardPort) {
+      for (const vPort of virtualPorts) {
+        const b = bindings[vPort];
+        if (b && b.cardIndex === cardIndex && b.boardPort === boardPort) {
+          return vPort;
         }
       }
-      if (nextPorts.length === 0) {
-        nextPorts.push('vna-port1', 'vna-port2');
-      }
-      availablePorts = nextPorts;
-      portBindings = nextBindings;
+      return '';
     }
 
-    function assignedPortsForCard(index) {
-      const ports = [];
-      for (const p of availablePorts) {
-        if (portBindings[p] === index) {
-          ports.push(p);
-        }
-      }
-      return ports;
+    function setHint(text) {
+      hint.textContent = text;
     }
 
-    function renderPortPool() {
-      portPool.innerHTML = '';
-      for (const p of availablePorts) {
-        const boundCard = typeof portBindings[p] === 'number' ? Number(portBindings[p]) + 1 : 0;
-        const chip = document.createElement('div');
-        chip.className = 'port-chip' + (boundCard > 0 ? ' bound' : '');
-        chip.setAttribute('draggable', 'true');
-        chip.setAttribute('data-port', p);
-        chip.innerHTML =
-          '<span>' + escapeHtml(p) + (boundCard > 0 ? ' → Card' + String(boundCard) : '') + '</span>' +
-          '<button class="secondary remove-port" data-port="' + escapeHtml(p) + '">×</button>';
-        portPool.appendChild(chip);
+    function refreshSelectedCardOptions() {
+      selectedCardSelect.innerHTML = '';
+      if (cards.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = '-1';
+        opt.textContent = 'No card';
+        selectedCardSelect.appendChild(opt);
+        return;
       }
-
-      for (const chip of portPool.querySelectorAll('.port-chip')) {
-        chip.addEventListener('dragstart', (event) => {
-          const port = chip.getAttribute('data-port') || '';
-          draggingPort = port;
-          if (event.dataTransfer) {
-            event.dataTransfer.setData('text/plain', port);
-            event.dataTransfer.effectAllowed = 'move';
-          }
-        });
-      }
-
-      for (const btn of portPool.querySelectorAll('.remove-port')) {
-        btn.addEventListener('click', (event) => {
-          event.preventDefault();
-          const port = btn.getAttribute('data-port') || '';
-          availablePorts = availablePorts.filter((item) => item !== port);
-          delete portBindings[port];
-          renderVisual();
-          setHint('Port removed: ' + port);
-        });
-      }
-    }
-
-    function renderMappingPreview() {
-      const lines = ['------------------------------'];
       for (let i = 0; i < cards.length; i += 1) {
-        const c = cards[i];
-        const ports = assignedPortsForCard(i);
-        const left = ports.length > 0 ? ports.join(', ') : '(no ports)';
-        const right = 'Card' + String(i + 1) + ' [' + (c.resource || 'resource addr...') + ']';
-        lines.push(left + '  ->  ' + right);
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = 'Card ' + String(i + 1) + ' (' + (cards[i].id || 'id?') + ')';
+        selectedCardSelect.appendChild(opt);
       }
-      lines.push('------------------------------');
-      mappingPreview.textContent = lines.join('\n');
     }
 
-    function collectCardsFromDom() {
+    function syncFromCards() {
       const nodes = cardsContainer.querySelectorAll('.card');
-      const collected = [];
-      for (let index = 0; index < nodes.length; index += 1) {
-        const node = nodes[index];
-        const ports = assignedPortsForCard(index);
-        collected.push(createCard({
+      const next = [];
+      for (const node of nodes) {
+        next.push(createCard({
           id: node.querySelector('.field-id input').value,
           driver: node.querySelector('.field-driver input').value,
           device: node.querySelector('.field-device input').value,
           resource: node.querySelector('.field-resource input').value,
           cardIndex: node.querySelector('.field-card-index input').value,
-          portsCsv: ports.join(','),
+          boardKind: node.querySelector('.field-kind select').value,
+          boardPortsCsv: node.querySelector('.field-board-ports input').value,
           detail: node.querySelector('.field-detail input').value,
         }));
       }
-      return collected;
+      cards = next;
     }
 
-    function bindDropZoneEvents() {
-      for (const zone of cardsContainer.querySelectorAll('.drop-zone')) {
-        zone.addEventListener('dragover', (event) => {
-          event.preventDefault();
-          zone.classList.add('active');
+    function sanitizeBindings() {
+      const validVirtualPorts = new Set(virtualPorts);
+      const next = {};
+      for (const vPort of virtualPorts) {
+        const b = bindings[vPort];
+        if (!b) {
+          continue;
+        }
+        if (typeof b.cardIndex !== 'number' || b.cardIndex < 0 || b.cardIndex >= cards.length) {
+          continue;
+        }
+        const boardPorts = getBoardPorts(cards[b.cardIndex]);
+        if (!boardPorts.includes(String(b.boardPort || ''))) {
+          continue;
+        }
+        next[vPort] = { cardIndex: b.cardIndex, boardPort: String(b.boardPort) };
+      }
+      bindings = next;
+    }
+
+    function renderVirtualPortPool() {
+      virtualPortPool.innerHTML = '';
+      for (const vPort of virtualPorts) {
+        const b = bindings[vPort];
+        const boundText = b ? ' → Card' + String(b.cardIndex + 1) + '.' + b.boardPort : '';
+        const chip = document.createElement('div');
+        chip.className = 'chip' + (b ? ' bound' : '');
+        chip.setAttribute('draggable', 'true');
+        chip.setAttribute('data-vport', vPort);
+        chip.innerHTML =
+          '<span>' + escapeHtml(vPort + boundText) + '</span>' +
+          '<button class="tiny-btn remove-vport" data-vport="' + escapeHtml(vPort) + '">×</button>';
+        virtualPortPool.appendChild(chip);
+      }
+
+      for (const chip of virtualPortPool.querySelectorAll('.chip')) {
+        chip.addEventListener('dragstart', (event) => {
+          const vPort = chip.getAttribute('data-vport') || '';
+          draggingVirtualPort = vPort;
           if (event.dataTransfer) {
-            event.dataTransfer.dropEffect = 'move';
+            event.dataTransfer.setData('text/plain', vPort);
+            event.dataTransfer.effectAllowed = 'move';
           }
-        });
-        zone.addEventListener('dragleave', () => {
-          zone.classList.remove('active');
-        });
-        zone.addEventListener('drop', (event) => {
-          event.preventDefault();
-          zone.classList.remove('active');
-          const cardIndex = Number(zone.getAttribute('data-card-index') || '-1');
-          const port = (event.dataTransfer && event.dataTransfer.getData('text/plain')) || draggingPort;
-          if (cardIndex < 0 || !port) {
-            return;
-          }
-          portBindings[port] = cardIndex;
-          renderVisual();
-          setHint('Mapped ' + port + ' → Card' + String(cardIndex + 1));
         });
       }
 
-      for (const btn of cardsContainer.querySelectorAll('.unbind-port')) {
-        btn.addEventListener('click', () => {
-          const port = btn.getAttribute('data-port') || '';
-          delete portBindings[port];
+      for (const btn of virtualPortPool.querySelectorAll('.remove-vport')) {
+        btn.addEventListener('click', (event) => {
+          event.preventDefault();
+          const vPort = btn.getAttribute('data-vport') || '';
+          virtualPorts = virtualPorts.filter((item) => item !== vPort);
+          delete bindings[vPort];
           renderVisual();
-          setHint('Unbound port: ' + port);
+          setHint('Removed virtual port: ' + vPort);
+        });
+      }
+    }
+
+    function renderBindingPreview() {
+      const lines = ['------------------------------'];
+      for (const vPort of virtualPorts) {
+        const b = bindings[vPort];
+        if (!b) {
+          lines.push(vPort + ' -> (unbound)');
+          continue;
+        }
+        const card = cards[b.cardIndex];
+        const cardTag = 'Card' + String(b.cardIndex + 1) + '(' + (card ? card.id : 'id?') + ')';
+        lines.push(vPort + ' -> ' + cardTag + '.' + b.boardPort);
+      }
+      lines.push('------------------------------');
+      bindingPreview.textContent = lines.join('\n');
+    }
+
+    function bindPortSlotEvents() {
+      for (const slot of cardsContainer.querySelectorAll('.port-slot')) {
+        slot.addEventListener('dragover', (event) => {
+          event.preventDefault();
+          slot.classList.add('active');
+        });
+        slot.addEventListener('dragleave', () => {
+          slot.classList.remove('active');
+        });
+        slot.addEventListener('drop', (event) => {
+          event.preventDefault();
+          slot.classList.remove('active');
+          const cardIndex = Number(slot.getAttribute('data-card-index') || '-1');
+          const boardPort = String(slot.getAttribute('data-board-port') || '');
+          const vPort = (event.dataTransfer && event.dataTransfer.getData('text/plain')) || draggingVirtualPort;
+          if (cardIndex < 0 || !boardPort || !vPort) {
+            return;
+          }
+          bindings[vPort] = { cardIndex, boardPort };
+          renderVisual();
+          setHint('Bound ' + vPort + ' -> Card' + String(cardIndex + 1) + '.' + boardPort);
+        });
+      }
+
+      for (const btn of cardsContainer.querySelectorAll('.unbind-vport')) {
+        btn.addEventListener('click', () => {
+          const vPort = btn.getAttribute('data-vport') || '';
+          delete bindings[vPort];
+          renderVisual();
+          setHint('Unbound ' + vPort);
         });
       }
 
@@ -598,20 +512,23 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
             return;
           }
           cards.splice(index, 1);
-          const nextBindings = {};
-          for (const p of availablePorts) {
-            const target = portBindings[p];
-            if (typeof target !== 'number') {
+          const next = {};
+          for (const vPort of virtualPorts) {
+            const b = bindings[vPort];
+            if (!b) {
               continue;
             }
-            if (target === index) {
+            if (b.cardIndex === index) {
               continue;
             }
-            nextBindings[p] = target > index ? target - 1 : target;
+            next[vPort] = {
+              cardIndex: b.cardIndex > index ? b.cardIndex - 1 : b.cardIndex,
+              boardPort: b.boardPort,
+            };
           }
-          portBindings = nextBindings;
+          bindings = next;
           if (cards.length === 0) {
-            cards.push(createCard({ id: 'inst0', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1' }));
+            cards.push(createCard({ id: 'card1', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1' }));
           }
           renderVisual();
         });
@@ -622,7 +539,21 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       cardsContainer.innerHTML = '';
       for (let index = 0; index < cards.length; index += 1) {
         const card = cards[index];
-        const ports = assignedPortsForCard(index);
+        const boardPorts = getBoardPorts(card);
+
+        const slotHtml = boardPorts.length > 0
+          ? boardPorts.map((boardPort) => {
+              const boundVPort = getBindingForEndpoint(index, boardPort);
+              const right = boundVPort
+                ? '<span class="chip bound">' + escapeHtml(boundVPort) + ' <button class="tiny-btn unbind-vport" data-vport="' + escapeHtml(boundVPort) + '">×</button></span>'
+                : '<span class="muted">Drop virtual port here</span>';
+              return '<div class="port-slot" data-card-index="' + String(index) + '" data-board-port="' + escapeHtml(boardPort) + '">' +
+                '<span class="slot-left"><strong>' + escapeHtml(boardPort) + '</strong><span class="muted">board port</span></span>' +
+                right +
+              '</div>';
+            }).join('')
+          : '<div class="muted">Define board ports first (comma-separated).</div>';
+
         const wrapper = document.createElement('div');
         wrapper.className = 'card';
         wrapper.innerHTML =
@@ -630,52 +561,351 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
             '<div class="card-title">Card ' + String(index + 1) + '</div>' +
             '<button class="secondary remove-card" data-index="' + String(index) + '">Remove</button>' +
           '</div>' +
-          '<div class="card-grid">' +
-            '<div class="field field-id"><label>Instance ID</label><input value="' + escapeHtml(card.id) + '" placeholder="inst0" /></div>' +
+          '<div class="grid">' +
+            '<div class="field field-id"><label>Board ID</label><input value="' + escapeHtml(card.id) + '" placeholder="card1" /></div>' +
             '<div class="field field-card-index"><label>Card Index</label><input value="' + escapeHtml(card.cardIndex) + '" placeholder="1" /></div>' +
+            '<div class="field field-kind"><label>Board Kind</label>' +
+              '<select>' +
+                '<option value="board"' + (card.boardKind === 'board' ? ' selected' : '') + '>board</option>' +
+                '<option value="virtual-vna"' + (card.boardKind === 'virtual-vna' ? ' selected' : '') + '>virtual-vna</option>' +
+              '</select>' +
+            '</div>' +
             '<div class="field field-driver"><label>Driver</label><input value="' + escapeHtml(card.driver) + '" placeholder="pxi" /></div>' +
             '<div class="field field-device"><label>Device</label><input value="' + escapeHtml(card.device) + '" placeholder="pxi-mock-0" /></div>' +
-            '<div class="field full field-resource"><label>Resource Address</label><input value="' + escapeHtml(card.resource) + '" placeholder="resource addr..." /></div>' +
-            '<div class="field full"><label>Port Mapping (drop ports here)</label>' +
-              '<div class="drop-zone" data-card-index="' + String(index) + '">' +
-                (ports.length > 0
-                  ? ports.map((p) => '<span class="port-chip bound">' + escapeHtml(p) + ' <button class="secondary unbind-port" data-port="' + escapeHtml(p) + '">×</button></span>').join('')
-                  : '<span class="muted">Drop vna-port* here</span>') +
-              '</div>' +
-            '</div>' +
+            '<div class="field field-resource"><label>Resource</label><input value="' + escapeHtml(card.resource) + '" placeholder="dev0" /></div>' +
+            '<div class="field full field-board-ports"><label>Board Ports (comma-separated)</label><input value="' + escapeHtml(card.boardPortsCsv) + '" placeholder="p1,p2,p3" /></div>' +
+            '<div class="field full"><label>Bindings (virtual port -> board port)</label><div class="port-slot-list">' + slotHtml + '</div></div>' +
             '<div class="field full field-detail"><label>Detail</label><input value="' + escapeHtml(card.detail) + '" placeholder="detail..." /></div>' +
           '</div>';
+
         cardsContainer.appendChild(wrapper);
       }
 
-      bindDropZoneEvents();
+      bindPortSlotEvents();
     }
 
     function renderVisual() {
-      cards = collectCardsFromDom();
+      syncFromCards();
+      sanitizeBindings();
+      refreshSelectedCardOptions();
       renderCards();
-      renderPortPool();
-      renderMappingPreview();
+      renderVirtualPortPool();
+      renderBindingPreview();
+    }
+
+    function parseFromYaml(yamlText) {
+      const text = String(yamlText || '');
+      const lines = text.split(/\r?\n/);
+
+      const parsedCards = [];
+      const parsedVirtualPorts = [];
+      const parsedBindings = {};
+
+      let section = '';
+      let inVirtualPorts = false;
+      let inBoardPorts = false;
+      let inBindingItem = false;
+      let currentBoard = null;
+      let currentBinding = null;
+      let currentInstance = null;
+
+      function flushBoard() {
+        if (currentBoard) {
+          parsedCards.push(createCard(currentBoard));
+          currentBoard = null;
+        }
+      }
+
+      function flushBinding() {
+        if (currentBinding && currentBinding.vnaPort && currentBinding.boardId && currentBinding.boardPort) {
+          parsedBindings[currentBinding.vnaPort] = {
+            boardId: currentBinding.boardId,
+            boardPort: currentBinding.boardPort,
+          };
+        }
+        currentBinding = null;
+      }
+
+      function flushInstance() {
+        if (!currentInstance) {
+          return;
+        }
+        if (!currentInstance.id) {
+          currentInstance = null;
+          return;
+        }
+
+        const existing = parsedCards.find((c) => c.id === currentInstance.id);
+        if (existing) {
+          existing.driver = currentInstance.driver || existing.driver;
+          existing.device = currentInstance.device || existing.device;
+          existing.resource = currentInstance.resource || existing.resource;
+          existing.cardIndex = currentInstance.cardIndex || existing.cardIndex;
+        } else {
+          parsedCards.push(createCard(currentInstance));
+        }
+        currentInstance = null;
+      }
+
+      for (let i = 0; i < lines.length; i += 1) {
+        const raw = lines[i];
+        const trim = raw.trim();
+        if (!trim || trim.startsWith('#')) {
+          continue;
+        }
+
+        if (trim === 'virtual_vna:' || trim === 'virtualVna:') {
+          flushBoard();
+          flushBinding();
+          flushInstance();
+          section = 'virtual';
+          inVirtualPorts = false;
+          continue;
+        }
+        if (trim === 'boards:') {
+          flushBoard();
+          flushBinding();
+          flushInstance();
+          section = 'boards';
+          inBoardPorts = false;
+          continue;
+        }
+        if (trim === 'bindings:') {
+          flushBoard();
+          flushBinding();
+          flushInstance();
+          section = 'bindings';
+          inBindingItem = false;
+          continue;
+        }
+        if (trim === 'instances:') {
+          flushBoard();
+          flushBinding();
+          flushInstance();
+          section = 'instances';
+          continue;
+        }
+
+        if (section === 'virtual') {
+          if (trim === 'ports:') {
+            inVirtualPorts = true;
+            continue;
+          }
+          if (inVirtualPorts && trim.startsWith('- ')) {
+            parsedVirtualPorts.push(dequote(trim.substring(2).trim()));
+            continue;
+          }
+        }
+
+        if (section === 'boards') {
+          if (trim.startsWith('- ')) {
+            flushBoard();
+            inBoardPorts = false;
+            currentBoard = createCard({});
+            const inline = trim.substring(2).trim();
+            if (inline.startsWith('id:')) {
+              currentBoard.id = dequote(inline.substring(3).trim());
+            }
+            continue;
+          }
+          if (!currentBoard) {
+            continue;
+          }
+          const kvPos = trim.indexOf(':');
+          if (kvPos < 0) {
+            continue;
+          }
+          const key = trim.substring(0, kvPos).trim();
+          const val = dequote(trim.substring(kvPos + 1).trim());
+          if (key === 'id') {
+            currentBoard.id = val;
+          } else if (key === 'kind') {
+            currentBoard.boardKind = val || 'board';
+          } else if (key === 'ports') {
+            inBoardPorts = true;
+          } else if (key === 'detail') {
+            currentBoard.detail = val;
+          }
+
+          if (inBoardPorts && trim.startsWith('- ')) {
+            const p = dequote(trim.substring(2).trim());
+            const merged = parseCsv(currentBoard.boardPortsCsv);
+            if (!merged.includes(p)) {
+              merged.push(p);
+            }
+            currentBoard.boardPortsCsv = merged.join(',');
+          }
+          continue;
+        }
+
+        if (section === 'bindings') {
+          if (trim.startsWith('- ')) {
+            flushBinding();
+            inBindingItem = true;
+            currentBinding = { vnaPort: '', boardId: '', boardPort: '' };
+            const inline = trim.substring(2).trim();
+            if (inline.startsWith('vna_port:')) {
+              currentBinding.vnaPort = dequote(inline.substring('vna_port:'.length).trim());
+            }
+            continue;
+          }
+          if (!inBindingItem || !currentBinding) {
+            continue;
+          }
+          const kvPos = trim.indexOf(':');
+          if (kvPos < 0) {
+            continue;
+          }
+          const key = trim.substring(0, kvPos).trim();
+          const val = dequote(trim.substring(kvPos + 1).trim());
+          if (key === 'vna_port') {
+            currentBinding.vnaPort = val;
+          } else if (key === 'board_id') {
+            currentBinding.boardId = val;
+          } else if (key === 'board_port') {
+            currentBinding.boardPort = val;
+          }
+          continue;
+        }
+
+        if (section === 'instances') {
+          if (trim.startsWith('- ')) {
+            flushInstance();
+            currentInstance = { id: '', driver: '', device: '', resource: '', cardIndex: '', boardKind: 'board', boardPortsCsv: '', detail: '' };
+            const inline = trim.substring(2).trim();
+            if (inline.startsWith('id:')) {
+              currentInstance.id = dequote(inline.substring(3).trim());
+            }
+            continue;
+          }
+          if (!currentInstance) {
+            continue;
+          }
+          const kvPos = trim.indexOf(':');
+          if (kvPos < 0) {
+            continue;
+          }
+          const key = trim.substring(0, kvPos).trim();
+          const val = dequote(trim.substring(kvPos + 1).trim());
+          if (key === 'id') {
+            currentInstance.id = val;
+          } else if (key === 'driver') {
+            currentInstance.driver = val;
+          } else if (key === 'device') {
+            currentInstance.device = val;
+          } else if (key === 'resource') {
+            currentInstance.resource = val;
+          } else if (key === 'cardIndex') {
+            currentInstance.cardIndex = val;
+          }
+          continue;
+        }
+      }
+
+      flushBoard();
+      flushBinding();
+      flushInstance();
+
+      if (parsedCards.length === 0) {
+        parsedCards.push(createCard({ id: 'card1', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1', boardKind: 'board', boardPortsCsv: 'p1,p2' }));
+      }
+
+      const nextVirtualPorts = parsedVirtualPorts.length > 0 ? parsedVirtualPorts : ['vna-port1', 'vna-port2'];
+
+      const boardIdToIndex = {};
+      for (let i = 0; i < parsedCards.length; i += 1) {
+        boardIdToIndex[parsedCards[i].id] = i;
+      }
+
+      const nextBindings = {};
+      for (const vPort of nextVirtualPorts) {
+        const b = parsedBindings[vPort];
+        if (!b) {
+          continue;
+        }
+        const idx = boardIdToIndex[b.boardId];
+        if (typeof idx !== 'number') {
+          continue;
+        }
+        const boardPorts = getBoardPorts(parsedCards[idx]);
+        if (!boardPorts.includes(b.boardPort)) {
+          continue;
+        }
+        nextBindings[vPort] = { cardIndex: idx, boardPort: b.boardPort };
+      }
+
+      return {
+        cards: parsedCards,
+        virtualPorts: nextVirtualPorts,
+        bindings: nextBindings,
+      };
+    }
+
+    function toYamlModel() {
+      const effectiveCards = visualMode ? cards : parseFromYaml(topologyYamlInput.value).cards;
+      const lines = [];
+
+      lines.push('virtual_vna:');
+      lines.push('  ports:');
+      for (const vPort of virtualPorts) {
+        lines.push('    - ' + scalar(vPort));
+      }
+
+      lines.push('boards:');
+      for (const card of effectiveCards) {
+        lines.push('  - id: ' + scalar(card.id));
+        lines.push('    kind: ' + scalar(card.boardKind || 'board'));
+        const boardPorts = getBoardPorts(card);
+        if (boardPorts.length > 0) {
+          lines.push('    ports:');
+          for (const p of boardPorts) {
+            lines.push('      - ' + scalar(p));
+          }
+        }
+        if (String(card.detail || '').trim().length > 0) {
+          lines.push('    detail: ' + scalar(card.detail));
+        }
+      }
+
+      lines.push('bindings:');
+      for (const vPort of virtualPorts) {
+        const b = bindings[vPort];
+        if (!b) {
+          continue;
+        }
+        const card = effectiveCards[b.cardIndex];
+        if (!card) {
+          continue;
+        }
+        lines.push('  - vna_port: ' + scalar(vPort));
+        lines.push('    board_id: ' + scalar(card.id));
+        lines.push('    board_port: ' + scalar(b.boardPort));
+      }
+
+      lines.push('instances:');
+      for (const card of effectiveCards) {
+        lines.push('  - id: ' + scalar(card.id));
+        lines.push('    driver: ' + scalar(card.driver));
+        lines.push('    device: ' + scalar(card.device));
+        lines.push('    resource: ' + scalar(card.resource));
+        if (String(card.cardIndex || '').trim().length > 0) {
+          lines.push('    cardIndex: ' + scalar(card.cardIndex));
+        }
+      }
+
+      return lines.join('\n');
     }
 
     function setMode(nextVisualMode) {
       visualMode = Boolean(nextVisualMode);
       if (visualMode) {
-        try {
-          cards = parseCardsFromYaml(topologyYamlInput.value);
-          syncPortsAndBindingsFromCards(cards);
-        } catch {
-          if (cards.length === 0) {
-            cards = [createCard({ id: 'inst0', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1' })];
-          }
-          syncPortsAndBindingsFromCards(cards);
-        }
-        renderCards();
-        renderPortPool();
-        renderMappingPreview();
+        const parsed = parseFromYaml(topologyYamlInput.value);
+        cards = parsed.cards;
+        virtualPorts = parsed.virtualPorts;
+        bindings = parsed.bindings;
+        renderVisual();
       } else {
-        cards = collectCardsFromDom();
-        topologyYamlInput.value = toYamlFromCards(cards);
+        topologyYamlInput.value = toYamlModel();
       }
 
       visualSection.classList.toggle('hidden', !visualMode);
@@ -684,25 +914,23 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       yamlModeBtn.classList.toggle('secondary', visualMode);
       addCardBtn.disabled = !visualMode;
       autoAssignBtn.disabled = !visualMode;
-      addPortBtn.disabled = !visualMode;
-      newPortInput.disabled = !visualMode;
+      selectedCardSelect.disabled = !visualMode;
+      assignSelectedBtn.disabled = !visualMode;
+      clearAssignBtn.disabled = !visualMode;
+      addVirtualPortBtn.disabled = !visualMode;
+      newVirtualPortInput.disabled = !visualMode;
     }
 
     function state() {
-      const visualCards = visualMode ? collectCardsFromDom() : cards;
-      const topologyYaml = visualMode
-        ? toYamlFromCards(visualCards)
-        : String(topologyYamlInput.value || '');
-
+      if (visualMode) {
+        syncFromCards();
+        sanitizeBindings();
+      }
       return {
         workspaceId: String(workspaceIdInput.value || '').trim(),
         topologyId: String(topologyIdInput.value || '').trim(),
-        topologyYaml,
+        topologyYaml: visualMode ? toYamlModel() : String(topologyYamlInput.value || ''),
       };
-    }
-
-    function setHint(text) {
-      hint.textContent = text;
     }
 
     function setWorkspaceList(items, activeWorkspaceId) {
@@ -730,60 +958,92 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     });
 
     addCardBtn.addEventListener('click', () => {
-      cards = collectCardsFromDom();
+      syncFromCards();
       const index = cards.length;
       cards.push(createCard({
-        id: 'inst' + String(index),
+        id: 'card' + String(index + 1),
         driver: 'pxi',
         device: 'pxi-mock-' + String(index),
         resource: 'dev' + String(index),
         cardIndex: String(index + 1),
+        boardKind: 'board',
+        boardPortsCsv: 'p1,p2',
       }));
-      renderCards();
-      renderMappingPreview();
-      setHint('Card added.');
+      renderVisual();
+      selectedCardSelect.value = String(index);
+      setHint('Board card added.');
+    });
+
+    addVirtualPortBtn.addEventListener('click', () => {
+      const vPort = String(newVirtualPortInput.value || '').trim();
+      if (!vPort) {
+        setHint('Virtual VNA port name is required.');
+        return;
+      }
+      if (virtualPorts.includes(vPort)) {
+        setHint('Virtual port already exists: ' + vPort);
+        return;
+      }
+      virtualPorts.push(vPort);
+      renderVisual();
+      newVirtualPortInput.value = '';
+      setHint('Virtual port added: ' + vPort);
     });
 
     autoAssignBtn.addEventListener('click', () => {
-      cards = collectCardsFromDom();
+      syncFromCards();
       if (cards.length === 0) {
-        setHint('No cards to assign. Add a card first.');
+        setHint('No board cards available.');
         return;
       }
-      if (availablePorts.length === 0) {
-        setHint('No ports available to assign.');
+      const endpoints = [];
+      for (let i = 0; i < cards.length; i += 1) {
+        for (const bp of getBoardPorts(cards[i])) {
+          endpoints.push({ cardIndex: i, boardPort: bp });
+        }
+      }
+      if (endpoints.length === 0) {
+        setHint('No board ports found on cards.');
         return;
       }
-
-      const nextBindings = {};
-      for (let i = 0; i < availablePorts.length; i += 1) {
-        nextBindings[availablePorts[i]] = i % cards.length;
+      bindings = {};
+      for (let i = 0; i < virtualPorts.length; i += 1) {
+        const endpoint = endpoints[i % endpoints.length];
+        bindings[virtualPorts[i]] = { cardIndex: endpoint.cardIndex, boardPort: endpoint.boardPort };
       }
-      portBindings = nextBindings;
       renderVisual();
-      setHint('Ports auto-assigned to cards by sequence.');
+      setHint('Auto assigned virtual ports to board ports.');
     });
 
-    addPortBtn.addEventListener('click', () => {
-      const portName = String(newPortInput.value || '').trim();
-      if (!portName) {
-        setHint('Port name is required.');
+    assignSelectedBtn.addEventListener('click', () => {
+      syncFromCards();
+      const selected = Number(selectedCardSelect.value || '-1');
+      if (selected < 0 || selected >= cards.length) {
+        setHint('Please select a valid card.');
         return;
       }
-      if (availablePorts.includes(portName)) {
-        setHint('Port already exists: ' + portName);
+      const boardPorts = getBoardPorts(cards[selected]);
+      if (boardPorts.length === 0) {
+        setHint('Selected card has no board ports.');
         return;
       }
-      availablePorts.push(portName);
-      renderPortPool();
-      renderMappingPreview();
-      newPortInput.value = '';
-      setHint('Port added: ' + portName);
+      for (let i = 0; i < virtualPorts.length; i += 1) {
+        bindings[virtualPorts[i]] = { cardIndex: selected, boardPort: boardPorts[i % boardPorts.length] };
+      }
+      renderVisual();
+      selectedCardSelect.value = String(selected);
+      setHint('Assigned all virtual ports to selected card board ports.');
+    });
+
+    clearAssignBtn.addEventListener('click', () => {
+      bindings = {};
+      renderVisual();
+      setHint('All bindings cleared.');
     });
 
     visualModeBtn.addEventListener('click', () => {
       setMode(true);
-      setHint('Visual mode enabled. Drag ports to cards.');
+      setHint('Visual mode enabled. Bind virtual ports to board ports.');
     });
 
     yamlModeBtn.addEventListener('click', () => {
@@ -843,16 +1103,12 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
           workspaceIdInput.value = msg.item.workspaceId || '';
           topologyIdInput.value = msg.item.topologyId || '';
           topologyYamlInput.value = msg.item.topologyYaml || '';
-          try {
-            cards = parseCardsFromYaml(topologyYamlInput.value);
-            syncPortsAndBindingsFromCards(cards);
-            setMode(true);
-            setHint('Workspace loaded (visual): ' + String(msg.item.workspaceId || ''));
-          } catch (error) {
-            setMode(false);
-            const msgText = error instanceof Error ? error.message : String(error);
-            setHint('Workspace loaded in YAML mode: ' + msgText);
-          }
+          const parsed = parseFromYaml(topologyYamlInput.value);
+          cards = parsed.cards;
+          virtualPorts = parsed.virtualPorts;
+          bindings = parsed.bindings;
+          setMode(true);
+          setHint('Workspace loaded: ' + String(msg.item.workspaceId || ''));
         } else {
           setHint(msg.error || 'Workspace load failed.');
         }
@@ -873,8 +1129,19 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       }
     });
 
-    cards = [createCard({ id: 'inst0', driver: 'pxi', device: 'pxi-mock-0', resource: 'dev0', cardIndex: '1', portsCsv: 'vna-port1,vna-port2' })];
-    syncPortsAndBindingsFromCards(cards);
+    cards = [createCard({
+      id: 'card1',
+      driver: 'pxi',
+      device: 'pxi-mock-0',
+      resource: 'dev0',
+      cardIndex: '1',
+      boardKind: 'board',
+      boardPortsCsv: 'p1,p2',
+      detail: '',
+    })];
+    virtualPorts = ['vna-port1', 'vna-port2'];
+    bindings = { 'vna-port1': { cardIndex: 0, boardPort: 'p1' }, 'vna-port2': { cardIndex: 0, boardPort: 'p2' } };
+
     setMode(true);
     vscode.postMessage({ type: 'workspace-list' });
   </script>

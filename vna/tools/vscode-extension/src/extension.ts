@@ -16,6 +16,7 @@ import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
 import { buildWaveformPreviewHtml, buildWaveformPreviewUpdatePayload } from "./waveformPreview";
 import { buildWorkspaceTopologyEditorHtml } from "./workspaceTopologyEditor";
+import { buildUnifiedControlCenterHtml } from "./unifiedControlCenter";
 import type { WaveformPreviewData, WaveformScanState, WaveformTraceSource } from "./types";
 
 type LogLevel = "INFO" | "ERROR";
@@ -342,6 +343,243 @@ export function activate(context: vscode.ExtensionContext): void {
           type: resultType,
           ok: false,
           error: errorMessage,
+          message: errorMessage,
+        });
+      }
+    });
+  });
+
+  const openControlCenterCommand = vscode.commands.registerCommand("xswlZapVna.openControlCenter", async () => {
+    const requestId = createRequestId();
+    const panel = vscode.window.createWebviewPanel(
+      "xswlZapVna.controlCenter",
+      "XSWL VNA Control Center",
+      vscode.ViewColumn.One,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      },
+    );
+
+    panel.webview.html = buildUnifiedControlCenterHtml(panel.webview, createNonce());
+
+    const { address, deadlineMs, autoOpenOutput } = readConfig();
+    const client = new ServiceClient({ address, deadlineMs });
+    let liveAbortController: AbortController | null = null;
+    let panelDisposed = false;
+
+    const postWorkspaceList = async () => {
+      const list = await client.listWorkspaceTopologies();
+      await panel.webview.postMessage({
+        type: "workspace-list-result",
+        items: list.items,
+        activeWorkspaceId: list.activeWorkspaceId,
+      });
+    };
+
+    const postServiceStatus = async () => {
+      const status = await client.getServiceStatus();
+      await panel.webview.postMessage({ type: "service-status-result", ok: true, status });
+    };
+
+    const stopLiveStream = async (instanceId: string) => {
+      if (liveAbortController) {
+        liveAbortController.abort();
+        liveAbortController = null;
+      }
+      try {
+        await client.setScanState(instanceId, "hold");
+      } catch {
+        // ignore scan stop errors to avoid blocking UI lifecycle
+      }
+      if (!panelDisposed) {
+        await panel.webview.postMessage({ type: "live-state", active: false });
+      }
+    };
+
+    panel.onDidDispose(() => {
+      panelDisposed = true;
+      if (liveAbortController) {
+        liveAbortController.abort();
+        liveAbortController = null;
+      }
+      client.dispose();
+    });
+
+    panel.webview.onDidReceiveMessage(async (message: unknown) => {
+      const payload = message as {
+        type?: string;
+        workspaceId?: string;
+        topologyId?: string;
+        topologyYaml?: string;
+        activate?: boolean;
+        instanceId?: string;
+        scanState?: WaveformScanState;
+        sampleCount?: number;
+        mode?: "frequency" | "time";
+      };
+
+      const workspaceId = String(payload.workspaceId ?? "").trim();
+      const topologyId = String(payload.topologyId ?? "").trim();
+      const topologyYaml = String(payload.topologyYaml ?? "");
+      const instanceId = String(payload.instanceId ?? "inst0").trim() || "inst0";
+      const sampleCountRaw = Number(payload.sampleCount ?? 256);
+      const sampleCount = Number.isInteger(sampleCountRaw) && sampleCountRaw > 0 ? sampleCountRaw : 256;
+      const mode = payload.mode === "time" ? "time" : "frequency";
+
+      try {
+        if (payload.type === "app-init") {
+          await postWorkspaceList();
+          await postServiceStatus();
+          return;
+        }
+
+        if (payload.type === "service-status") {
+          await postServiceStatus();
+          return;
+        }
+
+        if (payload.type === "workspace-list") {
+          await postWorkspaceList();
+          return;
+        }
+
+        if (payload.type === "workspace-load") {
+          const item = await client.getWorkspaceTopology(workspaceId);
+          await panel.webview.postMessage({ type: "workspace-load-result", ok: true, item });
+          return;
+        }
+
+        if (payload.type === "workspace-save") {
+          const result = await client.upsertWorkspaceTopology(
+            workspaceId,
+            topologyId,
+            topologyYaml,
+            Boolean(payload.activate),
+          );
+          const messageText = formatValidationResult(result);
+
+          logBlock(outputChannel, "INFO", `[ControlCenterWorkspaceSave][requestId=${requestId}]`, [
+            `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
+            messageText,
+          ]);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+          await panel.webview.postMessage({
+            type: "workspace-save-result",
+            ok: result.ok,
+            message: result.ok
+              ? `Saved workspace ${workspaceId}${Boolean(payload.activate) ? " and activated" : ""}.`
+              : `Save failed: ${messageText}`,
+          });
+
+          if (result.ok) {
+            await postWorkspaceList();
+          }
+          return;
+        }
+
+        if (payload.type === "workspace-activate") {
+          const result = await client.setActiveWorkspace(workspaceId);
+          const messageText = formatValidationResult(result);
+          logBlock(outputChannel, "INFO", `[ControlCenterWorkspaceActivate][requestId=${requestId}]`, [
+            `workspaceId=${workspaceId}`,
+            messageText,
+          ]);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+          await panel.webview.postMessage({
+            type: "workspace-activate-result",
+            ok: result.ok,
+            message: result.ok ? `Active workspace switched to ${workspaceId}.` : `Activate failed: ${messageText}`,
+          });
+
+          if (result.ok) {
+            await postWorkspaceList();
+          }
+          return;
+        }
+
+        if (payload.type === "open-visual-topology") {
+          await vscode.commands.executeCommand("xswlZapVna.editWorkspaceTopology");
+          return;
+        }
+
+        if (payload.type === "scan-get") {
+          const scan = await client.getScanState(instanceId);
+          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+          return;
+        }
+
+        if (payload.type === "scan-set") {
+          const desiredState = payload.scanState === "single" || payload.scanState === "hold" ? payload.scanState : "continuous";
+          const scan = await client.setScanState(instanceId, desiredState);
+          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+          return;
+        }
+
+        if (payload.type === "waveform-snapshot") {
+          const waveform = await client.acquireWaveform(instanceId, sampleCount, mode, "frame", 0, []);
+          await panel.webview.postMessage({ type: "waveform-frame", waveform });
+          return;
+        }
+
+        if (payload.type === "waveform-live-start") {
+          await stopLiveStream(instanceId);
+
+          const started = await client.setScanState(instanceId, "continuous");
+          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...started });
+          await panel.webview.postMessage({ type: "live-state", active: true });
+
+          liveAbortController = new AbortController();
+          const localAbort = liveAbortController;
+
+          void client
+            .streamWaveform(
+              instanceId,
+              sampleCount,
+              mode,
+              "frame",
+              0,
+              [],
+              0,
+              async (waveform) => {
+                if (!panelDisposed && liveAbortController === localAbort) {
+                  await panel.webview.postMessage({ type: "waveform-frame", waveform });
+                }
+              },
+              localAbort.signal,
+            )
+            .then(async () => {
+              if (liveAbortController === localAbort) {
+                liveAbortController = null;
+                await panel.webview.postMessage({ type: "live-state", active: false });
+              }
+            })
+            .catch(async (error) => {
+              if (liveAbortController === localAbort) {
+                liveAbortController = null;
+                await panel.webview.postMessage({
+                  type: "app-error",
+                  message: error instanceof Error ? error.message : String(error),
+                });
+                await panel.webview.postMessage({ type: "live-state", active: false });
+              }
+            });
+          return;
+        }
+
+        if (payload.type === "waveform-live-stop") {
+          await stopLiveStream(instanceId);
+          const scan = await client.getScanState(instanceId);
+          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logBlock(outputChannel, "ERROR", `[ControlCenter][requestId=${requestId}]`, [errorMessage]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        await panel.webview.postMessage({
+          type: "app-error",
           message: errorMessage,
         });
       }
@@ -1296,6 +1534,7 @@ export function activate(context: vscode.ExtensionContext): void {
     getInstanceCapabilitiesCommand,
     validateTopologyCommand,
     editWorkspaceTopologyCommand,
+    openControlCenterCommand,
     acquireOnceCommand,
     streamPreviewCommand,
     importAcquisitionCommand,
