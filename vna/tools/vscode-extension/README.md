@@ -4,7 +4,7 @@
 
 - Command: `XSWL: Get Service Status`
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
-- Command: `XSWL: Open Control Center`（统一入口 App：多级菜单切换工作区/拓扑/扫描/波形；支持弹框交互；内置工作区保存/激活、扫描状态控制、snapshot/live 波形）
+- Command: `XSWL: Open Control Center`（统一入口 App：多级菜单切换工作区/拓扑/扫描/波形；支持弹框交互；拓扑页内嵌可视化编辑（虚拟端口拖拽绑定到板卡端口）+ YAML 高级模式；内置工作区保存/激活、扫描状态控制、snapshot/live 波形）
 - Command: `XSWL: Edit Workspace Topology`（Webview 可视化编辑工作区拓扑：明确区分“虚拟 VNA 端口”和“板卡端口”，通过拖拽完成虚拟端口→板卡端口绑定；板卡类型支持 `board` / `virtual-vna`；支持 Auto Assign / Assign To Selected / Clear Assignments；支持保存/加载/激活，保留 YAML 高级模式）
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
