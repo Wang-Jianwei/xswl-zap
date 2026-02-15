@@ -60,6 +60,12 @@ function resolveBrowserExecutable(): string {
     const topologyViewClass = (await page.locator("#view-topology").getAttribute("class")) ?? "";
     assert(topologyViewClass.includes("is-active"), "topology view did not activate on click");
 
+    const initialDeviceRows = await page.locator("#deviceManagerRows .device-row").count();
+    await page.locator("#btnAddDevice").click();
+    await page.waitForTimeout(40);
+    const nextDeviceRows = await page.locator("#deviceManagerRows .device-row").count();
+    assert.equal(nextDeviceRows, initialDeviceRows + 1, "device manager add button did not create device row");
+
     // Test adding virtual port via Modal
     await page.locator("#btnAddVirtualPort").click();
     await page.waitForTimeout(40);
@@ -82,12 +88,52 @@ function resolveBrowserExecutable(): string {
     const firstBoardPortLabel = ((await page.locator('.t-node[data-type="board"] .t-port-label').first().textContent()) ?? "").trim();
     assert.equal(firstBoardPortLabel, "1", "board port label should simplify p1 -> 1");
 
-    await page.locator('.t-node[data-type="board"] .t-node-header').first().dblclick({ force: true });
+    // Test expand board details (use the LAST/newest board to avoid overlap issues)
+    const expandBtn = page.locator('.t-node[data-type="board"] [data-action="toggle-expand"]').last();
+    // Scroll into view
+    await expandBtn.scrollIntoViewIfNeeded();
+    
+    const initialIcon = await expandBtn.textContent();
+    assert.equal(initialIcon?.trim(), "▶", "initial expand icon should be ▶");
+
+    const boardLabel = page.locator('.t-node[data-type="board"] [data-action="toggle-expand-label"]').last();
+    await boardLabel.dblclick({ force: true });
+    await page.waitForTimeout(80);
+    const iconAfterDblClick = await expandBtn.textContent();
+    assert.equal(iconAfterDblClick?.trim(), "▼", "double click board label should expand board details");
+
+    await boardLabel.dblclick({ force: true });
+    await page.waitForTimeout(80);
+    const iconAfterSecondDblClick = await expandBtn.textContent();
+    assert.equal(iconAfterSecondDblClick?.trim(), "▶", "double click board label again should collapse board details");
+    
+    await expandBtn.click({ force: true });
+    await page.waitForTimeout(100); // Increase wait time
+    const expandedIcon = await expandBtn.textContent();
+    assert.equal(expandedIcon?.trim(), "▼", "expanded icon should be ▼");
+
+    const boardTemplateSelect = page.locator('.t-node[data-type="board"] [data-action="board-device-template"]').last();
+    await boardTemplateSelect.selectOption("dev-pxi-0");
     await page.waitForTimeout(40);
-    const boardEditModalClass = (await page.locator("#modal").getAttribute("class")) ?? "";
-    assert(boardEditModalClass.includes("is-open"), "double click on board header should open edit modal");
-    await page.locator("#modalCancel").click();
+
+    const boardBindHint = page.locator('.t-node[data-type="board"] .board-bind-hint').last();
+    const bindState = await boardBindHint.getAttribute("data-bind-state");
+    const bindTemplateId = await boardBindHint.getAttribute("data-template-id");
+    assert.equal(bindState, "bound", "board should show bound state after selecting template");
+    assert.equal(bindTemplateId, "dev-pxi-0", "board should display selected template id in bind hint");
+
+    const pxiResourceInput = page.locator('#deviceManagerRows .device-row[data-device-id="dev-pxi-0"] input[data-field="resource"]').first();
+    await pxiResourceInput.fill("dev0-bound-updated");
+    await page.waitForTimeout(60);
+
+    const boardResourceInput = page.locator('.t-node[data-type="board"] [data-action="board-resource"]').last();
+    const boundResourceValue = await boardResourceInput.inputValue();
+    assert.equal(boundResourceValue, "dev0-bound-updated", "editing device manager resource should sync to bound board resource");
+
+    await boardResourceInput.fill("virt://custom/resource-1");
     await page.waitForTimeout(40);
+    const boardResourceValue = await boardResourceInput.inputValue();
+    assert.equal(boardResourceValue, "virt://custom/resource-1", "board resource should be editable in expanded details");
 
     // Auto layout check (simple click check)
     await page.locator("#btnAutoLayout").click();

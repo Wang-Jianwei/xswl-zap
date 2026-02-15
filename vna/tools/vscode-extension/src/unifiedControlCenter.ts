@@ -36,7 +36,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     .app {
       display: grid;
       grid-template-columns: 280px 1fr;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
     }
     .sidebar {
       border-right: 1px solid var(--vscode-panel-border);
@@ -99,8 +100,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     .content {
       display: flex;
       flex-direction: column;
-      min-width: 0;
-      min-height: 0;
+      height: 100%;
+      overflow: hidden;
     }
     .topbar {
       display: flex;
@@ -121,10 +122,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       display: none;
       padding: 12px;
       overflow: auto;
+      flex: 1;
       min-height: 0;
     }
     .view.is-active {
-      display: block;
+      display: flex;
+      flex-direction: column;
     }
     .grid {
       display: grid;
@@ -137,6 +140,13 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       border-radius: 6px;
       padding: 10px;
       background: var(--vscode-editorWidget-background);
+    }
+    .card.fit {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     .card h3 {
       margin: 0 0 8px;
@@ -251,7 +261,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       display: flex;
       flex-direction: column;
       gap: 10px;
-      height: 600px;
+      flex: 1;
       border: 1px solid var(--vscode-panel-border);
       border-radius: 6px;
       background: var(--vscode-editor-background);
@@ -433,6 +443,55 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       color: var(--vscode-descriptionForeground);
       font-size: 11px;
     }
+    .device-manager {
+      border-top: 1px solid var(--vscode-panel-border);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      max-height: 30vh;
+      overflow: auto;
+      background: color-mix(in srgb, var(--vscode-editor-background) 95%, var(--vscode-sideBar-background) 5%);
+    }
+    .device-row {
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 4px;
+      padding: 6px;
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr 1fr 1fr auto;
+      gap: 6px;
+      align-items: center;
+      background: var(--vscode-editorWidget-background);
+    }
+    .device-row input,
+    .device-row select {
+      padding: 4px 6px;
+      font-size: 11px;
+    }
+    .board-detail-grid {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .board-detail-grid .full { grid-column: 1 / span 2; }
+    .board-detail-grid label {
+      color: var(--vscode-descriptionForeground);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 10px;
+    }
+    .board-bind-hint {
+      font-size: 10px;
+      color: var(--vscode-descriptionForeground);
+      margin-bottom: 4px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      background: color-mix(in srgb, var(--vscode-editor-background) 90%, var(--vscode-sideBar-background) 10%);
+      border: 1px solid var(--vscode-panel-border);
+    }
     .hidden { display: none; }
   </style>
 </head>
@@ -500,7 +559,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       </section>
 
       <section id="view-topology" class="view">
-        <div class="card">
+        <div class="card fit">
           <h3>拓扑编辑（内嵌可视化）</h3>
           <div class="topology-mode">
             <button id="topologyVisualMode">可视化模式</button>
@@ -517,8 +576,16 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                 <button id="btnAutoLayout" class="secondary">自动排列</button>
               </div>
               <div class="help" style="margin-left:auto; font-size:12px;">
-                拖拽标题移动 | 拖拽端口连线 | 点击连线删除 | 双击板卡编辑
+                拖拽标题移动 | 拖拽端口连线 | 点击连线删除
               </div>
+            </div>
+
+            <div class="device-manager">
+              <div class="line inline" style="margin:0;">
+                <strong>设备管理器</strong>
+                <button id="btnAddDevice" class="secondary">新增设备</button>
+              </div>
+              <div id="deviceManagerRows" class="help">暂无设备，请先新增（支持物理/虚拟设备）。</div>
             </div>
             
             <div id="topologyCanvasContainer" class="topology-canvas-container">
@@ -640,6 +707,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     const instanceId = document.getElementById("instanceId");
     const sampleCount = document.getElementById("sampleCount");
     const mode = document.getElementById("mode");
+    const deviceManagerRows = document.getElementById("deviceManagerRows");
+    const btnAddDevice = document.getElementById("btnAddDevice");
     const serviceStatus = document.getElementById("serviceStatus");
     const scanStatus = document.getElementById("scanStatus");
     const waveMeta = document.getElementById("waveMeta");
@@ -664,6 +733,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           id: "card1",
           kind: "board",
           portsCsv: "p1,p2",
+          deviceTemplateId: "dev-pxi-0",
           driver: "pxi",
           device: "pxi-mock-0",
           resource: "dev0",
@@ -673,6 +743,22 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       ],
       bindings: {},
     };
+    state.deviceRegistry = [
+      {
+        id: "dev-pxi-0",
+        type: "physical",
+        driver: "pxi",
+        device: "pxi-mock-0",
+        resource: "dev0",
+      },
+      {
+        id: "dev-virt-0",
+        type: "virtual",
+        driver: "virtual",
+        device: "virtual-device-0",
+        resource: "virt://device/0",
+      },
+    ];
 
     function setStatus(text) {
       statusLine.textContent = text;
@@ -792,6 +878,93 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         }
       }
       state.topology.bindings = next;
+    }
+
+    function syncDeviceRegistryFromBoards() {
+      const existingKeys = new Set(
+        state.deviceRegistry.map((item) => [item.driver, item.device, item.resource].join("|"))
+      );
+      for (const board of state.topology.boards) {
+        const key = [board.driver || "", board.device || "", board.resource || ""].join("|");
+        if (!board.device || existingKeys.has(key)) {
+          continue;
+        }
+        state.deviceRegistry.push({
+          id: "dev-import-" + String(state.deviceRegistry.length + 1),
+          type: String(board.driver || "").toLowerCase() === "virtual" ? "virtual" : "physical",
+          driver: board.driver || "",
+          device: board.device || "",
+          resource: board.resource || "",
+        });
+        existingKeys.add(key);
+      }
+    }
+
+    function applyDeviceTemplateToBoard(board, deviceId) {
+      if (!board || !deviceId) {
+        return false;
+      }
+      const device = state.deviceRegistry.find((item) => item.id === deviceId);
+      if (!device) {
+        return false;
+      }
+      board.deviceTemplateId = device.id;
+      board.driver = device.driver;
+      board.device = device.device;
+      board.resource = device.resource;
+      return true;
+    }
+
+    function syncBoardsBoundToDevice(deviceId) {
+      if (!deviceId) {
+        return;
+      }
+      for (const board of state.topology.boards) {
+        if (board.deviceTemplateId === deviceId) {
+          applyDeviceTemplateToBoard(board, deviceId);
+        }
+      }
+    }
+
+    function buildDeviceTemplateOptions(board) {
+      const selected = board.deviceTemplateId
+        ? state.deviceRegistry.find((item) => item.id === board.deviceTemplateId)
+        : state.deviceRegistry.find(
+            (item) => item.driver === board.driver && item.device === board.device && item.resource === board.resource
+          );
+      const options = ['<option value="">自定义</option>'];
+      for (const item of state.deviceRegistry) {
+        const label = item.id + " [" + (item.type === "virtual" ? "虚拟" : "物理") + "] " + item.resource;
+        options.push(
+          '<option value="' + escapeAttr(item.id) + '"' +
+            (selected && selected.id === item.id ? ' selected' : '') +
+          '>' + escapeHtml(label) + '</option>'
+        );
+      }
+      return options.join("");
+    }
+
+    function renderDeviceManager() {
+      if (!deviceManagerRows) {
+        return;
+      }
+      if (!Array.isArray(state.deviceRegistry) || state.deviceRegistry.length === 0) {
+        deviceManagerRows.innerHTML = "暂无设备，请先新增（支持物理/虚拟设备）。";
+        return;
+      }
+      deviceManagerRows.innerHTML = state.deviceRegistry.map((item) =>
+        '<div class="device-row" data-device-id="' + escapeAttr(item.id) + '">' +
+          '<input data-field="id" value="' + escapeAttr(item.id) + '" placeholder="设备ID" />' +
+          '<select data-field="type">' +
+            '<option value="physical"' + (item.type === "physical" ? ' selected' : '') + '>物理</option>' +
+            '<option value="virtual"' + (item.type === "virtual" ? ' selected' : '') + '>虚拟</option>' +
+          '</select>' +
+          '<input data-field="driver" value="' + escapeAttr(item.driver) + '" placeholder="driver" />' +
+          '<input data-field="device" value="' + escapeAttr(item.device) + '" placeholder="device" />' +
+          '<input data-field="resource" value="' + escapeAttr(item.resource) + '" placeholder="resource" />' +
+          '<button data-action="delete-device" class="secondary">删除</button>' +
+        '</div>'
+      ).join("");
     }
 
     function ensureLayout() {
@@ -928,35 +1101,48 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             '</div>';
         }).join("");
 
-        if (1) { } // dummy block to simplify diff
-        
         const isExpanded = state.expandedBoards.has(board.id);
         const toggleIcon = isExpanded ? "▼" : "▶";
+           const templateOptions = buildDeviceTemplateOptions(board);
+          const isTemplateBound = Boolean(board.deviceTemplateId);
+          const headerStateIcon = isTemplateBound ? "🔒" : "◌";
+          const headerStateTitle = isTemplateBound ? "模板绑定中" : "自定义配置";
+          const bindState = isTemplateBound ? "bound" : "custom";
+          const bindHint = isTemplateBound
+           ? ("🔒 已绑定模板 " + String(board.deviceTemplateId || "") + "（编辑字段将自动切换为自定义）")
+           : "✎ 当前为自定义配置（可选择模板启用自动同步）";
         
         let detailsHtml = "";
         if (isExpanded) {
-             detailsHtml = '<div style="margin-top:8px; padding-top:4px; border-top:1px solid var(--vscode-widget-border); font-size:10px; color:var(--vscode-descriptionForeground);">' +
-                '<div>Driver: ' + escapeHtml(board.driver) + '</div>' +
-                '<div>Device: ' + escapeHtml(board.device) + '</div>' +
-                '<div>Resource: ' + escapeHtml(board.resource) + '</div>' +
-                (board.cardIndex ? '<div>Index: ' + escapeHtml(board.cardIndex) + '</div>' : '') +
-                (board.detail ? '<div>Note: ' + escapeHtml(board.detail) + '</div>' : '') +
+             detailsHtml = '<div style="margin-top:8px; padding-top:6px; border-top:1px solid var(--vscode-widget-border);">' +
+             '<div class="board-bind-hint" data-bind-state="' + escapeAttr(bindState) + '" data-template-id="' + escapeAttr(board.deviceTemplateId || "") + '">' + escapeHtml(bindHint) + '</div>' +
+             '<div class="board-detail-grid">' +
+               '<div class="full"><label>设备模板</label><select data-action="board-device-template" data-board-id="' + escapeAttr(board.id) + '">' + templateOptions + '</select></div>' +
+               '<div><label>Driver</label><input data-action="board-driver" data-board-id="' + escapeAttr(board.id) + '" value="' + escapeAttr(board.driver || "") + '" /></div>' +
+               '<div><label>Device</label><input data-action="board-device" data-board-id="' + escapeAttr(board.id) + '" value="' + escapeAttr(board.device || "") + '" /></div>' +
+               '<div><label>Resource</label><input data-action="board-resource" data-board-id="' + escapeAttr(board.id) + '" value="' + escapeAttr(board.resource || "") + '" /></div>' +
+               '<div><label>Card Index</label><input data-action="board-card-index" data-board-id="' + escapeAttr(board.id) + '" value="' + escapeAttr(board.cardIndex || "") + '" /></div>' +
+               '<div class="full"><label>Detail</label><input data-action="board-detail" data-board-id="' + escapeAttr(board.id) + '" value="' + escapeAttr(board.detail || "") + '" /></div>' +
+             '</div>' +
             '</div>';
         } else {
-             detailsHtml = '<div style="font-size:10px;color:var(--vscode-descriptionForeground)">' + escapeHtml(board.driver) + '</div>';
+             detailsHtml = '<div style="margin-top:4px; padding-top:4px; border-top:1px solid var(--vscode-widget-border); font-size:10px; color:var(--vscode-descriptionForeground)">' + escapeHtml(board.driver) + '</div>';
         }
 
         el.innerHTML = 
-            '<div class="t-node-header" data-action="edit-board" style="display:flex; align-items:center;">' +
-               '<span style="flex:1">' + escapeHtml(board.id) + '</span>' +
+            '<div class="t-node-header" style="display:flex; align-items:center;">' +
+             '<span data-action="toggle-expand-label" data-id="' + escapeAttr(board.id) + '" style="flex:1; cursor:pointer;">' + escapeHtml(board.id) + '</span>' +
+             '<span title="' + escapeAttr(headerStateTitle) + '" style="margin-right:4px; font-size:10px;">' + headerStateIcon + '</span>' +
                '<span data-action="toggle-expand" data-id="' + escapeAttr(board.id) + '" style="cursor:pointer; padding:0 4px;font-size:10px;">' + toggleIcon + '</span>' +
             '</div>' +
             '<div class="t-node-body">' +
-                detailsHtml + 
                 portsHtml +
+                detailsHtml +
             '</div>';
         nodesContainer.appendChild(el);
       });
+
+          renderDeviceManager();
 
       // Defer connection rendering to next frame
       requestAnimationFrame(() => renderConnections());
@@ -1055,6 +1241,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         lines.push("    driver: " + scalar(board.driver));
         lines.push("    device: " + scalar(board.device));
         lines.push("    resource: " + scalar(board.resource));
+        if (board.deviceTemplateId) {
+          lines.push("    deviceTemplate: " + scalar(board.deviceTemplateId));
+        }
         if (board.cardIndex) {
           lines.push("    cardIndex: " + scalar(board.cardIndex));
         }
@@ -1152,6 +1341,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
               id: "",
               kind: "board",
               portsCsv: "",
+              deviceTemplateId: "",
               driver: "",
               device: "",
               resource: "",
@@ -1222,7 +1412,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (section === "instances") {
           if (trim.startsWith("- ")) {
             flushInstance();
-            currentInstance = { id: "", driver: "", device: "", resource: "", cardIndex: "" };
+            currentInstance = { id: "", deviceTemplate: "", driver: "", device: "", resource: "", cardIndex: "" };
             const inline = trim.slice(2).trim();
             if (inline.startsWith("id:")) {
               currentInstance.id = dequote(inline.slice(3));
@@ -1240,6 +1430,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           const value = dequote(trim.slice(pos + 1));
           if (key === "id") {
             currentInstance.id = value;
+          } else if (key === "deviceTemplate") {
+            currentInstance.deviceTemplate = value;
           } else if (key === "driver") {
             currentInstance.driver = value;
           } else if (key === "device") {
@@ -1265,6 +1457,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         board.device = instance.device || board.device;
         board.resource = instance.resource || board.resource;
         board.cardIndex = instance.cardIndex || board.cardIndex;
+        board.deviceTemplateId = instance.deviceTemplate || board.deviceTemplateId || "";
       }
 
       state.topology.virtualPorts = virtualPorts.length > 0 ? virtualPorts : ["vna-port1", "vna-port2"];
@@ -1273,6 +1466,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           id: "card1",
           kind: "board",
           portsCsv: "p1,p2",
+          deviceTemplateId: "dev-pxi-0",
           driver: "pxi",
           device: "pxi-mock-0",
           resource: "dev0",
@@ -1282,6 +1476,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       ];
       state.topology.bindings = bindings;
       sanitizeBindings();
+      syncDeviceRegistryFromBoards();
+      renderDeviceManager();
       renderTopologyVisual();
     }
 
@@ -1549,55 +1745,14 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         }
     });
 
-    // Double click to edit board
-    canvasContainer.addEventListener("dblclick", async (e) => {
-      const target = e.target;
-      const element = target && target.nodeType === 1 ? target : (target && target.parentElement ? target.parentElement : null);
-      if (!element) return;
-
-      const header = element.closest(".t-node-header");
-        if (!header) return;
-        const node = header.closest(".t-node");
-        if (node.getAttribute("data-type") !== "board") return;
-        
-        const boardId = node.getAttribute("data-id");
-        const board = state.topology.boards.find(b => b.id === boardId);
-        if (!board) return;
-        
-        // Simple prompt for now, or open a fuller modal
-        // Let's use the existing modal logic but tailored
-        const newId = await openModal({
-            title: "编辑板卡 ID",
-            body: "当前 ID: " + board.id,
-            inputLabel: "新 ID",
-            inputValue: board.id
-        });
-        
-        if (newId && newId !== board.id) {
-            // Rename board and update bindings
-            const oldId = board.id;
-            board.id = newId;
-            // Update bindings
-            Object.keys(state.topology.bindings).forEach(k => {
-                if (state.topology.bindings[k].boardId === oldId) {
-                    state.topology.bindings[k].boardId = newId;
-                }
-            });
-            // Update layout key
-            if (state.topology.layout[oldId]) {
-                state.topology.layout[newId] = state.topology.layout[oldId];
-                delete state.topology.layout[oldId];
-            }
-            renderTopologyVisual();
-        }
-    });
-
     canvasContainer.addEventListener("click", (e) => {
         const target = e.target;
+        if (!(target instanceof HTMLElement)) return;
         
         // Handle expand toggle
-        if (target.getAttribute("data-action") === "toggle-expand") {
-             const boardId = target.getAttribute("data-id");
+        const toggleBtn = target.closest('[data-action="toggle-expand"]');
+        if (toggleBtn) {
+             const boardId = toggleBtn.getAttribute("data-id");
              if (state.expandedBoards.has(boardId)) {
                  state.expandedBoards.delete(boardId);
              } else {
@@ -1614,6 +1769,91 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             delete state.topology.bindings[vPort];
             renderTopologyVisual();
         }
+    });
+
+    canvasContainer.addEventListener("dblclick", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const label = target.closest('[data-action="toggle-expand-label"]');
+      if (!label) {
+        return;
+      }
+      const boardId = label.getAttribute("data-id") || "";
+      if (!boardId) {
+        return;
+      }
+      if (state.expandedBoards.has(boardId)) {
+        state.expandedBoards.delete(boardId);
+      } else {
+        state.expandedBoards.add(boardId);
+      }
+      renderTopologyVisual();
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    canvasContainer.addEventListener("input", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const boardId = target.getAttribute("data-board-id") || "";
+      if (!boardId) {
+        return;
+      }
+      const board = state.topology.boards.find((item) => item.id === boardId);
+      if (!board) {
+        return;
+      }
+      const action = target.getAttribute("data-action");
+      if (!action) {
+        return;
+      }
+      if (action === "board-driver") {
+        board.deviceTemplateId = "";
+        board.driver = String(target.value || "").trim();
+      } else if (action === "board-device") {
+        board.deviceTemplateId = "";
+        board.device = String(target.value || "").trim();
+      } else if (action === "board-resource") {
+        board.deviceTemplateId = "";
+        board.resource = String(target.value || "").trim();
+      } else if (action === "board-card-index") {
+        board.cardIndex = String(target.value || "").trim();
+      } else if (action === "board-detail") {
+        board.detail = String(target.value || "").trim();
+      }
+    });
+
+    canvasContainer.addEventListener("change", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const action = target.getAttribute("data-action");
+      if (action !== "board-device-template") {
+        return;
+      }
+      const boardId = target.getAttribute("data-board-id") || "";
+      const selectedDeviceId = String(target.value || "");
+      if (!boardId) {
+        return;
+      }
+      const board = state.topology.boards.find((item) => item.id === boardId);
+      if (!board) {
+        return;
+      }
+      if (!selectedDeviceId) {
+        board.deviceTemplateId = "";
+        renderTopologyVisual();
+        return;
+      }
+      if (!applyDeviceTemplateToBoard(board, selectedDeviceId)) {
+        return;
+      }
+      renderTopologyVisual();
     });
 
     document.getElementById("btnAutoLayout").addEventListener("click", () => {
@@ -1650,16 +1890,100 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
     document.getElementById("btnAddBoard").addEventListener("click", () => {
       syncBoardsFromDom();
+      const preferred = state.deviceRegistry[0] || null;
       state.topology.boards.push({
         id: "card" + String(state.topology.boards.length + 1),
         kind: "board",
         portsCsv: "p1,p2",
-        driver: "pxi",
-        device: "pxi-mock-" + String(state.topology.boards.length),
-        resource: "dev" + String(state.topology.boards.length),
+        deviceTemplateId: preferred ? preferred.id : "",
+        driver: preferred ? preferred.driver : "pxi",
+        device: preferred ? preferred.device : ("pxi-mock-" + String(state.topology.boards.length)),
+        resource: preferred ? preferred.resource : ("dev" + String(state.topology.boards.length)),
         cardIndex: String(state.topology.boards.length + 1),
         detail: "",
       });
+      renderTopologyVisual();
+    });
+
+    btnAddDevice.addEventListener("click", () => {
+      const index = state.deviceRegistry.length + 1;
+      state.deviceRegistry.push({
+        id: "device-" + String(index),
+        type: "virtual",
+        driver: "virtual",
+        device: "virtual-device-" + String(index),
+        resource: "virt://device/" + String(index),
+      });
+      renderTopologyVisual();
+      setStatus("已新增设备，可在设备管理器中继续编辑。");
+    });
+
+    deviceManagerRows.addEventListener("input", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      const row = target.closest(".device-row");
+      if (!row) {
+        return;
+      }
+      const originalId = row.getAttribute("data-device-id") || "";
+      const field = target.getAttribute("data-field") || "";
+      if (!originalId || !field) {
+        return;
+      }
+      const device = state.deviceRegistry.find((item) => item.id === originalId);
+      if (!device) {
+        return;
+      }
+      const nextValue = String(target.value || "").trim();
+      if (field === "id") {
+        if (!nextValue || state.deviceRegistry.some((item) => item.id === nextValue && item !== device)) {
+          return;
+        }
+        const previousId = device.id;
+        device.id = nextValue;
+        for (const board of state.topology.boards) {
+          if (board.deviceTemplateId === previousId) {
+            board.deviceTemplateId = nextValue;
+          }
+        }
+        row.setAttribute("data-device-id", nextValue);
+      } else if (field === "type") {
+        device.type = nextValue === "virtual" ? "virtual" : "physical";
+        if (device.type === "virtual" && !device.driver) {
+          device.driver = "virtual";
+        }
+      } else if (field === "driver") {
+        device.driver = nextValue;
+      } else if (field === "device") {
+        device.device = nextValue;
+      } else if (field === "resource") {
+        device.resource = nextValue;
+      }
+      syncBoardsBoundToDevice(device.id);
+      renderTopologyVisual();
+    });
+
+    deviceManagerRows.addEventListener("click", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+      if (target.getAttribute("data-action") !== "delete-device") {
+        return;
+      }
+      const row = target.closest(".device-row");
+      const deviceId = row ? row.getAttribute("data-device-id") : "";
+      if (!deviceId) {
+        return;
+      }
+      for (const board of state.topology.boards) {
+        if (board.deviceTemplateId === deviceId) {
+          board.deviceTemplateId = "";
+        }
+      }
+      state.deviceRegistry = state.deviceRegistry.filter((item) => item.id !== deviceId);
       renderTopologyVisual();
     });
 
@@ -1873,6 +2197,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       }
     });
 
+  syncDeviceRegistryFromBoards();
+  renderDeviceManager();
     renderTopologyVisual();
     setTopologyMode("visual");
 

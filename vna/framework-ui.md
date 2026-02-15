@@ -128,6 +128,8 @@ flowchart LR
 - 扫描状态语义收敛为“后端主导”：`hold/continuous/single` 通过显式控制 RPC 下发到后端，前端仅在收到后端确认后更新状态显示。
 - 新增命令 `XSWL: Get Instance Capabilities`，可直接查询并展示实例能力（pulse/multi-tone/external-clock 及关键阈值）。
 - 新增命令 `XSWL: Edit Workspace Topology`，通过 Webview 可视化卡片编辑工作区级拓扑（左侧端口池 + 右侧 Card 槽位拖拽绑定，配置 instance/driver/device/resource/detail），支持保存、加载、激活，工作区配置相互独立；同时保留 YAML 高级模式作为兼容兜底。
+- 拓扑编辑页新增“设备管理器”（支持物理/虚拟设备），可集中维护 `driver/device/resource`；板卡展开详情区支持选择设备模板并直接编辑资源地址，详情显示位于端口列表下方，减少弹窗编辑打断。
+- 板卡选择设备模板后进入“强绑定”模式：设备管理器内该模板属性变更会自动同步到所有绑定板卡；若在板卡详情直接改写 `driver/device/resource`，则自动切回“自定义”解除模板绑定。
 - 波形预览在打开前会先查询实例能力；若实例不支持 pulse，选择 `time` 模式时自动降级为 `frequency` 并提示。
 - 支持预览类型选择：`snapshot`（单次）/`live`（持续自动刷新，直到取消）。
 - 当前渲染范围：
