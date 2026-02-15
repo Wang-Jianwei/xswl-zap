@@ -535,6 +535,20 @@ CI 推荐 profile（等价 strict，并固定 CI 报告输出命名）：
 
 `-Profile strict/ci` 会默认要求 batch compare 报告（`requireBatchCompareReport=true`）；其中 `ci` 在未显式传参时默认使用 `{latestBatchCompareReport}` 自动发现。
 
+主线封装脚本已支持“一条命令全链路”：在 `strict/ci` 且未显式提供 `-BatchCompareReportPath` 时，会先自动执行 `run_grpc_batch_compare.ps1` 生成报告，再执行 gate 校验。
+
+如需显式控制生成参数，可在主线脚本中直接传入：
+
+```powershell
+.\scripts\run_mainline_gate.ps1 -Profile strict -SkipBuild `
+   -GenerateBatchCompareReport `
+   -BatchCompareInputDir .\build-grpc `
+   -BatchCompareOutputJsonPath '.\build-grpc\batch_compare_report_{timestamp}.json' `
+   -BatchCompareMode frequency `
+   -BatchCompareSampleCount 128 `
+   -BatchCompareTolerance 1e-6
+```
+
 可选标准模式（不启用 UI E2E 与 strict unknown-stderr）：
 
 ```powershell

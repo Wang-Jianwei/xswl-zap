@@ -10,7 +10,8 @@ param(
   [int]$TimeoutMs = 1000,
   [double]$Tolerance = 1e-6,
   [switch]$FailOnMismatch,
-  [switch]$FailOnFailed
+  [switch]$FailOnFailed,
+  [switch]$AsJson
 )
 
 $ErrorActionPreference = "Stop"
@@ -40,6 +41,13 @@ function Resolve-PathPlaceholders {
 }
 
 Ensure-MingwRuntime
+
+function Write-Log {
+  param([string]$Message)
+  if (-not $AsJson) {
+    Write-Host $Message
+  }
+}
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptDir
@@ -89,7 +97,7 @@ if ($FailOnFailed) {
   $args += "--fail-on-failed"
 }
 
-Write-Host "[BATCH-COMPARE] endpoint=$Endpoint inputDir=$resolvedInputDir output=$resolvedOutputJsonPath mode=$Mode sampleCount=$SampleCount tolerance=$Tolerance"
+Write-Log "[BATCH-COMPARE] endpoint=$Endpoint inputDir=$resolvedInputDir output=$resolvedOutputJsonPath mode=$Mode sampleCount=$SampleCount tolerance=$Tolerance"
 & $exePath @args
 $exitCode = $LASTEXITCODE
 
@@ -97,4 +105,24 @@ if ($exitCode -ne 0) {
   throw "easy_grpc_batch_compare failed with exit code: $exitCode"
 }
 
-Write-Host "[BATCH-COMPARE] done report=$resolvedOutputJsonPath"
+$result = [PSCustomObject]@{
+  status = "PASS"
+  exitCode = 0
+  endpoint = $Endpoint
+  inputDir = $resolvedInputDir
+  outputJsonPath = $resolvedOutputJsonPath
+  instanceId = $InstanceId
+  mode = $Mode
+  sampleCount = $SampleCount
+  timeoutMs = $TimeoutMs
+  tolerance = $Tolerance
+  failOnMismatch = [bool]$FailOnMismatch
+  failOnFailed = [bool]$FailOnFailed
+}
+
+if ($AsJson) {
+  $result | ConvertTo-Json -Depth 4
+}
+else {
+  Write-Log "[BATCH-COMPARE] done report=$resolvedOutputJsonPath"
+}

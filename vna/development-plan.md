@@ -6688,6 +6688,38 @@ WU-MAINLINE-041: 非交互 gRPC 批量回放比对报告生成器
   - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
   - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
 
+### 8.320 已完成 Work Unit
+
+WU-MAINLINE-042: 主线门禁一键全链路（自动生成 batch compare 报告）
+
+- Objective:
+  - 让 `run_mainline_gate.ps1` 在 strict/ci 场景下自动完成“batch compare 报告生成 -> gate 消费校验”全链路，减少手工步骤和参数拼装。
+- Scope (in/out):
+  - in: `run_grpc_batch_compare.ps1` 增加机器可读输出；`run_mainline_gate.ps1` 新增自动生成策略和生成参数透传；README 同步。
+  - out: 修改 gRPC compare RPC 契约、修改 smoke matrix 报告结构。
+- Status: ✅ Completed (2026-02-15)
+
+- Files to change (WU-MAINLINE-042):
+  - `vna/scripts/run_grpc_batch_compare.ps1`
+  - `vna/scripts/run_mainline_gate.ps1`
+  - `vna/README.md`
+  - `vna/development-plan.md`
+- Contract impact: 无。
+- Test plan:
+  - `powershell -NoProfile -Command "[void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_grpc_batch_compare.ps1' -Raw)); [void][ScriptBlock]::Create((Get-Content 'vna/scripts/run_mainline_gate.ps1' -Raw)); Write-Host 'mainline full-chain syntax ok'"`
+- Rollback plan: 回滚本次提交，恢复 mainline gate 仅消费已有 batch compare 报告的行为。
+- Risks: strict/ci 自动生成依赖 gRPC 服务可达；服务不可达时会更早失败，符合严格门禁预期。
+- Acceptance criteria:
+  - strict/ci 在未显式传 `BatchCompareReportPath` 时自动生成并消费 batch compare 报告。
+  - 生成脚本支持 `-AsJson` 机器可读输出，便于编排脚本串联。
+
+- Validation result (WU-MAINLINE-042):
+  - `run_grpc_batch_compare.ps1` 与 `run_mainline_gate.ps1` 语法检查通过
+
+- Closure notes (WU-MAINLINE-042):
+  - 文档同步：已更新 `vna/development-plan.md` 与 `vna/README.md`。
+  - 提交状态：已完成 WU 提交流程；最终 commit hash 见本次收尾说明。
+
 ---
 
 *版本：v2.0（AI Agent 执行版） | 日期：2026-02-13*
