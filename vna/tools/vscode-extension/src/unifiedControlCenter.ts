@@ -283,7 +283,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 0;
+      z-index: 2; /* Move above nodes so connections are visible on top of ports */
     }
     #topologyNodes {
       position: absolute;
@@ -330,7 +330,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     .t-port {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       height: 24px;
       position: relative;
     }
@@ -341,6 +341,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       border: 1px solid var(--vscode-button-border);
       border-radius: 50%;
       cursor: crosshair;
+      flex-shrink: 0;
     }
     .t-port-point:hover {
       background: var(--vscode-button-hoverBackground);
@@ -348,7 +349,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     }
     .t-port-label {
       font-size: 11px;
-      padding: 0 6px;
+      padding: 0 4px;
       color: var(--vscode-foreground);
     }
     /* Virtual Ports: Simple Pill */
@@ -364,19 +365,21 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     /* SVG Styles */
     .connection-line {
       fill: none;
-      stroke: var(--vscode-charts-blue);
-      stroke-width: 2px;
+      stroke: var(--line-color, var(--vscode-charts-blue, #569cd6));
+      stroke-width: 2.5px;
       stroke-linecap: round;
       pointer-events: stroke; /* Allow clicking the line to delete */
       cursor: pointer;
+      transition: stroke-width 0.1s ease;
     }
     .connection-line:hover {
-      stroke: var(--vscode-charts-red);
-      stroke-width: 3px;
+      stroke: var(--vscode-charts-red, #f14c4c);
+      stroke-width: 4px;
     }
     .connection-line.draft {
-      stroke: var(--vscode-descriptionForeground);
-      stroke-dasharray: 5, 5;
+      stroke: var(--vscode-descriptionForeground, #ccccccb3);
+      stroke-dasharray: 4, 4;
+      pointer-events: none;
     }
       border: none;
       border-radius: 10px;
@@ -607,6 +610,19 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       modalResolver: null,
     };
 
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+    
+    function escapeAttr(value) {
+        return String(value).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
     const statusLine = document.getElementById("statusLine");
     const workspaceRows = document.getElementById("workspaceRows");
     const workspaceId = document.getElementById("workspaceId");
@@ -802,17 +818,37 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     }
 
     function getPortPosition(nodeId, portName, isVirtual) {
+        // Try to get position from DOM
+        // Note: Use simple attribute selector to avoid escaping issues in querySelector string
+        const container = document.getElementById("topologyNodes");
+        if (container) {
+             const points = Array.from(container.querySelectorAll('.t-port-point'));
+             const el = points.find(p => p.getAttribute('data-node') === nodeId && p.getAttribute('data-port') === portName);
+             
+             if (el) {
+                const rect = el.getBoundingClientRect();
+                const canvasContainer = document.getElementById("topologyCanvasContainer");
+                // Fallback to client coords if container not found (should not happen)
+                const containerRect = canvasContainer ? canvasContainer.getBoundingClientRect() : { left: 0, top: 0 };
+    
+                return {
+                    x: rect.left - containerRect.left + (rect.width / 2),
+                    y: rect.top - containerRect.top + (rect.height / 2)
+                };
+             }
+        }
+
+        // Fallback to estimation if not rendered yet (should rarely happen in visual mode)
         const layout = state.topology.layout[nodeId] || { x:0, y:0 };
         if (isVirtual) {
-            // Virtual port: Right center
-            return { x: layout.x + 100, y: layout.y + 20 }; // width 100, height 40
+            return { x: layout.x + 90, y: layout.y + 36 }; 
         } else {
-            // Board port: Left side, distributed vertically
             const board = state.topology.boards.find(b => b.id === nodeId);
             if (!board) return { x: layout.x, y: layout.y };
             const ports = parseCsv(board.portsCsv);
             const index = ports.indexOf(portName);
-            return { x: layout.x, y: layout.y + 45 + (index * 24) + 12 };
+            // approximate: header ~30px, driver ~15px, port ~24px height
+            return { x: layout.x + 12, y: layout.y + 45 + (index * 24) + 12 };
         }
     }
 
@@ -825,21 +861,26 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       nodesContainer.innerHTML = "";
       
       // Render Virtual Ports (Source Nodes)
-      state.topology.virtualPorts.forEach(vp => {
+      const palette = ["#3794ff", "#89d185", "#b180d7", "#cca700", "#d18616", "#f14c4c", "#00bcd4", "#9c27b0"];
+      
+      state.topology.virtualPorts.forEach((vp, idx) => {
         const pos = state.topology.layout[vp];
+        const color = palette[idx % palette.length];
+        
         const el = document.createElement("div");
         el.className = "t-node virtual";
         el.style.left = pos.x + "px";
         el.style.top = pos.y + "px";
         el.style.width = "100px";
+        el.style.borderColor = color; // Border color
         el.setAttribute("data-id", vp);
         el.setAttribute("data-type", "virtual");
         
         el.innerHTML = 
-            '<div class="t-node-header">' + escapeHtml(vp) + 
+            '<div class="t-node-header" style="background:' + color + '; filter:brightness(0.9);">' + escapeHtml(vp) + 
             ' <span style="cursor:pointer;margin-left:4px;" data-action="delete-vp">×</span></div>' +
             '<div class="t-port" style="justify-content:flex-end; padding-right:0;">' +
-             '<div class="t-port-point" data-port="' + escapeAttr(vp) + '" data-node="' + escapeAttr(vp) + '"></div>' +
+             '<div class="t-port-point" style="background:' + color + '; border-color:' + color + ';" data-port="' + escapeAttr(vp) + '" data-node="' + escapeAttr(vp) + '"></div>' +
             '</div>';
         nodesContainer.appendChild(el);
       });
@@ -855,12 +896,36 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         el.setAttribute("data-type", "board");
 
         const portsOnBoard = parseCsv(board.portsCsv);
-        const portsHtml = portsOnBoard.map(p => 
-            '<div class="t-port">' +
-                '<div class="t-port-point" data-port="' + escapeAttr(p) + '" data-node="' + escapeAttr(board.id) + '"></div>' +
-                '<span class="t-port-label">' + escapeHtml(p) + '</span>' +
-            '</div>'
-        ).join("");
+        const portsHtml = portsOnBoard.map(p => {
+            // Find if this port is bound
+            let boundColor = "";
+            for (const [vPort, binding] of Object.entries(state.topology.bindings)) {
+                if (binding && binding.boardId === board.id && binding.boardPort === p) {
+                    const vIdx = state.topology.virtualPorts.indexOf(vPort);
+                    if (vIdx !== -1) {
+                         boundColor = palette[vIdx % palette.length];
+                    }
+                    break;
+                }
+            }
+            
+            // Simplify label: any digits in port name -> show digits only (p1 -> 1, port2 -> 2)
+            const portText = String(p);
+            let digits = "";
+            for (const ch of portText) {
+              if (ch >= "0" && ch <= "9") {
+                digits += ch;
+              }
+            }
+            const label = digits.length > 0 ? digits : portText;
+
+            const style = boundColor ? ('style="background:' + boundColor + '; border-color:' + boundColor + ';"') : '';
+            
+            return '<div class="t-port">' +
+                '<div class="t-port-point" ' + style + ' data-port="' + escapeAttr(p) + '" data-node="' + escapeAttr(board.id) + '"></div>' +
+                '<span class="t-port-label">' + escapeHtml(label) + '</span>' +
+            '</div>';
+        }).join("");
 
         el.innerHTML = 
             '<div class="t-node-header" data-action="edit-board">' + escapeHtml(board.id) + ' (' + escapeHtml(board.kind) + ')</div>' +
@@ -871,35 +936,46 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         nodesContainer.appendChild(el);
       });
 
-      // Render Connections
-      const bindings = state.topology.bindings;
-      let svgContent = '<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#569cd6" /></marker></defs>';
+      // Defer connection rendering to next frame
+      requestAnimationFrame(() => renderConnections());
+    }
+
+    function renderConnections() {
+      const connectionsContainer = document.getElementById("topologyConnections");
+      if (!connectionsContainer) return;
+
+      const vPorts = state.topology.virtualPorts;
+      const palette = ["#3794ff", "#89d185", "#b180d7", "#cca700", "#d18616", "#f14c4c", "#00bcd4", "#9c27b0"];
+      let svgContent = "";
       
-      for (const [vPort, target] of Object.entries(bindings)) {
+      for (const [vPort, target] of Object.entries(state.topology.bindings)) {
           if (!target || !target.boardId) continue;
           
           const start = getPortPosition(vPort, vPort, true);
           const end = getPortPosition(target.boardId, target.boardPort, false);
           
+          const vIdx = vPorts.indexOf(vPort);
+          const color = vIdx === -1 ? "#888" : palette[vIdx % palette.length];
+
           // Bezier Curve
           const cp1 = { x: start.x + 50, y: start.y };
           const cp2 = { x: end.x - 50,  y: end.y };
           
-          const d = \`M \${start.x} \${start.y} C \${cp1.x} \${cp1.y}, \${cp2.x} \${cp2.y}, \${end.x} \${end.y}\`;
+          const d = "M " + start.x + " " + start.y + " C " + cp1.x + " " + cp1.y + ", " + cp2.x + " " + cp2.y + ", " + end.x + " " + end.y;
           
-          svgContent += \`<path d="\${d}" class="connection-line" marker-end="url(#arrowhead)" 
-                data-vport="\${escapeAttr(vPort)}"
-                onclick="removeBinding('\${escapeAttr(vPort)}')"
-            ><title>Click to remove binding</title></path>\`;
+          svgContent += '<path d="' + d + '" class="connection-line" style="--line-color: ' + color + '"' + 
+                ' data-vport="' + escapeAttr(vPort) + '"' +
+                ' onclick="removeBinding(\\\'' + escapeAttr(vPort) + '\\\')"' +
+            '><title>Click to remove binding</title></path>';
       }
       
       // If dragging a line
       if (state.drag && state.drag.type === "line" && state.drag.startNode) {
          const startPos = getPortPosition(state.drag.startNode, state.drag.startPort, state.drag.isVirtual);
-         const endX = state.drag.currentX;
+         const endX = state.drag.currentX; 
          const endY = state.drag.currentY;
-         const d = \`M \${startPos.x} \${startPos.y} L \${endX} \${endY}\`;
-         svgContent += \`<path d="\${d}" class="connection-line draft" />\`;
+         const d = "M " + startPos.x + " " + startPos.y + " L " + endX + " " + endY;
+         svgContent += '<path d="' + d + '" class="connection-line draft" />';
       }
 
       connectionsContainer.innerHTML = svgContent;
@@ -1358,6 +1434,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                 active: true,
                 type: "node",
                 id: id,
+              moved: false,
                 offsetX: e.clientX - box.left,
                 offsetY: e.clientY - box.top,
                 cLeft: cBox.left,
@@ -1380,6 +1457,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             state.drag = {
                 active: true,
                 type: "line",
+              moved: true,
                 startNode: nodeId,
                 startPort: portName,
                 isVirtual: true,
@@ -1397,6 +1475,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (!state.drag || !state.drag.active) return;
 
         if (state.drag.type === "node") {
+        const dx = Math.abs(e.clientX - (state.drag.cLeft + state.drag.offsetX + state.topology.layout[state.drag.id].x));
+        const dy = Math.abs(e.clientY - (state.drag.cTop + state.drag.offsetY + state.topology.layout[state.drag.id].y));
+        if (!state.drag.moved && dx < 2 && dy < 2) {
+          return;
+        }
+        state.drag.moved = true;
             const x = e.clientX - state.drag.cLeft - state.drag.offsetX;
             const y = e.clientY - state.drag.cTop - state.drag.offsetY;
             state.topology.layout[state.drag.id] = { x, y };
@@ -1410,6 +1494,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
     window.addEventListener("mouseup", (e) => {
         if (!state.drag || !state.drag.active) return;
+
+      const dragType = state.drag.type;
+      const dragMoved = Boolean(state.drag.moved);
 
         if (state.drag.type === "line") {
              // Check drop target
@@ -1433,12 +1520,18 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         }
         
         state.drag = { active: false };
-        renderTopologyVisual();
+        if (dragType === "line" || dragMoved) {
+          renderTopologyVisual();
+        }
     });
 
     // Double click to edit board
     canvasContainer.addEventListener("dblclick", async (e) => {
-        const header = e.target.closest(".t-node-header");
+      const target = e.target;
+      const element = target && target.nodeType === 1 ? target : (target && target.parentElement ? target.parentElement : null);
+      if (!element) return;
+
+      const header = element.closest(".t-node-header");
         if (!header) return;
         const node = header.closest(".t-node");
         if (node.getAttribute("data-type") !== "board") return;

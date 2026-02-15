@@ -117,6 +117,7 @@
     "test:ui": "npm run build && node ./out/test/waveformPreview.ui.test.js && node ./out/test/unifiedControlCenter.ui.test.js",
     "test:ui:control-center": "npm run build && node ./out/test/unifiedControlCenter.ui.test.js",
     "test:ui:grpc": "npm run build && node ./out/test/waveformPreview.grpc.ui.e2e.test.js",
+    "start:ui": "npm run build && node ./scripts/start-ui-dev.js",
     "package": "vsce package"
   },
   "devDependencies": {

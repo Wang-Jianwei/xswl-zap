@@ -79,6 +79,16 @@ function resolveBrowserExecutable(): string {
     const boardCount = await page.locator(".t-node[data-type='board']").count();
     assert(boardCount >= 2, "add board button did not create board node");
 
+    const firstBoardPortLabel = ((await page.locator('.t-node[data-type="board"] .t-port-label').first().textContent()) ?? "").trim();
+    assert.equal(firstBoardPortLabel, "1", "board port label should simplify p1 -> 1");
+
+    await page.locator('.t-node[data-type="board"] .t-node-header').first().dblclick({ force: true });
+    await page.waitForTimeout(40);
+    const boardEditModalClass = (await page.locator("#modal").getAttribute("class")) ?? "";
+    assert(boardEditModalClass.includes("is-open"), "double click on board header should open edit modal");
+    await page.locator("#modalCancel").click();
+    await page.waitForTimeout(40);
+
     // Auto layout check (simple click check)
     await page.locator("#btnAutoLayout").click();
     await page.waitForTimeout(40);
