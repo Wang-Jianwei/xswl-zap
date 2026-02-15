@@ -608,6 +608,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       liveActive: false,
       latestWaveform: null,
       modalResolver: null,
+      expandedBoards: new Set(), // Track expanded state separately
     };
 
     function escapeHtml(value) {
@@ -927,10 +928,31 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             '</div>';
         }).join("");
 
+        if (1) { } // dummy block to simplify diff
+        
+        const isExpanded = state.expandedBoards.has(board.id);
+        const toggleIcon = isExpanded ? "▼" : "▶";
+        
+        let detailsHtml = "";
+        if (isExpanded) {
+             detailsHtml = '<div style="margin-top:8px; padding-top:4px; border-top:1px solid var(--vscode-widget-border); font-size:10px; color:var(--vscode-descriptionForeground);">' +
+                '<div>Driver: ' + escapeHtml(board.driver) + '</div>' +
+                '<div>Device: ' + escapeHtml(board.device) + '</div>' +
+                '<div>Resource: ' + escapeHtml(board.resource) + '</div>' +
+                (board.cardIndex ? '<div>Index: ' + escapeHtml(board.cardIndex) + '</div>' : '') +
+                (board.detail ? '<div>Note: ' + escapeHtml(board.detail) + '</div>' : '') +
+            '</div>';
+        } else {
+             detailsHtml = '<div style="font-size:10px;color:var(--vscode-descriptionForeground)">' + escapeHtml(board.driver) + '</div>';
+        }
+
         el.innerHTML = 
-            '<div class="t-node-header" data-action="edit-board">' + escapeHtml(board.id) + ' (' + escapeHtml(board.kind) + ')</div>' +
+            '<div class="t-node-header" data-action="edit-board" style="display:flex; align-items:center;">' +
+               '<span style="flex:1">' + escapeHtml(board.id) + '</span>' +
+               '<span data-action="toggle-expand" data-id="' + escapeAttr(board.id) + '" style="cursor:pointer; padding:0 4px;font-size:10px;">' + toggleIcon + '</span>' +
+            '</div>' +
             '<div class="t-node-body">' +
-                '<div style="font-size:10px;color:var(--vscode-descriptionForeground)">' + escapeHtml(board.driver) + '</div>' + 
+                detailsHtml + 
                 portsHtml +
             '</div>';
         nodesContainer.appendChild(el);
@@ -1434,7 +1456,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                 active: true,
                 type: "node",
                 id: id,
-              moved: false,
+                moved: false,
+                startX: e.clientX,
+                startY: e.clientY,
                 offsetX: e.clientX - box.left,
                 offsetY: e.clientY - box.top,
                 cLeft: cBox.left,
@@ -1475,12 +1499,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (!state.drag || !state.drag.active) return;
 
         if (state.drag.type === "node") {
-        const dx = Math.abs(e.clientX - (state.drag.cLeft + state.drag.offsetX + state.topology.layout[state.drag.id].x));
-        const dy = Math.abs(e.clientY - (state.drag.cTop + state.drag.offsetY + state.topology.layout[state.drag.id].y));
-        if (!state.drag.moved && dx < 2 && dy < 2) {
-          return;
-        }
-        state.drag.moved = true;
+            const dx = Math.abs(e.clientX - (state.drag.startX || 0));
+            const dy = Math.abs(e.clientY - (state.drag.startY || 0));
+            if (!state.drag.moved && dx < 5 && dy < 5) {
+                return;
+            }
+            state.drag.moved = true;
             const x = e.clientX - state.drag.cLeft - state.drag.offsetX;
             const y = e.clientY - state.drag.cTop - state.drag.offsetY;
             state.topology.layout[state.drag.id] = { x, y };
@@ -1568,9 +1592,22 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         }
     });
 
-    // Handle delete buttons inside nodes
     canvasContainer.addEventListener("click", (e) => {
         const target = e.target;
+        
+        // Handle expand toggle
+        if (target.getAttribute("data-action") === "toggle-expand") {
+             const boardId = target.getAttribute("data-id");
+             if (state.expandedBoards.has(boardId)) {
+                 state.expandedBoards.delete(boardId);
+             } else {
+                 state.expandedBoards.add(boardId);
+             }
+             renderTopologyVisual();
+             e.stopPropagation(); // prevent other clicks
+             return;
+        }
+
         if (target.getAttribute("data-action") === "delete-vp") {
             const vPort = target.closest(".t-node").getAttribute("data-id");
             state.topology.virtualPorts = state.topology.virtualPorts.filter(p => p !== vPort);
