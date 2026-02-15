@@ -34,7 +34,7 @@ xswl-zap/
 │  ├─ framework.md                   # 总体架构
 │  ├─ framework-ui.md                # UI 架构
 │  ├─ development-plan.md            # 开发计划（AI执行版）
-│  ├─ architecture-feasibility-assessment.md
+│  ├─ archives/docs/architecture-feasibility-assessment.md
 │  └─ ai-engineering-framework.md    # 本文档
 └─ src/（后续）
    ├─ core/

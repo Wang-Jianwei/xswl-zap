@@ -2,6 +2,7 @@ import { strict as assert } from "node:assert";
 import {
   buildCwExcitationFromSampleCount,
   parseInstanceCapabilities,
+  parseWorkspaceTopologyConfig,
   splitCompareDetail,
 } from "../src/serviceClient";
 
@@ -44,6 +45,21 @@ import {
   );
   assert.equal(tokenOnly.detail, "");
   assert.equal(tokenOnly.grpcCompareToken, "grpc_compare_token=instance:inst0|sample:128|timeout_ms:2000|tolerance:1e-6");
+
+  const workspaceTopology = parseWorkspaceTopologyConfig({
+    workspaceId: "workspace-dev",
+    topology: {
+      id: "topo-main",
+      yaml: "instances:\n  - id: inst0\n",
+    },
+    isActive: true,
+    updatedAtMs: 123,
+  });
+  assert.equal(workspaceTopology.workspaceId, "workspace-dev");
+  assert.equal(workspaceTopology.topologyId, "topo-main");
+  assert.equal(workspaceTopology.topologyYaml, "instances:\n  - id: inst0\n");
+  assert.equal(workspaceTopology.isActive, true);
+  assert.equal(workspaceTopology.updatedAtMs, 123);
 
   process.stdout.write("serviceClient.test passed\n");
 })();

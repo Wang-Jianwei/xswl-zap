@@ -15,6 +15,7 @@ import {
 import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
 import { buildWaveformPreviewHtml, buildWaveformPreviewUpdatePayload } from "./waveformPreview";
+import { buildWorkspaceTopologyEditorHtml } from "./workspaceTopologyEditor";
 import type { WaveformPreviewData, WaveformScanState, WaveformTraceSource } from "./types";
 
 type LogLevel = "INFO" | "ERROR";
@@ -35,6 +36,15 @@ function nowTimestamp(): string {
 function createRequestId(): string {
   requestSequence += 1;
   return `${Date.now().toString(36)}-${requestSequence}`;
+}
+
+function createNonce(): string {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let nonce = "";
+  for (let i = 0; i < 20; i += 1) {
+    nonce += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+  return nonce;
 }
 
 function logLine(outputChannel: vscode.OutputChannel, level: LogLevel, message: string): void {
@@ -215,6 +225,127 @@ export function activate(context: vscode.ExtensionContext): void {
     } finally {
       client.dispose();
     }
+  });
+
+  const editWorkspaceTopologyCommand = vscode.commands.registerCommand("xswlZapVna.editWorkspaceTopology", async () => {
+    const requestId = createRequestId();
+    const panel = vscode.window.createWebviewPanel(
+      "xswlZapVna.workspaceTopologyEditor",
+      "XSWL Workspace Topology Editor",
+      vscode.ViewColumn.Beside,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+      },
+    );
+
+    panel.webview.html = buildWorkspaceTopologyEditorHtml(panel.webview, createNonce());
+
+    const { address, deadlineMs, autoOpenOutput } = readConfig();
+    const client = new ServiceClient({ address, deadlineMs });
+
+    const postWorkspaceList = async () => {
+      const list = await client.listWorkspaceTopologies();
+      await panel.webview.postMessage({
+        type: "workspace-list-result",
+        items: list.items,
+        activeWorkspaceId: list.activeWorkspaceId,
+      });
+    };
+
+    panel.onDidDispose(() => {
+      client.dispose();
+    });
+
+    panel.webview.onDidReceiveMessage(async (message: unknown) => {
+      const payload = message as {
+        type?: string;
+        workspaceId?: string;
+        topologyId?: string;
+        topologyYaml?: string;
+        activate?: boolean;
+      };
+
+      const workspaceId = String(payload.workspaceId ?? "").trim();
+      const topologyId = String(payload.topologyId ?? "").trim();
+      const topologyYaml = String(payload.topologyYaml ?? "");
+
+      try {
+        if (payload.type === "workspace-list") {
+          await postWorkspaceList();
+          return;
+        }
+
+        if (payload.type === "workspace-load") {
+          const item = await client.getWorkspaceTopology(workspaceId);
+          await panel.webview.postMessage({ type: "workspace-load-result", ok: true, item });
+          return;
+        }
+
+        if (payload.type === "workspace-save") {
+          const result = await client.upsertWorkspaceTopology(
+            workspaceId,
+            topologyId,
+            topologyYaml,
+            Boolean(payload.activate),
+          );
+
+          const messageText = formatValidationResult(result);
+          logBlock(outputChannel, "INFO", `[WorkspaceTopologySave][requestId=${requestId}]`, [
+            `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
+            messageText,
+          ]);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+          await panel.webview.postMessage({
+            type: "workspace-save-result",
+            ok: result.ok,
+            message: result.ok
+              ? `Saved workspace ${workspaceId}${Boolean(payload.activate) ? " and activated" : ""}.`
+              : `Save failed: ${messageText}`,
+          });
+          if (result.ok) {
+            await postWorkspaceList();
+          }
+          return;
+        }
+
+        if (payload.type === "workspace-activate") {
+          const result = await client.setActiveWorkspace(workspaceId);
+          const messageText = formatValidationResult(result);
+          logBlock(outputChannel, "INFO", `[WorkspaceTopologyActivate][requestId=${requestId}]`, [
+            `workspaceId=${workspaceId}`,
+            messageText,
+          ]);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+          await panel.webview.postMessage({
+            type: "workspace-activate-result",
+            ok: result.ok,
+            message: result.ok ? `Active workspace switched to ${workspaceId}.` : `Activate failed: ${messageText}`,
+          });
+          if (result.ok) {
+            await postWorkspaceList();
+          }
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        logBlock(outputChannel, "ERROR", `[WorkspaceTopologyEditor][requestId=${requestId}]`, [errorMessage]);
+        showOutputIfEnabled(outputChannel, autoOpenOutput);
+        let resultType = "workspace-load-result";
+        if (payload.type === "workspace-save") {
+          resultType = "workspace-save-result";
+        } else if (payload.type === "workspace-activate") {
+          resultType = "workspace-activate-result";
+        }
+        await panel.webview.postMessage({
+          type: resultType,
+          ok: false,
+          error: errorMessage,
+          message: errorMessage,
+        });
+      }
+    });
   });
 
   const getInstanceCapabilitiesCommand = vscode.commands.registerCommand("xswlZapVna.getInstanceCapabilities", async () => {
@@ -1164,6 +1295,7 @@ export function activate(context: vscode.ExtensionContext): void {
     getServiceStatusCommand,
     getInstanceCapabilitiesCommand,
     validateTopologyCommand,
+    editWorkspaceTopologyCommand,
     acquireOnceCommand,
     streamPreviewCommand,
     importAcquisitionCommand,

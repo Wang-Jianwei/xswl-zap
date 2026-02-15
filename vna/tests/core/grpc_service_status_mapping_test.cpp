@@ -47,6 +47,72 @@ int main() {
       4,
       10);
 
+    vna::WorkspaceTopologyUpsertRequest upsertReqA;
+    upsertReqA.set_workspace_id("ws-a");
+    upsertReqA.mutable_topology()->set_id("topo-a");
+    upsertReqA.mutable_topology()->set_yaml(
+      "instances:\n"
+      "  - id: inst0\n"
+      "    driver: pxi\n"
+      "    device: pxi-mock-0\n"
+      "    resource: dev0\n");
+    upsertReqA.set_activate(true);
+    vna::ValidationResult upsertRespA;
+    grpc::Status upsertStatusA = grpcService.UpsertWorkspaceTopology(nullptr, &upsertReqA, &upsertRespA);
+    assert(upsertStatusA.ok());
+    assert(upsertRespA.ok());
+
+    vna::WorkspaceTopologyUpsertRequest upsertReqB;
+    upsertReqB.set_workspace_id("ws-b");
+    upsertReqB.mutable_topology()->set_id("topo-b");
+    upsertReqB.mutable_topology()->set_yaml(
+      "instances:\n"
+      "  - id: inst1\n"
+      "    driver: usb\n"
+      "    device: usb-mock-1\n"
+      "    resource: dev1\n");
+    upsertReqB.set_activate(false);
+    vna::ValidationResult upsertRespB;
+    grpc::Status upsertStatusB = grpcService.UpsertWorkspaceTopology(nullptr, &upsertReqB, &upsertRespB);
+    assert(upsertStatusB.ok());
+    assert(upsertRespB.ok());
+
+    vna::WorkspaceRef getReq;
+    getReq.set_workspace_id("ws-a");
+    vna::WorkspaceTopologyConfig getResp;
+    grpc::Status getWorkspaceStatus = grpcService.GetWorkspaceTopology(nullptr, &getReq, &getResp);
+    assert(getWorkspaceStatus.ok());
+    assert(getResp.workspace_id() == "ws-a");
+    assert(getResp.topology().id() == "topo-a");
+    assert(getResp.is_active());
+
+    vna::WorkspaceTopologyList listResp;
+    grpc::Status listStatus = grpcService.ListWorkspaceTopologies(nullptr, nullptr, &listResp);
+    assert(listStatus.ok());
+    assert(listResp.items_size() >= 2);
+    bool hasWorkspaceA = false;
+    bool hasWorkspaceB = false;
+    for (int i = 0; i < listResp.items_size(); ++i) {
+      hasWorkspaceA = hasWorkspaceA || listResp.items(i).workspace_id() == "ws-a";
+      hasWorkspaceB = hasWorkspaceB || listResp.items(i).workspace_id() == "ws-b";
+    }
+    assert(hasWorkspaceA);
+    assert(hasWorkspaceB);
+    assert(listResp.active_workspace_id() == "ws-a");
+
+    vna::WorkspaceRef activateReq;
+    activateReq.set_workspace_id("ws-b");
+    vna::ValidationResult activateResp;
+    grpc::Status activateStatus = grpcService.SetActiveWorkspace(nullptr, &activateReq, &activateResp);
+    assert(activateStatus.ok());
+    assert(activateResp.ok());
+
+    vna::WorkspaceTopologyList listRespAfterActivate;
+    grpc::Status listAfterActivateStatus =
+      grpcService.ListWorkspaceTopologies(nullptr, nullptr, &listRespAfterActivate);
+    assert(listAfterActivateStatus.ok());
+    assert(listRespAfterActivate.active_workspace_id() == "ws-b");
+
   vna::ScanStateRequest setHold;
   setHold.set_instance_id("inst0");
   setHold.set_desired_state(vna::ScanState::SCAN_STATE_HOLD);

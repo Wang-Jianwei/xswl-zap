@@ -167,6 +167,22 @@ class ValidationResult;
 struct ValidationResultDefaultTypeInternal;
 extern ValidationResultDefaultTypeInternal _ValidationResult_default_instance_;
 extern const ::google::protobuf::internal::ClassDataFull ValidationResult_class_data_;
+class WorkspaceRef;
+struct WorkspaceRefDefaultTypeInternal;
+extern WorkspaceRefDefaultTypeInternal _WorkspaceRef_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceRef_class_data_;
+class WorkspaceTopologyConfig;
+struct WorkspaceTopologyConfigDefaultTypeInternal;
+extern WorkspaceTopologyConfigDefaultTypeInternal _WorkspaceTopologyConfig_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyConfig_class_data_;
+class WorkspaceTopologyList;
+struct WorkspaceTopologyListDefaultTypeInternal;
+extern WorkspaceTopologyListDefaultTypeInternal _WorkspaceTopologyList_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyList_class_data_;
+class WorkspaceTopologyUpsertRequest;
+struct WorkspaceTopologyUpsertRequestDefaultTypeInternal;
+extern WorkspaceTopologyUpsertRequestDefaultTypeInternal _WorkspaceTopologyUpsertRequest_default_instance_;
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyUpsertRequest_class_data_;
 }  // namespace vna
 namespace google {
 namespace protobuf {
@@ -261,6 +277,201 @@ inline bool ScanState_Parse(
 
 // -------------------------------------------------------------------
 
+class WorkspaceRef final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.WorkspaceRef) */ {
+ public:
+  inline WorkspaceRef() : WorkspaceRef(nullptr) {}
+  ~WorkspaceRef() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(WorkspaceRef* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorkspaceRef));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR WorkspaceRef(::google::protobuf::internal::ConstantInitialized);
+
+  inline WorkspaceRef(const WorkspaceRef& from) : WorkspaceRef(nullptr, from) {}
+  inline WorkspaceRef(WorkspaceRef&& from) noexcept
+      : WorkspaceRef(nullptr, ::std::move(from)) {}
+  inline WorkspaceRef& operator=(const WorkspaceRef& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline WorkspaceRef& operator=(WorkspaceRef&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const WorkspaceRef& default_instance() {
+    return *reinterpret_cast<const WorkspaceRef*>(
+        &_WorkspaceRef_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 2;
+  friend void swap(WorkspaceRef& a, WorkspaceRef& b) { a.Swap(&b); }
+  inline void Swap(WorkspaceRef* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(WorkspaceRef* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  WorkspaceRef* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorkspaceRef>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const WorkspaceRef& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const WorkspaceRef& from) { WorkspaceRef::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(WorkspaceRef* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.WorkspaceRef"; }
+
+  explicit WorkspaceRef(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  WorkspaceRef(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const WorkspaceRef& from);
+  WorkspaceRef(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, WorkspaceRef&& from) noexcept
+      : WorkspaceRef(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kWorkspaceIdFieldNumber = 1,
+  };
+  // string workspace_id = 1;
+  void clear_workspace_id() ;
+  const ::std::string& workspace_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_workspace_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_workspace_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_workspace_id();
+  void set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_workspace_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_workspace_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_workspace_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.WorkspaceRef)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1,
+                                   0, 37,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const WorkspaceRef& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr workspace_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceRef_class_data_;
+// -------------------------------------------------------------------
+
 class TopologyErrorDetail final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.TopologyErrorDetail) */ {
  public:
@@ -316,7 +527,7 @@ class TopologyErrorDetail final : public ::google::protobuf::Message
     return *reinterpret_cast<const TopologyErrorDetail*>(
         &_TopologyErrorDetail_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 3;
+  static constexpr int kIndexInFileMessages = 7;
   friend void swap(TopologyErrorDetail& a, TopologyErrorDetail& b) { a.Swap(&b); }
   inline void Swap(TopologyErrorDetail* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -757,7 +968,7 @@ class TimeDomainPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const TimeDomainPoint*>(
         &_TimeDomainPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 12;
+  static constexpr int kIndexInFileMessages = 16;
   friend void swap(TimeDomainPoint& a, TimeDomainPoint& b) { a.Swap(&b); }
   inline void Swap(TimeDomainPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -971,7 +1182,7 @@ class ServiceStatus final : public ::google::protobuf::Message
     return *reinterpret_cast<const ServiceStatus*>(
         &_ServiceStatus_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 26;
+  static constexpr int kIndexInFileMessages = 30;
   friend void swap(ServiceStatus& a, ServiceStatus& b) { a.Swap(&b); }
   inline void Swap(ServiceStatus* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1323,7 +1534,7 @@ class ScanStateResponse final : public ::google::protobuf::Message
     return *reinterpret_cast<const ScanStateResponse*>(
         &_ScanStateResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 25;
+  static constexpr int kIndexInFileMessages = 29;
   friend void swap(ScanStateResponse& a, ScanStateResponse& b) { a.Swap(&b); }
   inline void Swap(ScanStateResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1571,7 +1782,7 @@ class ScanStateRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ScanStateRequest*>(
         &_ScanStateRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 24;
+  static constexpr int kIndexInFileMessages = 28;
   friend void swap(ScanStateRequest& a, ScanStateRequest& b) { a.Swap(&b); }
   inline void Swap(ScanStateRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1778,7 +1989,7 @@ class SParameterPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const SParameterPoint*>(
         &_SParameterPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 15;
+  static constexpr int kIndexInFileMessages = 19;
   friend void swap(SParameterPoint& a, SParameterPoint& b) { a.Swap(&b); }
   inline void Swap(SParameterPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2004,7 +2215,7 @@ class ResourceRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ResourceRequest*>(
         &_ResourceRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 20;
+  static constexpr int kIndexInFileMessages = 24;
   friend void swap(ResourceRequest& a, ResourceRequest& b) { a.Swap(&b); }
   inline void Swap(ResourceRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2240,7 +2451,7 @@ class ReceiverChannelSample final : public ::google::protobuf::Message
     return *reinterpret_cast<const ReceiverChannelSample*>(
         &_ReceiverChannelSample_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 13;
+  static constexpr int kIndexInFileMessages = 17;
   friend void swap(ReceiverChannelSample& a, ReceiverChannelSample& b) { a.Swap(&b); }
   inline void Swap(ReceiverChannelSample* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2471,7 +2682,7 @@ class PulseExcitation final : public ::google::protobuf::Message
     return *reinterpret_cast<const PulseExcitation*>(
         &_PulseExcitation_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 5;
+  static constexpr int kIndexInFileMessages = 9;
   friend void swap(PulseExcitation& a, PulseExcitation& b) { a.Swap(&b); }
   inline void Swap(PulseExcitation* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2709,7 +2920,7 @@ class LeaseInfo final : public ::google::protobuf::Message
     return *reinterpret_cast<const LeaseInfo*>(
         &_LeaseInfo_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 21;
+  static constexpr int kIndexInFileMessages = 25;
   friend void swap(LeaseInfo& a, LeaseInfo& b) { a.Swap(&b); }
   inline void Swap(LeaseInfo* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -2933,7 +3144,7 @@ class InstanceSelector final : public ::google::protobuf::Message
     return *reinterpret_cast<const InstanceSelector*>(
         &_InstanceSelector_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 22;
+  static constexpr int kIndexInFileMessages = 26;
   friend void swap(InstanceSelector& a, InstanceSelector& b) { a.Swap(&b); }
   inline void Swap(InstanceSelector* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3128,7 +3339,7 @@ class InstanceCapabilities final : public ::google::protobuf::Message
     return *reinterpret_cast<const InstanceCapabilities*>(
         &_InstanceCapabilities_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 23;
+  static constexpr int kIndexInFileMessages = 27;
   friend void swap(InstanceCapabilities& a, InstanceCapabilities& b) { a.Swap(&b); }
   inline void Swap(InstanceCapabilities* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3378,7 +3589,7 @@ class ImportAcquisitionRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const ImportAcquisitionRequest*>(
         &_ImportAcquisitionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 8;
+  static constexpr int kIndexInFileMessages = 12;
   friend void swap(ImportAcquisitionRequest& a, ImportAcquisitionRequest& b) { a.Swap(&b); }
   inline void Swap(ImportAcquisitionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3573,7 +3784,7 @@ class FrequencyDomainPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const FrequencyDomainPoint*>(
         &_FrequencyDomainPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 11;
+  static constexpr int kIndexInFileMessages = 15;
   friend void swap(FrequencyDomainPoint& a, FrequencyDomainPoint& b) { a.Swap(&b); }
   inline void Swap(FrequencyDomainPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -3921,7 +4132,7 @@ class CwExcitation final : public ::google::protobuf::Message
     return *reinterpret_cast<const CwExcitation*>(
         &_CwExcitation_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 4;
+  static constexpr int kIndexInFileMessages = 8;
   friend void swap(CwExcitation& a, CwExcitation& b) { a.Swap(&b); }
   inline void Swap(CwExcitation* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4207,7 +4418,7 @@ class CompareImportedAcquisitionResponse final : public ::google::protobuf::Mess
     return *reinterpret_cast<const CompareImportedAcquisitionResponse*>(
         &_CompareImportedAcquisitionResponse_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 10;
+  static constexpr int kIndexInFileMessages = 14;
   friend void swap(CompareImportedAcquisitionResponse& a, CompareImportedAcquisitionResponse& b) { a.Swap(&b); }
   inline void Swap(CompareImportedAcquisitionResponse* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4359,6 +4570,466 @@ class CompareImportedAcquisitionResponse final : public ::google::protobuf::Mess
 extern const ::google::protobuf::internal::ClassDataFull CompareImportedAcquisitionResponse_class_data_;
 // -------------------------------------------------------------------
 
+class WorkspaceTopologyUpsertRequest final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.WorkspaceTopologyUpsertRequest) */ {
+ public:
+  inline WorkspaceTopologyUpsertRequest() : WorkspaceTopologyUpsertRequest(nullptr) {}
+  ~WorkspaceTopologyUpsertRequest() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(WorkspaceTopologyUpsertRequest* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorkspaceTopologyUpsertRequest));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR WorkspaceTopologyUpsertRequest(::google::protobuf::internal::ConstantInitialized);
+
+  inline WorkspaceTopologyUpsertRequest(const WorkspaceTopologyUpsertRequest& from) : WorkspaceTopologyUpsertRequest(nullptr, from) {}
+  inline WorkspaceTopologyUpsertRequest(WorkspaceTopologyUpsertRequest&& from) noexcept
+      : WorkspaceTopologyUpsertRequest(nullptr, ::std::move(from)) {}
+  inline WorkspaceTopologyUpsertRequest& operator=(const WorkspaceTopologyUpsertRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline WorkspaceTopologyUpsertRequest& operator=(WorkspaceTopologyUpsertRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const WorkspaceTopologyUpsertRequest& default_instance() {
+    return *reinterpret_cast<const WorkspaceTopologyUpsertRequest*>(
+        &_WorkspaceTopologyUpsertRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 3;
+  friend void swap(WorkspaceTopologyUpsertRequest& a, WorkspaceTopologyUpsertRequest& b) { a.Swap(&b); }
+  inline void Swap(WorkspaceTopologyUpsertRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(WorkspaceTopologyUpsertRequest* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  WorkspaceTopologyUpsertRequest* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorkspaceTopologyUpsertRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const WorkspaceTopologyUpsertRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const WorkspaceTopologyUpsertRequest& from) { WorkspaceTopologyUpsertRequest::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(WorkspaceTopologyUpsertRequest* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.WorkspaceTopologyUpsertRequest"; }
+
+  explicit WorkspaceTopologyUpsertRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  WorkspaceTopologyUpsertRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const WorkspaceTopologyUpsertRequest& from);
+  WorkspaceTopologyUpsertRequest(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, WorkspaceTopologyUpsertRequest&& from) noexcept
+      : WorkspaceTopologyUpsertRequest(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kWorkspaceIdFieldNumber = 1,
+    kTopologyFieldNumber = 2,
+    kActivateFieldNumber = 3,
+  };
+  // string workspace_id = 1;
+  void clear_workspace_id() ;
+  const ::std::string& workspace_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_workspace_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_workspace_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_workspace_id();
+  void set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_workspace_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_workspace_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_workspace_id();
+
+  public:
+  // .vna.Topology topology = 2;
+  bool has_topology() const;
+  void clear_topology() ;
+  const ::vna::Topology& topology() const;
+  [[nodiscard]] ::vna::Topology* PROTOBUF_NULLABLE release_topology();
+  ::vna::Topology* PROTOBUF_NONNULL mutable_topology();
+  void set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value);
+  ::vna::Topology* PROTOBUF_NULLABLE unsafe_arena_release_topology();
+
+  private:
+  const ::vna::Topology& _internal_topology() const;
+  ::vna::Topology* PROTOBUF_NONNULL _internal_mutable_topology();
+
+  public:
+  // bool activate = 3;
+  void clear_activate() ;
+  bool activate() const;
+  void set_activate(bool value);
+
+  private:
+  bool _internal_activate() const;
+  void _internal_set_activate(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.WorkspaceTopologyUpsertRequest)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3,
+                                   1, 55,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const WorkspaceTopologyUpsertRequest& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr workspace_id_;
+    ::vna::Topology* PROTOBUF_NULLABLE topology_;
+    bool activate_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyUpsertRequest_class_data_;
+// -------------------------------------------------------------------
+
+class WorkspaceTopologyConfig final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.WorkspaceTopologyConfig) */ {
+ public:
+  inline WorkspaceTopologyConfig() : WorkspaceTopologyConfig(nullptr) {}
+  ~WorkspaceTopologyConfig() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(WorkspaceTopologyConfig* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorkspaceTopologyConfig));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR WorkspaceTopologyConfig(::google::protobuf::internal::ConstantInitialized);
+
+  inline WorkspaceTopologyConfig(const WorkspaceTopologyConfig& from) : WorkspaceTopologyConfig(nullptr, from) {}
+  inline WorkspaceTopologyConfig(WorkspaceTopologyConfig&& from) noexcept
+      : WorkspaceTopologyConfig(nullptr, ::std::move(from)) {}
+  inline WorkspaceTopologyConfig& operator=(const WorkspaceTopologyConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline WorkspaceTopologyConfig& operator=(WorkspaceTopologyConfig&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const WorkspaceTopologyConfig& default_instance() {
+    return *reinterpret_cast<const WorkspaceTopologyConfig*>(
+        &_WorkspaceTopologyConfig_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 4;
+  friend void swap(WorkspaceTopologyConfig& a, WorkspaceTopologyConfig& b) { a.Swap(&b); }
+  inline void Swap(WorkspaceTopologyConfig* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(WorkspaceTopologyConfig* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  WorkspaceTopologyConfig* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorkspaceTopologyConfig>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const WorkspaceTopologyConfig& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const WorkspaceTopologyConfig& from) { WorkspaceTopologyConfig::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(WorkspaceTopologyConfig* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.WorkspaceTopologyConfig"; }
+
+  explicit WorkspaceTopologyConfig(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  WorkspaceTopologyConfig(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const WorkspaceTopologyConfig& from);
+  WorkspaceTopologyConfig(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, WorkspaceTopologyConfig&& from) noexcept
+      : WorkspaceTopologyConfig(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kWorkspaceIdFieldNumber = 1,
+    kTopologyFieldNumber = 2,
+    kUpdatedAtMsFieldNumber = 4,
+    kIsActiveFieldNumber = 3,
+  };
+  // string workspace_id = 1;
+  void clear_workspace_id() ;
+  const ::std::string& workspace_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_workspace_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_workspace_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_workspace_id();
+  void set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_workspace_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_workspace_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_workspace_id();
+
+  public:
+  // .vna.Topology topology = 2;
+  bool has_topology() const;
+  void clear_topology() ;
+  const ::vna::Topology& topology() const;
+  [[nodiscard]] ::vna::Topology* PROTOBUF_NULLABLE release_topology();
+  ::vna::Topology* PROTOBUF_NONNULL mutable_topology();
+  void set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value);
+  ::vna::Topology* PROTOBUF_NULLABLE unsafe_arena_release_topology();
+
+  private:
+  const ::vna::Topology& _internal_topology() const;
+  ::vna::Topology* PROTOBUF_NONNULL _internal_mutable_topology();
+
+  public:
+  // uint64 updated_at_ms = 4;
+  void clear_updated_at_ms() ;
+  ::uint64_t updated_at_ms() const;
+  void set_updated_at_ms(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_updated_at_ms() const;
+  void _internal_set_updated_at_ms(::uint64_t value);
+
+  public:
+  // bool is_active = 3;
+  void clear_is_active() ;
+  bool is_active() const;
+  void set_is_active(bool value);
+
+  private:
+  bool _internal_is_active() const;
+  void _internal_set_is_active(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.WorkspaceTopologyConfig)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 4,
+                                   1, 48,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const WorkspaceTopologyConfig& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr workspace_id_;
+    ::vna::Topology* PROTOBUF_NULLABLE topology_;
+    ::uint64_t updated_at_ms_;
+    bool is_active_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyConfig_class_data_;
+// -------------------------------------------------------------------
+
 class ValidationResult final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.ValidationResult) */ {
  public:
@@ -4414,7 +5085,7 @@ class ValidationResult final : public ::google::protobuf::Message
     return *reinterpret_cast<const ValidationResult*>(
         &_ValidationResult_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 2;
+  static constexpr int kIndexInFileMessages = 6;
   friend void swap(ValidationResult& a, ValidationResult& b) { a.Swap(&b); }
   inline void Swap(ValidationResult* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4647,7 +5318,7 @@ class TimeDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const TimeDomainFrame*>(
         &_TimeDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 19;
+  static constexpr int kIndexInFileMessages = 23;
   friend void swap(TimeDomainFrame& a, TimeDomainFrame& b) { a.Swap(&b); }
   inline void Swap(TimeDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -4856,7 +5527,7 @@ class SParameterFrequencyPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const SParameterFrequencyPoint*>(
         &_SParameterFrequencyPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 16;
+  static constexpr int kIndexInFileMessages = 20;
   friend void swap(SParameterFrequencyPoint& a, SParameterFrequencyPoint& b) { a.Swap(&b); }
   inline void Swap(SParameterFrequencyPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5077,7 +5748,7 @@ class ReceiverFrequencyPoint final : public ::google::protobuf::Message
     return *reinterpret_cast<const ReceiverFrequencyPoint*>(
         &_ReceiverFrequencyPoint_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 14;
+  static constexpr int kIndexInFileMessages = 18;
   friend void swap(ReceiverFrequencyPoint& a, ReceiverFrequencyPoint& b) { a.Swap(&b); }
   inline void Swap(ReceiverFrequencyPoint* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5298,7 +5969,7 @@ class FrequencyDomainFrame final : public ::google::protobuf::Message
     return *reinterpret_cast<const FrequencyDomainFrame*>(
         &_FrequencyDomainFrame_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 18;
+  static constexpr int kIndexInFileMessages = 22;
   friend void swap(FrequencyDomainFrame& a, FrequencyDomainFrame& b) { a.Swap(&b); }
   inline void Swap(FrequencyDomainFrame* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5500,7 +6171,7 @@ class ExcitationConfig final : public ::google::protobuf::Message
     kPulse = 11,
     DETAIL_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 6;
+  static constexpr int kIndexInFileMessages = 10;
   friend void swap(ExcitationConfig& a, ExcitationConfig& b) { a.Swap(&b); }
   inline void Swap(ExcitationConfig* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -5712,6 +6383,220 @@ class ExcitationConfig final : public ::google::protobuf::Message
 extern const ::google::protobuf::internal::ClassDataFull ExcitationConfig_class_data_;
 // -------------------------------------------------------------------
 
+class WorkspaceTopologyList final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:vna.WorkspaceTopologyList) */ {
+ public:
+  inline WorkspaceTopologyList() : WorkspaceTopologyList(nullptr) {}
+  ~WorkspaceTopologyList() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(WorkspaceTopologyList* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorkspaceTopologyList));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR WorkspaceTopologyList(::google::protobuf::internal::ConstantInitialized);
+
+  inline WorkspaceTopologyList(const WorkspaceTopologyList& from) : WorkspaceTopologyList(nullptr, from) {}
+  inline WorkspaceTopologyList(WorkspaceTopologyList&& from) noexcept
+      : WorkspaceTopologyList(nullptr, ::std::move(from)) {}
+  inline WorkspaceTopologyList& operator=(const WorkspaceTopologyList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline WorkspaceTopologyList& operator=(WorkspaceTopologyList&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const WorkspaceTopologyList& default_instance() {
+    return *reinterpret_cast<const WorkspaceTopologyList*>(
+        &_WorkspaceTopologyList_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 5;
+  friend void swap(WorkspaceTopologyList& a, WorkspaceTopologyList& b) { a.Swap(&b); }
+  inline void Swap(WorkspaceTopologyList* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(WorkspaceTopologyList* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  WorkspaceTopologyList* PROTOBUF_NONNULL New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorkspaceTopologyList>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const WorkspaceTopologyList& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const WorkspaceTopologyList& from) { WorkspaceTopologyList::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(WorkspaceTopologyList* PROTOBUF_NONNULL other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "vna.WorkspaceTopologyList"; }
+
+  explicit WorkspaceTopologyList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  WorkspaceTopologyList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const WorkspaceTopologyList& from);
+  WorkspaceTopologyList(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, WorkspaceTopologyList&& from) noexcept
+      : WorkspaceTopologyList(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_();
+
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kItemsFieldNumber = 1,
+    kActiveWorkspaceIdFieldNumber = 2,
+  };
+  // repeated .vna.WorkspaceTopologyConfig items = 1;
+  int items_size() const;
+  private:
+  int _internal_items_size() const;
+
+  public:
+  void clear_items() ;
+  ::vna::WorkspaceTopologyConfig* PROTOBUF_NONNULL mutable_items(int index);
+  ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>* PROTOBUF_NONNULL mutable_items();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>& _internal_items() const;
+  ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>* PROTOBUF_NONNULL _internal_mutable_items();
+  public:
+  const ::vna::WorkspaceTopologyConfig& items(int index) const;
+  ::vna::WorkspaceTopologyConfig* PROTOBUF_NONNULL add_items();
+  const ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>& items() const;
+  // string active_workspace_id = 2;
+  void clear_active_workspace_id() ;
+  const ::std::string& active_workspace_id() const;
+  template <typename Arg_ = const ::std::string&, typename... Args_>
+  void set_active_workspace_id(Arg_&& arg, Args_... args);
+  ::std::string* PROTOBUF_NONNULL mutable_active_workspace_id();
+  [[nodiscard]] ::std::string* PROTOBUF_NULLABLE release_active_workspace_id();
+  void set_allocated_active_workspace_id(::std::string* PROTOBUF_NULLABLE value);
+
+  private:
+  const ::std::string& _internal_active_workspace_id() const;
+  PROTOBUF_ALWAYS_INLINE void _internal_set_active_workspace_id(const ::std::string& value);
+  ::std::string* PROTOBUF_NONNULL _internal_mutable_active_workspace_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:vna.WorkspaceTopologyList)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2,
+                                   1, 53,
+                                   2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const WorkspaceTopologyList& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::vna::WorkspaceTopologyConfig > items_;
+    ::google::protobuf::internal::ArenaStringPtr active_workspace_id_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_vna_2eproto;
+};
+
+extern const ::google::protobuf::internal::ClassDataFull WorkspaceTopologyList_class_data_;
+// -------------------------------------------------------------------
+
 class AcquisitionResult final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:vna.AcquisitionResult) */ {
  public:
@@ -5772,7 +6657,7 @@ class AcquisitionResult final : public ::google::protobuf::Message
     kTimeFrame = 11,
     DATA_NOT_SET = 0,
   };
-  static constexpr int kIndexInFileMessages = 17;
+  static constexpr int kIndexInFileMessages = 21;
   friend void swap(AcquisitionResult& a, AcquisitionResult& b) { a.Swap(&b); }
   inline void Swap(AcquisitionResult* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6089,7 +6974,7 @@ class AcquisitionRequest final : public ::google::protobuf::Message
     return *reinterpret_cast<const AcquisitionRequest*>(
         &_AcquisitionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 7;
+  static constexpr int kIndexInFileMessages = 11;
   friend void swap(AcquisitionRequest& a, AcquisitionRequest& b) { a.Swap(&b); }
   inline void Swap(AcquisitionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6376,7 +7261,7 @@ class CompareImportedAcquisitionRequest final : public ::google::protobuf::Messa
     return *reinterpret_cast<const CompareImportedAcquisitionRequest*>(
         &_CompareImportedAcquisitionRequest_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 9;
+  static constexpr int kIndexInFileMessages = 13;
   friend void swap(CompareImportedAcquisitionRequest& a, CompareImportedAcquisitionRequest& b) { a.Swap(&b); }
   inline void Swap(CompareImportedAcquisitionRequest* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -6692,6 +7577,611 @@ inline void Topology::set_allocated_yaml(::std::string* PROTOBUF_NULLABLE value)
     _impl_.yaml_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:vna.Topology.yaml)
+}
+
+// -------------------------------------------------------------------
+
+// WorkspaceRef
+
+// string workspace_id = 1;
+inline void WorkspaceRef::clear_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& WorkspaceRef::workspace_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceRef.workspace_id)
+  return _internal_workspace_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void WorkspaceRef::set_workspace_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.workspace_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.WorkspaceRef.workspace_id)
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceRef::mutable_workspace_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_workspace_id();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceRef.workspace_id)
+  return _s;
+}
+inline const ::std::string& WorkspaceRef::_internal_workspace_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.workspace_id_.Get();
+}
+inline void WorkspaceRef::_internal_set_workspace_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceRef::_internal_mutable_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.workspace_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE WorkspaceRef::release_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceRef.workspace_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.workspace_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void WorkspaceRef::set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.workspace_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.workspace_id_.IsDefault()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceRef.workspace_id)
+}
+
+// -------------------------------------------------------------------
+
+// WorkspaceTopologyUpsertRequest
+
+// string workspace_id = 1;
+inline void WorkspaceTopologyUpsertRequest::clear_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& WorkspaceTopologyUpsertRequest::workspace_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyUpsertRequest.workspace_id)
+  return _internal_workspace_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void WorkspaceTopologyUpsertRequest::set_workspace_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.workspace_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyUpsertRequest.workspace_id)
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::mutable_workspace_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_workspace_id();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyUpsertRequest.workspace_id)
+  return _s;
+}
+inline const ::std::string& WorkspaceTopologyUpsertRequest::_internal_workspace_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.workspace_id_.Get();
+}
+inline void WorkspaceTopologyUpsertRequest::_internal_set_workspace_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::_internal_mutable_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.workspace_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE WorkspaceTopologyUpsertRequest::release_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceTopologyUpsertRequest.workspace_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.workspace_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void WorkspaceTopologyUpsertRequest::set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.workspace_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.workspace_id_.IsDefault()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceTopologyUpsertRequest.workspace_id)
+}
+
+// .vna.Topology topology = 2;
+inline bool WorkspaceTopologyUpsertRequest::has_topology() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
+  PROTOBUF_ASSUME(!value || _impl_.topology_ != nullptr);
+  return value;
+}
+inline void WorkspaceTopologyUpsertRequest::clear_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.topology_ != nullptr) _impl_.topology_->Clear();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::vna::Topology& WorkspaceTopologyUpsertRequest::_internal_topology() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::vna::Topology* p = _impl_.topology_;
+  return p != nullptr ? *p : reinterpret_cast<const ::vna::Topology&>(::vna::_Topology_default_instance_);
+}
+inline const ::vna::Topology& WorkspaceTopologyUpsertRequest::topology() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyUpsertRequest.topology)
+  return _internal_topology();
+}
+inline void WorkspaceTopologyUpsertRequest::unsafe_arena_set_allocated_topology(
+    ::vna::Topology* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.topology_);
+  }
+  _impl_.topology_ = reinterpret_cast<::vna::Topology*>(value);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:vna.WorkspaceTopologyUpsertRequest.topology)
+}
+inline ::vna::Topology* PROTOBUF_NULLABLE WorkspaceTopologyUpsertRequest::release_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* released = _impl_.topology_;
+  _impl_.topology_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::vna::Topology* PROTOBUF_NULLABLE WorkspaceTopologyUpsertRequest::unsafe_arena_release_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceTopologyUpsertRequest.topology)
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* temp = _impl_.topology_;
+  _impl_.topology_ = nullptr;
+  return temp;
+}
+inline ::vna::Topology* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::_internal_mutable_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.topology_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::vna::Topology>(GetArena());
+    _impl_.topology_ = reinterpret_cast<::vna::Topology*>(p);
+  }
+  return _impl_.topology_;
+}
+inline ::vna::Topology* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::mutable_topology()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* _msg = _internal_mutable_topology();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyUpsertRequest.topology)
+  return _msg;
+}
+inline void WorkspaceTopologyUpsertRequest::set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.topology_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+
+  _impl_.topology_ = reinterpret_cast<::vna::Topology*>(value);
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceTopologyUpsertRequest.topology)
+}
+
+// bool activate = 3;
+inline void WorkspaceTopologyUpsertRequest::clear_activate() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activate_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline bool WorkspaceTopologyUpsertRequest::activate() const {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyUpsertRequest.activate)
+  return _internal_activate();
+}
+inline void WorkspaceTopologyUpsertRequest::set_activate(bool value) {
+  _internal_set_activate(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyUpsertRequest.activate)
+}
+inline bool WorkspaceTopologyUpsertRequest::_internal_activate() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.activate_;
+}
+inline void WorkspaceTopologyUpsertRequest::_internal_set_activate(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.activate_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// WorkspaceTopologyConfig
+
+// string workspace_id = 1;
+inline void WorkspaceTopologyConfig::clear_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline const ::std::string& WorkspaceTopologyConfig::workspace_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyConfig.workspace_id)
+  return _internal_workspace_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void WorkspaceTopologyConfig::set_workspace_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  _impl_.workspace_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyConfig.workspace_id)
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyConfig::mutable_workspace_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::std::string* _s = _internal_mutable_workspace_id();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyConfig.workspace_id)
+  return _s;
+}
+inline const ::std::string& WorkspaceTopologyConfig::_internal_workspace_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.workspace_id_.Get();
+}
+inline void WorkspaceTopologyConfig::_internal_set_workspace_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.workspace_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyConfig::_internal_mutable_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.workspace_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE WorkspaceTopologyConfig::release_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceTopologyConfig.workspace_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000001U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  auto* released = _impl_.workspace_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void WorkspaceTopologyConfig::set_allocated_workspace_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  _impl_.workspace_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.workspace_id_.IsDefault()) {
+    _impl_.workspace_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceTopologyConfig.workspace_id)
+}
+
+// .vna.Topology topology = 2;
+inline bool WorkspaceTopologyConfig::has_topology() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000002U);
+  PROTOBUF_ASSUME(!value || _impl_.topology_ != nullptr);
+  return value;
+}
+inline void WorkspaceTopologyConfig::clear_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.topology_ != nullptr) _impl_.topology_->Clear();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::vna::Topology& WorkspaceTopologyConfig::_internal_topology() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::vna::Topology* p = _impl_.topology_;
+  return p != nullptr ? *p : reinterpret_cast<const ::vna::Topology&>(::vna::_Topology_default_instance_);
+}
+inline const ::vna::Topology& WorkspaceTopologyConfig::topology() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyConfig.topology)
+  return _internal_topology();
+}
+inline void WorkspaceTopologyConfig::unsafe_arena_set_allocated_topology(
+    ::vna::Topology* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.topology_);
+  }
+  _impl_.topology_ = reinterpret_cast<::vna::Topology*>(value);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:vna.WorkspaceTopologyConfig.topology)
+}
+inline ::vna::Topology* PROTOBUF_NULLABLE WorkspaceTopologyConfig::release_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* released = _impl_.topology_;
+  _impl_.topology_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::vna::Topology* PROTOBUF_NULLABLE WorkspaceTopologyConfig::unsafe_arena_release_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceTopologyConfig.topology)
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* temp = _impl_.topology_;
+  _impl_.topology_ = nullptr;
+  return temp;
+}
+inline ::vna::Topology* PROTOBUF_NONNULL WorkspaceTopologyConfig::_internal_mutable_topology() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.topology_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::vna::Topology>(GetArena());
+    _impl_.topology_ = reinterpret_cast<::vna::Topology*>(p);
+  }
+  return _impl_.topology_;
+}
+inline ::vna::Topology* PROTOBUF_NONNULL WorkspaceTopologyConfig::mutable_topology()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::vna::Topology* _msg = _internal_mutable_topology();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyConfig.topology)
+  return _msg;
+}
+inline void WorkspaceTopologyConfig::set_allocated_topology(::vna::Topology* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.topology_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+
+  _impl_.topology_ = reinterpret_cast<::vna::Topology*>(value);
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceTopologyConfig.topology)
+}
+
+// bool is_active = 3;
+inline void WorkspaceTopologyConfig::clear_is_active() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_active_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000008U);
+}
+inline bool WorkspaceTopologyConfig::is_active() const {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyConfig.is_active)
+  return _internal_is_active();
+}
+inline void WorkspaceTopologyConfig::set_is_active(bool value) {
+  _internal_set_is_active(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000008U);
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyConfig.is_active)
+}
+inline bool WorkspaceTopologyConfig::_internal_is_active() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.is_active_;
+}
+inline void WorkspaceTopologyConfig::_internal_set_is_active(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.is_active_ = value;
+}
+
+// uint64 updated_at_ms = 4;
+inline void WorkspaceTopologyConfig::clear_updated_at_ms() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.updated_at_ms_ = ::uint64_t{0u};
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000004U);
+}
+inline ::uint64_t WorkspaceTopologyConfig::updated_at_ms() const {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyConfig.updated_at_ms)
+  return _internal_updated_at_ms();
+}
+inline void WorkspaceTopologyConfig::set_updated_at_ms(::uint64_t value) {
+  _internal_set_updated_at_ms(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000004U);
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyConfig.updated_at_ms)
+}
+inline ::uint64_t WorkspaceTopologyConfig::_internal_updated_at_ms() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.updated_at_ms_;
+}
+inline void WorkspaceTopologyConfig::_internal_set_updated_at_ms(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.updated_at_ms_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// WorkspaceTopologyList
+
+// repeated .vna.WorkspaceTopologyConfig items = 1;
+inline int WorkspaceTopologyList::_internal_items_size() const {
+  return _internal_items().size();
+}
+inline int WorkspaceTopologyList::items_size() const {
+  return _internal_items_size();
+}
+inline void WorkspaceTopologyList::clear_items() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.items_.Clear();
+  ClearHasBitForRepeated(_impl_._has_bits_[0],
+                  0x00000001U);
+}
+inline ::vna::WorkspaceTopologyConfig* PROTOBUF_NONNULL WorkspaceTopologyList::mutable_items(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyList.items)
+  return _internal_mutable_items()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>* PROTOBUF_NONNULL WorkspaceTopologyList::mutable_items()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_mutable_list:vna.WorkspaceTopologyList.items)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_items();
+}
+inline const ::vna::WorkspaceTopologyConfig& WorkspaceTopologyList::items(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyList.items)
+  return _internal_items().Get(index);
+}
+inline ::vna::WorkspaceTopologyConfig* PROTOBUF_NONNULL WorkspaceTopologyList::add_items()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::vna::WorkspaceTopologyConfig* _add =
+      _internal_mutable_items()->InternalAddWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), GetArena());
+  SetHasBitForRepeated(_impl_._has_bits_[0], 0x00000001U);
+  // @@protoc_insertion_point(field_add:vna.WorkspaceTopologyList.items)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>& WorkspaceTopologyList::items() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:vna.WorkspaceTopologyList.items)
+  return _internal_items();
+}
+inline const ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>&
+WorkspaceTopologyList::_internal_items() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.items_;
+}
+inline ::google::protobuf::RepeatedPtrField<::vna::WorkspaceTopologyConfig>* PROTOBUF_NONNULL
+WorkspaceTopologyList::_internal_mutable_items() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.items_;
+}
+
+// string active_workspace_id = 2;
+inline void WorkspaceTopologyList::clear_active_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.active_workspace_id_.ClearToEmpty();
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000002U);
+}
+inline const ::std::string& WorkspaceTopologyList::active_workspace_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:vna.WorkspaceTopologyList.active_workspace_id)
+  return _internal_active_workspace_id();
+}
+template <typename Arg_, typename... Args_>
+PROTOBUF_ALWAYS_INLINE void WorkspaceTopologyList::set_active_workspace_id(Arg_&& arg, Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  _impl_.active_workspace_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:vna.WorkspaceTopologyList.active_workspace_id)
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyList::mutable_active_workspace_id()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  ::std::string* _s = _internal_mutable_active_workspace_id();
+  // @@protoc_insertion_point(field_mutable:vna.WorkspaceTopologyList.active_workspace_id)
+  return _s;
+}
+inline const ::std::string& WorkspaceTopologyList::_internal_active_workspace_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.active_workspace_id_.Get();
+}
+inline void WorkspaceTopologyList::_internal_set_active_workspace_id(const ::std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.active_workspace_id_.Set(value, GetArena());
+}
+inline ::std::string* PROTOBUF_NONNULL WorkspaceTopologyList::_internal_mutable_active_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.active_workspace_id_.Mutable( GetArena());
+}
+inline ::std::string* PROTOBUF_NULLABLE WorkspaceTopologyList::release_active_workspace_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:vna.WorkspaceTopologyList.active_workspace_id)
+  if (!CheckHasBit(_impl_._has_bits_[0], 0x00000002U)) {
+    return nullptr;
+  }
+  ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  auto* released = _impl_.active_workspace_id_.Release();
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString()) {
+    _impl_.active_workspace_id_.Set("", GetArena());
+  }
+  return released;
+}
+inline void WorkspaceTopologyList::set_allocated_active_workspace_id(::std::string* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000002U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000002U);
+  }
+  _impl_.active_workspace_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.active_workspace_id_.IsDefault()) {
+    _impl_.active_workspace_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:vna.WorkspaceTopologyList.active_workspace_id)
 }
 
 // -------------------------------------------------------------------

@@ -26,6 +26,22 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
                                   const ::vna::Topology* request,
                                   ::vna::ValidationResult* response) override;
 
+  ::grpc::Status UpsertWorkspaceTopology(::grpc::ServerContext* context,
+                                         const ::vna::WorkspaceTopologyUpsertRequest* request,
+                                         ::vna::ValidationResult* response) override;
+
+  ::grpc::Status GetWorkspaceTopology(::grpc::ServerContext* context,
+                                      const ::vna::WorkspaceRef* request,
+                                      ::vna::WorkspaceTopologyConfig* response) override;
+
+  ::grpc::Status ListWorkspaceTopologies(::grpc::ServerContext* context,
+                                         const ::vna::Empty* request,
+                                         ::vna::WorkspaceTopologyList* response) override;
+
+  ::grpc::Status SetActiveWorkspace(::grpc::ServerContext* context,
+                                    const ::vna::WorkspaceRef* request,
+                                    ::vna::ValidationResult* response) override;
+
   ::grpc::Status GetServiceStatus(::grpc::ServerContext* context,
                                   const ::vna::Empty* request,
                                   ::vna::ServiceStatus* response) override;

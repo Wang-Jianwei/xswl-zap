@@ -26,6 +26,10 @@
         "title": "XSWL: Validate Topology"
       },
       {
+        "command": "xswlZapVna.editWorkspaceTopology",
+        "title": "XSWL: Edit Workspace Topology"
+      },
+      {
         "command": "xswlZapVna.acquireOnce",
         "title": "XSWL: Acquire Once"
       },

@@ -1748,7 +1748,7 @@ flowchart TD
 
 继续：我可以将这些接口草案和示例测试用例转换为具体的 Issue 模板并生成初始实现任务清单。
 
-## 12. 架构优化摘要（参考：architecture-optimization-plan.md）
+## 12. 架构优化摘要（参考：archives/docs/architecture-optimization-plan.md）
 
 为完整支持 VNA 的高级功能（TDR、功率特性、X 参数、材料与毫米波），已制定详细的架构优化计划，关键改动如下：
 
@@ -1760,6 +1760,6 @@ flowchart TD
 - **多层扫描与中断**：实现 `HierarchicalSweepExecutor` 与 `LoopPlugin`，支持嵌套扫描、进度回调与中断（CancellationToken）。
 - **外设驱动框架**：定义 `NoiseSourceDriver` / `ProbeStationDriver` / `TemperatureControllerDriver` 等接口供外部设备接入。
 
-这些改动均以**接口向后兼容、增量实现**为原则，预计在 P0-P2 阶段完成（详见 `architecture-optimization-plan.md`）。
+这些改动均以**接口向后兼容、增量实现**为原则，预计在 P0-P2 阶段完成（详见 `archives/docs/architecture-optimization-plan.md`）。
 
 **下一步**：把 P0（接口与 Mock 支持）、时域路径、硬件驱动框架列为优先任务并创建对应 issue/branch。

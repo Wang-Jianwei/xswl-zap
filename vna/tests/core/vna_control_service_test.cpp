@@ -56,6 +56,53 @@ int main() {
     assert(hasTabIndentError);
   }
 
+      // Workspace topology configs should be independently managed and activatable.
+      {
+        vna::core::Topology topoA;
+        topoA.id = "ws-topo-a";
+        topoA.yaml =
+       "instances:\n"
+       "  - id: inst0\n"
+       "    driver: pxi\n"
+       "    device: pxi-mock-0\n"
+       "    resource: dev0\n";
+
+        vna::service::TopologyValidationReport reportA;
+        assert(service.UpsertWorkspaceTopology("workspace-a", topoA, true, &reportA) ==
+          vna::core::Status::kOk);
+        assert(reportA.ok);
+
+        vna::core::Topology topoB;
+        topoB.id = "ws-topo-b";
+        topoB.yaml =
+       "instances:\n"
+       "  - id: inst1\n"
+       "    driver: usb\n"
+       "    device: usb-mock-1\n"
+       "    resource: dev1\n";
+
+        vna::service::TopologyValidationReport reportB;
+        assert(service.UpsertWorkspaceTopology("workspace-b", topoB, false, &reportB) ==
+          vna::core::Status::kOk);
+        assert(reportB.ok);
+
+        std::vector<vna::service::WorkspaceTopologyConfig> listed = service.ListWorkspaceTopologies();
+        assert(listed.size() == 2);
+        assert(service.GetActiveWorkspaceId() == "workspace-a");
+
+        vna::service::WorkspaceTopologyConfig loaded;
+        assert(service.GetWorkspaceTopology("workspace-b", loaded) == vna::core::Status::kOk);
+        assert(loaded.workspaceId == "workspace-b");
+        assert(loaded.topology.id == "ws-topo-b");
+        assert(!loaded.isActive);
+
+        assert(service.SetActiveWorkspace("workspace-b") == vna::core::Status::kOk);
+        assert(service.GetActiveWorkspaceId() == "workspace-b");
+
+        assert(service.GetWorkspaceTopology("missing-workspace", loaded) ==
+          vna::core::Status::kInvalidArgument);
+      }
+
   // Apply -> Start -> Acquire -> Stop happy path.
   {
     vna::core::Topology topology;

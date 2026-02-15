@@ -746,7 +746,7 @@ flowchart LR
 
 1. **确认硬件能力（本周）**：与 PXI 卡 / USB VNA / 探针台厂商明确支持项（脉冲激励、多频源、PXI 同步精度、ENR 噪声源、温控），并把结果记录到 Hardware Compatibility Matrix 中。
 
-2. **启动 P0 实施（立即）**：按 `architecture-optimization-plan.md` 执行 Phase 0 工作，包括：扩展 `proto/vna.proto`（时域/激励消息）、实现 mock server 的时域响应、实现 `HardwareDriver` 基类与 PXI/USB mock 驱动、以及 TimeDomainProcessor 的基础实现并加入 CI 集成测试。
+2. **启动 P0 实施（立即）**：按 `./architecture-optimization-plan.md` 执行 Phase 0 工作，包括：扩展 `proto/vna.proto`（时域/激励消息）、实现 mock server 的时域响应、实现 `HardwareDriver` 基类与 PXI/USB mock 驱动、以及 TimeDomainProcessor 的基础实现并加入 CI 集成测试。
 
 3. **建立并行/压力测试基准（2 周）**：定义 2/3/4/8 实例场景，自动化跑测并记录延迟/稳定性基线，以便 Phase 1 的性能优化目标化。
 

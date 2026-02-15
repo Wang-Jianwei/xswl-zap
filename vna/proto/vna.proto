@@ -9,6 +9,28 @@ message Topology {
   string yaml = 2;
 }
 
+message WorkspaceRef {
+  string workspace_id = 1;
+}
+
+message WorkspaceTopologyUpsertRequest {
+  string workspace_id = 1;
+  Topology topology = 2;
+  bool activate = 3;
+}
+
+message WorkspaceTopologyConfig {
+  string workspace_id = 1;
+  Topology topology = 2;
+  bool is_active = 3;
+  uint64 updated_at_ms = 4;
+}
+
+message WorkspaceTopologyList {
+  repeated WorkspaceTopologyConfig items = 1;
+  string active_workspace_id = 2;
+}
+
 message ValidationResult {
   bool ok = 1;
   repeated string errors = 2;
@@ -207,6 +229,10 @@ message ServiceStatus {
 
 service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
+  rpc UpsertWorkspaceTopology(WorkspaceTopologyUpsertRequest) returns (ValidationResult);
+  rpc GetWorkspaceTopology(WorkspaceRef) returns (WorkspaceTopologyConfig);
+  rpc ListWorkspaceTopologies(Empty) returns (WorkspaceTopologyList);
+  rpc SetActiveWorkspace(WorkspaceRef) returns (ValidationResult);
   rpc GetServiceStatus(Empty) returns (ServiceStatus);
   rpc GetInstanceCapabilities(InstanceSelector) returns (InstanceCapabilities);
   rpc SetScanState(ScanStateRequest) returns (ScanStateResponse);

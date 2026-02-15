@@ -5,6 +5,7 @@
 #include <mutex>
 #include <sstream>
 #include <thread>
+#include <vector>
 
 #include "core/excitation_mode.h"
 #include "core/measurement_data.h"
@@ -207,6 +208,18 @@ std::string AppendCompareContextToken(const std::string& detail,
   return detail + ", " + contextToken;
 }
 
+void FillValidationResultFromReport(const ::vna::service::TopologyValidationReport& report,
+                                    ::vna::ValidationResult* response) {
+  response->set_ok(report.ok);
+  for (std::size_t i = 0; i < report.errors.size(); ++i) {
+    response->add_errors(report.errors[i].message);
+    ::vna::TopologyErrorDetail* detail = response->add_error_details();
+    detail->set_code(report.errors[i].code);
+    detail->set_field(report.errors[i].field);
+    detail->set_message(report.errors[i].message);
+  }
+}
+
 void LogConfigTransitionIfChanged(const char* scope, const ::vna::AcquisitionRequest& request) {
   static std::mutex logMutex;
   static std::string lastAcquireDigest;
@@ -276,6 +289,110 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     detail->set_message(report.errors[i].message);
   }
 
+  return ::grpc::Status::OK;
+}
+
+::grpc::Status VnaControlGrpcService::UpsertWorkspaceTopology(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::WorkspaceTopologyUpsertRequest* request,
+    ::vna::ValidationResult* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->workspace_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "workspace_id is required");
+  }
+
+  ::vna::core::Topology topology;
+  topology.id = request->topology().id();
+  topology.yaml = request->topology().yaml();
+
+  TopologyValidationReport report;
+  const ::vna::core::Status status = controlService_->UpsertWorkspaceTopology(
+      request->workspace_id(), topology, request->activate(), &report);
+
+  FillValidationResultFromReport(report, response);
+  if (status == ::vna::core::Status::kOk) {
+    response->set_ok(true);
+    return ::grpc::Status::OK;
+  }
+
+  if (status == ::vna::core::Status::kInvalidArgument && !report.errors.empty()) {
+    response->set_ok(false);
+    return ::grpc::Status::OK;
+  }
+  return ToGrpcStatus(status, "upsert workspace topology failed");
+}
+
+::grpc::Status VnaControlGrpcService::GetWorkspaceTopology(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::WorkspaceRef* request,
+    ::vna::WorkspaceTopologyConfig* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->workspace_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "workspace_id is required");
+  }
+
+  WorkspaceTopologyConfig config;
+  const ::vna::core::Status status =
+      controlService_->GetWorkspaceTopology(request->workspace_id(), config);
+  if (status != ::vna::core::Status::kOk) {
+    return ToGrpcStatus(status, "workspace topology not found");
+  }
+
+  response->set_workspace_id(config.workspaceId);
+  response->mutable_topology()->set_id(config.topology.id);
+  response->mutable_topology()->set_yaml(config.topology.yaml);
+  response->set_is_active(config.isActive);
+  response->set_updated_at_ms(config.updatedAtMs);
+  return ::grpc::Status::OK;
+}
+
+::grpc::Status VnaControlGrpcService::ListWorkspaceTopologies(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::Empty* /*request*/,
+    ::vna::WorkspaceTopologyList* response) {
+  if (controlService_ == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  const std::vector<WorkspaceTopologyConfig> configs = controlService_->ListWorkspaceTopologies();
+  for (std::size_t i = 0; i < configs.size(); ++i) {
+    ::vna::WorkspaceTopologyConfig* item = response->add_items();
+    item->set_workspace_id(configs[i].workspaceId);
+    item->mutable_topology()->set_id(configs[i].topology.id);
+    item->mutable_topology()->set_yaml(configs[i].topology.yaml);
+    item->set_is_active(configs[i].isActive);
+    item->set_updated_at_ms(configs[i].updatedAtMs);
+  }
+  response->set_active_workspace_id(controlService_->GetActiveWorkspaceId());
+  return ::grpc::Status::OK;
+}
+
+::grpc::Status VnaControlGrpcService::SetActiveWorkspace(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::WorkspaceRef* request,
+    ::vna::ValidationResult* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->workspace_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "workspace_id is required");
+  }
+
+  const ::vna::core::Status status = controlService_->SetActiveWorkspace(request->workspace_id());
+  if (status != ::vna::core::Status::kOk) {
+    response->set_ok(false);
+    response->add_errors("workspace not found");
+    return ToGrpcStatus(status, "set active workspace failed");
+  }
+
+  response->set_ok(true);
   return ::grpc::Status::OK;
 }
 

@@ -2,6 +2,8 @@
 
 #include <complex>
 #include <cstdint>
+#include <map>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -27,6 +29,13 @@ struct TopologyValidationReport {
   std::vector<TopologyErrorDetail> errors;
 };
 
+struct WorkspaceTopologyConfig {
+  std::string workspaceId;
+  core::Topology topology;
+  bool isActive = false;
+  std::uint64_t updatedAtMs = 0;
+};
+
 // VnaControlService is a minimal, in-process service facade over core runtime.
 // It is intended to be wrapped by a transport layer later (e.g. grpc-cpp).
 class VnaControlService {
@@ -36,6 +45,20 @@ class VnaControlService {
   // Stateless topology validation (does not modify runtime state).
   core::ValidationResult ValidateTopology(const core::Topology& topology) const;
   TopologyValidationReport ValidateTopologyStructured(const core::Topology& topology) const;
+
+  core::Status UpsertWorkspaceTopology(const std::string& workspaceId,
+                                       const core::Topology& topology,
+                                       bool activate,
+                                       TopologyValidationReport* validationReport = nullptr);
+
+  core::Status GetWorkspaceTopology(const std::string& workspaceId,
+                                    WorkspaceTopologyConfig& outConfig) const;
+
+  std::vector<WorkspaceTopologyConfig> ListWorkspaceTopologies() const;
+
+  core::Status SetActiveWorkspace(const std::string& workspaceId);
+
+  std::string GetActiveWorkspaceId() const;
 
   // Applies topology and creates instances (single-apply in Pre-GA runtime).
   core::Status ApplyTopology(const core::Topology& topology,
@@ -81,6 +104,7 @@ class VnaControlService {
  private:
   static TopologyErrorDetail BuildTopologyError(const std::string& rawError);
   std::string BuildDeEmbeddingContextTag() const;
+  static std::uint64_t NowMs();
 
   core::VnaRuntime runtime_;
   bool started_;
@@ -88,6 +112,9 @@ class VnaControlService {
   std::vector<std::complex<double> > deEmbeddingPortTransfer_;
   std::vector<core::processors::FrequencyPortTransferProfile> deEmbeddingFrequencyProfiles_;
   core::processors::DeEmbeddingProcessor deEmbeddingProcessor_;
+  mutable std::mutex workspaceTopologyMutex_;
+  std::map<std::string, WorkspaceTopologyConfig> workspaceTopologies_;
+  std::string activeWorkspaceId_;
 };
 
 }  // namespace service

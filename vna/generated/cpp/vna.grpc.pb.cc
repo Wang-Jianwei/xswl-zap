@@ -24,6 +24,10 @@ namespace vna {
 
 static const char* VnaControl_method_names[] = {
   "/vna.VnaControl/ValidateTopology",
+  "/vna.VnaControl/UpsertWorkspaceTopology",
+  "/vna.VnaControl/GetWorkspaceTopology",
+  "/vna.VnaControl/ListWorkspaceTopologies",
+  "/vna.VnaControl/SetActiveWorkspace",
   "/vna.VnaControl/GetServiceStatus",
   "/vna.VnaControl/GetInstanceCapabilities",
   "/vna.VnaControl/SetScanState",
@@ -42,14 +46,18 @@ std::unique_ptr< VnaControl::Stub> VnaControl::NewStub(const std::shared_ptr< ::
 
 VnaControl::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_ValidateTopology_(VnaControl_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetServiceStatus_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetInstanceCapabilities_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetScanState_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetScanState_(VnaControl_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Acquire_(VnaControl_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ImportAcquisition_(VnaControl_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_CompareImportedAcquisition_(VnaControl_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StreamAcquisition_(VnaControl_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_UpsertWorkspaceTopology_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetWorkspaceTopology_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListWorkspaceTopologies_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetActiveWorkspace_(VnaControl_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetServiceStatus_(VnaControl_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetInstanceCapabilities_(VnaControl_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetScanState_(VnaControl_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetScanState_(VnaControl_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Acquire_(VnaControl_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ImportAcquisition_(VnaControl_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CompareImportedAcquisition_(VnaControl_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StreamAcquisition_(VnaControl_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status VnaControl::Stub::ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::vna::ValidationResult* response) {
@@ -71,6 +79,98 @@ void VnaControl::Stub::async::ValidateTopology(::grpc::ClientContext* context, c
 ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::AsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncValidateTopologyRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::vna::ValidationResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpsertWorkspaceTopology_, context, request, response);
+}
+
+void VnaControl::Stub::async::UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpsertWorkspaceTopology_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpsertWorkspaceTopology_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::PrepareAsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::ValidationResult, ::vna::WorkspaceTopologyUpsertRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpsertWorkspaceTopology_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::AsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUpsertWorkspaceTopologyRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::GetWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::vna::WorkspaceTopologyConfig* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetWorkspaceTopology_, context, request, response);
+}
+
+void VnaControl::Stub::async::GetWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetWorkspaceTopology_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::GetWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetWorkspaceTopology_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::WorkspaceTopologyConfig>* VnaControl::Stub::PrepareAsyncGetWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::WorkspaceTopologyConfig, ::vna::WorkspaceRef, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetWorkspaceTopology_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::WorkspaceTopologyConfig>* VnaControl::Stub::AsyncGetWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetWorkspaceTopologyRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::ListWorkspaceTopologies(::grpc::ClientContext* context, const ::vna::Empty& request, ::vna::WorkspaceTopologyList* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::Empty, ::vna::WorkspaceTopologyList, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ListWorkspaceTopologies_, context, request, response);
+}
+
+void VnaControl::Stub::async::ListWorkspaceTopologies(::grpc::ClientContext* context, const ::vna::Empty* request, ::vna::WorkspaceTopologyList* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::Empty, ::vna::WorkspaceTopologyList, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ListWorkspaceTopologies_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::ListWorkspaceTopologies(::grpc::ClientContext* context, const ::vna::Empty* request, ::vna::WorkspaceTopologyList* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ListWorkspaceTopologies_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::WorkspaceTopologyList>* VnaControl::Stub::PrepareAsyncListWorkspaceTopologiesRaw(::grpc::ClientContext* context, const ::vna::Empty& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::WorkspaceTopologyList, ::vna::Empty, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ListWorkspaceTopologies_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::WorkspaceTopologyList>* VnaControl::Stub::AsyncListWorkspaceTopologiesRaw(::grpc::ClientContext* context, const ::vna::Empty& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncListWorkspaceTopologiesRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::SetActiveWorkspace(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::vna::ValidationResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::WorkspaceRef, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SetActiveWorkspace_, context, request, response);
+}
+
+void VnaControl::Stub::async::SetActiveWorkspace(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::WorkspaceRef, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SetActiveWorkspace_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::SetActiveWorkspace(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SetActiveWorkspace_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::PrepareAsyncSetActiveWorkspaceRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::ValidationResult, ::vna::WorkspaceRef, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SetActiveWorkspace_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::AsyncSetActiveWorkspaceRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSetActiveWorkspaceRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -266,6 +366,46 @@ VnaControl::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       VnaControl_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::WorkspaceTopologyUpsertRequest* req,
+             ::vna::ValidationResult* resp) {
+               return service->UpsertWorkspaceTopology(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::WorkspaceRef* req,
+             ::vna::WorkspaceTopologyConfig* resp) {
+               return service->GetWorkspaceTopology(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::Empty, ::vna::WorkspaceTopologyList, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::Empty* req,
+             ::vna::WorkspaceTopologyList* resp) {
+               return service->ListWorkspaceTopologies(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceRef, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::WorkspaceRef* req,
+             ::vna::ValidationResult* resp) {
+               return service->SetActiveWorkspace(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[5],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::Empty, ::vna::ServiceStatus, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
              ::grpc::ServerContext* ctx,
@@ -274,7 +414,7 @@ VnaControl::Service::Service() {
                return service->GetServiceStatus(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[2],
+      VnaControl_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::InstanceSelector, ::vna::InstanceCapabilities, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -284,7 +424,7 @@ VnaControl::Service::Service() {
                return service->GetInstanceCapabilities(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[3],
+      VnaControl_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::ScanStateRequest, ::vna::ScanStateResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -294,7 +434,7 @@ VnaControl::Service::Service() {
                return service->SetScanState(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[4],
+      VnaControl_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::InstanceSelector, ::vna::ScanStateResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -304,7 +444,7 @@ VnaControl::Service::Service() {
                return service->GetScanState(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[5],
+      VnaControl_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -314,7 +454,7 @@ VnaControl::Service::Service() {
                return service->Acquire(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[6],
+      VnaControl_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -324,7 +464,7 @@ VnaControl::Service::Service() {
                return service->ImportAcquisition(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[7],
+      VnaControl_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -334,7 +474,7 @@ VnaControl::Service::Service() {
                return service->CompareImportedAcquisition(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[8],
+      VnaControl_method_names[12],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
           [](VnaControl::Service* service,
@@ -349,6 +489,34 @@ VnaControl::Service::~Service() {
 }
 
 ::grpc::Status VnaControl::Service::ValidateTopology(::grpc::ServerContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::UpsertWorkspaceTopology(::grpc::ServerContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::GetWorkspaceTopology(::grpc::ServerContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::ListWorkspaceTopologies(::grpc::ServerContext* context, const ::vna::Empty* request, ::vna::WorkspaceTopologyList* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::SetActiveWorkspace(::grpc::ServerContext* context, const ::vna::WorkspaceRef* request, ::vna::ValidationResult* response) {
   (void) context;
   (void) request;
   (void) response;

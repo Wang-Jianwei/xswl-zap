@@ -26,6 +26,33 @@ namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace vna {
 
+inline constexpr WorkspaceRef::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        workspace_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+PROTOBUF_CONSTEXPR WorkspaceRef::WorkspaceRef(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(WorkspaceRef_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct WorkspaceRefDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR WorkspaceRefDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~WorkspaceRefDefaultTypeInternal() {}
+  union {
+    WorkspaceRef _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 WorkspaceRefDefaultTypeInternal _WorkspaceRef_default_instance_;
+
 inline constexpr TopologyErrorDetail::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -565,6 +592,65 @@ struct CompareImportedAcquisitionResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CompareImportedAcquisitionResponseDefaultTypeInternal _CompareImportedAcquisitionResponse_default_instance_;
 
+inline constexpr WorkspaceTopologyUpsertRequest::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        workspace_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        topology_{nullptr},
+        activate_{false} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR WorkspaceTopologyUpsertRequest::WorkspaceTopologyUpsertRequest(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(WorkspaceTopologyUpsertRequest_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct WorkspaceTopologyUpsertRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR WorkspaceTopologyUpsertRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~WorkspaceTopologyUpsertRequestDefaultTypeInternal() {}
+  union {
+    WorkspaceTopologyUpsertRequest _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 WorkspaceTopologyUpsertRequestDefaultTypeInternal _WorkspaceTopologyUpsertRequest_default_instance_;
+
+inline constexpr WorkspaceTopologyConfig::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        workspace_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        topology_{nullptr},
+        updated_at_ms_{::uint64_t{0u}},
+        is_active_{false} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR WorkspaceTopologyConfig::WorkspaceTopologyConfig(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(WorkspaceTopologyConfig_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct WorkspaceTopologyConfigDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR WorkspaceTopologyConfigDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~WorkspaceTopologyConfigDefaultTypeInternal() {}
+  union {
+    WorkspaceTopologyConfig _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 WorkspaceTopologyConfigDefaultTypeInternal _WorkspaceTopologyConfig_default_instance_;
+
 inline constexpr ValidationResult::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -726,6 +812,34 @@ struct ExcitationConfigDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ExcitationConfigDefaultTypeInternal _ExcitationConfig_default_instance_;
 
+inline constexpr WorkspaceTopologyList::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : _cached_size_{0},
+        items_{},
+        active_workspace_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()) {}
+
+template <typename>
+PROTOBUF_CONSTEXPR WorkspaceTopologyList::WorkspaceTopologyList(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(WorkspaceTopologyList_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct WorkspaceTopologyListDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR WorkspaceTopologyListDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~WorkspaceTopologyListDefaultTypeInternal() {}
+  union {
+    WorkspaceTopologyList _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 WorkspaceTopologyListDefaultTypeInternal _WorkspaceTopologyList_default_instance_;
+
 inline constexpr AcquisitionResult::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
@@ -840,6 +954,38 @@ const ::uint32_t
         5, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::vna::Topology, _impl_.id_),
         PROTOBUF_FIELD_OFFSET(::vna::Topology, _impl_.yaml_),
+        0,
+        1,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceRef, _impl_._has_bits_),
+        4, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceRef, _impl_.workspace_id_),
+        0,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyUpsertRequest, _impl_._has_bits_),
+        6, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyUpsertRequest, _impl_.workspace_id_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyUpsertRequest, _impl_.topology_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyUpsertRequest, _impl_.activate_),
+        0,
+        1,
+        2,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyConfig, _impl_._has_bits_),
+        7, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyConfig, _impl_.workspace_id_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyConfig, _impl_.topology_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyConfig, _impl_.is_active_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyConfig, _impl_.updated_at_ms_),
+        0,
+        1,
+        3,
+        2,
+        0x081, // bitmap
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyList, _impl_._has_bits_),
+        5, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyList, _impl_.items_),
+        PROTOBUF_FIELD_OFFSET(::vna::WorkspaceTopologyList, _impl_.active_workspace_id_),
         0,
         1,
         0x081, // bitmap
@@ -1129,35 +1275,43 @@ static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, sizeof(::vna::Empty)},
         {1, sizeof(::vna::Topology)},
-        {8, sizeof(::vna::ValidationResult)},
-        {17, sizeof(::vna::TopologyErrorDetail)},
-        {26, sizeof(::vna::CwExcitation)},
-        {47, sizeof(::vna::PulseExcitation)},
-        {60, sizeof(::vna::ExcitationConfig)},
-        {75, sizeof(::vna::AcquisitionRequest)},
-        {92, sizeof(::vna::ImportAcquisitionRequest)},
-        {97, sizeof(::vna::CompareImportedAcquisitionRequest)},
-        {106, sizeof(::vna::CompareImportedAcquisitionResponse)},
-        {113, sizeof(::vna::FrequencyDomainPoint)},
-        {122, sizeof(::vna::TimeDomainPoint)},
-        {131, sizeof(::vna::ReceiverChannelSample)},
-        {142, sizeof(::vna::ReceiverFrequencyPoint)},
-        {151, sizeof(::vna::SParameterPoint)},
-        {162, sizeof(::vna::SParameterFrequencyPoint)},
-        {171, sizeof(::vna::AcquisitionResult)},
-        {190, sizeof(::vna::FrequencyDomainFrame)},
-        {195, sizeof(::vna::TimeDomainFrame)},
-        {202, sizeof(::vna::ResourceRequest)},
-        {213, sizeof(::vna::LeaseInfo)},
-        {222, sizeof(::vna::InstanceSelector)},
-        {227, sizeof(::vna::InstanceCapabilities)},
-        {242, sizeof(::vna::ScanStateRequest)},
-        {249, sizeof(::vna::ScanStateResponse)},
-        {262, sizeof(::vna::ServiceStatus)},
+        {8, sizeof(::vna::WorkspaceRef)},
+        {13, sizeof(::vna::WorkspaceTopologyUpsertRequest)},
+        {22, sizeof(::vna::WorkspaceTopologyConfig)},
+        {33, sizeof(::vna::WorkspaceTopologyList)},
+        {40, sizeof(::vna::ValidationResult)},
+        {49, sizeof(::vna::TopologyErrorDetail)},
+        {58, sizeof(::vna::CwExcitation)},
+        {79, sizeof(::vna::PulseExcitation)},
+        {92, sizeof(::vna::ExcitationConfig)},
+        {107, sizeof(::vna::AcquisitionRequest)},
+        {124, sizeof(::vna::ImportAcquisitionRequest)},
+        {129, sizeof(::vna::CompareImportedAcquisitionRequest)},
+        {138, sizeof(::vna::CompareImportedAcquisitionResponse)},
+        {145, sizeof(::vna::FrequencyDomainPoint)},
+        {154, sizeof(::vna::TimeDomainPoint)},
+        {163, sizeof(::vna::ReceiverChannelSample)},
+        {174, sizeof(::vna::ReceiverFrequencyPoint)},
+        {183, sizeof(::vna::SParameterPoint)},
+        {194, sizeof(::vna::SParameterFrequencyPoint)},
+        {203, sizeof(::vna::AcquisitionResult)},
+        {222, sizeof(::vna::FrequencyDomainFrame)},
+        {227, sizeof(::vna::TimeDomainFrame)},
+        {234, sizeof(::vna::ResourceRequest)},
+        {245, sizeof(::vna::LeaseInfo)},
+        {254, sizeof(::vna::InstanceSelector)},
+        {259, sizeof(::vna::InstanceCapabilities)},
+        {274, sizeof(::vna::ScanStateRequest)},
+        {281, sizeof(::vna::ScanStateResponse)},
+        {294, sizeof(::vna::ServiceStatus)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::vna::_Empty_default_instance_._instance,
     &::vna::_Topology_default_instance_._instance,
+    &::vna::_WorkspaceRef_default_instance_._instance,
+    &::vna::_WorkspaceTopologyUpsertRequest_default_instance_._instance,
+    &::vna::_WorkspaceTopologyConfig_default_instance_._instance,
+    &::vna::_WorkspaceTopologyList_default_instance_._instance,
     &::vna::_ValidationResult_default_instance_._instance,
     &::vna::_TopologyErrorDetail_default_instance_._instance,
     &::vna::_CwExcitation_default_instance_._instance,
@@ -1187,123 +1341,140 @@ static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
 const char descriptor_table_protodef_vna_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
     "\n\tvna.proto\022\003vna\"\007\n\005Empty\"$\n\010Topology\022\n\n"
-    "\002id\030\001 \001(\t\022\014\n\004yaml\030\002 \001(\t\"_\n\020ValidationRes"
-    "ult\022\n\n\002ok\030\001 \001(\010\022\016\n\006errors\030\002 \003(\t\022/\n\rerror"
-    "_details\030\003 \003(\0132\030.vna.TopologyErrorDetail"
-    "\"C\n\023TopologyErrorDetail\022\014\n\004code\030\001 \001(\t\022\r\n"
-    "\005field\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\346\001\n\014CwExci"
-    "tation\022\024\n\014frequency_hz\030\001 \001(\001\022\021\n\tpower_db"
-    "m\030\002 \001(\001\022\025\n\rdwell_time_ms\030\003 \001(\r\022\032\n\022start_"
-    "frequency_hz\030\004 \001(\001\022\031\n\021stop_frequency_hz\030"
-    "\005 \001(\001\022\031\n\021sweep_point_count\030\006 \001(\r\022\027\n\017if_b"
-    "andwidth_hz\030\007 \001(\001\022\022\n\nport_count\030\010 \001(\r\022\027\n"
-    "\017excitation_port\030\t \001(\r\"\210\001\n\017PulseExcitati"
-    "on\022\033\n\023center_frequency_hz\030\001 \001(\001\022\026\n\016pulse"
-    "_width_ns\030\002 \001(\r\022\027\n\017pulse_period_ns\030\003 \001(\r"
-    "\022\021\n\tpower_dbm\030\004 \001(\001\022\024\n\014rise_time_ns\030\005 \001("
-    "\r\"\276\001\n\020ExcitationConfig\022!\n\004mode\030\001 \001(\0162\023.v"
-    "na.ExcitationMode\022\030\n\020settling_time_ms\030\002 "
-    "\001(\r\022\033\n\023enable_auto_trigger\030\003 \001(\010\022\037\n\002cw\030\n"
-    " \001(\0132\021.vna.CwExcitationH\000\022%\n\005pulse\030\013 \001(\013"
-    "2\024.vna.PulseExcitationH\000B\010\n\006detail\"\321\001\n\022A"
-    "cquisitionRequest\022\023\n\013instance_id\030\001 \001(\t\022)"
-    "\n\nexcitation\030\002 \001(\0132\025.vna.ExcitationConfi"
-    "g\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeout_ms\030\004 "
-    "\001(\r\022\027\n\017export_csv_path\030\005 \001(\t\022\036\n\026export_t"
-    "ouchstone_path\030\006 \001(\t\022\030\n\020export_json_path"
-    "\030\007 \001(\t\"-\n\030ImportAcquisitionRequest\022\021\n\tjs"
-    "on_path\030\001 \001(\t\"{\n!CompareImportedAcquisit"
-    "ionRequest\022\021\n\tjson_path\030\001 \001(\t\0220\n\017current"
-    "_request\030\002 \001(\0132\027.vna.AcquisitionRequest\022"
-    "\021\n\ttolerance\030\003 \001(\001\"E\n\"CompareImportedAcq"
-    "uisitionResponse\022\017\n\007matched\030\001 \001(\010\022\016\n\006det"
-    "ail\030\002 \001(\t\"H\n\024FrequencyDomainPoint\022\024\n\014fre"
-    "quency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 "
-    "\001(\001\"D\n\017TimeDomainPoint\022\017\n\007time_ns\030\001 \001(\001\022"
-    "\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003 \001(\001\"X\n\025Rec"
-    "eiverChannelSample\022\022\n\nchannel_id\030\001 \001(\t\022\014"
-    "\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007clipped\030\004 "
-    "\001(\010\"r\n\026ReceiverFrequencyPoint\022\024\n\014frequen"
-    "cy_hz\030\001 \001(\001\022\024\n\014timestamp_ns\030\002 \001(\004\022,\n\010cha"
-    "nnels\030\003 \003(\0132\032.vna.ReceiverChannelSample\""
-    "Q\n\017SParameterPoint\022\020\n\010row_port\030\001 \001(\r\022\020\n\010"
-    "col_port\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004imag\030\004 \001"
-    "(\001\"j\n\030SParameterFrequencyPoint\022\024\n\014freque"
-    "ncy_hz\030\001 \001(\001\022\022\n\nport_count\030\002 \001(\r\022$\n\006poin"
-    "ts\030\003 \003(\0132\024.vna.SParameterPoint\"\337\002\n\021Acqui"
-    "sitionResult\022\023\n\013instance_id\030\001 \001(\t\022\024\n\014tim"
-    "estamp_ns\030\002 \001(\004\0224\n\017frequency_frame\030\n \001(\013"
-    "2\031.vna.FrequencyDomainFrameH\000\022*\n\ntime_fr"
-    "ame\030\013 \001(\0132\024.vna.TimeDomainFrameH\000\0228\n\023rec"
-    "eiver_raw_points\030\024 \003(\0132\033.vna.ReceiverFre"
-    "quencyPoint\022@\n\033receiver_compensated_poin"
-    "ts\030\025 \003(\0132\033.vna.ReceiverFrequencyPoint\0229\n"
-    "\022s_parameter_points\030\026 \003(\0132\035.vna.SParamet"
-    "erFrequencyPointB\006\n\004data\"A\n\024FrequencyDom"
-    "ainFrame\022)\n\006points\030\001 \003(\0132\031.vna.Frequency"
-    "DomainPoint\"P\n\017TimeDomainFrame\022$\n\006points"
-    "\030\001 \003(\0132\024.vna.TimeDomainPoint\022\027\n\017sample_r"
-    "ate_ghz\030\002 \001(\001\"c\n\017ResourceRequest\022\023\n\013reso"
-    "urce_id\030\001 \001(\t\022\024\n\014workspace_id\030\002 \001(\t\022\021\n\te"
-    "xclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001(\r\"G\n\tLe"
-    "aseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013resource_id"
-    "\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\'\n\020InstanceS"
-    "elector\022\023\n\013instance_id\030\001 \001(\t\"\317\001\n\024Instanc"
-    "eCapabilities\022!\n\031supports_pulse_excitati"
-    "on\030\001 \001(\010\022\033\n\023supports_multi_tone\030\002 \001(\010\022\037\n"
-    "\027supports_external_clock\030\003 \001(\010\022\032\n\022min_pu"
-    "lse_width_ns\030\004 \001(\r\022\033\n\023min_pulse_period_n"
-    "s\030\005 \001(\r\022\035\n\025max_sampling_rate_ghz\030\006 \001(\001\"N"
-    "\n\020ScanStateRequest\022\023\n\013instance_id\030\001 \001(\t\022"
-    "%\n\rdesired_state\030\002 \001(\0162\016.vna.ScanState\"\206"
-    "\001\n\021ScanStateResponse\022\023\n\013instance_id\030\001 \001("
-    "\t\022\035\n\005state\030\002 \001(\0162\016.vna.ScanState\022\025\n\rstre"
-    "am_active\030\003 \001(\010\022\017\n\007message\030\004 \001(\t\022\025\n\rupda"
-    "ted_at_ms\030\005 \001(\004\"\376\001\n\rServiceStatus\022\r\n\005rea"
-    "dy\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007message\030\003 \001(\t"
-    "\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_address\030\005 \001("
-    "\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabled\030\007 \001(\010\022\021\n\t"
-    "log_level\030\010 \001(\t\022\026\n\016instance_count\030\t \001(\r\022"
-    "\032\n\022active_lease_count\030\n \001(\r\022\026\n\016bootstrap"
-    "_mode\030\013 \001(\t\022\023\n\013config_path\030\014 \001(\t*d\n\016Exci"
-    "tationMode\022\037\n\033EXCITATION_MODE_UNSPECIFIE"
-    "D\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022\031\n\025EXCITATIO"
-    "N_MODE_PULSE\020\002*n\n\tScanState\022\032\n\026SCAN_STAT"
-    "E_UNSPECIFIED\020\000\022\031\n\025SCAN_STATE_CONTINUOUS"
-    "\020\001\022\025\n\021SCAN_STATE_SINGLE\020\002\022\023\n\017SCAN_STATE_"
-    "HOLD\020\0032\204\005\n\nVnaControl\0228\n\020ValidateTopolog"
-    "y\022\r.vna.Topology\032\025.vna.ValidationResult\022"
-    "2\n\020GetServiceStatus\022\n.vna.Empty\032\022.vna.Se"
-    "rviceStatus\022K\n\027GetInstanceCapabilities\022\025"
-    ".vna.InstanceSelector\032\031.vna.InstanceCapa"
-    "bilities\022=\n\014SetScanState\022\025.vna.ScanState"
-    "Request\032\026.vna.ScanStateResponse\022=\n\014GetSc"
-    "anState\022\025.vna.InstanceSelector\032\026.vna.Sca"
-    "nStateResponse\022:\n\007Acquire\022\027.vna.Acquisit"
-    "ionRequest\032\026.vna.AcquisitionResult\022J\n\021Im"
-    "portAcquisition\022\035.vna.ImportAcquisitionR"
-    "equest\032\026.vna.AcquisitionResult\022m\n\032Compar"
-    "eImportedAcquisition\022&.vna.CompareImport"
-    "edAcquisitionRequest\032\'.vna.CompareImport"
-    "edAcquisitionResponse\022F\n\021StreamAcquisiti"
-    "on\022\027.vna.AcquisitionRequest\032\026.vna.Acquis"
-    "itionResult0\0012\243\001\n\016ResourceBroker\022/\n\007Acqu"
-    "ire\022\024.vna.ResourceRequest\032\016.vna.LeaseInf"
-    "o\022.\n\005Renew\022\016.vna.LeaseInfo\032\025.vna.Validat"
-    "ionResult\0220\n\007Release\022\016.vna.LeaseInfo\032\025.v"
-    "na.ValidationResultb\006proto3"
+    "\002id\030\001 \001(\t\022\014\n\004yaml\030\002 \001(\t\"$\n\014WorkspaceRef\022"
+    "\024\n\014workspace_id\030\001 \001(\t\"i\n\036WorkspaceTopolo"
+    "gyUpsertRequest\022\024\n\014workspace_id\030\001 \001(\t\022\037\n"
+    "\010topology\030\002 \001(\0132\r.vna.Topology\022\020\n\010activa"
+    "te\030\003 \001(\010\"z\n\027WorkspaceTopologyConfig\022\024\n\014w"
+    "orkspace_id\030\001 \001(\t\022\037\n\010topology\030\002 \001(\0132\r.vn"
+    "a.Topology\022\021\n\tis_active\030\003 \001(\010\022\025\n\rupdated"
+    "_at_ms\030\004 \001(\004\"a\n\025WorkspaceTopologyList\022+\n"
+    "\005items\030\001 \003(\0132\034.vna.WorkspaceTopologyConf"
+    "ig\022\033\n\023active_workspace_id\030\002 \001(\t\"_\n\020Valid"
+    "ationResult\022\n\n\002ok\030\001 \001(\010\022\016\n\006errors\030\002 \003(\t\022"
+    "/\n\rerror_details\030\003 \003(\0132\030.vna.TopologyErr"
+    "orDetail\"C\n\023TopologyErrorDetail\022\014\n\004code\030"
+    "\001 \001(\t\022\r\n\005field\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\"\346\001"
+    "\n\014CwExcitation\022\024\n\014frequency_hz\030\001 \001(\001\022\021\n\t"
+    "power_dbm\030\002 \001(\001\022\025\n\rdwell_time_ms\030\003 \001(\r\022\032"
+    "\n\022start_frequency_hz\030\004 \001(\001\022\031\n\021stop_frequ"
+    "ency_hz\030\005 \001(\001\022\031\n\021sweep_point_count\030\006 \001(\r"
+    "\022\027\n\017if_bandwidth_hz\030\007 \001(\001\022\022\n\nport_count\030"
+    "\010 \001(\r\022\027\n\017excitation_port\030\t \001(\r\"\210\001\n\017Pulse"
+    "Excitation\022\033\n\023center_frequency_hz\030\001 \001(\001\022"
+    "\026\n\016pulse_width_ns\030\002 \001(\r\022\027\n\017pulse_period_"
+    "ns\030\003 \001(\r\022\021\n\tpower_dbm\030\004 \001(\001\022\024\n\014rise_time"
+    "_ns\030\005 \001(\r\"\276\001\n\020ExcitationConfig\022!\n\004mode\030\001"
+    " \001(\0162\023.vna.ExcitationMode\022\030\n\020settling_ti"
+    "me_ms\030\002 \001(\r\022\033\n\023enable_auto_trigger\030\003 \001(\010"
+    "\022\037\n\002cw\030\n \001(\0132\021.vna.CwExcitationH\000\022%\n\005pul"
+    "se\030\013 \001(\0132\024.vna.PulseExcitationH\000B\010\n\006deta"
+    "il\"\321\001\n\022AcquisitionRequest\022\023\n\013instance_id"
+    "\030\001 \001(\t\022)\n\nexcitation\030\002 \001(\0132\025.vna.Excitat"
+    "ionConfig\022\024\n\014sample_count\030\003 \001(\r\022\022\n\ntimeo"
+    "ut_ms\030\004 \001(\r\022\027\n\017export_csv_path\030\005 \001(\t\022\036\n\026"
+    "export_touchstone_path\030\006 \001(\t\022\030\n\020export_j"
+    "son_path\030\007 \001(\t\"-\n\030ImportAcquisitionReque"
+    "st\022\021\n\tjson_path\030\001 \001(\t\"{\n!CompareImported"
+    "AcquisitionRequest\022\021\n\tjson_path\030\001 \001(\t\0220\n"
+    "\017current_request\030\002 \001(\0132\027.vna.Acquisition"
+    "Request\022\021\n\ttolerance\030\003 \001(\001\"E\n\"CompareImp"
+    "ortedAcquisitionResponse\022\017\n\007matched\030\001 \001("
+    "\010\022\016\n\006detail\030\002 \001(\t\"H\n\024FrequencyDomainPoin"
+    "t\022\024\n\014frequency_hz\030\001 \001(\001\022\014\n\004real\030\002 \001(\001\022\014\n"
+    "\004imag\030\003 \001(\001\"D\n\017TimeDomainPoint\022\017\n\007time_n"
+    "s\030\001 \001(\001\022\021\n\tmagnitude\030\002 \001(\001\022\r\n\005phase\030\003 \001("
+    "\001\"X\n\025ReceiverChannelSample\022\022\n\nchannel_id"
+    "\030\001 \001(\t\022\014\n\004real\030\002 \001(\001\022\014\n\004imag\030\003 \001(\001\022\017\n\007cl"
+    "ipped\030\004 \001(\010\"r\n\026ReceiverFrequencyPoint\022\024\n"
+    "\014frequency_hz\030\001 \001(\001\022\024\n\014timestamp_ns\030\002 \001("
+    "\004\022,\n\010channels\030\003 \003(\0132\032.vna.ReceiverChanne"
+    "lSample\"Q\n\017SParameterPoint\022\020\n\010row_port\030\001"
+    " \001(\r\022\020\n\010col_port\030\002 \001(\r\022\014\n\004real\030\003 \001(\001\022\014\n\004"
+    "imag\030\004 \001(\001\"j\n\030SParameterFrequencyPoint\022\024"
+    "\n\014frequency_hz\030\001 \001(\001\022\022\n\nport_count\030\002 \001(\r"
+    "\022$\n\006points\030\003 \003(\0132\024.vna.SParameterPoint\"\337"
+    "\002\n\021AcquisitionResult\022\023\n\013instance_id\030\001 \001("
+    "\t\022\024\n\014timestamp_ns\030\002 \001(\004\0224\n\017frequency_fra"
+    "me\030\n \001(\0132\031.vna.FrequencyDomainFrameH\000\022*\n"
+    "\ntime_frame\030\013 \001(\0132\024.vna.TimeDomainFrameH"
+    "\000\0228\n\023receiver_raw_points\030\024 \003(\0132\033.vna.Rec"
+    "eiverFrequencyPoint\022@\n\033receiver_compensa"
+    "ted_points\030\025 \003(\0132\033.vna.ReceiverFrequency"
+    "Point\0229\n\022s_parameter_points\030\026 \003(\0132\035.vna."
+    "SParameterFrequencyPointB\006\n\004data\"A\n\024Freq"
+    "uencyDomainFrame\022)\n\006points\030\001 \003(\0132\031.vna.F"
+    "requencyDomainPoint\"P\n\017TimeDomainFrame\022$"
+    "\n\006points\030\001 \003(\0132\024.vna.TimeDomainPoint\022\027\n\017"
+    "sample_rate_ghz\030\002 \001(\001\"c\n\017ResourceRequest"
+    "\022\023\n\013resource_id\030\001 \001(\t\022\024\n\014workspace_id\030\002 "
+    "\001(\t\022\021\n\texclusive\030\003 \001(\010\022\022\n\ntimeout_ms\030\004 \001"
+    "(\r\"G\n\tLeaseInfo\022\020\n\010lease_id\030\001 \001(\t\022\023\n\013res"
+    "ource_id\030\002 \001(\t\022\023\n\013ttl_seconds\030\003 \001(\r\"\'\n\020I"
+    "nstanceSelector\022\023\n\013instance_id\030\001 \001(\t\"\317\001\n"
+    "\024InstanceCapabilities\022!\n\031supports_pulse_"
+    "excitation\030\001 \001(\010\022\033\n\023supports_multi_tone\030"
+    "\002 \001(\010\022\037\n\027supports_external_clock\030\003 \001(\010\022\032"
+    "\n\022min_pulse_width_ns\030\004 \001(\r\022\033\n\023min_pulse_"
+    "period_ns\030\005 \001(\r\022\035\n\025max_sampling_rate_ghz"
+    "\030\006 \001(\001\"N\n\020ScanStateRequest\022\023\n\013instance_i"
+    "d\030\001 \001(\t\022%\n\rdesired_state\030\002 \001(\0162\016.vna.Sca"
+    "nState\"\206\001\n\021ScanStateResponse\022\023\n\013instance"
+    "_id\030\001 \001(\t\022\035\n\005state\030\002 \001(\0162\016.vna.ScanState"
+    "\022\025\n\rstream_active\030\003 \001(\010\022\017\n\007message\030\004 \001(\t"
+    "\022\025\n\rupdated_at_ms\030\005 \001(\004\"\376\001\n\rServiceStatu"
+    "s\022\r\n\005ready\030\001 \001(\010\022\r\n\005state\030\002 \001(\t\022\017\n\007messa"
+    "ge\030\003 \001(\t\022\021\n\tuptime_ms\030\004 \001(\004\022\024\n\014bind_addr"
+    "ess\030\005 \001(\t\022\014\n\004port\030\006 \001(\r\022\023\n\013tls_enabled\030\007"
+    " \001(\010\022\021\n\tlog_level\030\010 \001(\t\022\026\n\016instance_coun"
+    "t\030\t \001(\r\022\032\n\022active_lease_count\030\n \001(\r\022\026\n\016b"
+    "ootstrap_mode\030\013 \001(\t\022\023\n\013config_path\030\014 \001(\t"
+    "*d\n\016ExcitationMode\022\037\n\033EXCITATION_MODE_UN"
+    "SPECIFIED\020\000\022\026\n\022EXCITATION_MODE_CW\020\001\022\031\n\025E"
+    "XCITATION_MODE_PULSE\020\002*n\n\tScanState\022\032\n\026S"
+    "CAN_STATE_UNSPECIFIED\020\000\022\031\n\025SCAN_STATE_CO"
+    "NTINUOUS\020\001\022\025\n\021SCAN_STATE_SINGLE\020\002\022\023\n\017SCA"
+    "N_STATE_HOLD\020\0032\247\007\n\nVnaControl\0228\n\020Validat"
+    "eTopology\022\r.vna.Topology\032\025.vna.Validatio"
+    "nResult\022U\n\027UpsertWorkspaceTopology\022#.vna"
+    ".WorkspaceTopologyUpsertRequest\032\025.vna.Va"
+    "lidationResult\022G\n\024GetWorkspaceTopology\022\021"
+    ".vna.WorkspaceRef\032\034.vna.WorkspaceTopolog"
+    "yConfig\022A\n\027ListWorkspaceTopologies\022\n.vna"
+    ".Empty\032\032.vna.WorkspaceTopologyList\022>\n\022Se"
+    "tActiveWorkspace\022\021.vna.WorkspaceRef\032\025.vn"
+    "a.ValidationResult\0222\n\020GetServiceStatus\022\n"
+    ".vna.Empty\032\022.vna.ServiceStatus\022K\n\027GetIns"
+    "tanceCapabilities\022\025.vna.InstanceSelector"
+    "\032\031.vna.InstanceCapabilities\022=\n\014SetScanSt"
+    "ate\022\025.vna.ScanStateRequest\032\026.vna.ScanSta"
+    "teResponse\022=\n\014GetScanState\022\025.vna.Instanc"
+    "eSelector\032\026.vna.ScanStateResponse\022:\n\007Acq"
+    "uire\022\027.vna.AcquisitionRequest\032\026.vna.Acqu"
+    "isitionResult\022J\n\021ImportAcquisition\022\035.vna"
+    ".ImportAcquisitionRequest\032\026.vna.Acquisit"
+    "ionResult\022m\n\032CompareImportedAcquisition\022"
+    "&.vna.CompareImportedAcquisitionRequest\032"
+    "\'.vna.CompareImportedAcquisitionResponse"
+    "\022F\n\021StreamAcquisition\022\027.vna.AcquisitionR"
+    "equest\032\026.vna.AcquisitionResult0\0012\243\001\n\016Res"
+    "ourceBroker\022/\n\007Acquire\022\024.vna.ResourceReq"
+    "uest\032\016.vna.LeaseInfo\022.\n\005Renew\022\016.vna.Leas"
+    "eInfo\032\025.vna.ValidationResult\0220\n\007Release\022"
+    "\016.vna.LeaseInfo\032\025.vna.ValidationResultb\006"
+    "proto3"
 };
 static ::absl::once_flag descriptor_table_vna_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_vna_2eproto = {
     false,
     false,
-    4227,
+    4886,
     descriptor_table_protodef_vna_2eproto,
     "vna.proto",
     &descriptor_table_vna_2eproto_once,
     nullptr,
     0,
-    27,
+    31,
     schemas,
     file_default_instances,
     TableStruct_vna_2eproto::offsets,
@@ -1750,6 +1921,1367 @@ void Topology::InternalSwap(Topology* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) 
 }
 
 ::google::protobuf::Metadata Topology::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class WorkspaceRef::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<WorkspaceRef>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(WorkspaceRef, _impl_._has_bits_);
+};
+
+WorkspaceRef::WorkspaceRef(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceRef_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.WorkspaceRef)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceRef::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::WorkspaceRef& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        workspace_id_(arena, from.workspace_id_) {}
+
+WorkspaceRef::WorkspaceRef(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const WorkspaceRef& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceRef_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  WorkspaceRef* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:vna.WorkspaceRef)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceRef::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        workspace_id_(arena) {}
+
+inline void WorkspaceRef::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+WorkspaceRef::~WorkspaceRef() {
+  // @@protoc_insertion_point(destructor:vna.WorkspaceRef)
+  SharedDtor(*this);
+}
+inline void WorkspaceRef::SharedDtor(MessageLite& self) {
+  WorkspaceRef& this_ = static_cast<WorkspaceRef&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.workspace_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL WorkspaceRef::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) WorkspaceRef(arena);
+}
+constexpr auto WorkspaceRef::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(WorkspaceRef),
+                                            alignof(WorkspaceRef));
+}
+constexpr auto WorkspaceRef::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_WorkspaceRef_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &WorkspaceRef::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<WorkspaceRef>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &WorkspaceRef::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<WorkspaceRef>(), &WorkspaceRef::ByteSizeLong,
+              &WorkspaceRef::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(WorkspaceRef, _impl_._cached_size_),
+          false,
+      },
+      &WorkspaceRef::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull WorkspaceRef_class_data_ =
+        WorkspaceRef::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+WorkspaceRef::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&WorkspaceRef_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(WorkspaceRef_class_data_.tc_table);
+  return WorkspaceRef_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 0, 37, 2>
+WorkspaceRef::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(WorkspaceRef, _impl_._has_bits_),
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    WorkspaceRef_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::WorkspaceRef>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string workspace_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceRef, _impl_.workspace_id_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string workspace_id = 1;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceRef, _impl_.workspace_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\20\14\0\0\0\0\0\0"
+    "vna.WorkspaceRef"
+    "workspace_id"
+  }},
+};
+PROTOBUF_NOINLINE void WorkspaceRef::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.WorkspaceRef)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    _impl_.workspace_id_.ClearNonDefaultToEmpty();
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL WorkspaceRef::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const WorkspaceRef& this_ = static_cast<const WorkspaceRef&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL WorkspaceRef::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const WorkspaceRef& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.WorkspaceRef)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string workspace_id = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_workspace_id().empty()) {
+      const ::std::string& _s = this_._internal_workspace_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.WorkspaceRef.workspace_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.WorkspaceRef)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t WorkspaceRef::ByteSizeLong(const MessageLite& base) {
+  const WorkspaceRef& this_ = static_cast<const WorkspaceRef&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t WorkspaceRef::ByteSizeLong() const {
+  const WorkspaceRef& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.WorkspaceRef)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+   {
+    // string workspace_id = 1;
+    cached_has_bits = this_._impl_._has_bits_[0];
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_workspace_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_workspace_id());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void WorkspaceRef::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<WorkspaceRef*>(&to_msg);
+  auto& from = static_cast<const WorkspaceRef&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.WorkspaceRef)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!from._internal_workspace_id().empty()) {
+      _this->_internal_set_workspace_id(from._internal_workspace_id());
+    } else {
+      if (_this->_impl_.workspace_id_.IsDefault()) {
+        _this->_internal_set_workspace_id("");
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void WorkspaceRef::CopyFrom(const WorkspaceRef& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.WorkspaceRef)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void WorkspaceRef::InternalSwap(WorkspaceRef* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.workspace_id_, &other->_impl_.workspace_id_, arena);
+}
+
+::google::protobuf::Metadata WorkspaceRef::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class WorkspaceTopologyUpsertRequest::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<WorkspaceTopologyUpsertRequest>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_._has_bits_);
+};
+
+WorkspaceTopologyUpsertRequest::WorkspaceTopologyUpsertRequest(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyUpsertRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.WorkspaceTopologyUpsertRequest)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyUpsertRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::WorkspaceTopologyUpsertRequest& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        workspace_id_(arena, from.workspace_id_) {}
+
+WorkspaceTopologyUpsertRequest::WorkspaceTopologyUpsertRequest(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const WorkspaceTopologyUpsertRequest& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyUpsertRequest_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  WorkspaceTopologyUpsertRequest* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.topology_ = (CheckHasBit(cached_has_bits, 0x00000002U))
+                ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.topology_)
+                : nullptr;
+  _impl_.activate_ = from._impl_.activate_;
+
+  // @@protoc_insertion_point(copy_constructor:vna.WorkspaceTopologyUpsertRequest)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyUpsertRequest::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        workspace_id_(arena) {}
+
+inline void WorkspaceTopologyUpsertRequest::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, topology_),
+           0,
+           offsetof(Impl_, activate_) -
+               offsetof(Impl_, topology_) +
+               sizeof(Impl_::activate_));
+}
+WorkspaceTopologyUpsertRequest::~WorkspaceTopologyUpsertRequest() {
+  // @@protoc_insertion_point(destructor:vna.WorkspaceTopologyUpsertRequest)
+  SharedDtor(*this);
+}
+inline void WorkspaceTopologyUpsertRequest::SharedDtor(MessageLite& self) {
+  WorkspaceTopologyUpsertRequest& this_ = static_cast<WorkspaceTopologyUpsertRequest&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.workspace_id_.Destroy();
+  delete this_._impl_.topology_;
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) WorkspaceTopologyUpsertRequest(arena);
+}
+constexpr auto WorkspaceTopologyUpsertRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(WorkspaceTopologyUpsertRequest),
+                                            alignof(WorkspaceTopologyUpsertRequest));
+}
+constexpr auto WorkspaceTopologyUpsertRequest::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_WorkspaceTopologyUpsertRequest_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &WorkspaceTopologyUpsertRequest::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<WorkspaceTopologyUpsertRequest>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &WorkspaceTopologyUpsertRequest::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<WorkspaceTopologyUpsertRequest>(), &WorkspaceTopologyUpsertRequest::ByteSizeLong,
+              &WorkspaceTopologyUpsertRequest::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_._cached_size_),
+          false,
+      },
+      &WorkspaceTopologyUpsertRequest::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull WorkspaceTopologyUpsertRequest_class_data_ =
+        WorkspaceTopologyUpsertRequest::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+WorkspaceTopologyUpsertRequest::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&WorkspaceTopologyUpsertRequest_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(WorkspaceTopologyUpsertRequest_class_data_.tc_table);
+  return WorkspaceTopologyUpsertRequest_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 1, 55, 2>
+WorkspaceTopologyUpsertRequest::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_._has_bits_),
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    WorkspaceTopologyUpsertRequest_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::WorkspaceTopologyUpsertRequest>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string workspace_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.workspace_id_)}},
+    // .vna.Topology topology = 2;
+    {::_pbi::TcParser::FastMtS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.topology_)}},
+    // bool activate = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(WorkspaceTopologyUpsertRequest, _impl_.activate_), 2>(),
+     {24, 2, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.activate_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string workspace_id = 1;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.workspace_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // .vna.Topology topology = 2;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.topology_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // bool activate = 3;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.activate_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::Topology>()},
+  }},
+  {{
+    "\42\14\0\0\0\0\0\0"
+    "vna.WorkspaceTopologyUpsertRequest"
+    "workspace_id"
+  }},
+};
+PROTOBUF_NOINLINE void WorkspaceTopologyUpsertRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.WorkspaceTopologyUpsertRequest)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.workspace_id_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(_impl_.topology_ != nullptr);
+      _impl_.topology_->Clear();
+    }
+  }
+  _impl_.activate_ = false;
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const WorkspaceTopologyUpsertRequest& this_ = static_cast<const WorkspaceTopologyUpsertRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyUpsertRequest::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const WorkspaceTopologyUpsertRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.WorkspaceTopologyUpsertRequest)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string workspace_id = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_workspace_id().empty()) {
+      const ::std::string& _s = this_._internal_workspace_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.WorkspaceTopologyUpsertRequest.workspace_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // .vna.Topology topology = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        2, *this_._impl_.topology_, this_._impl_.topology_->GetCachedSize(), target,
+        stream);
+  }
+
+  // bool activate = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_activate() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          3, this_._internal_activate(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.WorkspaceTopologyUpsertRequest)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t WorkspaceTopologyUpsertRequest::ByteSizeLong(const MessageLite& base) {
+  const WorkspaceTopologyUpsertRequest& this_ = static_cast<const WorkspaceTopologyUpsertRequest&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t WorkspaceTopologyUpsertRequest::ByteSizeLong() const {
+  const WorkspaceTopologyUpsertRequest& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.WorkspaceTopologyUpsertRequest)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    // string workspace_id = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_workspace_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_workspace_id());
+      }
+    }
+    // .vna.Topology topology = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.topology_);
+    }
+    // bool activate = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_activate() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void WorkspaceTopologyUpsertRequest::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<WorkspaceTopologyUpsertRequest*>(&to_msg);
+  auto& from = static_cast<const WorkspaceTopologyUpsertRequest&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.WorkspaceTopologyUpsertRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000007U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_workspace_id().empty()) {
+        _this->_internal_set_workspace_id(from._internal_workspace_id());
+      } else {
+        if (_this->_impl_.workspace_id_.IsDefault()) {
+          _this->_internal_set_workspace_id("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(from._impl_.topology_ != nullptr);
+      if (_this->_impl_.topology_ == nullptr) {
+        _this->_impl_.topology_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.topology_);
+      } else {
+        _this->_impl_.topology_->MergeFrom(*from._impl_.topology_);
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_activate() != 0) {
+        _this->_impl_.activate_ = from._impl_.activate_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void WorkspaceTopologyUpsertRequest::CopyFrom(const WorkspaceTopologyUpsertRequest& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.WorkspaceTopologyUpsertRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void WorkspaceTopologyUpsertRequest::InternalSwap(WorkspaceTopologyUpsertRequest* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.workspace_id_, &other->_impl_.workspace_id_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.activate_)
+      + sizeof(WorkspaceTopologyUpsertRequest::_impl_.activate_)
+      - PROTOBUF_FIELD_OFFSET(WorkspaceTopologyUpsertRequest, _impl_.topology_)>(
+          reinterpret_cast<char*>(&_impl_.topology_),
+          reinterpret_cast<char*>(&other->_impl_.topology_));
+}
+
+::google::protobuf::Metadata WorkspaceTopologyUpsertRequest::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class WorkspaceTopologyConfig::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<WorkspaceTopologyConfig>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_._has_bits_);
+};
+
+WorkspaceTopologyConfig::WorkspaceTopologyConfig(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyConfig_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.WorkspaceTopologyConfig)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyConfig::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::WorkspaceTopologyConfig& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        workspace_id_(arena, from.workspace_id_) {}
+
+WorkspaceTopologyConfig::WorkspaceTopologyConfig(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const WorkspaceTopologyConfig& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyConfig_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  WorkspaceTopologyConfig* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.topology_ = (CheckHasBit(cached_has_bits, 0x00000002U))
+                ? ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.topology_)
+                : nullptr;
+  ::memcpy(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, updated_at_ms_),
+           reinterpret_cast<const char*>(&from._impl_) +
+               offsetof(Impl_, updated_at_ms_),
+           offsetof(Impl_, is_active_) -
+               offsetof(Impl_, updated_at_ms_) +
+               sizeof(Impl_::is_active_));
+
+  // @@protoc_insertion_point(copy_constructor:vna.WorkspaceTopologyConfig)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyConfig::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        workspace_id_(arena) {}
+
+inline void WorkspaceTopologyConfig::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char*>(&_impl_) +
+               offsetof(Impl_, topology_),
+           0,
+           offsetof(Impl_, is_active_) -
+               offsetof(Impl_, topology_) +
+               sizeof(Impl_::is_active_));
+}
+WorkspaceTopologyConfig::~WorkspaceTopologyConfig() {
+  // @@protoc_insertion_point(destructor:vna.WorkspaceTopologyConfig)
+  SharedDtor(*this);
+}
+inline void WorkspaceTopologyConfig::SharedDtor(MessageLite& self) {
+  WorkspaceTopologyConfig& this_ = static_cast<WorkspaceTopologyConfig&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.workspace_id_.Destroy();
+  delete this_._impl_.topology_;
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL WorkspaceTopologyConfig::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) WorkspaceTopologyConfig(arena);
+}
+constexpr auto WorkspaceTopologyConfig::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(WorkspaceTopologyConfig),
+                                            alignof(WorkspaceTopologyConfig));
+}
+constexpr auto WorkspaceTopologyConfig::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_WorkspaceTopologyConfig_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &WorkspaceTopologyConfig::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<WorkspaceTopologyConfig>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &WorkspaceTopologyConfig::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<WorkspaceTopologyConfig>(), &WorkspaceTopologyConfig::ByteSizeLong,
+              &WorkspaceTopologyConfig::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_._cached_size_),
+          false,
+      },
+      &WorkspaceTopologyConfig::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull WorkspaceTopologyConfig_class_data_ =
+        WorkspaceTopologyConfig::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+WorkspaceTopologyConfig::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&WorkspaceTopologyConfig_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(WorkspaceTopologyConfig_class_data_.tc_table);
+  return WorkspaceTopologyConfig_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 1, 48, 2>
+WorkspaceTopologyConfig::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_._has_bits_),
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    WorkspaceTopologyConfig_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::WorkspaceTopologyConfig>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // uint64 updated_at_ms = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(WorkspaceTopologyConfig, _impl_.updated_at_ms_), 2>(),
+     {32, 2, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.updated_at_ms_)}},
+    // string workspace_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.workspace_id_)}},
+    // .vna.Topology topology = 2;
+    {::_pbi::TcParser::FastMtS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.topology_)}},
+    // bool is_active = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(WorkspaceTopologyConfig, _impl_.is_active_), 3>(),
+     {24, 3, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.is_active_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string workspace_id = 1;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.workspace_id_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // .vna.Topology topology = 2;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.topology_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+    // bool is_active = 3;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.is_active_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
+    // uint64 updated_at_ms = 4;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.updated_at_ms_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kUInt64)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::Topology>()},
+  }},
+  {{
+    "\33\14\0\0\0\0\0\0"
+    "vna.WorkspaceTopologyConfig"
+    "workspace_id"
+  }},
+};
+PROTOBUF_NOINLINE void WorkspaceTopologyConfig::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.WorkspaceTopologyConfig)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      _impl_.workspace_id_.ClearNonDefaultToEmpty();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(_impl_.topology_ != nullptr);
+      _impl_.topology_->Clear();
+    }
+  }
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000cU)) {
+    ::memset(&_impl_.updated_at_ms_, 0, static_cast<::size_t>(
+        reinterpret_cast<char*>(&_impl_.is_active_) -
+        reinterpret_cast<char*>(&_impl_.updated_at_ms_)) + sizeof(_impl_.is_active_));
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyConfig::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const WorkspaceTopologyConfig& this_ = static_cast<const WorkspaceTopologyConfig&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyConfig::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const WorkspaceTopologyConfig& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.WorkspaceTopologyConfig)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // string workspace_id = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    if (!this_._internal_workspace_id().empty()) {
+      const ::std::string& _s = this_._internal_workspace_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.WorkspaceTopologyConfig.workspace_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+    }
+  }
+
+  // .vna.Topology topology = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        2, *this_._impl_.topology_, this_._impl_.topology_->GetCachedSize(), target,
+        stream);
+  }
+
+  // bool is_active = 3;
+  if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+    if (this_._internal_is_active() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteBoolToArray(
+          3, this_._internal_is_active(), target);
+    }
+  }
+
+  // uint64 updated_at_ms = 4;
+  if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+    if (this_._internal_updated_at_ms() != 0) {
+      target = stream->EnsureSpace(target);
+      target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+          4, this_._internal_updated_at_ms(), target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.WorkspaceTopologyConfig)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t WorkspaceTopologyConfig::ByteSizeLong(const MessageLite& base) {
+  const WorkspaceTopologyConfig& this_ = static_cast<const WorkspaceTopologyConfig&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t WorkspaceTopologyConfig::ByteSizeLong() const {
+  const WorkspaceTopologyConfig& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.WorkspaceTopologyConfig)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    // string workspace_id = 1;
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!this_._internal_workspace_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_workspace_id());
+      }
+    }
+    // .vna.Topology topology = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.topology_);
+    }
+    // uint64 updated_at_ms = 4;
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (this_._internal_updated_at_ms() != 0) {
+        total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+            this_._internal_updated_at_ms());
+      }
+    }
+    // bool is_active = 3;
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (this_._internal_is_active() != 0) {
+        total_size += 2;
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void WorkspaceTopologyConfig::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<WorkspaceTopologyConfig*>(&to_msg);
+  auto& from = static_cast<const WorkspaceTopologyConfig&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.WorkspaceTopologyConfig)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      if (!from._internal_workspace_id().empty()) {
+        _this->_internal_set_workspace_id(from._internal_workspace_id());
+      } else {
+        if (_this->_impl_.workspace_id_.IsDefault()) {
+          _this->_internal_set_workspace_id("");
+        }
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      ABSL_DCHECK(from._impl_.topology_ != nullptr);
+      if (_this->_impl_.topology_ == nullptr) {
+        _this->_impl_.topology_ = ::google::protobuf::Message::CopyConstruct(arena, *from._impl_.topology_);
+      } else {
+        _this->_impl_.topology_->MergeFrom(*from._impl_.topology_);
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000004U)) {
+      if (from._internal_updated_at_ms() != 0) {
+        _this->_impl_.updated_at_ms_ = from._impl_.updated_at_ms_;
+      }
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000008U)) {
+      if (from._internal_is_active() != 0) {
+        _this->_impl_.is_active_ = from._impl_.is_active_;
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void WorkspaceTopologyConfig::CopyFrom(const WorkspaceTopologyConfig& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.WorkspaceTopologyConfig)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void WorkspaceTopologyConfig::InternalSwap(WorkspaceTopologyConfig* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.workspace_id_, &other->_impl_.workspace_id_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.is_active_)
+      + sizeof(WorkspaceTopologyConfig::_impl_.is_active_)
+      - PROTOBUF_FIELD_OFFSET(WorkspaceTopologyConfig, _impl_.topology_)>(
+          reinterpret_cast<char*>(&_impl_.topology_),
+          reinterpret_cast<char*>(&other->_impl_.topology_));
+}
+
+::google::protobuf::Metadata WorkspaceTopologyConfig::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class WorkspaceTopologyList::_Internal {
+ public:
+  using HasBits =
+      decltype(::std::declval<WorkspaceTopologyList>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_._has_bits_);
+};
+
+WorkspaceTopologyList::WorkspaceTopologyList(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyList_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:vna.WorkspaceTopologyList)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyList::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::vna::WorkspaceTopologyList& from_msg)
+      : _has_bits_{from._has_bits_},
+        _cached_size_{0},
+        items_{visibility, arena, from.items_},
+        active_workspace_id_(arena, from.active_workspace_id_) {}
+
+WorkspaceTopologyList::WorkspaceTopologyList(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const WorkspaceTopologyList& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, WorkspaceTopologyList_class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  WorkspaceTopologyList* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:vna.WorkspaceTopologyList)
+}
+PROTOBUF_NDEBUG_INLINE WorkspaceTopologyList::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : _cached_size_{0},
+        items_{visibility, arena},
+        active_workspace_id_(arena) {}
+
+inline void WorkspaceTopologyList::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+WorkspaceTopologyList::~WorkspaceTopologyList() {
+  // @@protoc_insertion_point(destructor:vna.WorkspaceTopologyList)
+  SharedDtor(*this);
+}
+inline void WorkspaceTopologyList::SharedDtor(MessageLite& self) {
+  WorkspaceTopologyList& this_ = static_cast<WorkspaceTopologyList&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.active_workspace_id_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* PROTOBUF_NONNULL WorkspaceTopologyList::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) WorkspaceTopologyList(arena);
+}
+constexpr auto WorkspaceTopologyList::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_.items_) +
+          decltype(WorkspaceTopologyList::_impl_.items_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(WorkspaceTopologyList), alignof(WorkspaceTopologyList), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&WorkspaceTopologyList::PlacementNew_,
+                                 sizeof(WorkspaceTopologyList),
+                                 alignof(WorkspaceTopologyList));
+  }
+}
+constexpr auto WorkspaceTopologyList::InternalGenerateClassData_() {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &_WorkspaceTopologyList_default_instance_._instance,
+          &_table_.header,
+          nullptr,  // OnDemandRegisterArenaDtor
+          nullptr,  // IsInitialized
+          &WorkspaceTopologyList::MergeImpl,
+          ::google::protobuf::Message::GetNewImpl<WorkspaceTopologyList>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &WorkspaceTopologyList::SharedDtor,
+          ::google::protobuf::Message::GetClearImpl<WorkspaceTopologyList>(), &WorkspaceTopologyList::ByteSizeLong,
+              &WorkspaceTopologyList::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_._cached_size_),
+          false,
+      },
+      &WorkspaceTopologyList::kDescriptorMethods,
+      &descriptor_table_vna_2eproto,
+      nullptr,  // tracker
+  };
+}
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull WorkspaceTopologyList_class_data_ =
+        WorkspaceTopologyList::InternalGenerateClassData_();
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+WorkspaceTopologyList::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&WorkspaceTopologyList_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(WorkspaceTopologyList_class_data_.tc_table);
+  return WorkspaceTopologyList_class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<1, 2, 1, 53, 2>
+WorkspaceTopologyList::_table_ = {
+  {
+    PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_._has_bits_),
+    0, // no _extensions_
+    2, 8,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967292,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    2,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    WorkspaceTopologyList_class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::vna::WorkspaceTopologyList>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string active_workspace_id = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 1, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_.active_workspace_id_)}},
+    // repeated .vna.WorkspaceTopologyConfig items = 1;
+    {::_pbi::TcParser::FastMtR1,
+     {10, 0, 0,
+      PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_.items_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // repeated .vna.WorkspaceTopologyConfig items = 1;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_.items_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // string active_workspace_id = 2;
+    {PROTOBUF_FIELD_OFFSET(WorkspaceTopologyList, _impl_.active_workspace_id_), _Internal::kHasBitsOffset + 1, 0, (0 | ::_fl::kFcOptional | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  {{
+      {::_pbi::TcParser::GetTable<::vna::WorkspaceTopologyConfig>()},
+  }},
+  {{
+    "\31\0\23\0\0\0\0\0"
+    "vna.WorkspaceTopologyList"
+    "active_workspace_id"
+  }},
+};
+PROTOBUF_NOINLINE void WorkspaceTopologyList::Clear() {
+// @@protoc_insertion_point(message_clear_start:vna.WorkspaceTopologyList)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _impl_.items_.Clear();
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      _impl_.active_workspace_id_.ClearNonDefaultToEmpty();
+    }
+  }
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyList::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const WorkspaceTopologyList& this_ = static_cast<const WorkspaceTopologyList&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL WorkspaceTopologyList::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const WorkspaceTopologyList& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:vna.WorkspaceTopologyList)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // repeated .vna.WorkspaceTopologyConfig items = 1;
+  if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+    for (unsigned i = 0, n = static_cast<unsigned>(
+                             this_._internal_items_size());
+         i < n; i++) {
+      const auto& repfield = this_._internal_items().Get(i);
+      target =
+          ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+              1, repfield, repfield.GetCachedSize(),
+              target, stream);
+    }
+  }
+
+  // string active_workspace_id = 2;
+  if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+    if (!this_._internal_active_workspace_id().empty()) {
+      const ::std::string& _s = this_._internal_active_workspace_id();
+      ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "vna.WorkspaceTopologyList.active_workspace_id");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+    }
+  }
+
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:vna.WorkspaceTopologyList)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t WorkspaceTopologyList::ByteSizeLong(const MessageLite& base) {
+  const WorkspaceTopologyList& this_ = static_cast<const WorkspaceTopologyList&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t WorkspaceTopologyList::ByteSizeLong() const {
+  const WorkspaceTopologyList& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:vna.WorkspaceTopologyList)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void)cached_has_bits;
+
+  ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    // repeated .vna.WorkspaceTopologyConfig items = 1;
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      total_size += 1UL * this_._internal_items_size();
+      for (const auto& msg : this_._internal_items()) {
+        total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+      }
+    }
+    // string active_workspace_id = 2;
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!this_._internal_active_workspace_id().empty()) {
+        total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                        this_._internal_active_workspace_id());
+      }
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void WorkspaceTopologyList::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                            const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this =
+      static_cast<WorkspaceTopologyList*>(&to_msg);
+  auto& from = static_cast<const WorkspaceTopologyList&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:vna.WorkspaceTopologyList)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
+    if (CheckHasBitForRepeated(cached_has_bits, 0x00000001U)) {
+      _this->_internal_mutable_items()->InternalMergeFromWithArena(
+          ::google::protobuf::MessageLite::internal_visibility(), arena,
+          from._internal_items());
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000002U)) {
+      if (!from._internal_active_workspace_id().empty()) {
+        _this->_internal_set_active_workspace_id(from._internal_active_workspace_id());
+      } else {
+        if (_this->_impl_.active_workspace_id_.IsDefault()) {
+          _this->_internal_set_active_workspace_id("");
+        }
+      }
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void WorkspaceTopologyList::CopyFrom(const WorkspaceTopologyList& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:vna.WorkspaceTopologyList)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void WorkspaceTopologyList::InternalSwap(WorkspaceTopologyList* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.items_.InternalSwap(&other->_impl_.items_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.active_workspace_id_, &other->_impl_.active_workspace_id_, arena);
+}
+
+::google::protobuf::Metadata WorkspaceTopologyList::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

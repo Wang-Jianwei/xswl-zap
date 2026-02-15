@@ -115,6 +115,28 @@ export interface Topology {
   yaml: string;
 }
 
+export interface WorkspaceRef {
+  workspaceId: string;
+}
+
+export interface WorkspaceTopologyUpsertRequest {
+  workspaceId: string;
+  topology: Topology | undefined;
+  activate: boolean;
+}
+
+export interface WorkspaceTopologyConfig {
+  workspaceId: string;
+  topology: Topology | undefined;
+  isActive: boolean;
+  updatedAtMs: number;
+}
+
+export interface WorkspaceTopologyList {
+  items: WorkspaceTopologyConfig[];
+  activeWorkspaceId: string;
+}
+
 export interface ValidationResult {
   ok: boolean;
   errors: string[];
@@ -406,6 +428,374 @@ export const Topology: MessageFns<Topology> = {
     const message = createBaseTopology();
     message.id = object.id ?? "";
     message.yaml = object.yaml ?? "";
+    return message;
+  },
+};
+
+function createBaseWorkspaceRef(): WorkspaceRef {
+  return { workspaceId: "" };
+}
+
+export const WorkspaceRef: MessageFns<WorkspaceRef> = {
+  encode(message: WorkspaceRef, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.workspaceId !== "") {
+      writer.uint32(10).string(message.workspaceId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): WorkspaceRef {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkspaceRef();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.workspaceId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WorkspaceRef {
+    return {
+      workspaceId: isSet(object.workspaceId)
+        ? globalThis.String(object.workspaceId)
+        : isSet(object.workspace_id)
+        ? globalThis.String(object.workspace_id)
+        : "",
+    };
+  },
+
+  toJSON(message: WorkspaceRef): unknown {
+    const obj: any = {};
+    if (message.workspaceId !== "") {
+      obj.workspaceId = message.workspaceId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<WorkspaceRef>, I>>(base?: I): WorkspaceRef {
+    return WorkspaceRef.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<WorkspaceRef>, I>>(object: I): WorkspaceRef {
+    const message = createBaseWorkspaceRef();
+    message.workspaceId = object.workspaceId ?? "";
+    return message;
+  },
+};
+
+function createBaseWorkspaceTopologyUpsertRequest(): WorkspaceTopologyUpsertRequest {
+  return { workspaceId: "", topology: undefined, activate: false };
+}
+
+export const WorkspaceTopologyUpsertRequest: MessageFns<WorkspaceTopologyUpsertRequest> = {
+  encode(message: WorkspaceTopologyUpsertRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.workspaceId !== "") {
+      writer.uint32(10).string(message.workspaceId);
+    }
+    if (message.topology !== undefined) {
+      Topology.encode(message.topology, writer.uint32(18).fork()).join();
+    }
+    if (message.activate !== false) {
+      writer.uint32(24).bool(message.activate);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): WorkspaceTopologyUpsertRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkspaceTopologyUpsertRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.workspaceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.topology = Topology.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.activate = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WorkspaceTopologyUpsertRequest {
+    return {
+      workspaceId: isSet(object.workspaceId)
+        ? globalThis.String(object.workspaceId)
+        : isSet(object.workspace_id)
+        ? globalThis.String(object.workspace_id)
+        : "",
+      topology: isSet(object.topology) ? Topology.fromJSON(object.topology) : undefined,
+      activate: isSet(object.activate) ? globalThis.Boolean(object.activate) : false,
+    };
+  },
+
+  toJSON(message: WorkspaceTopologyUpsertRequest): unknown {
+    const obj: any = {};
+    if (message.workspaceId !== "") {
+      obj.workspaceId = message.workspaceId;
+    }
+    if (message.topology !== undefined) {
+      obj.topology = Topology.toJSON(message.topology);
+    }
+    if (message.activate !== false) {
+      obj.activate = message.activate;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<WorkspaceTopologyUpsertRequest>, I>>(base?: I): WorkspaceTopologyUpsertRequest {
+    return WorkspaceTopologyUpsertRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<WorkspaceTopologyUpsertRequest>, I>>(
+    object: I,
+  ): WorkspaceTopologyUpsertRequest {
+    const message = createBaseWorkspaceTopologyUpsertRequest();
+    message.workspaceId = object.workspaceId ?? "";
+    message.topology = (object.topology !== undefined && object.topology !== null)
+      ? Topology.fromPartial(object.topology)
+      : undefined;
+    message.activate = object.activate ?? false;
+    return message;
+  },
+};
+
+function createBaseWorkspaceTopologyConfig(): WorkspaceTopologyConfig {
+  return { workspaceId: "", topology: undefined, isActive: false, updatedAtMs: 0 };
+}
+
+export const WorkspaceTopologyConfig: MessageFns<WorkspaceTopologyConfig> = {
+  encode(message: WorkspaceTopologyConfig, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.workspaceId !== "") {
+      writer.uint32(10).string(message.workspaceId);
+    }
+    if (message.topology !== undefined) {
+      Topology.encode(message.topology, writer.uint32(18).fork()).join();
+    }
+    if (message.isActive !== false) {
+      writer.uint32(24).bool(message.isActive);
+    }
+    if (message.updatedAtMs !== 0) {
+      writer.uint32(32).uint64(message.updatedAtMs);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): WorkspaceTopologyConfig {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkspaceTopologyConfig();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.workspaceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.topology = Topology.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.isActive = reader.bool();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.updatedAtMs = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WorkspaceTopologyConfig {
+    return {
+      workspaceId: isSet(object.workspaceId)
+        ? globalThis.String(object.workspaceId)
+        : isSet(object.workspace_id)
+        ? globalThis.String(object.workspace_id)
+        : "",
+      topology: isSet(object.topology) ? Topology.fromJSON(object.topology) : undefined,
+      isActive: isSet(object.isActive)
+        ? globalThis.Boolean(object.isActive)
+        : isSet(object.is_active)
+        ? globalThis.Boolean(object.is_active)
+        : false,
+      updatedAtMs: isSet(object.updatedAtMs)
+        ? globalThis.Number(object.updatedAtMs)
+        : isSet(object.updated_at_ms)
+        ? globalThis.Number(object.updated_at_ms)
+        : 0,
+    };
+  },
+
+  toJSON(message: WorkspaceTopologyConfig): unknown {
+    const obj: any = {};
+    if (message.workspaceId !== "") {
+      obj.workspaceId = message.workspaceId;
+    }
+    if (message.topology !== undefined) {
+      obj.topology = Topology.toJSON(message.topology);
+    }
+    if (message.isActive !== false) {
+      obj.isActive = message.isActive;
+    }
+    if (message.updatedAtMs !== 0) {
+      obj.updatedAtMs = Math.round(message.updatedAtMs);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<WorkspaceTopologyConfig>, I>>(base?: I): WorkspaceTopologyConfig {
+    return WorkspaceTopologyConfig.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<WorkspaceTopologyConfig>, I>>(object: I): WorkspaceTopologyConfig {
+    const message = createBaseWorkspaceTopologyConfig();
+    message.workspaceId = object.workspaceId ?? "";
+    message.topology = (object.topology !== undefined && object.topology !== null)
+      ? Topology.fromPartial(object.topology)
+      : undefined;
+    message.isActive = object.isActive ?? false;
+    message.updatedAtMs = object.updatedAtMs ?? 0;
+    return message;
+  },
+};
+
+function createBaseWorkspaceTopologyList(): WorkspaceTopologyList {
+  return { items: [], activeWorkspaceId: "" };
+}
+
+export const WorkspaceTopologyList: MessageFns<WorkspaceTopologyList> = {
+  encode(message: WorkspaceTopologyList, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.items) {
+      WorkspaceTopologyConfig.encode(v!, writer.uint32(10).fork()).join();
+    }
+    if (message.activeWorkspaceId !== "") {
+      writer.uint32(18).string(message.activeWorkspaceId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): WorkspaceTopologyList {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseWorkspaceTopologyList();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.items.push(WorkspaceTopologyConfig.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.activeWorkspaceId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): WorkspaceTopologyList {
+    return {
+      items: globalThis.Array.isArray(object?.items)
+        ? object.items.map((e: any) => WorkspaceTopologyConfig.fromJSON(e))
+        : [],
+      activeWorkspaceId: isSet(object.activeWorkspaceId)
+        ? globalThis.String(object.activeWorkspaceId)
+        : isSet(object.active_workspace_id)
+        ? globalThis.String(object.active_workspace_id)
+        : "",
+    };
+  },
+
+  toJSON(message: WorkspaceTopologyList): unknown {
+    const obj: any = {};
+    if (message.items?.length) {
+      obj.items = message.items.map((e) => WorkspaceTopologyConfig.toJSON(e));
+    }
+    if (message.activeWorkspaceId !== "") {
+      obj.activeWorkspaceId = message.activeWorkspaceId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<WorkspaceTopologyList>, I>>(base?: I): WorkspaceTopologyList {
+    return WorkspaceTopologyList.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<WorkspaceTopologyList>, I>>(object: I): WorkspaceTopologyList {
+    const message = createBaseWorkspaceTopologyList();
+    message.items = object.items?.map((e) => WorkspaceTopologyConfig.fromPartial(e)) || [];
+    message.activeWorkspaceId = object.activeWorkspaceId ?? "";
     return message;
   },
 };
@@ -3486,6 +3876,45 @@ export const VnaControlService = {
     responseSerialize: (value: ValidationResult): Buffer => Buffer.from(ValidationResult.encode(value).finish()),
     responseDeserialize: (value: Buffer): ValidationResult => ValidationResult.decode(value),
   },
+  upsertWorkspaceTopology: {
+    path: "/vna.VnaControl/UpsertWorkspaceTopology",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: WorkspaceTopologyUpsertRequest): Buffer =>
+      Buffer.from(WorkspaceTopologyUpsertRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): WorkspaceTopologyUpsertRequest => WorkspaceTopologyUpsertRequest.decode(value),
+    responseSerialize: (value: ValidationResult): Buffer => Buffer.from(ValidationResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ValidationResult => ValidationResult.decode(value),
+  },
+  getWorkspaceTopology: {
+    path: "/vna.VnaControl/GetWorkspaceTopology",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: WorkspaceRef): Buffer => Buffer.from(WorkspaceRef.encode(value).finish()),
+    requestDeserialize: (value: Buffer): WorkspaceRef => WorkspaceRef.decode(value),
+    responseSerialize: (value: WorkspaceTopologyConfig): Buffer =>
+      Buffer.from(WorkspaceTopologyConfig.encode(value).finish()),
+    responseDeserialize: (value: Buffer): WorkspaceTopologyConfig => WorkspaceTopologyConfig.decode(value),
+  },
+  listWorkspaceTopologies: {
+    path: "/vna.VnaControl/ListWorkspaceTopologies",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: Empty): Buffer => Buffer.from(Empty.encode(value).finish()),
+    requestDeserialize: (value: Buffer): Empty => Empty.decode(value),
+    responseSerialize: (value: WorkspaceTopologyList): Buffer =>
+      Buffer.from(WorkspaceTopologyList.encode(value).finish()),
+    responseDeserialize: (value: Buffer): WorkspaceTopologyList => WorkspaceTopologyList.decode(value),
+  },
+  setActiveWorkspace: {
+    path: "/vna.VnaControl/SetActiveWorkspace",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: WorkspaceRef): Buffer => Buffer.from(WorkspaceRef.encode(value).finish()),
+    requestDeserialize: (value: Buffer): WorkspaceRef => WorkspaceRef.decode(value),
+    responseSerialize: (value: ValidationResult): Buffer => Buffer.from(ValidationResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ValidationResult => ValidationResult.decode(value),
+  },
   getServiceStatus: {
     path: "/vna.VnaControl/GetServiceStatus",
     requestStream: false,
@@ -3568,6 +3997,10 @@ export const VnaControlService = {
 
 export interface VnaControlServer extends UntypedServiceImplementation {
   validateTopology: handleUnaryCall<Topology, ValidationResult>;
+  upsertWorkspaceTopology: handleUnaryCall<WorkspaceTopologyUpsertRequest, ValidationResult>;
+  getWorkspaceTopology: handleUnaryCall<WorkspaceRef, WorkspaceTopologyConfig>;
+  listWorkspaceTopologies: handleUnaryCall<Empty, WorkspaceTopologyList>;
+  setActiveWorkspace: handleUnaryCall<WorkspaceRef, ValidationResult>;
   getServiceStatus: handleUnaryCall<Empty, ServiceStatus>;
   getInstanceCapabilities: handleUnaryCall<InstanceSelector, InstanceCapabilities>;
   setScanState: handleUnaryCall<ScanStateRequest, ScanStateResponse>;
@@ -3590,6 +4023,66 @@ export interface VnaControlClient extends Client {
   ): ClientUnaryCall;
   validateTopology(
     request: Topology,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  upsertWorkspaceTopology(
+    request: WorkspaceTopologyUpsertRequest,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  upsertWorkspaceTopology(
+    request: WorkspaceTopologyUpsertRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  upsertWorkspaceTopology(
+    request: WorkspaceTopologyUpsertRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  getWorkspaceTopology(
+    request: WorkspaceRef,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyConfig) => void,
+  ): ClientUnaryCall;
+  getWorkspaceTopology(
+    request: WorkspaceRef,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyConfig) => void,
+  ): ClientUnaryCall;
+  getWorkspaceTopology(
+    request: WorkspaceRef,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyConfig) => void,
+  ): ClientUnaryCall;
+  listWorkspaceTopologies(
+    request: Empty,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyList) => void,
+  ): ClientUnaryCall;
+  listWorkspaceTopologies(
+    request: Empty,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyList) => void,
+  ): ClientUnaryCall;
+  listWorkspaceTopologies(
+    request: Empty,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: WorkspaceTopologyList) => void,
+  ): ClientUnaryCall;
+  setActiveWorkspace(
+    request: WorkspaceRef,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  setActiveWorkspace(
+    request: WorkspaceRef,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  setActiveWorkspace(
+    request: WorkspaceRef,
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ValidationResult) => void,

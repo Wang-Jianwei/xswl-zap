@@ -2,6 +2,15 @@
 
 一款矢量网络分析仪（VNA）上位机应用。
 
+## AI 开发统一入口（推荐）
+
+- 统一导航：`vna/development-plan-ai-guide.md`
+- 计划索引（分文档）：`vna/docs/plan/README.md`
+- 任务状态真源：`vna/development-plan.md`
+- 架构真源：`vna/framework.md`、`vna/framework-ui.md`
+- 工程规范：`vna/ai-engineering-framework.md`、`.github/copilot-instructions.md`
+- 行业功能池（仅参考）：`vna/vna-features-inventory.md`
+
 ## 应用概述
 
 xswl-zap-vna 提供对矢量网络分析仪的统一控制与测量能力，支持多厂商仪器、PXI 平台以及虚拟仪器，面向自动化测试、实验室测量和研发验证场景。

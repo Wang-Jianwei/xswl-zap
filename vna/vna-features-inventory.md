@@ -1,6 +1,8 @@
 # VNA 功能特性清单 (Feature Inventory)
 
 > 目的：系统整理市面上主流 VNA 支持的各类测量功能，作为后续功能规划和 plugin 开发的参考。
+>
+> 使用说明：本文档是“行业功能池/能力参考”，**不作为当前项目实现状态真源**。实现进度与验收状态请统一以 `vna/development-plan.md` 为准，执行优先级以 `vna/development-plan-ai-guide.md` 为准。
 
 ---
 

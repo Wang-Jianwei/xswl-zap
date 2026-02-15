@@ -34,6 +34,19 @@ export interface ValidationResult {
   errorDetails: TopologyErrorDetail[];
 }
 
+export interface WorkspaceTopologyConfig {
+  workspaceId: string;
+  topologyId: string;
+  topologyYaml: string;
+  isActive: boolean;
+  updatedAtMs: number;
+}
+
+export interface WorkspaceTopologyList {
+  items: WorkspaceTopologyConfig[];
+  activeWorkspaceId: string;
+}
+
 export interface AcquisitionSummary {
   instanceId: string;
   timestampNs: number;

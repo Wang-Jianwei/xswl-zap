@@ -1,5 +1,7 @@
 #include "service/vna_control_service.h"
 
+#include <algorithm>
+#include <chrono>
 #include <cctype>
 #include <vector>
 
@@ -64,6 +66,13 @@ bool HasParentTraversal(const std::string& path) {
 VnaControlService::VnaControlService()
   : runtime_(), started_(false), deEmbeddingEnabled_(false) {}
 
+std::uint64_t VnaControlService::NowMs() {
+  return static_cast<std::uint64_t>(
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::system_clock::now().time_since_epoch())
+          .count());
+}
+
 core::ValidationResult VnaControlService::ValidateTopology(const core::Topology& topology) const {
   core::TopologyManager manager;
   return manager.ValidateTopology(topology);
@@ -82,6 +91,108 @@ TopologyValidationReport VnaControlService::ValidateTopologyStructured(
   }
 
   return report;
+}
+
+core::Status VnaControlService::UpsertWorkspaceTopology(const std::string& workspaceId,
+                                                        const core::Topology& topology,
+                                                        bool activate,
+                                                        TopologyValidationReport* validationReport) {
+  if (workspaceId.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  const TopologyValidationReport report = ValidateTopologyStructured(topology);
+  if (validationReport != nullptr) {
+    *validationReport = report;
+  }
+  if (!report.ok) {
+    return core::Status::kInvalidArgument;
+  }
+
+  WorkspaceTopologyConfig config;
+  config.workspaceId = workspaceId;
+  config.topology = topology;
+  config.updatedAtMs = NowMs();
+
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  workspaceTopologies_[workspaceId] = config;
+
+  if (activate || activeWorkspaceId_.empty()) {
+    for (std::map<std::string, WorkspaceTopologyConfig>::iterator it = workspaceTopologies_.begin();
+         it != workspaceTopologies_.end();
+         ++it) {
+      it->second.isActive = false;
+    }
+    workspaceTopologies_[workspaceId].isActive = true;
+    activeWorkspaceId_ = workspaceId;
+  }
+
+  return core::Status::kOk;
+}
+
+core::Status VnaControlService::GetWorkspaceTopology(const std::string& workspaceId,
+                                                     WorkspaceTopologyConfig& outConfig) const {
+  if (workspaceId.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  const std::map<std::string, WorkspaceTopologyConfig>::const_iterator it =
+      workspaceTopologies_.find(workspaceId);
+  if (it == workspaceTopologies_.end()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  outConfig = it->second;
+  return core::Status::kOk;
+}
+
+std::vector<WorkspaceTopologyConfig> VnaControlService::ListWorkspaceTopologies() const {
+  std::vector<WorkspaceTopologyConfig> result;
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  result.reserve(workspaceTopologies_.size());
+
+  for (std::map<std::string, WorkspaceTopologyConfig>::const_iterator it = workspaceTopologies_.begin();
+       it != workspaceTopologies_.end();
+       ++it) {
+    result.push_back(it->second);
+  }
+
+  std::sort(result.begin(), result.end(), [](const WorkspaceTopologyConfig& left,
+                                             const WorkspaceTopologyConfig& right) {
+    return left.workspaceId < right.workspaceId;
+  });
+
+  return result;
+}
+
+core::Status VnaControlService::SetActiveWorkspace(const std::string& workspaceId) {
+  if (workspaceId.empty()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  const std::map<std::string, WorkspaceTopologyConfig>::iterator target =
+      workspaceTopologies_.find(workspaceId);
+  if (target == workspaceTopologies_.end()) {
+    return core::Status::kInvalidArgument;
+  }
+
+  for (std::map<std::string, WorkspaceTopologyConfig>::iterator it = workspaceTopologies_.begin();
+       it != workspaceTopologies_.end();
+       ++it) {
+    it->second.isActive = false;
+  }
+
+  target->second.isActive = true;
+  target->second.updatedAtMs = NowMs();
+  activeWorkspaceId_ = workspaceId;
+  return core::Status::kOk;
+}
+
+std::string VnaControlService::GetActiveWorkspaceId() const {
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  return activeWorkspaceId_;
 }
 
 TopologyErrorDetail VnaControlService::BuildTopologyError(const std::string& rawError) {
@@ -130,7 +241,21 @@ core::Status VnaControlService::ApplyTopology(const core::Topology& topology,
   if (started_) {
     return core::Status::kInternalError;
   }
-  return runtime_.ApplyTopology(topology, workspaceId, defaultLeaseTtlSeconds);
+  const core::Status status = runtime_.ApplyTopology(topology, workspaceId, defaultLeaseTtlSeconds);
+  if (status != core::Status::kOk) {
+    return status;
+  }
+
+  WorkspaceTopologyConfig config;
+  config.workspaceId = workspaceId;
+  config.topology = topology;
+  config.isActive = true;
+  config.updatedAtMs = NowMs();
+
+  std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
+  workspaceTopologies_[workspaceId] = config;
+  activeWorkspaceId_ = workspaceId;
+  return core::Status::kOk;
 }
 
 core::Status VnaControlService::Start() {

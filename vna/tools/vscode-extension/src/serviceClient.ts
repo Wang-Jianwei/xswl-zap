@@ -15,6 +15,8 @@ import type {
   WaveformPreviewData,
   WaveformScanState,
   WaveformTraceSource,
+  WorkspaceTopologyConfig,
+  WorkspaceTopologyList,
 } from "./types";
 import { buildWaveformPreviewData } from "./waveformPreview";
 
@@ -110,6 +112,17 @@ export function parseInstanceCapabilities(payload: Record<string, unknown>): Ins
     minPulseWidthNs: Number(payload.minPulseWidthNs ?? 0),
     minPulsePeriodNs: Number(payload.minPulsePeriodNs ?? 0),
     maxSamplingRateGhz: Number(payload.maxSamplingRateGhz ?? 0),
+  };
+}
+
+export function parseWorkspaceTopologyConfig(payload: Record<string, unknown>): WorkspaceTopologyConfig {
+  const topology = (payload.topology as Record<string, unknown> | undefined) ?? {};
+  return {
+    workspaceId: String(payload.workspaceId ?? ""),
+    topologyId: String(topology.id ?? ""),
+    topologyYaml: String(topology.yaml ?? ""),
+    isActive: Boolean(payload.isActive),
+    updatedAtMs: Number(payload.updatedAtMs ?? 0),
   };
 }
 
@@ -232,6 +245,162 @@ export class ServiceClient {
 
           resolve({
             ok: Boolean(payload.ok),
+            errors,
+            errorDetails,
+          });
+        },
+      );
+    });
+  }
+
+  upsertWorkspaceTopology(
+    workspaceId: string,
+    topologyId: string,
+    topologyYaml: string,
+    activate: boolean,
+  ): Promise<ValidationResult> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ValidationResult>((resolve, reject) => {
+      (this.client as unknown as {
+        upsertWorkspaceTopology: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).upsertWorkspaceTopology(
+        {
+          workspaceId,
+          topology: {
+            id: topologyId,
+            yaml: topologyYaml,
+          },
+          activate,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const payload = response;
+          const rawErrors = payload.errors;
+          const rawDetails = payload.errorDetails;
+          const errors = Array.isArray(rawErrors) ? rawErrors.map((item) => String(item)) : [];
+          const errorDetails: TopologyErrorDetail[] = Array.isArray(rawDetails)
+            ? rawDetails.map((item) => {
+                const detail = item as Record<string, unknown>;
+                return {
+                  code: String(detail.code ?? ""),
+                  field: String(detail.field ?? ""),
+                  message: String(detail.message ?? ""),
+                };
+              })
+            : [];
+
+          resolve({
+            ok: Boolean(payload.ok),
+            errors,
+            errorDetails,
+          });
+        },
+      );
+    });
+  }
+
+  getWorkspaceTopology(workspaceId: string): Promise<WorkspaceTopologyConfig> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<WorkspaceTopologyConfig>((resolve, reject) => {
+      (this.client as unknown as {
+        getWorkspaceTopology: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).getWorkspaceTopology(
+        {
+          workspaceId,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve(parseWorkspaceTopologyConfig(response));
+        },
+      );
+    });
+  }
+
+  listWorkspaceTopologies(): Promise<WorkspaceTopologyList> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<WorkspaceTopologyList>((resolve, reject) => {
+      (this.client as unknown as {
+        listWorkspaceTopologies: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).listWorkspaceTopologies(
+        {},
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const itemsRaw = response.items;
+          const items = Array.isArray(itemsRaw)
+            ? itemsRaw.map((item) => parseWorkspaceTopologyConfig(item as Record<string, unknown>))
+            : [];
+
+          resolve({
+            items,
+            activeWorkspaceId: String(response.activeWorkspaceId ?? ""),
+          });
+        },
+      );
+    });
+  }
+
+  setActiveWorkspace(workspaceId: string): Promise<ValidationResult> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<ValidationResult>((resolve, reject) => {
+      (this.client as unknown as {
+        setActiveWorkspace: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      }).setActiveWorkspace(
+        {
+          workspaceId,
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          const rawErrors = response.errors;
+          const rawDetails = response.errorDetails;
+          const errors = Array.isArray(rawErrors) ? rawErrors.map((item) => String(item)) : [];
+          const errorDetails: TopologyErrorDetail[] = Array.isArray(rawDetails)
+            ? rawDetails.map((item) => {
+                const detail = item as Record<string, unknown>;
+                return {
+                  code: String(detail.code ?? ""),
+                  field: String(detail.field ?? ""),
+                  message: String(detail.message ?? ""),
+                };
+              })
+            : [];
+
+          resolve({
+            ok: Boolean(response.ok),
             errors,
             errorDetails,
           });
