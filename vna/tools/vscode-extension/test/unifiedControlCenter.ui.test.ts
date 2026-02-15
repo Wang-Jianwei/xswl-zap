@@ -60,21 +60,28 @@ function resolveBrowserExecutable(): string {
     const topologyViewClass = (await page.locator("#view-topology").getAttribute("class")) ?? "";
     assert(topologyViewClass.includes("is-active"), "topology view did not activate on click");
 
-    await page.fill("#newVirtualPort", "vna-port9");
+    // Test adding virtual port via Modal
     await page.locator("#btnAddVirtualPort").click();
     await page.waitForTimeout(40);
-    const hasNewVirtualPort = await page.locator("#topologyVirtualPorts .chip", { hasText: "vna-port9" }).count();
-    assert(hasNewVirtualPort > 0, "add virtual port button did not take effect");
+    const modalInput = await page.inputValue("#modalInput");
+    assert(modalInput.includes("vna-port"), "modal input should have default value");
+    await page.fill("#modalInput", "vna-test-port");
+    await page.locator("#modalConfirm").click();
+    await page.waitForTimeout(40);
+    
+    // Check if node exists in canvas
+    const hasNewVirtualPort = await page.locator(".t-node.virtual", { hasText: "vna-test-port" }).count();
+    assert(hasNewVirtualPort > 0, "add virtual port (via modal) did not create node");
 
+    // Test adding board
     await page.locator("#btnAddBoard").click();
     await page.waitForTimeout(40);
-    const boardCount = await page.locator("#topologyBoards .topology-board").count();
-    assert(boardCount >= 2, "add board button did not take effect");
+    const boardCount = await page.locator(".t-node[data-type='board']").count();
+    assert(boardCount >= 2, "add board button did not create board node");
 
-    await page.locator("#btnAutoBind").click();
+    // Auto layout check (simple click check)
+    await page.locator("#btnAutoLayout").click();
     await page.waitForTimeout(40);
-    const bindingRows = await page.locator("#topologyBindingRows tr").count();
-    assert(bindingRows > 0, "auto bind path did not render binding rows");
 
     await page.locator('[data-action="open-new-workspace-modal"]').click();
     await page.waitForTimeout(40);

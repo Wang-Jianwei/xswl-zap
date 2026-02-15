@@ -247,7 +247,137 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     .chip.is-bound {
       border-color: var(--vscode-charts-blue);
     }
-    .chip button {
+    .topology-layout-new {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 600px;
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 6px;
+      background: var(--vscode-editor-background);
+      overflow: hidden;
+    }
+    .topology-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border-bottom: 1px solid var(--vscode-panel-border);
+      background: var(--vscode-editorWidget-background);
+      align-items: center;
+    }
+    .topology-canvas-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      cursor: grab;
+      background-image: radial-gradient(var(--vscode-panel-border) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+    .topology-canvas-container:active {
+      cursor: grabbing;
+    }
+    #topologyConnections {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #topologyNodes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none; /* Nodes inside will have pointer-events: auto */
+    }
+    .t-node {
+      position: absolute;
+      border: 1px solid var(--vscode-widget-border);
+      background: var(--vscode-editorWidget-background);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      padding: 0;
+      min-width: 120px;
+      pointer-events: auto;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
+    .t-node-header {
+      padding: 6px 8px;
+      background: var(--vscode-titleBar-activeBackground);
+      color: var(--vscode-titleBar-activeForeground);
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: grab;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .t-node-header:active { cursor: grabbing; }
+    .t-node-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .t-port {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 24px;
+      position: relative;
+    }
+    .t-port-point {
+      width: 10px;
+      height: 10px;
+      background: var(--vscode-button-background);
+      border: 1px solid var(--vscode-button-border);
+      border-radius: 50%;
+      cursor: crosshair;
+    }
+    .t-port-point:hover {
+      background: var(--vscode-button-hoverBackground);
+      transform: scale(1.2);
+    }
+    .t-port-label {
+      font-size: 11px;
+      padding: 0 6px;
+      color: var(--vscode-foreground);
+    }
+    /* Virtual Ports: Simple Pill */
+    .t-node.virtual {
+      min-width: auto;
+      border-color: var(--vscode-charts-blue);
+    }
+    .t-node.virtual .t-node-header {
+      background: var(--vscode-charts-blue);
+      color: white;
+      padding: 4px 8px;
+    }
+    /* SVG Styles */
+    .connection-line {
+      fill: none;
+      stroke: var(--vscode-charts-blue);
+      stroke-width: 2px;
+      stroke-linecap: round;
+      pointer-events: stroke; /* Allow clicking the line to delete */
+      cursor: pointer;
+    }
+    .connection-line:hover {
+      stroke: var(--vscode-charts-red);
+      stroke-width: 3px;
+    }
+    .connection-line.draft {
+      stroke: var(--vscode-descriptionForeground);
+      stroke-dasharray: 5, 5;
+    }
       border: none;
       border-radius: 10px;
       width: 16px;
@@ -376,36 +506,29 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             <button id="btnTopologyToYaml" class="secondary">从可视化生成 YAML</button>
           </div>
 
-          <div id="topologyVisualSection" class="topology-layout">
-            <div class="card">
-              <h3>虚拟 VNA 端口</h3>
-              <div class="line inline">
-                <input id="newVirtualPort" placeholder="例如: vna-port3" />
-                <button id="btnAddVirtualPort">添加</button>
+          <div id="topologyVisualSection" class="topology-layout-new">
+            <div class="topology-toolbar">
+              <div class="line inline" style="margin:0;">
+                <button id="btnAddVirtualPort">新增虚拟端口</button>
+                <button id="btnAddBoard">新增板卡</button>
+                <button id="btnAutoLayout" class="secondary">自动排列</button>
               </div>
-              <div id="topologyVirtualPorts" class="chip-list"></div>
+              <div class="help" style="margin-left:auto; font-size:12px;">
+                拖拽标题移动 | 拖拽端口连线 | 点击连线删除 | 双击板卡编辑
+              </div>
             </div>
-
-            <div>
-              <div class="card" style="margin-bottom:8px;">
-                <div class="line inline">
-                  <h3 style="margin:0;">板卡与端口</h3>
-                  <button id="btnAddBoard">新增板卡</button>
-                  <button id="btnAutoBind" class="secondary">自动绑定</button>
-                </div>
-                <div class="help" style="margin-bottom:8px;">拖拽左侧虚拟端口到下方板卡端口槽位完成绑定</div>
-                <div id="topologyBoards" class="topology-boards"></div>
-              </div>
-
-              <div class="card">
-                <h3>绑定关系（虚拟端口 -> 板卡端口）</h3>
-                <div class="table-wrap">
-                  <table>
-                    <thead><tr><th>Virtual Port</th><th>Board Endpoint</th><th>操作</th></tr></thead>
-                    <tbody id="topologyBindingRows"></tbody>
-                  </table>
-                </div>
-              </div>
+            
+            <div id="topologyCanvasContainer" class="topology-canvas-container">
+              <!-- SVG Layer for Links (Z-Index 0) -->
+              <svg id="topologyConnections" width="100%" height="100%">
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#569cd6" />
+                  </marker>
+                </defs>
+              </svg>
+              <!-- HTML Layer for Nodes (Z-Index 1) -->
+              <div id="topologyNodes"></div>
             </div>
           </div>
 
@@ -635,32 +758,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     }
 
     function syncBoardsFromDom() {
-      const nextBoards = [];
-      for (const node of topologyBoards.querySelectorAll(".topology-board")) {
-        nextBoards.push({
-          id: String(node.querySelector("[data-field='id']").value || "").trim(),
-          kind: String(node.querySelector("[data-field='kind']").value || "board"),
-          portsCsv: String(node.querySelector("[data-field='portsCsv']").value || "").trim(),
-          driver: String(node.querySelector("[data-field='driver']").value || "").trim(),
-          device: String(node.querySelector("[data-field='device']").value || "").trim(),
-          resource: String(node.querySelector("[data-field='resource']").value || "").trim(),
-          cardIndex: String(node.querySelector("[data-field='cardIndex']").value || "").trim(),
-          detail: String(node.querySelector("[data-field='detail']").value || "").trim(),
-        });
-      }
-      state.topology.boards = nextBoards.filter((item) => item.id.length > 0);
-      if (state.topology.boards.length === 0) {
-        state.topology.boards.push({
-          id: "card1",
-          kind: "board",
-          portsCsv: "p1,p2",
-          driver: "pxi",
-          device: "pxi-mock-0",
-          resource: "dev0",
-          cardIndex: "1",
-          detail: "",
-        });
-      }
+      // No-op: State is now managed directly by visual interaction
     }
 
     function sanitizeBindings() {
@@ -679,74 +777,142 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       state.topology.bindings = next;
     }
 
-    function renderTopologyVisual() {
-      topologyVirtualPorts.innerHTML = "";
-      for (const vPort of state.topology.virtualPorts) {
-        const bound = Boolean(state.topology.bindings[vPort]);
-        const chip = document.createElement("span");
-        chip.className = "chip" + (bound ? " is-bound" : "");
-        chip.setAttribute("draggable", "true");
-        chip.setAttribute("data-action", "drag-vport");
-        chip.setAttribute("data-vport", vPort);
-        chip.innerHTML = '<span>' + escapeHtml(vPort) + (bound ? ' <span class="slot-hint">(bound)</span>' : '') + '</span><button data-action="remove-vport" data-vport="' + escapeAttr(vPort) + '">×</button>';
-        topologyVirtualPorts.appendChild(chip);
+    function ensureLayout() {
+      if (!state.topology.layout) {
+        state.topology.layout = {};
       }
+      // Initialize layout if empty
+      let y = 50;
+      state.topology.virtualPorts.forEach((vp, i) => {
+        if (!state.topology.layout[vp]) {
+            state.topology.layout[vp] = { x: 50, y: y };
+            y += 60;
+        }
+      });
+      
+      let x = 300;
+      y = 50;
+      state.topology.boards.forEach((board, i) => {
+        if (!state.topology.layout[board.id]) {
+            state.topology.layout[board.id] = { x: x, y: y };
+            y += 150;
+            if (y > 400) { y = 50; x += 250; }
+        }
+      });
+    }
 
-      topologyBoards.innerHTML = "";
-      state.topology.boards.forEach((board, index) => {
-        const portSlots = parseCsv(board.portsCsv)
-          .map((boardPort) => {
-            const boundVPort = getBoundVirtualPort(board.id, boardPort);
-            const rightPart = boundVPort
-              ? '<span class="chip is-bound"><span>' + escapeHtml(boundVPort) + '</span><button data-action="unbind-slot" data-vport="' + escapeAttr(boundVPort) + '">×</button></span>'
-              : '<span class="slot-hint">Drop virtual port here</span>';
-            return '<div class="board-port-slot" data-action="drop-slot" data-board-id="' + escapeAttr(board.id) + '" data-board-port="' + escapeAttr(boardPort) + '">' +
-              '<span class="slot-left"><strong>' + escapeHtml(boardPort) + '</strong><span class="slot-hint">board port</span></span>' +
-              rightPart +
-            '</div>';
-          })
-          .join("");
+    function getPortPosition(nodeId, portName, isVirtual) {
+        const layout = state.topology.layout[nodeId] || { x:0, y:0 };
+        if (isVirtual) {
+            // Virtual port: Right center
+            return { x: layout.x + 100, y: layout.y + 20 }; // width 100, height 40
+        } else {
+            // Board port: Left side, distributed vertically
+            const board = state.topology.boards.find(b => b.id === nodeId);
+            if (!board) return { x: layout.x, y: layout.y };
+            const ports = parseCsv(board.portsCsv);
+            const index = ports.indexOf(portName);
+            return { x: layout.x, y: layout.y + 45 + (index * 24) + 12 };
+        }
+    }
 
+    function renderTopologyVisual() {
+      ensureLayout();
+      const nodesContainer = document.getElementById("topologyNodes");
+      const connectionsContainer = document.getElementById("topologyConnections");
+      if (!nodesContainer || !connectionsContainer) return;
+
+      nodesContainer.innerHTML = "";
+      
+      // Render Virtual Ports (Source Nodes)
+      state.topology.virtualPorts.forEach(vp => {
+        const pos = state.topology.layout[vp];
         const el = document.createElement("div");
-        el.className = "topology-board";
-        el.innerHTML =
-          '<div class="line inline"><strong>Board ' + String(index + 1) + '</strong><button class="secondary" data-action="remove-board" data-index="' + String(index) + '">删除</button></div>' +
-          '<div class="topology-board-grid">' +
-            '<div class="line"><label>ID</label><input data-field="id" value="' + escapeAttr(board.id) + '" /></div>' +
-            '<div class="line"><label>Kind</label><select data-field="kind"><option value="board"' + (board.kind === "board" ? " selected" : "") + '>board</option><option value="virtual-vna"' + (board.kind === "virtual-vna" ? " selected" : "") + '>virtual-vna</option></select></div>' +
-            '<div class="line"><label>Driver</label><input data-field="driver" value="' + escapeAttr(board.driver) + '" /></div>' +
-            '<div class="line"><label>Device</label><input data-field="device" value="' + escapeAttr(board.device) + '" /></div>' +
-            '<div class="line"><label>Resource</label><input data-field="resource" value="' + escapeAttr(board.resource) + '" /></div>' +
-            '<div class="line"><label>CardIndex</label><input data-field="cardIndex" value="' + escapeAttr(board.cardIndex) + '" /></div>' +
-            '<div class="line full"><label>Ports (comma-separated)</label><input data-field="portsCsv" value="' + escapeAttr(board.portsCsv) + '" /></div>' +
-            '<div class="line full"><label>Drop Slots</label><div class="board-port-slots">' + (portSlots || '<span class="slot-hint">先填写端口列表</span>') + '</div></div>' +
-            '<div class="line full"><label>Detail</label><input data-field="detail" value="' + escapeAttr(board.detail) + '" /></div>' +
-          '</div>';
-        topologyBoards.appendChild(el);
+        el.className = "t-node virtual";
+        el.style.left = pos.x + "px";
+        el.style.top = pos.y + "px";
+        el.style.width = "100px";
+        el.setAttribute("data-id", vp);
+        el.setAttribute("data-type", "virtual");
+        
+        el.innerHTML = 
+            '<div class="t-node-header">' + escapeHtml(vp) + 
+            ' <span style="cursor:pointer;margin-left:4px;" data-action="delete-vp">×</span></div>' +
+            '<div class="t-port" style="justify-content:flex-end; padding-right:0;">' +
+             '<div class="t-port-point" data-port="' + escapeAttr(vp) + '" data-node="' + escapeAttr(vp) + '"></div>' +
+            '</div>';
+        nodesContainer.appendChild(el);
       });
 
-      topologyBindingRows.innerHTML = "";
-      const endpoints = buildEndpoints();
-      for (const vPort of state.topology.virtualPorts) {
-        const binding = state.topology.bindings[vPort] || { boardId: "", boardPort: "" };
-        const tr = document.createElement("tr");
-        const selectedKey = binding.boardId && binding.boardPort ? binding.boardId + "." + binding.boardPort : "";
-        const options = ['<option value="">(unbound)</option>']
-          .concat(
-            endpoints.map((item) => {
-              const key = item.boardId + "." + item.boardPort;
-              const selected = key === selectedKey ? " selected" : "";
-              return '<option value="' + escapeAttr(key) + '"' + selected + '>' + escapeHtml(key) + '</option>';
-            }),
-          )
-          .join("");
-        tr.innerHTML =
-          '<td>' + escapeHtml(vPort) + '</td>' +
-          '<td><select data-action="binding-select" data-vport="' + escapeAttr(vPort) + '">' + options + '</select></td>' +
-          '<td><button class="secondary" data-action="binding-clear" data-vport="' + escapeAttr(vPort) + '">清空</button></td>';
-        topologyBindingRows.appendChild(tr);
+      // Render Boards (Target Nodes)
+      state.topology.boards.forEach(board => {
+        const pos = state.topology.layout[board.id];
+        const el = document.createElement("div");
+        el.className = "t-node";
+        el.style.left = pos.x + "px";
+        el.style.top = pos.y + "px";
+        el.setAttribute("data-id", board.id);
+        el.setAttribute("data-type", "board");
+
+        const portsOnBoard = parseCsv(board.portsCsv);
+        const portsHtml = portsOnBoard.map(p => 
+            '<div class="t-port">' +
+                '<div class="t-port-point" data-port="' + escapeAttr(p) + '" data-node="' + escapeAttr(board.id) + '"></div>' +
+                '<span class="t-port-label">' + escapeHtml(p) + '</span>' +
+            '</div>'
+        ).join("");
+
+        el.innerHTML = 
+            '<div class="t-node-header" data-action="edit-board">' + escapeHtml(board.id) + ' (' + escapeHtml(board.kind) + ')</div>' +
+            '<div class="t-node-body">' +
+                '<div style="font-size:10px;color:var(--vscode-descriptionForeground)">' + escapeHtml(board.driver) + '</div>' + 
+                portsHtml +
+            '</div>';
+        nodesContainer.appendChild(el);
+      });
+
+      // Render Connections
+      const bindings = state.topology.bindings;
+      let svgContent = '<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#569cd6" /></marker></defs>';
+      
+      for (const [vPort, target] of Object.entries(bindings)) {
+          if (!target || !target.boardId) continue;
+          
+          const start = getPortPosition(vPort, vPort, true);
+          const end = getPortPosition(target.boardId, target.boardPort, false);
+          
+          // Bezier Curve
+          const cp1 = { x: start.x + 50, y: start.y };
+          const cp2 = { x: end.x - 50,  y: end.y };
+          
+          const d = \`M \${start.x} \${start.y} C \${cp1.x} \${cp1.y}, \${cp2.x} \${cp2.y}, \${end.x} \${end.y}\`;
+          
+          svgContent += \`<path d="\${d}" class="connection-line" marker-end="url(#arrowhead)" 
+                data-vport="\${escapeAttr(vPort)}"
+                onclick="removeBinding('\${escapeAttr(vPort)}')"
+            ><title>Click to remove binding</title></path>\`;
       }
+      
+      // If dragging a line
+      if (state.drag && state.drag.type === "line" && state.drag.startNode) {
+         const startPos = getPortPosition(state.drag.startNode, state.drag.startPort, state.drag.isVirtual);
+         const endX = state.drag.currentX;
+         const endY = state.drag.currentY;
+         const d = \`M \${startPos.x} \${startPos.y} L \${endX} \${endY}\`;
+         svgContent += \`<path d="\${d}" class="connection-line draft" />\`;
+      }
+
+      connectionsContainer.innerHTML = svgContent;
     }
+
+    // Expose for onclick
+    window.removeBinding = function(vPort) {
+        if (state.topology.bindings[vPort]) {
+            delete state.topology.bindings[vPort];
+            renderTopologyVisual();
+        }
+    };
+
 
     function topologyToYaml() {
       syncBoardsFromDom();
@@ -1168,164 +1334,164 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       node.addEventListener("click", () => post("open-visual-topology", {}));
     });
 
-    topologyVirtualPorts.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      syncBoardsFromDom();
-      const action = target.getAttribute("data-action");
-      if (action !== "remove-vport") {
-        return;
-      }
-      const vPort = String(target.getAttribute("data-vport") || "");
-      if (!vPort) {
-        return;
-      }
-      state.topology.virtualPorts = state.topology.virtualPorts.filter((item) => item !== vPort);
-      delete state.topology.bindings[vPort];
-      renderTopologyVisual();
+    // --- Topology Canvas Interaction ---
+    const canvasContainer = document.getElementById("topologyCanvasContainer");
+    
+    canvasContainer.addEventListener("mousedown", (e) => {
+        const target = e.target;
+        if (!target) return;
+        
+        // 1. Drag Node (Header)
+        const header = target.closest(".t-node-header");
+        if (header) {
+            const removeBtn = target.closest('[data-action="delete-vp"]');
+            if (removeBtn) return; // Don't drag if clicking remove
+
+            const node = header.closest(".t-node");
+            const id = node.getAttribute("data-id");
+            if (!state.topology.layout[id]) return;
+
+            const box = node.getBoundingClientRect();
+            const cBox = canvasContainer.getBoundingClientRect();
+            
+            state.drag = {
+                active: true,
+                type: "node",
+                id: id,
+                offsetX: e.clientX - box.left,
+                offsetY: e.clientY - box.top,
+                cLeft: cBox.left,
+                cTop: cBox.top
+            };
+            return;
+        }
+
+        // 2. Drag Connection (Port)
+        const portPoint = target.closest(".t-port-point");
+        if (portPoint) {
+            const portName = portPoint.getAttribute("data-port");
+            const nodeId = portPoint.getAttribute("data-node");
+            const isVirtual = portPoint.closest(".t-node").classList.contains("virtual");
+            
+            // We only support dragging form Virtual Port -> Board Port for binding creation
+            if (!isVirtual) return;
+
+            const cBox = canvasContainer.getBoundingClientRect();
+            state.drag = {
+                active: true,
+                type: "line",
+                startNode: nodeId,
+                startPort: portName,
+                isVirtual: true,
+                cLeft: cBox.left,
+                cTop: cBox.top,
+                currentX: e.clientX - cBox.left,
+                currentY: e.clientY - cBox.top
+            };
+            renderTopologyVisual(); // draw draft line
+            return;
+        }
     });
 
-    topologyVirtualPorts.addEventListener("dragstart", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      const action = target.getAttribute("data-action");
-      const vPort = String(target.getAttribute("data-vport") || "");
-      if (action !== "drag-vport" || !vPort) {
-        return;
-      }
-      state.draggingVirtualPort = vPort;
-      if (event.dataTransfer) {
-        event.dataTransfer.setData("text/plain", vPort);
-        event.dataTransfer.effectAllowed = "move";
-      }
+    window.addEventListener("mousemove", (e) => {
+        if (!state.drag || !state.drag.active) return;
+
+        if (state.drag.type === "node") {
+            const x = e.clientX - state.drag.cLeft - state.drag.offsetX;
+            const y = e.clientY - state.drag.cTop - state.drag.offsetY;
+            state.topology.layout[state.drag.id] = { x, y };
+            renderTopologyVisual();
+        } else if (state.drag.type === "line") {
+            state.drag.currentX = e.clientX - state.drag.cLeft;
+            state.drag.currentY = e.clientY - state.drag.cTop;
+            renderTopologyVisual();
+        }
     });
 
-    topologyVirtualPorts.addEventListener("dragend", () => {
-      state.draggingVirtualPort = "";
+    window.addEventListener("mouseup", (e) => {
+        if (!state.drag || !state.drag.active) return;
+
+        if (state.drag.type === "line") {
+             // Check drop target
+             const target = e.target;
+             const portPoint = target ? target.closest(".t-port-point") : null;
+             
+             if (portPoint) {
+                 const endNodeId = portPoint.getAttribute("data-node");
+                 const endPortName = portPoint.getAttribute("data-port");
+                 const isVirtual = portPoint.closest(".t-node").classList.contains("virtual");
+                 
+                 // Valid drop: From Virtual to Board (non-virtual)
+                 if (!isVirtual && state.drag.isVirtual) {
+                     const vPort = state.drag.startNode;
+                     state.topology.bindings[vPort] = {
+                         boardId: endNodeId,
+                         boardPort: endPortName
+                     };
+                 }
+             }
+        }
+        
+        state.drag = { active: false };
+        renderTopologyVisual();
     });
 
-    topologyBoards.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      syncBoardsFromDom();
-      if (target.getAttribute("data-action") !== "remove-board") {
-        if (target.getAttribute("data-action") === "unbind-slot") {
-          const vPort = String(target.getAttribute("data-vport") || "");
-          if (vPort) {
+    // Double click to edit board
+    canvasContainer.addEventListener("dblclick", async (e) => {
+        const header = e.target.closest(".t-node-header");
+        if (!header) return;
+        const node = header.closest(".t-node");
+        if (node.getAttribute("data-type") !== "board") return;
+        
+        const boardId = node.getAttribute("data-id");
+        const board = state.topology.boards.find(b => b.id === boardId);
+        if (!board) return;
+        
+        // Simple prompt for now, or open a fuller modal
+        // Let's use the existing modal logic but tailored
+        const newId = await openModal({
+            title: "编辑板卡 ID",
+            body: "当前 ID: " + board.id,
+            inputLabel: "新 ID",
+            inputValue: board.id
+        });
+        
+        if (newId && newId !== board.id) {
+            // Rename board and update bindings
+            const oldId = board.id;
+            board.id = newId;
+            // Update bindings
+            Object.keys(state.topology.bindings).forEach(k => {
+                if (state.topology.bindings[k].boardId === oldId) {
+                    state.topology.bindings[k].boardId = newId;
+                }
+            });
+            // Update layout key
+            if (state.topology.layout[oldId]) {
+                state.topology.layout[newId] = state.topology.layout[oldId];
+                delete state.topology.layout[oldId];
+            }
+            renderTopologyVisual();
+        }
+    });
+
+    // Handle delete buttons inside nodes
+    canvasContainer.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target.getAttribute("data-action") === "delete-vp") {
+            const vPort = target.closest(".t-node").getAttribute("data-id");
+            state.topology.virtualPorts = state.topology.virtualPorts.filter(p => p !== vPort);
             delete state.topology.bindings[vPort];
             renderTopologyVisual();
-          }
         }
-        return;
-      }
-      const index = Number(target.getAttribute("data-index") || "-1");
-      if (!Number.isInteger(index) || index < 0 || index >= state.topology.boards.length) {
-        return;
-      }
-      state.topology.boards.splice(index, 1);
-      syncBoardsFromDom();
-      sanitizeBindings();
-      renderTopologyVisual();
     });
 
-    topologyBoards.addEventListener("dragover", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      const slot = target.closest(".board-port-slot");
-      if (!(slot instanceof HTMLElement)) {
-        return;
-      }
-      event.preventDefault();
-      slot.classList.add("is-drop-target");
-      if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = "move";
-      }
+    document.getElementById("btnAutoLayout").addEventListener("click", () => {
+         state.topology.layout = {}; // Clear layout to force re-calc
+         renderTopologyVisual();
     });
 
-    topologyBoards.addEventListener("dragleave", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      const slot = target.closest(".board-port-slot");
-      if (!(slot instanceof HTMLElement)) {
-        return;
-      }
-      slot.classList.remove("is-drop-target");
-    });
 
-    topologyBoards.addEventListener("drop", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      const slot = target.closest(".board-port-slot");
-      if (!(slot instanceof HTMLElement)) {
-        return;
-      }
-      event.preventDefault();
-      slot.classList.remove("is-drop-target");
-      syncBoardsFromDom();
-
-      const boardId = String(slot.getAttribute("data-board-id") || "");
-      const boardPort = String(slot.getAttribute("data-board-port") || "");
-      const dragged = (event.dataTransfer && event.dataTransfer.getData("text/plain")) || state.draggingVirtualPort || "";
-      if (!dragged || !boardId || !boardPort) {
-        return;
-      }
-      if (!state.topology.virtualPorts.includes(dragged)) {
-        return;
-      }
-      state.topology.bindings[dragged] = { boardId, boardPort };
-      renderTopologyVisual();
-    });
-
-    topologyBindingRows.addEventListener("change", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLSelectElement)) {
-        return;
-      }
-      syncBoardsFromDom();
-      if (target.getAttribute("data-action") !== "binding-select") {
-        return;
-      }
-      const vPort = String(target.getAttribute("data-vport") || "");
-      const selected = String(target.value || "");
-      if (!selected) {
-        delete state.topology.bindings[vPort];
-        return;
-      }
-      const pos = selected.indexOf(".");
-      if (pos <= 0) {
-        return;
-      }
-      state.topology.bindings[vPort] = {
-        boardId: selected.slice(0, pos),
-        boardPort: selected.slice(pos + 1),
-      };
-    });
-
-    topologyBindingRows.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) {
-        return;
-      }
-      syncBoardsFromDom();
-      if (target.getAttribute("data-action") !== "binding-clear") {
-        return;
-      }
-      const vPort = String(target.getAttribute("data-vport") || "");
-      delete state.topology.bindings[vPort];
-      renderTopologyVisual();
-    });
 
     topologyVisualMode.addEventListener("click", () => {
       if (state.topologyMode === "yaml") {
@@ -1338,16 +1504,18 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       setTopologyMode("yaml");
     });
 
-    document.getElementById("btnAddVirtualPort").addEventListener("click", () => {
-      const value = String(newVirtualPort.value || "").trim();
-      if (!value) {
-        return;
+    document.getElementById("btnAddVirtualPort").addEventListener("click", async () => {
+      syncBoardsFromDom();
+      const name = await openModal({
+        title: "添加虚拟端口",
+        body: "请输入虚拟端口名称",
+        inputLabel: "Port Name",
+        inputValue: "vna-port" + (state.topology.virtualPorts.length + 1)
+      });
+      if (name && !state.topology.virtualPorts.includes(name)) {
+        state.topology.virtualPorts.push(name);
+        renderTopologyVisual();
       }
-      if (!state.topology.virtualPorts.includes(value)) {
-        state.topology.virtualPorts.push(value);
-      }
-      newVirtualPort.value = "";
-      renderTopologyVisual();
     });
 
     document.getElementById("btnAddBoard").addEventListener("click", () => {
@@ -1365,19 +1533,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       renderTopologyVisual();
     });
 
-    document.getElementById("btnAutoBind").addEventListener("click", () => {
-      syncBoardsFromDom();
-      const endpoints = buildEndpoints();
-      if (endpoints.length === 0) {
-        return;
-      }
-      state.topology.bindings = {};
-      state.topology.virtualPorts.forEach((vPort, index) => {
-        const endpoint = endpoints[index % endpoints.length];
-        state.topology.bindings[vPort] = { boardId: endpoint.boardId, boardPort: endpoint.boardPort };
-      });
-      renderTopologyVisual();
-    });
+    // Old auto-bind button removed
+    // document.getElementById("btnAutoBind").addEventListener("click", () => { ... });
 
     document.getElementById("btnTopologyToYaml").addEventListener("click", () => {
       topologyYaml.value = topologyToYaml();
