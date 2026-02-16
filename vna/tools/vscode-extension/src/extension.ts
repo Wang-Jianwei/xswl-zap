@@ -467,6 +467,19 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         if (payload.type === "workspace-activate") {
+          const list = await client.listWorkspaceTopologies();
+          const exists = Array.isArray(list.items)
+            ? list.items.some((item) => String(item.workspaceId || "").trim() === workspaceId)
+            : false;
+          if (!exists) {
+            await panel.webview.postMessage({
+              type: "workspace-activate-result",
+              ok: false,
+              message: `Activate failed: workspace \"${workspaceId}\" not found. Please save topology first or reload workspace list.`,
+            });
+            return;
+          }
+
           const result = await client.setActiveWorkspace(workspaceId);
           const messageText = formatValidationResult(result);
           logBlock(outputChannel, "INFO", `[WorkspaceTopologyActivate][requestId=${requestId}]`, [
@@ -743,6 +756,19 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         if (payload.type === "workspace-activate") {
+          const list = await client.listWorkspaceTopologies();
+          const exists = Array.isArray(list.items)
+            ? list.items.some((item) => String(item.workspaceId || "").trim() === workspaceId)
+            : false;
+          if (!exists) {
+            await postMessage({
+              type: "workspace-activate-result",
+              ok: false,
+              message: `Activate failed: workspace \"${workspaceId}\" not found. Please save topology first or reload workspace list.`,
+            });
+            return;
+          }
+
           const result = await client.setActiveWorkspace(workspaceId);
           const messageText = formatValidationResult(result);
           logBlock(outputChannel, "INFO", `[ControlCenterWorkspaceActivate][requestId=${requestId}]`, [
