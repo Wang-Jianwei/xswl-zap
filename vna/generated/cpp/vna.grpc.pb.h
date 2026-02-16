@@ -43,6 +43,13 @@ class VnaControl final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>> PrepareAsyncValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>>(PrepareAsyncValidateTopologyRaw(context, request, cq));
     }
+    virtual ::grpc::Status PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::vna::TopologyPrecheckResult* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>> AsyncPrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>>(AsyncPrecheckWorkspaceTopologyRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>> PrepareAsyncPrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>>(PrepareAsyncPrecheckWorkspaceTopologyRaw(context, request, cq));
+    }
     virtual ::grpc::Status UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::vna::ValidationResult* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>> AsyncUpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>>(AsyncUpsertWorkspaceTopologyRaw(context, request, cq));
@@ -134,6 +141,8 @@ class VnaControl final {
       virtual ~async_interface() {}
       virtual void ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void GetWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response, std::function<void(::grpc::Status)>) = 0;
@@ -164,6 +173,8 @@ class VnaControl final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>* AsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>* PrepareAsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>* AsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::TopologyPrecheckResult>* PrepareAsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>* AsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>* PrepareAsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::WorkspaceTopologyConfig>* AsyncGetWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) = 0;
@@ -199,6 +210,13 @@ class VnaControl final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>> PrepareAsyncValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>>(PrepareAsyncValidateTopologyRaw(context, request, cq));
+    }
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::vna::TopologyPrecheckResult* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>> AsyncPrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>>(AsyncPrecheckWorkspaceTopologyRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>> PrepareAsyncPrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>>(PrepareAsyncPrecheckWorkspaceTopologyRaw(context, request, cq));
     }
     ::grpc::Status UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::vna::ValidationResult* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>> AsyncUpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) {
@@ -291,6 +309,8 @@ class VnaControl final {
      public:
       void ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) override;
       void ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, std::function<void(::grpc::Status)>) override;
+      void PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, ::grpc::ClientUnaryReactor* reactor) override;
       void UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) override;
       void UpsertWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetWorkspaceTopology(::grpc::ClientContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response, std::function<void(::grpc::Status)>) override;
@@ -327,6 +347,8 @@ class VnaControl final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* AsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* PrepareAsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>* AsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>* PrepareAsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* AsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* PrepareAsyncUpsertWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceTopologyUpsertRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::WorkspaceTopologyConfig>* AsyncGetWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::WorkspaceRef& request, ::grpc::CompletionQueue* cq) override;
@@ -353,6 +375,7 @@ class VnaControl final {
     ::grpc::ClientAsyncReader< ::vna::AcquisitionResult>* AsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
     ::grpc::ClientAsyncReader< ::vna::AcquisitionResult>* PrepareAsyncStreamAcquisitionRaw(::grpc::ClientContext* context, const ::vna::AcquisitionRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_ValidateTopology_;
+    const ::grpc::internal::RpcMethod rpcmethod_PrecheckWorkspaceTopology_;
     const ::grpc::internal::RpcMethod rpcmethod_UpsertWorkspaceTopology_;
     const ::grpc::internal::RpcMethod rpcmethod_GetWorkspaceTopology_;
     const ::grpc::internal::RpcMethod rpcmethod_ListWorkspaceTopologies_;
@@ -373,6 +396,7 @@ class VnaControl final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status ValidateTopology(::grpc::ServerContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response);
+    virtual ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response);
     virtual ::grpc::Status UpsertWorkspaceTopology(::grpc::ServerContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response);
     virtual ::grpc::Status GetWorkspaceTopology(::grpc::ServerContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response);
     virtual ::grpc::Status ListWorkspaceTopologies(::grpc::ServerContext* context, const ::vna::Empty* request, ::vna::WorkspaceTopologyList* response);
@@ -407,12 +431,32 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithAsyncMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPrecheckWorkspaceTopology(::grpc::ServerContext* context, ::vna::TopologyPrecheckRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::TopologyPrecheckResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(2);
     }
     ~WithAsyncMethod_UpsertWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -423,7 +467,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUpsertWorkspaceTopology(::grpc::ServerContext* context, ::vna::WorkspaceTopologyUpsertRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::ValidationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -432,7 +476,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodAsync(2);
+      ::grpc::Service::MarkMethodAsync(3);
     }
     ~WithAsyncMethod_GetWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -443,7 +487,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWorkspaceTopology(::grpc::ServerContext* context, ::vna::WorkspaceRef* request, ::grpc::ServerAsyncResponseWriter< ::vna::WorkspaceTopologyConfig>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -452,7 +496,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodAsync(3);
+      ::grpc::Service::MarkMethodAsync(4);
     }
     ~WithAsyncMethod_ListWorkspaceTopologies() override {
       BaseClassMustBeDerivedFromService(this);
@@ -463,7 +507,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListWorkspaceTopologies(::grpc::ServerContext* context, ::vna::Empty* request, ::grpc::ServerAsyncResponseWriter< ::vna::WorkspaceTopologyList>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -472,7 +516,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_SetActiveWorkspace() override {
       BaseClassMustBeDerivedFromService(this);
@@ -483,7 +527,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetActiveWorkspace(::grpc::ServerContext* context, ::vna::WorkspaceRef* request, ::grpc::ServerAsyncResponseWriter< ::vna::ValidationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -492,7 +536,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_GetServiceStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -503,7 +547,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetServiceStatus(::grpc::ServerContext* context, ::vna::Empty* request, ::grpc::ServerAsyncResponseWriter< ::vna::ServiceStatus>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -512,7 +556,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod_GetInstanceCapabilities() override {
       BaseClassMustBeDerivedFromService(this);
@@ -523,7 +567,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetInstanceCapabilities(::grpc::ServerContext* context, ::vna::InstanceSelector* request, ::grpc::ServerAsyncResponseWriter< ::vna::InstanceCapabilities>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -532,7 +576,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetScanState() {
-      ::grpc::Service::MarkMethodAsync(7);
+      ::grpc::Service::MarkMethodAsync(8);
     }
     ~WithAsyncMethod_SetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -543,7 +587,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetScanState(::grpc::ServerContext* context, ::vna::ScanStateRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::ScanStateResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -552,7 +596,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetScanState() {
-      ::grpc::Service::MarkMethodAsync(8);
+      ::grpc::Service::MarkMethodAsync(9);
     }
     ~WithAsyncMethod_GetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -563,7 +607,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetScanState(::grpc::ServerContext* context, ::vna::InstanceSelector* request, ::grpc::ServerAsyncResponseWriter< ::vna::ScanStateResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -572,7 +616,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_Acquire() {
-      ::grpc::Service::MarkMethodAsync(9);
+      ::grpc::Service::MarkMethodAsync(10);
     }
     ~WithAsyncMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -583,7 +627,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAcquire(::grpc::ServerContext* context, ::vna::AcquisitionRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::AcquisitionResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -592,7 +636,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodAsync(10);
+      ::grpc::Service::MarkMethodAsync(11);
     }
     ~WithAsyncMethod_ImportAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -603,7 +647,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestImportAcquisition(::grpc::ServerContext* context, ::vna::ImportAcquisitionRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::AcquisitionResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -612,7 +656,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodAsync(11);
+      ::grpc::Service::MarkMethodAsync(12);
     }
     ~WithAsyncMethod_CompareImportedAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -623,7 +667,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestCompareImportedAcquisition(::grpc::ServerContext* context, ::vna::CompareImportedAcquisitionRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::CompareImportedAcquisitionResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -632,7 +676,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodAsync(12);
+      ::grpc::Service::MarkMethodAsync(13);
     }
     ~WithAsyncMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -643,10 +687,10 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStreamAcquisition(::grpc::ServerContext* context, ::vna::AcquisitionRequest* request, ::grpc::ServerAsyncWriter< ::vna::AcquisitionResult>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(12, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(13, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_ValidateTopology<WithAsyncMethod_UpsertWorkspaceTopology<WithAsyncMethod_GetWorkspaceTopology<WithAsyncMethod_ListWorkspaceTopologies<WithAsyncMethod_SetActiveWorkspace<WithAsyncMethod_GetServiceStatus<WithAsyncMethod_GetInstanceCapabilities<WithAsyncMethod_SetScanState<WithAsyncMethod_GetScanState<WithAsyncMethod_Acquire<WithAsyncMethod_ImportAcquisition<WithAsyncMethod_CompareImportedAcquisition<WithAsyncMethod_StreamAcquisition<Service > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_ValidateTopology<WithAsyncMethod_PrecheckWorkspaceTopology<WithAsyncMethod_UpsertWorkspaceTopology<WithAsyncMethod_GetWorkspaceTopology<WithAsyncMethod_ListWorkspaceTopologies<WithAsyncMethod_SetActiveWorkspace<WithAsyncMethod_GetServiceStatus<WithAsyncMethod_GetInstanceCapabilities<WithAsyncMethod_SetScanState<WithAsyncMethod_GetScanState<WithAsyncMethod_Acquire<WithAsyncMethod_ImportAcquisition<WithAsyncMethod_CompareImportedAcquisition<WithAsyncMethod_StreamAcquisition<Service > > > > > > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_ValidateTopology : public BaseClass {
    private:
@@ -675,18 +719,45 @@ class VnaControl final {
       ::grpc::CallbackServerContext* /*context*/, const ::vna::Topology* /*request*/, ::vna::ValidationResult* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithCallbackMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response) { return this->PrecheckWorkspaceTopology(context, request, response); }));}
+    void SetMessageAllocatorFor_PrecheckWorkspaceTopology(
+        ::grpc::MessageAllocator< ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* PrecheckWorkspaceTopology(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithCallbackMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodCallback(1,
+      ::grpc::Service::MarkMethodCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::WorkspaceTopologyUpsertRequest* request, ::vna::ValidationResult* response) { return this->UpsertWorkspaceTopology(context, request, response); }));}
     void SetMessageAllocatorFor_UpsertWorkspaceTopology(
         ::grpc::MessageAllocator< ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -707,13 +778,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodCallback(2,
+      ::grpc::Service::MarkMethodCallback(3,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::WorkspaceRef* request, ::vna::WorkspaceTopologyConfig* response) { return this->GetWorkspaceTopology(context, request, response); }));}
     void SetMessageAllocatorFor_GetWorkspaceTopology(
         ::grpc::MessageAllocator< ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -734,13 +805,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodCallback(3,
+      ::grpc::Service::MarkMethodCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::Empty, ::vna::WorkspaceTopologyList>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::Empty* request, ::vna::WorkspaceTopologyList* response) { return this->ListWorkspaceTopologies(context, request, response); }));}
     void SetMessageAllocatorFor_ListWorkspaceTopologies(
         ::grpc::MessageAllocator< ::vna::Empty, ::vna::WorkspaceTopologyList>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::Empty, ::vna::WorkspaceTopologyList>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -761,13 +832,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceRef, ::vna::ValidationResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::WorkspaceRef* request, ::vna::ValidationResult* response) { return this->SetActiveWorkspace(context, request, response); }));}
     void SetMessageAllocatorFor_SetActiveWorkspace(
         ::grpc::MessageAllocator< ::vna::WorkspaceRef, ::vna::ValidationResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::WorkspaceRef, ::vna::ValidationResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -788,13 +859,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodCallback(5,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::Empty, ::vna::ServiceStatus>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::Empty* request, ::vna::ServiceStatus* response) { return this->GetServiceStatus(context, request, response); }));}
     void SetMessageAllocatorFor_GetServiceStatus(
         ::grpc::MessageAllocator< ::vna::Empty, ::vna::ServiceStatus>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::Empty, ::vna::ServiceStatus>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -815,13 +886,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodCallback(6,
+      ::grpc::Service::MarkMethodCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::InstanceSelector, ::vna::InstanceCapabilities>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::InstanceSelector* request, ::vna::InstanceCapabilities* response) { return this->GetInstanceCapabilities(context, request, response); }));}
     void SetMessageAllocatorFor_GetInstanceCapabilities(
         ::grpc::MessageAllocator< ::vna::InstanceSelector, ::vna::InstanceCapabilities>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::InstanceSelector, ::vna::InstanceCapabilities>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -842,13 +913,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetScanState() {
-      ::grpc::Service::MarkMethodCallback(7,
+      ::grpc::Service::MarkMethodCallback(8,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::ScanStateRequest, ::vna::ScanStateResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::ScanStateRequest* request, ::vna::ScanStateResponse* response) { return this->SetScanState(context, request, response); }));}
     void SetMessageAllocatorFor_SetScanState(
         ::grpc::MessageAllocator< ::vna::ScanStateRequest, ::vna::ScanStateResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::ScanStateRequest, ::vna::ScanStateResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -869,13 +940,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetScanState() {
-      ::grpc::Service::MarkMethodCallback(8,
+      ::grpc::Service::MarkMethodCallback(9,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::InstanceSelector, ::vna::ScanStateResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::InstanceSelector* request, ::vna::ScanStateResponse* response) { return this->GetScanState(context, request, response); }));}
     void SetMessageAllocatorFor_GetScanState(
         ::grpc::MessageAllocator< ::vna::InstanceSelector, ::vna::ScanStateResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::InstanceSelector, ::vna::ScanStateResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -896,13 +967,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_Acquire() {
-      ::grpc::Service::MarkMethodCallback(9,
+      ::grpc::Service::MarkMethodCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::AcquisitionRequest* request, ::vna::AcquisitionResult* response) { return this->Acquire(context, request, response); }));}
     void SetMessageAllocatorFor_Acquire(
         ::grpc::MessageAllocator< ::vna::AcquisitionRequest, ::vna::AcquisitionResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::AcquisitionRequest, ::vna::AcquisitionResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -923,13 +994,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodCallback(10,
+      ::grpc::Service::MarkMethodCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::ImportAcquisitionRequest* request, ::vna::AcquisitionResult* response) { return this->ImportAcquisition(context, request, response); }));}
     void SetMessageAllocatorFor_ImportAcquisition(
         ::grpc::MessageAllocator< ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -950,13 +1021,13 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodCallback(11,
+      ::grpc::Service::MarkMethodCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::CompareImportedAcquisitionRequest* request, ::vna::CompareImportedAcquisitionResponse* response) { return this->CompareImportedAcquisition(context, request, response); }));}
     void SetMessageAllocatorFor_CompareImportedAcquisition(
         ::grpc::MessageAllocator< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -977,7 +1048,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodCallback(12,
+      ::grpc::Service::MarkMethodCallback(13,
           new ::grpc::internal::CallbackServerStreamingHandler< ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::AcquisitionRequest* request) { return this->StreamAcquisition(context, request); }));
@@ -993,7 +1064,7 @@ class VnaControl final {
     virtual ::grpc::ServerWriteReactor< ::vna::AcquisitionResult>* StreamAcquisition(
       ::grpc::CallbackServerContext* /*context*/, const ::vna::AcquisitionRequest* /*request*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_ValidateTopology<WithCallbackMethod_UpsertWorkspaceTopology<WithCallbackMethod_GetWorkspaceTopology<WithCallbackMethod_ListWorkspaceTopologies<WithCallbackMethod_SetActiveWorkspace<WithCallbackMethod_GetServiceStatus<WithCallbackMethod_GetInstanceCapabilities<WithCallbackMethod_SetScanState<WithCallbackMethod_GetScanState<WithCallbackMethod_Acquire<WithCallbackMethod_ImportAcquisition<WithCallbackMethod_CompareImportedAcquisition<WithCallbackMethod_StreamAcquisition<Service > > > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_ValidateTopology<WithCallbackMethod_PrecheckWorkspaceTopology<WithCallbackMethod_UpsertWorkspaceTopology<WithCallbackMethod_GetWorkspaceTopology<WithCallbackMethod_ListWorkspaceTopologies<WithCallbackMethod_SetActiveWorkspace<WithCallbackMethod_GetServiceStatus<WithCallbackMethod_GetInstanceCapabilities<WithCallbackMethod_SetScanState<WithCallbackMethod_GetScanState<WithCallbackMethod_Acquire<WithCallbackMethod_ImportAcquisition<WithCallbackMethod_CompareImportedAcquisition<WithCallbackMethod_StreamAcquisition<Service > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_ValidateTopology : public BaseClass {
@@ -1013,12 +1084,29 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithGenericMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
   class WithGenericMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(2);
     }
     ~WithGenericMethod_UpsertWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1035,7 +1123,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodGeneric(2);
+      ::grpc::Service::MarkMethodGeneric(3);
     }
     ~WithGenericMethod_GetWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1052,7 +1140,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodGeneric(3);
+      ::grpc::Service::MarkMethodGeneric(4);
     }
     ~WithGenericMethod_ListWorkspaceTopologies() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1069,7 +1157,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_SetActiveWorkspace() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1086,7 +1174,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_GetServiceStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1103,7 +1191,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod_GetInstanceCapabilities() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1120,7 +1208,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetScanState() {
-      ::grpc::Service::MarkMethodGeneric(7);
+      ::grpc::Service::MarkMethodGeneric(8);
     }
     ~WithGenericMethod_SetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1137,7 +1225,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetScanState() {
-      ::grpc::Service::MarkMethodGeneric(8);
+      ::grpc::Service::MarkMethodGeneric(9);
     }
     ~WithGenericMethod_GetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1154,7 +1242,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_Acquire() {
-      ::grpc::Service::MarkMethodGeneric(9);
+      ::grpc::Service::MarkMethodGeneric(10);
     }
     ~WithGenericMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1171,7 +1259,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodGeneric(10);
+      ::grpc::Service::MarkMethodGeneric(11);
     }
     ~WithGenericMethod_ImportAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1188,7 +1276,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodGeneric(11);
+      ::grpc::Service::MarkMethodGeneric(12);
     }
     ~WithGenericMethod_CompareImportedAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1205,7 +1293,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodGeneric(12);
+      ::grpc::Service::MarkMethodGeneric(13);
     }
     ~WithGenericMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1237,12 +1325,32 @@ class VnaControl final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPrecheckWorkspaceTopology(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(2);
     }
     ~WithRawMethod_UpsertWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1253,7 +1361,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUpsertWorkspaceTopology(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1262,7 +1370,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodRaw(2);
+      ::grpc::Service::MarkMethodRaw(3);
     }
     ~WithRawMethod_GetWorkspaceTopology() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1273,7 +1381,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetWorkspaceTopology(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1282,7 +1390,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodRaw(3);
+      ::grpc::Service::MarkMethodRaw(4);
     }
     ~WithRawMethod_ListWorkspaceTopologies() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1293,7 +1401,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestListWorkspaceTopologies(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1302,7 +1410,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_SetActiveWorkspace() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1313,7 +1421,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetActiveWorkspace(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1322,7 +1430,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_GetServiceStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1333,7 +1441,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetServiceStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1342,7 +1450,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod_GetInstanceCapabilities() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1353,7 +1461,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetInstanceCapabilities(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1362,7 +1470,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetScanState() {
-      ::grpc::Service::MarkMethodRaw(7);
+      ::grpc::Service::MarkMethodRaw(8);
     }
     ~WithRawMethod_SetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1373,7 +1481,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetScanState(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1382,7 +1490,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetScanState() {
-      ::grpc::Service::MarkMethodRaw(8);
+      ::grpc::Service::MarkMethodRaw(9);
     }
     ~WithRawMethod_GetScanState() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1393,7 +1501,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetScanState(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1402,7 +1510,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_Acquire() {
-      ::grpc::Service::MarkMethodRaw(9);
+      ::grpc::Service::MarkMethodRaw(10);
     }
     ~WithRawMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1413,7 +1521,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAcquire(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1422,7 +1530,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodRaw(10);
+      ::grpc::Service::MarkMethodRaw(11);
     }
     ~WithRawMethod_ImportAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1433,7 +1541,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestImportAcquisition(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1442,7 +1550,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodRaw(11);
+      ::grpc::Service::MarkMethodRaw(12);
     }
     ~WithRawMethod_CompareImportedAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1453,7 +1561,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestCompareImportedAcquisition(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1462,7 +1570,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodRaw(12);
+      ::grpc::Service::MarkMethodRaw(13);
     }
     ~WithRawMethod_StreamAcquisition() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1473,7 +1581,7 @@ class VnaControl final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestStreamAcquisition(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(12, context, request, writer, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncServerStreaming(13, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1499,12 +1607,34 @@ class VnaControl final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithRawCallbackMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PrecheckWorkspaceTopology(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* PrecheckWorkspaceTopology(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodRawCallback(1,
+      ::grpc::Service::MarkMethodRawCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UpsertWorkspaceTopology(context, request, response); }));
@@ -1526,7 +1656,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodRawCallback(2,
+      ::grpc::Service::MarkMethodRawCallback(3,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetWorkspaceTopology(context, request, response); }));
@@ -1548,7 +1678,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodRawCallback(3,
+      ::grpc::Service::MarkMethodRawCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ListWorkspaceTopologies(context, request, response); }));
@@ -1570,7 +1700,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetActiveWorkspace(context, request, response); }));
@@ -1592,7 +1722,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodRawCallback(5,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetServiceStatus(context, request, response); }));
@@ -1614,7 +1744,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodRawCallback(6,
+      ::grpc::Service::MarkMethodRawCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetInstanceCapabilities(context, request, response); }));
@@ -1636,7 +1766,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetScanState() {
-      ::grpc::Service::MarkMethodRawCallback(7,
+      ::grpc::Service::MarkMethodRawCallback(8,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetScanState(context, request, response); }));
@@ -1658,7 +1788,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetScanState() {
-      ::grpc::Service::MarkMethodRawCallback(8,
+      ::grpc::Service::MarkMethodRawCallback(9,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetScanState(context, request, response); }));
@@ -1680,7 +1810,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_Acquire() {
-      ::grpc::Service::MarkMethodRawCallback(9,
+      ::grpc::Service::MarkMethodRawCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Acquire(context, request, response); }));
@@ -1702,7 +1832,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodRawCallback(10,
+      ::grpc::Service::MarkMethodRawCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ImportAcquisition(context, request, response); }));
@@ -1724,7 +1854,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodRawCallback(11,
+      ::grpc::Service::MarkMethodRawCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->CompareImportedAcquisition(context, request, response); }));
@@ -1746,7 +1876,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodRawCallback(12,
+      ::grpc::Service::MarkMethodRawCallback(13,
           new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->StreamAcquisition(context, request); }));
@@ -1790,12 +1920,39 @@ class VnaControl final {
     virtual ::grpc::Status StreamedValidateTopology(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::Topology,::vna::ValidationResult>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_PrecheckWorkspaceTopology : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_PrecheckWorkspaceTopology() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult>* streamer) {
+                       return this->StreamedPrecheckWorkspaceTopology(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_PrecheckWorkspaceTopology() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* /*context*/, const ::vna::TopologyPrecheckRequest* /*request*/, ::vna::TopologyPrecheckResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedPrecheckWorkspaceTopology(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::TopologyPrecheckRequest,::vna::TopologyPrecheckResult>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_UpsertWorkspaceTopology : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_UpsertWorkspaceTopology() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult>(
             [this](::grpc::ServerContext* context,
@@ -1822,7 +1979,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetWorkspaceTopology() {
-      ::grpc::Service::MarkMethodStreamed(2,
+      ::grpc::Service::MarkMethodStreamed(3,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig>(
             [this](::grpc::ServerContext* context,
@@ -1849,7 +2006,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ListWorkspaceTopologies() {
-      ::grpc::Service::MarkMethodStreamed(3,
+      ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::Empty, ::vna::WorkspaceTopologyList>(
             [this](::grpc::ServerContext* context,
@@ -1876,7 +2033,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetActiveWorkspace() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::WorkspaceRef, ::vna::ValidationResult>(
             [this](::grpc::ServerContext* context,
@@ -1903,7 +2060,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetServiceStatus() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::Empty, ::vna::ServiceStatus>(
             [this](::grpc::ServerContext* context,
@@ -1930,7 +2087,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetInstanceCapabilities() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::InstanceSelector, ::vna::InstanceCapabilities>(
             [this](::grpc::ServerContext* context,
@@ -1957,7 +2114,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetScanState() {
-      ::grpc::Service::MarkMethodStreamed(7,
+      ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::ScanStateRequest, ::vna::ScanStateResponse>(
             [this](::grpc::ServerContext* context,
@@ -1984,7 +2141,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetScanState() {
-      ::grpc::Service::MarkMethodStreamed(8,
+      ::grpc::Service::MarkMethodStreamed(9,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::InstanceSelector, ::vna::ScanStateResponse>(
             [this](::grpc::ServerContext* context,
@@ -2011,7 +2168,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_Acquire() {
-      ::grpc::Service::MarkMethodStreamed(9,
+      ::grpc::Service::MarkMethodStreamed(10,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](::grpc::ServerContext* context,
@@ -2038,7 +2195,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ImportAcquisition() {
-      ::grpc::Service::MarkMethodStreamed(10,
+      ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult>(
             [this](::grpc::ServerContext* context,
@@ -2065,7 +2222,7 @@ class VnaControl final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_CompareImportedAcquisition() {
-      ::grpc::Service::MarkMethodStreamed(11,
+      ::grpc::Service::MarkMethodStreamed(12,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse>(
             [this](::grpc::ServerContext* context,
@@ -2086,14 +2243,14 @@ class VnaControl final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedCompareImportedAcquisition(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::CompareImportedAcquisitionRequest,::vna::CompareImportedAcquisitionResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_UpsertWorkspaceTopology<WithStreamedUnaryMethod_GetWorkspaceTopology<WithStreamedUnaryMethod_ListWorkspaceTopologies<WithStreamedUnaryMethod_SetActiveWorkspace<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_GetInstanceCapabilities<WithStreamedUnaryMethod_SetScanState<WithStreamedUnaryMethod_GetScanState<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<Service > > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_PrecheckWorkspaceTopology<WithStreamedUnaryMethod_UpsertWorkspaceTopology<WithStreamedUnaryMethod_GetWorkspaceTopology<WithStreamedUnaryMethod_ListWorkspaceTopologies<WithStreamedUnaryMethod_SetActiveWorkspace<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_GetInstanceCapabilities<WithStreamedUnaryMethod_SetScanState<WithStreamedUnaryMethod_GetScanState<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<Service > > > > > > > > > > > > > StreamedUnaryService;
   template <class BaseClass>
   class WithSplitStreamingMethod_StreamAcquisition : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithSplitStreamingMethod_StreamAcquisition() {
-      ::grpc::Service::MarkMethodStreamed(12,
+      ::grpc::Service::MarkMethodStreamed(13,
         new ::grpc::internal::SplitServerStreamingHandler<
           ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
             [this](::grpc::ServerContext* context,
@@ -2115,7 +2272,7 @@ class VnaControl final {
     virtual ::grpc::Status StreamedStreamAcquisition(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::vna::AcquisitionRequest,::vna::AcquisitionResult>* server_split_streamer) = 0;
   };
   typedef WithSplitStreamingMethod_StreamAcquisition<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_UpsertWorkspaceTopology<WithStreamedUnaryMethod_GetWorkspaceTopology<WithStreamedUnaryMethod_ListWorkspaceTopologies<WithStreamedUnaryMethod_SetActiveWorkspace<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_GetInstanceCapabilities<WithStreamedUnaryMethod_SetScanState<WithStreamedUnaryMethod_GetScanState<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<WithSplitStreamingMethod_StreamAcquisition<Service > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_ValidateTopology<WithStreamedUnaryMethod_PrecheckWorkspaceTopology<WithStreamedUnaryMethod_UpsertWorkspaceTopology<WithStreamedUnaryMethod_GetWorkspaceTopology<WithStreamedUnaryMethod_ListWorkspaceTopologies<WithStreamedUnaryMethod_SetActiveWorkspace<WithStreamedUnaryMethod_GetServiceStatus<WithStreamedUnaryMethod_GetInstanceCapabilities<WithStreamedUnaryMethod_SetScanState<WithStreamedUnaryMethod_GetScanState<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_ImportAcquisition<WithStreamedUnaryMethod_CompareImportedAcquisition<WithSplitStreamingMethod_StreamAcquisition<Service > > > > > > > > > > > > > > StreamedService;
 };
 
 class ResourceBroker final {
@@ -2126,6 +2283,34 @@ class ResourceBroker final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
+    virtual ::grpc::Status AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::vna::LockAcquireResult* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>> AsyncAcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>>(AsyncAcquireLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>> PrepareAsyncAcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>>(PrepareAsyncAcquireLockRaw(context, request, cq));
+    }
+    virtual ::grpc::Status RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::vna::LockOperationResult* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>> AsyncRenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>>(AsyncRenewLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>> PrepareAsyncRenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>>(PrepareAsyncRenewLockRaw(context, request, cq));
+    }
+    virtual ::grpc::Status ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::vna::LockOperationResult* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>> AsyncReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>>(AsyncReleaseLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>> PrepareAsyncReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>>(PrepareAsyncReleaseLockRaw(context, request, cq));
+    }
+    virtual ::grpc::Status GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::vna::LockSnapshot* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>> AsyncGetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>>(AsyncGetLockSnapshotRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>> PrepareAsyncGetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>>(PrepareAsyncGetLockSnapshotRaw(context, request, cq));
+    }
     virtual ::grpc::Status Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::vna::LeaseInfo* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LeaseInfo>> AsyncAcquire(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::vna::LeaseInfo>>(AsyncAcquireRaw(context, request, cq));
@@ -2150,6 +2335,14 @@ class ResourceBroker final {
     class async_interface {
      public:
       virtual ~async_interface() {}
+      virtual void AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void Renew(::grpc::ClientContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) = 0;
@@ -2161,6 +2354,14 @@ class ResourceBroker final {
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>* AsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockAcquireResult>* PrepareAsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>* AsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>* PrepareAsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>* AsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockOperationResult>* PrepareAsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>* AsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LockSnapshot>* PrepareAsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LeaseInfo>* AsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::LeaseInfo>* PrepareAsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::vna::ValidationResult>* AsyncRenewRaw(::grpc::ClientContext* context, const ::vna::LeaseInfo& request, ::grpc::CompletionQueue* cq) = 0;
@@ -2171,6 +2372,34 @@ class ResourceBroker final {
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    ::grpc::Status AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::vna::LockAcquireResult* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>> AsyncAcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>>(AsyncAcquireLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>> PrepareAsyncAcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>>(PrepareAsyncAcquireLockRaw(context, request, cq));
+    }
+    ::grpc::Status RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::vna::LockOperationResult* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>> AsyncRenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>>(AsyncRenewLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>> PrepareAsyncRenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>>(PrepareAsyncRenewLockRaw(context, request, cq));
+    }
+    ::grpc::Status ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::vna::LockOperationResult* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>> AsyncReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>>(AsyncReleaseLockRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>> PrepareAsyncReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>>(PrepareAsyncReleaseLockRaw(context, request, cq));
+    }
+    ::grpc::Status GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::vna::LockSnapshot* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>> AsyncGetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>>(AsyncGetLockSnapshotRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>> PrepareAsyncGetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>>(PrepareAsyncGetLockSnapshotRaw(context, request, cq));
+    }
     ::grpc::Status Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::vna::LeaseInfo* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LeaseInfo>> AsyncAcquire(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::vna::LeaseInfo>>(AsyncAcquireRaw(context, request, cq));
@@ -2195,6 +2424,14 @@ class ResourceBroker final {
     class async final :
       public StubInterface::async_interface {
      public:
+      void AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, std::function<void(::grpc::Status)>) override;
+      void AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)>) override;
+      void RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)>) override;
+      void ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, std::function<void(::grpc::Status)>) override;
+      void GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, ::grpc::ClientUnaryReactor* reactor) override;
       void Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response, std::function<void(::grpc::Status)>) override;
       void Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response, ::grpc::ClientUnaryReactor* reactor) override;
       void Renew(::grpc::ClientContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response, std::function<void(::grpc::Status)>) override;
@@ -2212,12 +2449,24 @@ class ResourceBroker final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>* AsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>* PrepareAsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* AsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* PrepareAsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* AsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* PrepareAsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>* AsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>* PrepareAsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::LeaseInfo>* AsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::LeaseInfo>* PrepareAsyncAcquireRaw(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* AsyncRenewRaw(::grpc::ClientContext* context, const ::vna::LeaseInfo& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* PrepareAsyncRenewRaw(::grpc::ClientContext* context, const ::vna::LeaseInfo& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* AsyncReleaseRaw(::grpc::ClientContext* context, const ::vna::LeaseInfo& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* PrepareAsyncReleaseRaw(::grpc::ClientContext* context, const ::vna::LeaseInfo& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_AcquireLock_;
+    const ::grpc::internal::RpcMethod rpcmethod_RenewLock_;
+    const ::grpc::internal::RpcMethod rpcmethod_ReleaseLock_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetLockSnapshot_;
     const ::grpc::internal::RpcMethod rpcmethod_Acquire_;
     const ::grpc::internal::RpcMethod rpcmethod_Renew_;
     const ::grpc::internal::RpcMethod rpcmethod_Release_;
@@ -2228,9 +2477,93 @@ class ResourceBroker final {
    public:
     Service();
     virtual ~Service();
+    virtual ::grpc::Status AcquireLock(::grpc::ServerContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response);
+    virtual ::grpc::Status RenewLock(::grpc::ServerContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response);
+    virtual ::grpc::Status ReleaseLock(::grpc::ServerContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response);
+    virtual ::grpc::Status GetLockSnapshot(::grpc::ServerContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response);
     virtual ::grpc::Status Acquire(::grpc::ServerContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response);
     virtual ::grpc::Status Renew(::grpc::ServerContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response);
     virtual ::grpc::Status Release(::grpc::ServerContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAcquireLock(::grpc::ServerContext* context, ::vna::LockAcquireRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::LockAcquireResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_RenewLock() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRenewLock(::grpc::ServerContext* context, ::vna::LockRenewRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::LockOperationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestReleaseLock(::grpc::ServerContext* context, ::vna::LockReleaseRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::LockOperationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetLockSnapshot(::grpc::ServerContext* context, ::vna::LockSnapshotRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::LockSnapshot>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
   };
   template <class BaseClass>
   class WithAsyncMethod_Acquire : public BaseClass {
@@ -2238,7 +2571,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_Acquire() {
-      ::grpc::Service::MarkMethodAsync(0);
+      ::grpc::Service::MarkMethodAsync(4);
     }
     ~WithAsyncMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2249,7 +2582,7 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAcquire(::grpc::ServerContext* context, ::vna::ResourceRequest* request, ::grpc::ServerAsyncResponseWriter< ::vna::LeaseInfo>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2258,7 +2591,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_Renew() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_Renew() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2269,7 +2602,7 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRenew(::grpc::ServerContext* context, ::vna::LeaseInfo* request, ::grpc::ServerAsyncResponseWriter< ::vna::ValidationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2278,7 +2611,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_Release() {
-      ::grpc::Service::MarkMethodAsync(2);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_Release() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2289,23 +2622,131 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRelease(::grpc::ServerContext* context, ::vna::LeaseInfo* request, ::grpc::ServerAsyncResponseWriter< ::vna::ValidationResult>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Acquire<WithAsyncMethod_Renew<WithAsyncMethod_Release<Service > > > AsyncService;
+  typedef WithAsyncMethod_AcquireLock<WithAsyncMethod_RenewLock<WithAsyncMethod_ReleaseLock<WithAsyncMethod_GetLockSnapshot<WithAsyncMethod_Acquire<WithAsyncMethod_Renew<WithAsyncMethod_Release<Service > > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::LockAcquireRequest, ::vna::LockAcquireResult>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response) { return this->AcquireLock(context, request, response); }));}
+    void SetMessageAllocatorFor_AcquireLock(
+        ::grpc::MessageAllocator< ::vna::LockAcquireRequest, ::vna::LockAcquireResult>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LockAcquireRequest, ::vna::LockAcquireResult>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AcquireLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_RenewLock() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::LockRenewRequest, ::vna::LockOperationResult>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response) { return this->RenewLock(context, request, response); }));}
+    void SetMessageAllocatorFor_RenewLock(
+        ::grpc::MessageAllocator< ::vna::LockRenewRequest, ::vna::LockOperationResult>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LockRenewRequest, ::vna::LockOperationResult>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RenewLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::LockReleaseRequest, ::vna::LockOperationResult>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response) { return this->ReleaseLock(context, request, response); }));}
+    void SetMessageAllocatorFor_ReleaseLock(
+        ::grpc::MessageAllocator< ::vna::LockReleaseRequest, ::vna::LockOperationResult>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LockReleaseRequest, ::vna::LockOperationResult>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ReleaseLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::vna::LockSnapshotRequest, ::vna::LockSnapshot>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response) { return this->GetLockSnapshot(context, request, response); }));}
+    void SetMessageAllocatorFor_GetLockSnapshot(
+        ::grpc::MessageAllocator< ::vna::LockSnapshotRequest, ::vna::LockSnapshot>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LockSnapshotRequest, ::vna::LockSnapshot>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetLockSnapshot(
+      ::grpc::CallbackServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/)  { return nullptr; }
+  };
   template <class BaseClass>
   class WithCallbackMethod_Acquire : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_Acquire() {
-      ::grpc::Service::MarkMethodCallback(0,
+      ::grpc::Service::MarkMethodCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::ResourceRequest, ::vna::LeaseInfo>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response) { return this->Acquire(context, request, response); }));}
     void SetMessageAllocatorFor_Acquire(
         ::grpc::MessageAllocator< ::vna::ResourceRequest, ::vna::LeaseInfo>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::ResourceRequest, ::vna::LeaseInfo>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2326,13 +2767,13 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_Renew() {
-      ::grpc::Service::MarkMethodCallback(1,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::LeaseInfo, ::vna::ValidationResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response) { return this->Renew(context, request, response); }));}
     void SetMessageAllocatorFor_Renew(
         ::grpc::MessageAllocator< ::vna::LeaseInfo, ::vna::ValidationResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LeaseInfo, ::vna::ValidationResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2353,13 +2794,13 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_Release() {
-      ::grpc::Service::MarkMethodCallback(2,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::vna::LeaseInfo, ::vna::ValidationResult>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::vna::LeaseInfo* request, ::vna::ValidationResult* response) { return this->Release(context, request, response); }));}
     void SetMessageAllocatorFor_Release(
         ::grpc::MessageAllocator< ::vna::LeaseInfo, ::vna::ValidationResult>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::vna::LeaseInfo, ::vna::ValidationResult>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2374,15 +2815,83 @@ class ResourceBroker final {
     virtual ::grpc::ServerUnaryReactor* Release(
       ::grpc::CallbackServerContext* /*context*/, const ::vna::LeaseInfo* /*request*/, ::vna::ValidationResult* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Acquire<WithCallbackMethod_Renew<WithCallbackMethod_Release<Service > > > CallbackService;
+  typedef WithCallbackMethod_AcquireLock<WithCallbackMethod_RenewLock<WithCallbackMethod_ReleaseLock<WithCallbackMethod_GetLockSnapshot<WithCallbackMethod_Acquire<WithCallbackMethod_Renew<WithCallbackMethod_Release<Service > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_RenewLock() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
   template <class BaseClass>
   class WithGenericMethod_Acquire : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_Acquire() {
-      ::grpc::Service::MarkMethodGeneric(0);
+      ::grpc::Service::MarkMethodGeneric(4);
     }
     ~WithGenericMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2399,7 +2908,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_Renew() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_Renew() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2416,7 +2925,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_Release() {
-      ::grpc::Service::MarkMethodGeneric(2);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_Release() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2428,12 +2937,92 @@ class ResourceBroker final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAcquireLock(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_RenewLock() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestRenewLock(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestReleaseLock(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetLockSnapshot(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_Acquire : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_Acquire() {
-      ::grpc::Service::MarkMethodRaw(0);
+      ::grpc::Service::MarkMethodRaw(4);
     }
     ~WithRawMethod_Acquire() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2444,7 +3033,7 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestAcquire(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2453,7 +3042,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_Renew() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_Renew() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2464,7 +3053,7 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRenew(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -2473,7 +3062,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_Release() {
-      ::grpc::Service::MarkMethodRaw(2);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_Release() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2484,8 +3073,96 @@ class ResourceBroker final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRelease(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AcquireLock(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AcquireLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_RenewLock() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RenewLock(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* RenewLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ReleaseLock(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* ReleaseLock(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetLockSnapshot(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetLockSnapshot(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithRawCallbackMethod_Acquire : public BaseClass {
@@ -2493,7 +3170,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_Acquire() {
-      ::grpc::Service::MarkMethodRawCallback(0,
+      ::grpc::Service::MarkMethodRawCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Acquire(context, request, response); }));
@@ -2515,7 +3192,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_Renew() {
-      ::grpc::Service::MarkMethodRawCallback(1,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Renew(context, request, response); }));
@@ -2537,7 +3214,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_Release() {
-      ::grpc::Service::MarkMethodRawCallback(2,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->Release(context, request, response); }));
@@ -2554,12 +3231,120 @@ class ResourceBroker final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_AcquireLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_AcquireLock() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::LockAcquireRequest, ::vna::LockAcquireResult>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::LockAcquireRequest, ::vna::LockAcquireResult>* streamer) {
+                       return this->StreamedAcquireLock(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_AcquireLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AcquireLock(::grpc::ServerContext* /*context*/, const ::vna::LockAcquireRequest* /*request*/, ::vna::LockAcquireResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAcquireLock(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::LockAcquireRequest,::vna::LockAcquireResult>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_RenewLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_RenewLock() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::LockRenewRequest, ::vna::LockOperationResult>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::LockRenewRequest, ::vna::LockOperationResult>* streamer) {
+                       return this->StreamedRenewLock(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_RenewLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status RenewLock(::grpc::ServerContext* /*context*/, const ::vna::LockRenewRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedRenewLock(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::LockRenewRequest,::vna::LockOperationResult>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_ReleaseLock : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_ReleaseLock() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::LockReleaseRequest, ::vna::LockOperationResult>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::LockReleaseRequest, ::vna::LockOperationResult>* streamer) {
+                       return this->StreamedReleaseLock(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_ReleaseLock() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status ReleaseLock(::grpc::ServerContext* /*context*/, const ::vna::LockReleaseRequest* /*request*/, ::vna::LockOperationResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedReleaseLock(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::LockReleaseRequest,::vna::LockOperationResult>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetLockSnapshot : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetLockSnapshot() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::vna::LockSnapshotRequest, ::vna::LockSnapshot>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::vna::LockSnapshotRequest, ::vna::LockSnapshot>* streamer) {
+                       return this->StreamedGetLockSnapshot(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetLockSnapshot() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetLockSnapshot(::grpc::ServerContext* /*context*/, const ::vna::LockSnapshotRequest* /*request*/, ::vna::LockSnapshot* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetLockSnapshot(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::LockSnapshotRequest,::vna::LockSnapshot>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_Acquire : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_Acquire() {
-      ::grpc::Service::MarkMethodStreamed(0,
+      ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::ResourceRequest, ::vna::LeaseInfo>(
             [this](::grpc::ServerContext* context,
@@ -2586,7 +3371,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_Renew() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::LeaseInfo, ::vna::ValidationResult>(
             [this](::grpc::ServerContext* context,
@@ -2613,7 +3398,7 @@ class ResourceBroker final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_Release() {
-      ::grpc::Service::MarkMethodStreamed(2,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::vna::LeaseInfo, ::vna::ValidationResult>(
             [this](::grpc::ServerContext* context,
@@ -2634,9 +3419,9 @@ class ResourceBroker final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedRelease(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::vna::LeaseInfo,::vna::ValidationResult>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_Renew<WithStreamedUnaryMethod_Release<Service > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_AcquireLock<WithStreamedUnaryMethod_RenewLock<WithStreamedUnaryMethod_ReleaseLock<WithStreamedUnaryMethod_GetLockSnapshot<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_Renew<WithStreamedUnaryMethod_Release<Service > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_Renew<WithStreamedUnaryMethod_Release<Service > > > StreamedService;
+  typedef WithStreamedUnaryMethod_AcquireLock<WithStreamedUnaryMethod_RenewLock<WithStreamedUnaryMethod_ReleaseLock<WithStreamedUnaryMethod_GetLockSnapshot<WithStreamedUnaryMethod_Acquire<WithStreamedUnaryMethod_Renew<WithStreamedUnaryMethod_Release<Service > > > > > > > StreamedService;
 };
 
 }  // namespace vna

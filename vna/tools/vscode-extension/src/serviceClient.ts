@@ -6,6 +6,7 @@ import type {
   CompareImportedAcquisitionSummary,
   ImportedAcquisitionSummary,
   InstanceCapabilities,
+  LockSnapshotResult,
   ServiceStatus,
   StreamPreviewFrame,
   StreamPreviewSummary,
@@ -129,6 +130,7 @@ export function parseWorkspaceTopologyConfig(payload: Record<string, unknown>): 
 
 export class ServiceClient {
   private readonly client: grpc.Client;
+  private readonly resourceBrokerClient: grpc.Client | null;
   private readonly deadlineMs: number;
 
   constructor(options: ServiceClientOptions) {
@@ -143,9 +145,78 @@ export class ServiceClient {
     const descriptor = grpc.loadPackageDefinition(packageDefinition) as grpc.GrpcObject;
     const vnaPackage = descriptor.vna as grpc.GrpcObject;
     const VnaControlCtor = vnaPackage.VnaControl as grpc.ServiceClientConstructor;
+    const ResourceBrokerCtor = vnaPackage.ResourceBroker as grpc.ServiceClientConstructor | undefined;
 
     this.client = new VnaControlCtor(options.address, grpc.credentials.createInsecure());
+    this.resourceBrokerClient = ResourceBrokerCtor
+      ? new ResourceBrokerCtor(options.address, grpc.credentials.createInsecure())
+      : null;
     this.deadlineMs = options.deadlineMs;
+  }
+
+  getLockSnapshot(selectors: Array<{ type: number; resourceId: string }>): Promise<LockSnapshotResult | null> {
+    if (!this.resourceBrokerClient) {
+      return Promise.resolve(null);
+    }
+
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<LockSnapshotResult | null>((resolve, reject) => {
+      const grpcClient = this.resourceBrokerClient as unknown as {
+        getLockSnapshot?: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      };
+
+      if (typeof grpcClient.getLockSnapshot !== "function") {
+        resolve(null);
+        return;
+      }
+
+      grpcClient.getLockSnapshot(
+        { selectors },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            if (error.code === grpc.status.UNIMPLEMENTED) {
+              resolve(null);
+              return;
+            }
+            reject(error);
+            return;
+          }
+
+          const leasesRaw = response.leases;
+          const leases = Array.isArray(leasesRaw)
+            ? leasesRaw.map((item) => {
+                const lease = item as Record<string, unknown>;
+                const selector = (lease.selector as Record<string, unknown> | undefined) ?? {};
+                const owner = (lease.owner as Record<string, unknown> | undefined) ?? {};
+                return {
+                  leaseId: String(lease.leaseId ?? ""),
+                  selector: {
+                    type: String(selector.type ?? ""),
+                    resourceId: String(selector.resourceId ?? ""),
+                  },
+                  owner: {
+                    workspaceId: String(owner.workspaceId ?? ""),
+                    instanceId: String(owner.instanceId ?? ""),
+                    sessionId: String(owner.sessionId ?? ""),
+                    actor: String(owner.actor ?? ""),
+                  },
+                  mode: String(lease.mode ?? ""),
+                  fencingToken: Number(lease.fencingToken ?? 0),
+                  acquiredAtMs: Number(lease.acquiredAtMs ?? 0),
+                  expireAtMs: Number(lease.expireAtMs ?? 0),
+                };
+              })
+            : [];
+
+          resolve({ leases });
+        },
+      );
+    });
   }
 
   precheckWorkspaceTopology(
@@ -1002,5 +1073,8 @@ export class ServiceClient {
 
   dispose(): void {
     this.client.close();
+    if (this.resourceBrokerClient) {
+      this.resourceBrokerClient.close();
+    }
   }
 }

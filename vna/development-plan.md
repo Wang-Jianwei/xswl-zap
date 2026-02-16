@@ -24,6 +24,9 @@
 - **WU-103（完成）**：VS Code 扩展接入保存前 best-effort precheck（服务不支持时自动回退旧路径）。
 - **WU-104（完成）**：控制中心/工作区编辑器接入结构化冲突展示、重试保存、只读打开、只读退出与状态透出（`READONLY` / `active-readonly`）。
 - **WU-105（完成）**：文档同步更新（架构/UI/计划），确保实现与文档口径一致。
+- **WU-106（完成）**：补齐 gRPC 适配层（`VnaControl.PrecheckWorkspaceTopology` + `ResourceBroker` 锁服务），并新增适配层回归测试。
+- **WU-107（完成）**：扩展侧接入 `GetLockSnapshot` 诊断链路（client + control center + workspace editor），支持冲突后查看实时锁占用者。
+- **WU-108（完成）**：工作区编辑器 precheck 冲突链路升级为“按全部冲突资源批量拉取锁快照并聚合提示”，减少二次操作并提升冲突定位效率。
 
 ---
 

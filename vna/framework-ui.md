@@ -170,7 +170,9 @@ flowchart LR
   - `Workspace Quick Edit`：面向当前已选目标 VNA 的快捷编辑；
   - 两者复用同一拓扑编辑组件（同交互、同保存链路、同校验能力）。
 - **保存前 precheck**：UI 在提交保存前触发后端预检查（拓扑错误 + 资源占用冲突）。
-- **冲突可视化**：UI 显示结构化冲突详情（resource / holder），并提供 `重试保存`、`只读打开`、`退出只读`。
+- **冲突可视化**：UI 显示结构化冲突详情（resource / holder），并提供 `重试保存`、`只读打开`、`退出只读`、`查看锁快照`。
+- **锁快照诊断**：冲突发生后可拉取 `GetLockSnapshot`，展示实时 lease 持有者（resource / workspace / actor / leaseId），用于快速定位占用来源。
+- **工作区快速定位增强**：`Workspace Quick Edit` 在保存被 precheck 阻断时，会按全部冲突资源批量拉取锁快照并直接展示聚合提示（含多资源 holder 摘要），减少手动逐项排查。
 - **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
 
 ---

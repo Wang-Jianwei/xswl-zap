@@ -107,6 +107,171 @@ export function scanStateToJSON(object: ScanState): string {
   }
 }
 
+export enum LockResourceType {
+  LOCK_RESOURCE_TYPE_UNSPECIFIED = 0,
+  LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE = 1,
+  LOCK_RESOURCE_TYPE_MOCK_DEVICE = 2,
+  LOCK_RESOURCE_TYPE_VIRTUAL_VNA = 3,
+  LOCK_RESOURCE_TYPE_TRIGGER_LINE = 4,
+  LOCK_RESOURCE_TYPE_CLOCK_DOMAIN = 5,
+  LOCK_RESOURCE_TYPE_WORKSPACE_SESSION = 6,
+  UNRECOGNIZED = -1,
+}
+
+export function lockResourceTypeFromJSON(object: any): LockResourceType {
+  switch (object) {
+    case 0:
+    case "LOCK_RESOURCE_TYPE_UNSPECIFIED":
+      return LockResourceType.LOCK_RESOURCE_TYPE_UNSPECIFIED;
+    case 1:
+    case "LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE":
+      return LockResourceType.LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE;
+    case 2:
+    case "LOCK_RESOURCE_TYPE_MOCK_DEVICE":
+      return LockResourceType.LOCK_RESOURCE_TYPE_MOCK_DEVICE;
+    case 3:
+    case "LOCK_RESOURCE_TYPE_VIRTUAL_VNA":
+      return LockResourceType.LOCK_RESOURCE_TYPE_VIRTUAL_VNA;
+    case 4:
+    case "LOCK_RESOURCE_TYPE_TRIGGER_LINE":
+      return LockResourceType.LOCK_RESOURCE_TYPE_TRIGGER_LINE;
+    case 5:
+    case "LOCK_RESOURCE_TYPE_CLOCK_DOMAIN":
+      return LockResourceType.LOCK_RESOURCE_TYPE_CLOCK_DOMAIN;
+    case 6:
+    case "LOCK_RESOURCE_TYPE_WORKSPACE_SESSION":
+      return LockResourceType.LOCK_RESOURCE_TYPE_WORKSPACE_SESSION;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return LockResourceType.UNRECOGNIZED;
+  }
+}
+
+export function lockResourceTypeToJSON(object: LockResourceType): string {
+  switch (object) {
+    case LockResourceType.LOCK_RESOURCE_TYPE_UNSPECIFIED:
+      return "LOCK_RESOURCE_TYPE_UNSPECIFIED";
+    case LockResourceType.LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE:
+      return "LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE";
+    case LockResourceType.LOCK_RESOURCE_TYPE_MOCK_DEVICE:
+      return "LOCK_RESOURCE_TYPE_MOCK_DEVICE";
+    case LockResourceType.LOCK_RESOURCE_TYPE_VIRTUAL_VNA:
+      return "LOCK_RESOURCE_TYPE_VIRTUAL_VNA";
+    case LockResourceType.LOCK_RESOURCE_TYPE_TRIGGER_LINE:
+      return "LOCK_RESOURCE_TYPE_TRIGGER_LINE";
+    case LockResourceType.LOCK_RESOURCE_TYPE_CLOCK_DOMAIN:
+      return "LOCK_RESOURCE_TYPE_CLOCK_DOMAIN";
+    case LockResourceType.LOCK_RESOURCE_TYPE_WORKSPACE_SESSION:
+      return "LOCK_RESOURCE_TYPE_WORKSPACE_SESSION";
+    case LockResourceType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export enum LockMode {
+  LOCK_MODE_UNSPECIFIED = 0,
+  LOCK_MODE_SHARED = 1,
+  LOCK_MODE_EXCLUSIVE = 2,
+  UNRECOGNIZED = -1,
+}
+
+export function lockModeFromJSON(object: any): LockMode {
+  switch (object) {
+    case 0:
+    case "LOCK_MODE_UNSPECIFIED":
+      return LockMode.LOCK_MODE_UNSPECIFIED;
+    case 1:
+    case "LOCK_MODE_SHARED":
+      return LockMode.LOCK_MODE_SHARED;
+    case 2:
+    case "LOCK_MODE_EXCLUSIVE":
+      return LockMode.LOCK_MODE_EXCLUSIVE;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return LockMode.UNRECOGNIZED;
+  }
+}
+
+export function lockModeToJSON(object: LockMode): string {
+  switch (object) {
+    case LockMode.LOCK_MODE_UNSPECIFIED:
+      return "LOCK_MODE_UNSPECIFIED";
+    case LockMode.LOCK_MODE_SHARED:
+      return "LOCK_MODE_SHARED";
+    case LockMode.LOCK_MODE_EXCLUSIVE:
+      return "LOCK_MODE_EXCLUSIVE";
+    case LockMode.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export enum LockState {
+  LOCK_STATE_UNSPECIFIED = 0,
+  LOCK_STATE_ACQUIRED = 1,
+  LOCK_STATE_REFRESHED = 2,
+  LOCK_STATE_RELEASED = 3,
+  LOCK_STATE_CONFLICT = 4,
+  LOCK_STATE_STALE = 5,
+  LOCK_STATE_EXPIRED = 6,
+  UNRECOGNIZED = -1,
+}
+
+export function lockStateFromJSON(object: any): LockState {
+  switch (object) {
+    case 0:
+    case "LOCK_STATE_UNSPECIFIED":
+      return LockState.LOCK_STATE_UNSPECIFIED;
+    case 1:
+    case "LOCK_STATE_ACQUIRED":
+      return LockState.LOCK_STATE_ACQUIRED;
+    case 2:
+    case "LOCK_STATE_REFRESHED":
+      return LockState.LOCK_STATE_REFRESHED;
+    case 3:
+    case "LOCK_STATE_RELEASED":
+      return LockState.LOCK_STATE_RELEASED;
+    case 4:
+    case "LOCK_STATE_CONFLICT":
+      return LockState.LOCK_STATE_CONFLICT;
+    case 5:
+    case "LOCK_STATE_STALE":
+      return LockState.LOCK_STATE_STALE;
+    case 6:
+    case "LOCK_STATE_EXPIRED":
+      return LockState.LOCK_STATE_EXPIRED;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return LockState.UNRECOGNIZED;
+  }
+}
+
+export function lockStateToJSON(object: LockState): string {
+  switch (object) {
+    case LockState.LOCK_STATE_UNSPECIFIED:
+      return "LOCK_STATE_UNSPECIFIED";
+    case LockState.LOCK_STATE_ACQUIRED:
+      return "LOCK_STATE_ACQUIRED";
+    case LockState.LOCK_STATE_REFRESHED:
+      return "LOCK_STATE_REFRESHED";
+    case LockState.LOCK_STATE_RELEASED:
+      return "LOCK_STATE_RELEASED";
+    case LockState.LOCK_STATE_CONFLICT:
+      return "LOCK_STATE_CONFLICT";
+    case LockState.LOCK_STATE_STALE:
+      return "LOCK_STATE_STALE";
+    case LockState.LOCK_STATE_EXPIRED:
+      return "LOCK_STATE_EXPIRED";
+    case LockState.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
 export interface Empty {
 }
 
@@ -264,6 +429,101 @@ export interface ResourceRequest {
   workspaceId: string;
   exclusive: boolean;
   timeoutMs: number;
+}
+
+export interface LockSelector {
+  type: LockResourceType;
+  resourceId: string;
+}
+
+export interface LockOwner {
+  workspaceId: string;
+  instanceId: string;
+  sessionId: string;
+  actor: string;
+}
+
+export interface LockLease {
+  leaseId: string;
+  selector: LockSelector | undefined;
+  owner: LockOwner | undefined;
+  mode: LockMode;
+  fencingToken: number;
+  acquiredAtMs: number;
+  expireAtMs: number;
+}
+
+export interface LockConflictDetail {
+  selector: LockSelector | undefined;
+  holderLeaseId: string;
+  holderOwner: LockOwner | undefined;
+  holderFencingToken: number;
+  holderExpireAtMs: number;
+  suggestion: string;
+}
+
+export interface LockAcquireRequest {
+  selector: LockSelector | undefined;
+  owner: LockOwner | undefined;
+  mode: LockMode;
+  ttlSeconds: number;
+  waitTimeoutMs: number;
+  expectedMinFencingToken: number;
+}
+
+export interface LockAcquireResult {
+  ok: boolean;
+  code: string;
+  message: string;
+  state: LockState;
+  lease: LockLease | undefined;
+  conflicts: LockConflictDetail[];
+}
+
+export interface LockRenewRequest {
+  leaseId: string;
+  owner: LockOwner | undefined;
+  fencingToken: number;
+  ttlSeconds: number;
+}
+
+export interface LockReleaseRequest {
+  leaseId: string;
+  owner: LockOwner | undefined;
+  fencingToken: number;
+}
+
+export interface LockOperationResult {
+  ok: boolean;
+  code: string;
+  message: string;
+  state: LockState;
+  lease: LockLease | undefined;
+  conflicts: LockConflictDetail[];
+}
+
+export interface LockSnapshotRequest {
+  selectors: LockSelector[];
+}
+
+export interface LockSnapshot {
+  leases: LockLease[];
+}
+
+export interface TopologyPrecheckRequest {
+  workspaceId: string;
+  topology: Topology | undefined;
+  requiredResources: LockSelector[];
+  activate: boolean;
+  destructiveChange: boolean;
+}
+
+export interface TopologyPrecheckResult {
+  ok: boolean;
+  code: string;
+  message: string;
+  topologyErrors: TopologyErrorDetail[];
+  lockConflicts: LockConflictDetail[];
 }
 
 export interface LeaseInfo {
@@ -3025,6 +3285,1624 @@ export const ResourceRequest: MessageFns<ResourceRequest> = {
   },
 };
 
+function createBaseLockSelector(): LockSelector {
+  return { type: 0, resourceId: "" };
+}
+
+export const LockSelector: MessageFns<LockSelector> = {
+  encode(message: LockSelector, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.type !== 0) {
+      writer.uint32(8).int32(message.type);
+    }
+    if (message.resourceId !== "") {
+      writer.uint32(18).string(message.resourceId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockSelector {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockSelector();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.type = reader.int32() as any;
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.resourceId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockSelector {
+    return {
+      type: isSet(object.type) ? lockResourceTypeFromJSON(object.type) : 0,
+      resourceId: isSet(object.resourceId)
+        ? globalThis.String(object.resourceId)
+        : isSet(object.resource_id)
+        ? globalThis.String(object.resource_id)
+        : "",
+    };
+  },
+
+  toJSON(message: LockSelector): unknown {
+    const obj: any = {};
+    if (message.type !== 0) {
+      obj.type = lockResourceTypeToJSON(message.type);
+    }
+    if (message.resourceId !== "") {
+      obj.resourceId = message.resourceId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockSelector>, I>>(base?: I): LockSelector {
+    return LockSelector.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockSelector>, I>>(object: I): LockSelector {
+    const message = createBaseLockSelector();
+    message.type = object.type ?? 0;
+    message.resourceId = object.resourceId ?? "";
+    return message;
+  },
+};
+
+function createBaseLockOwner(): LockOwner {
+  return { workspaceId: "", instanceId: "", sessionId: "", actor: "" };
+}
+
+export const LockOwner: MessageFns<LockOwner> = {
+  encode(message: LockOwner, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.workspaceId !== "") {
+      writer.uint32(10).string(message.workspaceId);
+    }
+    if (message.instanceId !== "") {
+      writer.uint32(18).string(message.instanceId);
+    }
+    if (message.sessionId !== "") {
+      writer.uint32(26).string(message.sessionId);
+    }
+    if (message.actor !== "") {
+      writer.uint32(34).string(message.actor);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockOwner {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockOwner();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.workspaceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.instanceId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.sessionId = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.actor = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockOwner {
+    return {
+      workspaceId: isSet(object.workspaceId)
+        ? globalThis.String(object.workspaceId)
+        : isSet(object.workspace_id)
+        ? globalThis.String(object.workspace_id)
+        : "",
+      instanceId: isSet(object.instanceId)
+        ? globalThis.String(object.instanceId)
+        : isSet(object.instance_id)
+        ? globalThis.String(object.instance_id)
+        : "",
+      sessionId: isSet(object.sessionId)
+        ? globalThis.String(object.sessionId)
+        : isSet(object.session_id)
+        ? globalThis.String(object.session_id)
+        : "",
+      actor: isSet(object.actor) ? globalThis.String(object.actor) : "",
+    };
+  },
+
+  toJSON(message: LockOwner): unknown {
+    const obj: any = {};
+    if (message.workspaceId !== "") {
+      obj.workspaceId = message.workspaceId;
+    }
+    if (message.instanceId !== "") {
+      obj.instanceId = message.instanceId;
+    }
+    if (message.sessionId !== "") {
+      obj.sessionId = message.sessionId;
+    }
+    if (message.actor !== "") {
+      obj.actor = message.actor;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockOwner>, I>>(base?: I): LockOwner {
+    return LockOwner.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockOwner>, I>>(object: I): LockOwner {
+    const message = createBaseLockOwner();
+    message.workspaceId = object.workspaceId ?? "";
+    message.instanceId = object.instanceId ?? "";
+    message.sessionId = object.sessionId ?? "";
+    message.actor = object.actor ?? "";
+    return message;
+  },
+};
+
+function createBaseLockLease(): LockLease {
+  return {
+    leaseId: "",
+    selector: undefined,
+    owner: undefined,
+    mode: 0,
+    fencingToken: 0,
+    acquiredAtMs: 0,
+    expireAtMs: 0,
+  };
+}
+
+export const LockLease: MessageFns<LockLease> = {
+  encode(message: LockLease, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.leaseId !== "") {
+      writer.uint32(10).string(message.leaseId);
+    }
+    if (message.selector !== undefined) {
+      LockSelector.encode(message.selector, writer.uint32(18).fork()).join();
+    }
+    if (message.owner !== undefined) {
+      LockOwner.encode(message.owner, writer.uint32(26).fork()).join();
+    }
+    if (message.mode !== 0) {
+      writer.uint32(32).int32(message.mode);
+    }
+    if (message.fencingToken !== 0) {
+      writer.uint32(40).uint64(message.fencingToken);
+    }
+    if (message.acquiredAtMs !== 0) {
+      writer.uint32(48).uint64(message.acquiredAtMs);
+    }
+    if (message.expireAtMs !== 0) {
+      writer.uint32(56).uint64(message.expireAtMs);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockLease {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockLease();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.leaseId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.selector = LockSelector.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.owner = LockOwner.decode(reader, reader.uint32());
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.mode = reader.int32() as any;
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.fencingToken = longToNumber(reader.uint64());
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.acquiredAtMs = longToNumber(reader.uint64());
+          continue;
+        }
+        case 7: {
+          if (tag !== 56) {
+            break;
+          }
+
+          message.expireAtMs = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockLease {
+    return {
+      leaseId: isSet(object.leaseId)
+        ? globalThis.String(object.leaseId)
+        : isSet(object.lease_id)
+        ? globalThis.String(object.lease_id)
+        : "",
+      selector: isSet(object.selector) ? LockSelector.fromJSON(object.selector) : undefined,
+      owner: isSet(object.owner) ? LockOwner.fromJSON(object.owner) : undefined,
+      mode: isSet(object.mode) ? lockModeFromJSON(object.mode) : 0,
+      fencingToken: isSet(object.fencingToken)
+        ? globalThis.Number(object.fencingToken)
+        : isSet(object.fencing_token)
+        ? globalThis.Number(object.fencing_token)
+        : 0,
+      acquiredAtMs: isSet(object.acquiredAtMs)
+        ? globalThis.Number(object.acquiredAtMs)
+        : isSet(object.acquired_at_ms)
+        ? globalThis.Number(object.acquired_at_ms)
+        : 0,
+      expireAtMs: isSet(object.expireAtMs)
+        ? globalThis.Number(object.expireAtMs)
+        : isSet(object.expire_at_ms)
+        ? globalThis.Number(object.expire_at_ms)
+        : 0,
+    };
+  },
+
+  toJSON(message: LockLease): unknown {
+    const obj: any = {};
+    if (message.leaseId !== "") {
+      obj.leaseId = message.leaseId;
+    }
+    if (message.selector !== undefined) {
+      obj.selector = LockSelector.toJSON(message.selector);
+    }
+    if (message.owner !== undefined) {
+      obj.owner = LockOwner.toJSON(message.owner);
+    }
+    if (message.mode !== 0) {
+      obj.mode = lockModeToJSON(message.mode);
+    }
+    if (message.fencingToken !== 0) {
+      obj.fencingToken = Math.round(message.fencingToken);
+    }
+    if (message.acquiredAtMs !== 0) {
+      obj.acquiredAtMs = Math.round(message.acquiredAtMs);
+    }
+    if (message.expireAtMs !== 0) {
+      obj.expireAtMs = Math.round(message.expireAtMs);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockLease>, I>>(base?: I): LockLease {
+    return LockLease.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockLease>, I>>(object: I): LockLease {
+    const message = createBaseLockLease();
+    message.leaseId = object.leaseId ?? "";
+    message.selector = (object.selector !== undefined && object.selector !== null)
+      ? LockSelector.fromPartial(object.selector)
+      : undefined;
+    message.owner = (object.owner !== undefined && object.owner !== null)
+      ? LockOwner.fromPartial(object.owner)
+      : undefined;
+    message.mode = object.mode ?? 0;
+    message.fencingToken = object.fencingToken ?? 0;
+    message.acquiredAtMs = object.acquiredAtMs ?? 0;
+    message.expireAtMs = object.expireAtMs ?? 0;
+    return message;
+  },
+};
+
+function createBaseLockConflictDetail(): LockConflictDetail {
+  return {
+    selector: undefined,
+    holderLeaseId: "",
+    holderOwner: undefined,
+    holderFencingToken: 0,
+    holderExpireAtMs: 0,
+    suggestion: "",
+  };
+}
+
+export const LockConflictDetail: MessageFns<LockConflictDetail> = {
+  encode(message: LockConflictDetail, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.selector !== undefined) {
+      LockSelector.encode(message.selector, writer.uint32(10).fork()).join();
+    }
+    if (message.holderLeaseId !== "") {
+      writer.uint32(18).string(message.holderLeaseId);
+    }
+    if (message.holderOwner !== undefined) {
+      LockOwner.encode(message.holderOwner, writer.uint32(26).fork()).join();
+    }
+    if (message.holderFencingToken !== 0) {
+      writer.uint32(32).uint64(message.holderFencingToken);
+    }
+    if (message.holderExpireAtMs !== 0) {
+      writer.uint32(40).uint64(message.holderExpireAtMs);
+    }
+    if (message.suggestion !== "") {
+      writer.uint32(50).string(message.suggestion);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockConflictDetail {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockConflictDetail();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.selector = LockSelector.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.holderLeaseId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.holderOwner = LockOwner.decode(reader, reader.uint32());
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.holderFencingToken = longToNumber(reader.uint64());
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.holderExpireAtMs = longToNumber(reader.uint64());
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.suggestion = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockConflictDetail {
+    return {
+      selector: isSet(object.selector) ? LockSelector.fromJSON(object.selector) : undefined,
+      holderLeaseId: isSet(object.holderLeaseId)
+        ? globalThis.String(object.holderLeaseId)
+        : isSet(object.holder_lease_id)
+        ? globalThis.String(object.holder_lease_id)
+        : "",
+      holderOwner: isSet(object.holderOwner)
+        ? LockOwner.fromJSON(object.holderOwner)
+        : isSet(object.holder_owner)
+        ? LockOwner.fromJSON(object.holder_owner)
+        : undefined,
+      holderFencingToken: isSet(object.holderFencingToken)
+        ? globalThis.Number(object.holderFencingToken)
+        : isSet(object.holder_fencing_token)
+        ? globalThis.Number(object.holder_fencing_token)
+        : 0,
+      holderExpireAtMs: isSet(object.holderExpireAtMs)
+        ? globalThis.Number(object.holderExpireAtMs)
+        : isSet(object.holder_expire_at_ms)
+        ? globalThis.Number(object.holder_expire_at_ms)
+        : 0,
+      suggestion: isSet(object.suggestion) ? globalThis.String(object.suggestion) : "",
+    };
+  },
+
+  toJSON(message: LockConflictDetail): unknown {
+    const obj: any = {};
+    if (message.selector !== undefined) {
+      obj.selector = LockSelector.toJSON(message.selector);
+    }
+    if (message.holderLeaseId !== "") {
+      obj.holderLeaseId = message.holderLeaseId;
+    }
+    if (message.holderOwner !== undefined) {
+      obj.holderOwner = LockOwner.toJSON(message.holderOwner);
+    }
+    if (message.holderFencingToken !== 0) {
+      obj.holderFencingToken = Math.round(message.holderFencingToken);
+    }
+    if (message.holderExpireAtMs !== 0) {
+      obj.holderExpireAtMs = Math.round(message.holderExpireAtMs);
+    }
+    if (message.suggestion !== "") {
+      obj.suggestion = message.suggestion;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockConflictDetail>, I>>(base?: I): LockConflictDetail {
+    return LockConflictDetail.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockConflictDetail>, I>>(object: I): LockConflictDetail {
+    const message = createBaseLockConflictDetail();
+    message.selector = (object.selector !== undefined && object.selector !== null)
+      ? LockSelector.fromPartial(object.selector)
+      : undefined;
+    message.holderLeaseId = object.holderLeaseId ?? "";
+    message.holderOwner = (object.holderOwner !== undefined && object.holderOwner !== null)
+      ? LockOwner.fromPartial(object.holderOwner)
+      : undefined;
+    message.holderFencingToken = object.holderFencingToken ?? 0;
+    message.holderExpireAtMs = object.holderExpireAtMs ?? 0;
+    message.suggestion = object.suggestion ?? "";
+    return message;
+  },
+};
+
+function createBaseLockAcquireRequest(): LockAcquireRequest {
+  return {
+    selector: undefined,
+    owner: undefined,
+    mode: 0,
+    ttlSeconds: 0,
+    waitTimeoutMs: 0,
+    expectedMinFencingToken: 0,
+  };
+}
+
+export const LockAcquireRequest: MessageFns<LockAcquireRequest> = {
+  encode(message: LockAcquireRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.selector !== undefined) {
+      LockSelector.encode(message.selector, writer.uint32(10).fork()).join();
+    }
+    if (message.owner !== undefined) {
+      LockOwner.encode(message.owner, writer.uint32(18).fork()).join();
+    }
+    if (message.mode !== 0) {
+      writer.uint32(24).int32(message.mode);
+    }
+    if (message.ttlSeconds !== 0) {
+      writer.uint32(32).uint32(message.ttlSeconds);
+    }
+    if (message.waitTimeoutMs !== 0) {
+      writer.uint32(40).uint32(message.waitTimeoutMs);
+    }
+    if (message.expectedMinFencingToken !== 0) {
+      writer.uint32(48).uint64(message.expectedMinFencingToken);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockAcquireRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockAcquireRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.selector = LockSelector.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.owner = LockOwner.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.mode = reader.int32() as any;
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.ttlSeconds = reader.uint32();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.waitTimeoutMs = reader.uint32();
+          continue;
+        }
+        case 6: {
+          if (tag !== 48) {
+            break;
+          }
+
+          message.expectedMinFencingToken = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockAcquireRequest {
+    return {
+      selector: isSet(object.selector) ? LockSelector.fromJSON(object.selector) : undefined,
+      owner: isSet(object.owner) ? LockOwner.fromJSON(object.owner) : undefined,
+      mode: isSet(object.mode) ? lockModeFromJSON(object.mode) : 0,
+      ttlSeconds: isSet(object.ttlSeconds)
+        ? globalThis.Number(object.ttlSeconds)
+        : isSet(object.ttl_seconds)
+        ? globalThis.Number(object.ttl_seconds)
+        : 0,
+      waitTimeoutMs: isSet(object.waitTimeoutMs)
+        ? globalThis.Number(object.waitTimeoutMs)
+        : isSet(object.wait_timeout_ms)
+        ? globalThis.Number(object.wait_timeout_ms)
+        : 0,
+      expectedMinFencingToken: isSet(object.expectedMinFencingToken)
+        ? globalThis.Number(object.expectedMinFencingToken)
+        : isSet(object.expected_min_fencing_token)
+        ? globalThis.Number(object.expected_min_fencing_token)
+        : 0,
+    };
+  },
+
+  toJSON(message: LockAcquireRequest): unknown {
+    const obj: any = {};
+    if (message.selector !== undefined) {
+      obj.selector = LockSelector.toJSON(message.selector);
+    }
+    if (message.owner !== undefined) {
+      obj.owner = LockOwner.toJSON(message.owner);
+    }
+    if (message.mode !== 0) {
+      obj.mode = lockModeToJSON(message.mode);
+    }
+    if (message.ttlSeconds !== 0) {
+      obj.ttlSeconds = Math.round(message.ttlSeconds);
+    }
+    if (message.waitTimeoutMs !== 0) {
+      obj.waitTimeoutMs = Math.round(message.waitTimeoutMs);
+    }
+    if (message.expectedMinFencingToken !== 0) {
+      obj.expectedMinFencingToken = Math.round(message.expectedMinFencingToken);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockAcquireRequest>, I>>(base?: I): LockAcquireRequest {
+    return LockAcquireRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockAcquireRequest>, I>>(object: I): LockAcquireRequest {
+    const message = createBaseLockAcquireRequest();
+    message.selector = (object.selector !== undefined && object.selector !== null)
+      ? LockSelector.fromPartial(object.selector)
+      : undefined;
+    message.owner = (object.owner !== undefined && object.owner !== null)
+      ? LockOwner.fromPartial(object.owner)
+      : undefined;
+    message.mode = object.mode ?? 0;
+    message.ttlSeconds = object.ttlSeconds ?? 0;
+    message.waitTimeoutMs = object.waitTimeoutMs ?? 0;
+    message.expectedMinFencingToken = object.expectedMinFencingToken ?? 0;
+    return message;
+  },
+};
+
+function createBaseLockAcquireResult(): LockAcquireResult {
+  return { ok: false, code: "", message: "", state: 0, lease: undefined, conflicts: [] };
+}
+
+export const LockAcquireResult: MessageFns<LockAcquireResult> = {
+  encode(message: LockAcquireResult, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.ok !== false) {
+      writer.uint32(8).bool(message.ok);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    if (message.message !== "") {
+      writer.uint32(26).string(message.message);
+    }
+    if (message.state !== 0) {
+      writer.uint32(32).int32(message.state);
+    }
+    if (message.lease !== undefined) {
+      LockLease.encode(message.lease, writer.uint32(42).fork()).join();
+    }
+    for (const v of message.conflicts) {
+      LockConflictDetail.encode(v!, writer.uint32(50).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockAcquireResult {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockAcquireResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.state = reader.int32() as any;
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.lease = LockLease.decode(reader, reader.uint32());
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.conflicts.push(LockConflictDetail.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockAcquireResult {
+    return {
+      ok: isSet(object.ok) ? globalThis.Boolean(object.ok) : false,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+      state: isSet(object.state) ? lockStateFromJSON(object.state) : 0,
+      lease: isSet(object.lease) ? LockLease.fromJSON(object.lease) : undefined,
+      conflicts: globalThis.Array.isArray(object?.conflicts)
+        ? object.conflicts.map((e: any) => LockConflictDetail.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: LockAcquireResult): unknown {
+    const obj: any = {};
+    if (message.ok !== false) {
+      obj.ok = message.ok;
+    }
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    if (message.state !== 0) {
+      obj.state = lockStateToJSON(message.state);
+    }
+    if (message.lease !== undefined) {
+      obj.lease = LockLease.toJSON(message.lease);
+    }
+    if (message.conflicts?.length) {
+      obj.conflicts = message.conflicts.map((e) => LockConflictDetail.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockAcquireResult>, I>>(base?: I): LockAcquireResult {
+    return LockAcquireResult.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockAcquireResult>, I>>(object: I): LockAcquireResult {
+    const message = createBaseLockAcquireResult();
+    message.ok = object.ok ?? false;
+    message.code = object.code ?? "";
+    message.message = object.message ?? "";
+    message.state = object.state ?? 0;
+    message.lease = (object.lease !== undefined && object.lease !== null)
+      ? LockLease.fromPartial(object.lease)
+      : undefined;
+    message.conflicts = object.conflicts?.map((e) => LockConflictDetail.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseLockRenewRequest(): LockRenewRequest {
+  return { leaseId: "", owner: undefined, fencingToken: 0, ttlSeconds: 0 };
+}
+
+export const LockRenewRequest: MessageFns<LockRenewRequest> = {
+  encode(message: LockRenewRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.leaseId !== "") {
+      writer.uint32(10).string(message.leaseId);
+    }
+    if (message.owner !== undefined) {
+      LockOwner.encode(message.owner, writer.uint32(18).fork()).join();
+    }
+    if (message.fencingToken !== 0) {
+      writer.uint32(24).uint64(message.fencingToken);
+    }
+    if (message.ttlSeconds !== 0) {
+      writer.uint32(32).uint32(message.ttlSeconds);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockRenewRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockRenewRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.leaseId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.owner = LockOwner.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.fencingToken = longToNumber(reader.uint64());
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.ttlSeconds = reader.uint32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockRenewRequest {
+    return {
+      leaseId: isSet(object.leaseId)
+        ? globalThis.String(object.leaseId)
+        : isSet(object.lease_id)
+        ? globalThis.String(object.lease_id)
+        : "",
+      owner: isSet(object.owner) ? LockOwner.fromJSON(object.owner) : undefined,
+      fencingToken: isSet(object.fencingToken)
+        ? globalThis.Number(object.fencingToken)
+        : isSet(object.fencing_token)
+        ? globalThis.Number(object.fencing_token)
+        : 0,
+      ttlSeconds: isSet(object.ttlSeconds)
+        ? globalThis.Number(object.ttlSeconds)
+        : isSet(object.ttl_seconds)
+        ? globalThis.Number(object.ttl_seconds)
+        : 0,
+    };
+  },
+
+  toJSON(message: LockRenewRequest): unknown {
+    const obj: any = {};
+    if (message.leaseId !== "") {
+      obj.leaseId = message.leaseId;
+    }
+    if (message.owner !== undefined) {
+      obj.owner = LockOwner.toJSON(message.owner);
+    }
+    if (message.fencingToken !== 0) {
+      obj.fencingToken = Math.round(message.fencingToken);
+    }
+    if (message.ttlSeconds !== 0) {
+      obj.ttlSeconds = Math.round(message.ttlSeconds);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockRenewRequest>, I>>(base?: I): LockRenewRequest {
+    return LockRenewRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockRenewRequest>, I>>(object: I): LockRenewRequest {
+    const message = createBaseLockRenewRequest();
+    message.leaseId = object.leaseId ?? "";
+    message.owner = (object.owner !== undefined && object.owner !== null)
+      ? LockOwner.fromPartial(object.owner)
+      : undefined;
+    message.fencingToken = object.fencingToken ?? 0;
+    message.ttlSeconds = object.ttlSeconds ?? 0;
+    return message;
+  },
+};
+
+function createBaseLockReleaseRequest(): LockReleaseRequest {
+  return { leaseId: "", owner: undefined, fencingToken: 0 };
+}
+
+export const LockReleaseRequest: MessageFns<LockReleaseRequest> = {
+  encode(message: LockReleaseRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.leaseId !== "") {
+      writer.uint32(10).string(message.leaseId);
+    }
+    if (message.owner !== undefined) {
+      LockOwner.encode(message.owner, writer.uint32(18).fork()).join();
+    }
+    if (message.fencingToken !== 0) {
+      writer.uint32(24).uint64(message.fencingToken);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockReleaseRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockReleaseRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.leaseId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.owner = LockOwner.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.fencingToken = longToNumber(reader.uint64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockReleaseRequest {
+    return {
+      leaseId: isSet(object.leaseId)
+        ? globalThis.String(object.leaseId)
+        : isSet(object.lease_id)
+        ? globalThis.String(object.lease_id)
+        : "",
+      owner: isSet(object.owner) ? LockOwner.fromJSON(object.owner) : undefined,
+      fencingToken: isSet(object.fencingToken)
+        ? globalThis.Number(object.fencingToken)
+        : isSet(object.fencing_token)
+        ? globalThis.Number(object.fencing_token)
+        : 0,
+    };
+  },
+
+  toJSON(message: LockReleaseRequest): unknown {
+    const obj: any = {};
+    if (message.leaseId !== "") {
+      obj.leaseId = message.leaseId;
+    }
+    if (message.owner !== undefined) {
+      obj.owner = LockOwner.toJSON(message.owner);
+    }
+    if (message.fencingToken !== 0) {
+      obj.fencingToken = Math.round(message.fencingToken);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockReleaseRequest>, I>>(base?: I): LockReleaseRequest {
+    return LockReleaseRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockReleaseRequest>, I>>(object: I): LockReleaseRequest {
+    const message = createBaseLockReleaseRequest();
+    message.leaseId = object.leaseId ?? "";
+    message.owner = (object.owner !== undefined && object.owner !== null)
+      ? LockOwner.fromPartial(object.owner)
+      : undefined;
+    message.fencingToken = object.fencingToken ?? 0;
+    return message;
+  },
+};
+
+function createBaseLockOperationResult(): LockOperationResult {
+  return { ok: false, code: "", message: "", state: 0, lease: undefined, conflicts: [] };
+}
+
+export const LockOperationResult: MessageFns<LockOperationResult> = {
+  encode(message: LockOperationResult, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.ok !== false) {
+      writer.uint32(8).bool(message.ok);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    if (message.message !== "") {
+      writer.uint32(26).string(message.message);
+    }
+    if (message.state !== 0) {
+      writer.uint32(32).int32(message.state);
+    }
+    if (message.lease !== undefined) {
+      LockLease.encode(message.lease, writer.uint32(42).fork()).join();
+    }
+    for (const v of message.conflicts) {
+      LockConflictDetail.encode(v!, writer.uint32(50).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockOperationResult {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockOperationResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.state = reader.int32() as any;
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.lease = LockLease.decode(reader, reader.uint32());
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.conflicts.push(LockConflictDetail.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockOperationResult {
+    return {
+      ok: isSet(object.ok) ? globalThis.Boolean(object.ok) : false,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+      state: isSet(object.state) ? lockStateFromJSON(object.state) : 0,
+      lease: isSet(object.lease) ? LockLease.fromJSON(object.lease) : undefined,
+      conflicts: globalThis.Array.isArray(object?.conflicts)
+        ? object.conflicts.map((e: any) => LockConflictDetail.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: LockOperationResult): unknown {
+    const obj: any = {};
+    if (message.ok !== false) {
+      obj.ok = message.ok;
+    }
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    if (message.state !== 0) {
+      obj.state = lockStateToJSON(message.state);
+    }
+    if (message.lease !== undefined) {
+      obj.lease = LockLease.toJSON(message.lease);
+    }
+    if (message.conflicts?.length) {
+      obj.conflicts = message.conflicts.map((e) => LockConflictDetail.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockOperationResult>, I>>(base?: I): LockOperationResult {
+    return LockOperationResult.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockOperationResult>, I>>(object: I): LockOperationResult {
+    const message = createBaseLockOperationResult();
+    message.ok = object.ok ?? false;
+    message.code = object.code ?? "";
+    message.message = object.message ?? "";
+    message.state = object.state ?? 0;
+    message.lease = (object.lease !== undefined && object.lease !== null)
+      ? LockLease.fromPartial(object.lease)
+      : undefined;
+    message.conflicts = object.conflicts?.map((e) => LockConflictDetail.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseLockSnapshotRequest(): LockSnapshotRequest {
+  return { selectors: [] };
+}
+
+export const LockSnapshotRequest: MessageFns<LockSnapshotRequest> = {
+  encode(message: LockSnapshotRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.selectors) {
+      LockSelector.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockSnapshotRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockSnapshotRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.selectors.push(LockSelector.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockSnapshotRequest {
+    return {
+      selectors: globalThis.Array.isArray(object?.selectors)
+        ? object.selectors.map((e: any) => LockSelector.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: LockSnapshotRequest): unknown {
+    const obj: any = {};
+    if (message.selectors?.length) {
+      obj.selectors = message.selectors.map((e) => LockSelector.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockSnapshotRequest>, I>>(base?: I): LockSnapshotRequest {
+    return LockSnapshotRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockSnapshotRequest>, I>>(object: I): LockSnapshotRequest {
+    const message = createBaseLockSnapshotRequest();
+    message.selectors = object.selectors?.map((e) => LockSelector.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseLockSnapshot(): LockSnapshot {
+  return { leases: [] };
+}
+
+export const LockSnapshot: MessageFns<LockSnapshot> = {
+  encode(message: LockSnapshot, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.leases) {
+      LockLease.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LockSnapshot {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLockSnapshot();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.leases.push(LockLease.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LockSnapshot {
+    return {
+      leases: globalThis.Array.isArray(object?.leases) ? object.leases.map((e: any) => LockLease.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: LockSnapshot): unknown {
+    const obj: any = {};
+    if (message.leases?.length) {
+      obj.leases = message.leases.map((e) => LockLease.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LockSnapshot>, I>>(base?: I): LockSnapshot {
+    return LockSnapshot.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LockSnapshot>, I>>(object: I): LockSnapshot {
+    const message = createBaseLockSnapshot();
+    message.leases = object.leases?.map((e) => LockLease.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseTopologyPrecheckRequest(): TopologyPrecheckRequest {
+  return { workspaceId: "", topology: undefined, requiredResources: [], activate: false, destructiveChange: false };
+}
+
+export const TopologyPrecheckRequest: MessageFns<TopologyPrecheckRequest> = {
+  encode(message: TopologyPrecheckRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.workspaceId !== "") {
+      writer.uint32(10).string(message.workspaceId);
+    }
+    if (message.topology !== undefined) {
+      Topology.encode(message.topology, writer.uint32(18).fork()).join();
+    }
+    for (const v of message.requiredResources) {
+      LockSelector.encode(v!, writer.uint32(26).fork()).join();
+    }
+    if (message.activate !== false) {
+      writer.uint32(32).bool(message.activate);
+    }
+    if (message.destructiveChange !== false) {
+      writer.uint32(40).bool(message.destructiveChange);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TopologyPrecheckRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTopologyPrecheckRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.workspaceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.topology = Topology.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.requiredResources.push(LockSelector.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 4: {
+          if (tag !== 32) {
+            break;
+          }
+
+          message.activate = reader.bool();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.destructiveChange = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TopologyPrecheckRequest {
+    return {
+      workspaceId: isSet(object.workspaceId)
+        ? globalThis.String(object.workspaceId)
+        : isSet(object.workspace_id)
+        ? globalThis.String(object.workspace_id)
+        : "",
+      topology: isSet(object.topology) ? Topology.fromJSON(object.topology) : undefined,
+      requiredResources: globalThis.Array.isArray(object?.requiredResources)
+        ? object.requiredResources.map((e: any) => LockSelector.fromJSON(e))
+        : globalThis.Array.isArray(object?.required_resources)
+        ? object.required_resources.map((e: any) => LockSelector.fromJSON(e))
+        : [],
+      activate: isSet(object.activate) ? globalThis.Boolean(object.activate) : false,
+      destructiveChange: isSet(object.destructiveChange)
+        ? globalThis.Boolean(object.destructiveChange)
+        : isSet(object.destructive_change)
+        ? globalThis.Boolean(object.destructive_change)
+        : false,
+    };
+  },
+
+  toJSON(message: TopologyPrecheckRequest): unknown {
+    const obj: any = {};
+    if (message.workspaceId !== "") {
+      obj.workspaceId = message.workspaceId;
+    }
+    if (message.topology !== undefined) {
+      obj.topology = Topology.toJSON(message.topology);
+    }
+    if (message.requiredResources?.length) {
+      obj.requiredResources = message.requiredResources.map((e) => LockSelector.toJSON(e));
+    }
+    if (message.activate !== false) {
+      obj.activate = message.activate;
+    }
+    if (message.destructiveChange !== false) {
+      obj.destructiveChange = message.destructiveChange;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TopologyPrecheckRequest>, I>>(base?: I): TopologyPrecheckRequest {
+    return TopologyPrecheckRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TopologyPrecheckRequest>, I>>(object: I): TopologyPrecheckRequest {
+    const message = createBaseTopologyPrecheckRequest();
+    message.workspaceId = object.workspaceId ?? "";
+    message.topology = (object.topology !== undefined && object.topology !== null)
+      ? Topology.fromPartial(object.topology)
+      : undefined;
+    message.requiredResources = object.requiredResources?.map((e) => LockSelector.fromPartial(e)) || [];
+    message.activate = object.activate ?? false;
+    message.destructiveChange = object.destructiveChange ?? false;
+    return message;
+  },
+};
+
+function createBaseTopologyPrecheckResult(): TopologyPrecheckResult {
+  return { ok: false, code: "", message: "", topologyErrors: [], lockConflicts: [] };
+}
+
+export const TopologyPrecheckResult: MessageFns<TopologyPrecheckResult> = {
+  encode(message: TopologyPrecheckResult, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.ok !== false) {
+      writer.uint32(8).bool(message.ok);
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
+    }
+    if (message.message !== "") {
+      writer.uint32(26).string(message.message);
+    }
+    for (const v of message.topologyErrors) {
+      TopologyErrorDetail.encode(v!, writer.uint32(34).fork()).join();
+    }
+    for (const v of message.lockConflicts) {
+      LockConflictDetail.encode(v!, writer.uint32(42).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): TopologyPrecheckResult {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseTopologyPrecheckResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.ok = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.topologyErrors.push(TopologyErrorDetail.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.lockConflicts.push(LockConflictDetail.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): TopologyPrecheckResult {
+    return {
+      ok: isSet(object.ok) ? globalThis.Boolean(object.ok) : false,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+      topologyErrors: globalThis.Array.isArray(object?.topologyErrors)
+        ? object.topologyErrors.map((e: any) => TopologyErrorDetail.fromJSON(e))
+        : globalThis.Array.isArray(object?.topology_errors)
+        ? object.topology_errors.map((e: any) => TopologyErrorDetail.fromJSON(e))
+        : [],
+      lockConflicts: globalThis.Array.isArray(object?.lockConflicts)
+        ? object.lockConflicts.map((e: any) => LockConflictDetail.fromJSON(e))
+        : globalThis.Array.isArray(object?.lock_conflicts)
+        ? object.lock_conflicts.map((e: any) => LockConflictDetail.fromJSON(e))
+        : [],
+    };
+  },
+
+  toJSON(message: TopologyPrecheckResult): unknown {
+    const obj: any = {};
+    if (message.ok !== false) {
+      obj.ok = message.ok;
+    }
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    if (message.topologyErrors?.length) {
+      obj.topologyErrors = message.topologyErrors.map((e) => TopologyErrorDetail.toJSON(e));
+    }
+    if (message.lockConflicts?.length) {
+      obj.lockConflicts = message.lockConflicts.map((e) => LockConflictDetail.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TopologyPrecheckResult>, I>>(base?: I): TopologyPrecheckResult {
+    return TopologyPrecheckResult.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TopologyPrecheckResult>, I>>(object: I): TopologyPrecheckResult {
+    const message = createBaseTopologyPrecheckResult();
+    message.ok = object.ok ?? false;
+    message.code = object.code ?? "";
+    message.message = object.message ?? "";
+    message.topologyErrors = object.topologyErrors?.map((e) => TopologyErrorDetail.fromPartial(e)) || [];
+    message.lockConflicts = object.lockConflicts?.map((e) => LockConflictDetail.fromPartial(e)) || [];
+    return message;
+  },
+};
+
 function createBaseLeaseInfo(): LeaseInfo {
   return { leaseId: "", resourceId: "", ttlSeconds: 0 };
 }
@@ -3876,6 +5754,17 @@ export const VnaControlService = {
     responseSerialize: (value: ValidationResult): Buffer => Buffer.from(ValidationResult.encode(value).finish()),
     responseDeserialize: (value: Buffer): ValidationResult => ValidationResult.decode(value),
   },
+  precheckWorkspaceTopology: {
+    path: "/vna.VnaControl/PrecheckWorkspaceTopology",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: TopologyPrecheckRequest): Buffer =>
+      Buffer.from(TopologyPrecheckRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): TopologyPrecheckRequest => TopologyPrecheckRequest.decode(value),
+    responseSerialize: (value: TopologyPrecheckResult): Buffer =>
+      Buffer.from(TopologyPrecheckResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): TopologyPrecheckResult => TopologyPrecheckResult.decode(value),
+  },
   upsertWorkspaceTopology: {
     path: "/vna.VnaControl/UpsertWorkspaceTopology",
     requestStream: false,
@@ -3997,6 +5886,7 @@ export const VnaControlService = {
 
 export interface VnaControlServer extends UntypedServiceImplementation {
   validateTopology: handleUnaryCall<Topology, ValidationResult>;
+  precheckWorkspaceTopology: handleUnaryCall<TopologyPrecheckRequest, TopologyPrecheckResult>;
   upsertWorkspaceTopology: handleUnaryCall<WorkspaceTopologyUpsertRequest, ValidationResult>;
   getWorkspaceTopology: handleUnaryCall<WorkspaceRef, WorkspaceTopologyConfig>;
   listWorkspaceTopologies: handleUnaryCall<Empty, WorkspaceTopologyList>;
@@ -4026,6 +5916,21 @@ export interface VnaControlClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ValidationResult) => void,
+  ): ClientUnaryCall;
+  precheckWorkspaceTopology(
+    request: TopologyPrecheckRequest,
+    callback: (error: ServiceError | null, response: TopologyPrecheckResult) => void,
+  ): ClientUnaryCall;
+  precheckWorkspaceTopology(
+    request: TopologyPrecheckRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: TopologyPrecheckResult) => void,
+  ): ClientUnaryCall;
+  precheckWorkspaceTopology(
+    request: TopologyPrecheckRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: TopologyPrecheckResult) => void,
   ): ClientUnaryCall;
   upsertWorkspaceTopology(
     request: WorkspaceTopologyUpsertRequest,
@@ -4211,6 +6116,42 @@ export const VnaControlClient = makeGenericClientConstructor(VnaControlService, 
 
 export type ResourceBrokerService = typeof ResourceBrokerService;
 export const ResourceBrokerService = {
+  acquireLock: {
+    path: "/vna.ResourceBroker/AcquireLock",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: LockAcquireRequest): Buffer => Buffer.from(LockAcquireRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): LockAcquireRequest => LockAcquireRequest.decode(value),
+    responseSerialize: (value: LockAcquireResult): Buffer => Buffer.from(LockAcquireResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): LockAcquireResult => LockAcquireResult.decode(value),
+  },
+  renewLock: {
+    path: "/vna.ResourceBroker/RenewLock",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: LockRenewRequest): Buffer => Buffer.from(LockRenewRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): LockRenewRequest => LockRenewRequest.decode(value),
+    responseSerialize: (value: LockOperationResult): Buffer => Buffer.from(LockOperationResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): LockOperationResult => LockOperationResult.decode(value),
+  },
+  releaseLock: {
+    path: "/vna.ResourceBroker/ReleaseLock",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: LockReleaseRequest): Buffer => Buffer.from(LockReleaseRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): LockReleaseRequest => LockReleaseRequest.decode(value),
+    responseSerialize: (value: LockOperationResult): Buffer => Buffer.from(LockOperationResult.encode(value).finish()),
+    responseDeserialize: (value: Buffer): LockOperationResult => LockOperationResult.decode(value),
+  },
+  getLockSnapshot: {
+    path: "/vna.ResourceBroker/GetLockSnapshot",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: LockSnapshotRequest): Buffer => Buffer.from(LockSnapshotRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): LockSnapshotRequest => LockSnapshotRequest.decode(value),
+    responseSerialize: (value: LockSnapshot): Buffer => Buffer.from(LockSnapshot.encode(value).finish()),
+    responseDeserialize: (value: Buffer): LockSnapshot => LockSnapshot.decode(value),
+  },
   acquire: {
     path: "/vna.ResourceBroker/Acquire",
     requestStream: false,
@@ -4241,12 +6182,76 @@ export const ResourceBrokerService = {
 } as const;
 
 export interface ResourceBrokerServer extends UntypedServiceImplementation {
+  acquireLock: handleUnaryCall<LockAcquireRequest, LockAcquireResult>;
+  renewLock: handleUnaryCall<LockRenewRequest, LockOperationResult>;
+  releaseLock: handleUnaryCall<LockReleaseRequest, LockOperationResult>;
+  getLockSnapshot: handleUnaryCall<LockSnapshotRequest, LockSnapshot>;
   acquire: handleUnaryCall<ResourceRequest, LeaseInfo>;
   renew: handleUnaryCall<LeaseInfo, ValidationResult>;
   release: handleUnaryCall<LeaseInfo, ValidationResult>;
 }
 
 export interface ResourceBrokerClient extends Client {
+  acquireLock(
+    request: LockAcquireRequest,
+    callback: (error: ServiceError | null, response: LockAcquireResult) => void,
+  ): ClientUnaryCall;
+  acquireLock(
+    request: LockAcquireRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: LockAcquireResult) => void,
+  ): ClientUnaryCall;
+  acquireLock(
+    request: LockAcquireRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: LockAcquireResult) => void,
+  ): ClientUnaryCall;
+  renewLock(
+    request: LockRenewRequest,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  renewLock(
+    request: LockRenewRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  renewLock(
+    request: LockRenewRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  releaseLock(
+    request: LockReleaseRequest,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  releaseLock(
+    request: LockReleaseRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  releaseLock(
+    request: LockReleaseRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: LockOperationResult) => void,
+  ): ClientUnaryCall;
+  getLockSnapshot(
+    request: LockSnapshotRequest,
+    callback: (error: ServiceError | null, response: LockSnapshot) => void,
+  ): ClientUnaryCall;
+  getLockSnapshot(
+    request: LockSnapshotRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: LockSnapshot) => void,
+  ): ClientUnaryCall;
+  getLockSnapshot(
+    request: LockSnapshotRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: LockSnapshot) => void,
+  ): ClientUnaryCall;
   acquire(
     request: ResourceRequest,
     callback: (error: ServiceError | null, response: LeaseInfo) => void,

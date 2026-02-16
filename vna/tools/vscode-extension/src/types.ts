@@ -55,6 +55,20 @@ export interface LockConflictDetail {
   suggestion: string;
 }
 
+export interface LockLeaseDetail {
+  leaseId: string;
+  selector: LockSelector;
+  owner: LockOwner;
+  mode: string;
+  fencingToken: number;
+  acquiredAtMs: number;
+  expireAtMs: number;
+}
+
+export interface LockSnapshotResult {
+  leases: LockLeaseDetail[];
+}
+
 export interface TopologyPrecheckResult {
   ok: boolean;
   code: string;

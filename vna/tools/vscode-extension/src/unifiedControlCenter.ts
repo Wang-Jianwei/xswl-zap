@@ -1308,6 +1308,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       modalResolver: null,
       workspaceReadonly: false,
       lastSaveRequest: null,
+      lastPrecheck: null,
+      lastLockSnapshot: null,
       expandedBoards: new Set(), // Track expanded state separately
     };
 
@@ -2325,15 +2327,36 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       }
     }
 
+    function extractSelectorsFromPrecheck(precheck) {
+      const conflicts = Array.isArray(precheck && precheck.lockConflicts) ? precheck.lockConflicts : [];
+      const selectorMap = new Map();
+      conflicts.forEach((item) => {
+        const selector = item && item.selector ? item.selector : {};
+        const resourceId = String(selector.resourceId || "").trim();
+        if (!resourceId) {
+          return;
+        }
+        selectorMap.set(resourceId, {
+          type: 1,
+          resourceId,
+        });
+      });
+      return Array.from(selectorMap.values());
+    }
+
     function renderPrecheckDiagnostics(precheck) {
       if (!precheckDiagnostics) {
         return;
       }
       if (!precheck) {
+        state.lastPrecheck = null;
+        state.lastLockSnapshot = null;
         precheckDiagnostics.style.display = "none";
         precheckDiagnostics.innerHTML = "";
         return;
       }
+
+      state.lastPrecheck = precheck;
 
       const code = String(precheck.code || "PRECHECK_FAILED");
       const message = String(precheck.message || "precheck failed");
@@ -2369,7 +2392,30 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         lines.push('<button data-action="precheck-retry" class="secondary">重试保存</button>');
         lines.push('<button data-action="precheck-readonly" class="secondary">只读打开拓扑</button>');
         lines.push('<button data-action="precheck-editable" class="secondary">退出只读模式</button>');
+        lines.push('<button data-action="precheck-lock-snapshot" class="secondary">查看锁快照</button>');
         lines.push('</div>');
+      }
+
+      const snapshot = state.lastLockSnapshot && Array.isArray(state.lastLockSnapshot.leases)
+        ? state.lastLockSnapshot
+        : null;
+      if (snapshot) {
+        lines.push('<div style="margin-top:8px; font-weight:600;">Lock Snapshot</div>');
+        if (snapshot.leases.length === 0) {
+          lines.push('<div style="margin-top:4px;">No active leases on selected resources.</div>');
+        } else {
+          lines.push('<ul style="margin:4px 0 0 16px; padding:0;">');
+          snapshot.leases.slice(0, 8).forEach((lease) => {
+            const selector = lease && lease.selector ? lease.selector : {};
+            const owner = lease && lease.owner ? lease.owner : {};
+            const resourceId = String(selector.resourceId || "unknown-resource");
+            const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
+            const holderActor = String(owner.actor || "unknown-actor");
+            const leaseId = String(lease.leaseId || "");
+            lines.push('<li>resource=' + escapeHtml(resourceId) + ', holder=' + escapeHtml(holderWorkspace + '/' + holderActor) + ', lease=' + escapeHtml(leaseId) + '</li>');
+          });
+          lines.push('</ul>');
+        }
       }
 
       precheckDiagnostics.innerHTML = lines.join('');
@@ -3147,6 +3193,20 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         }
         return;
       }
+      if (type === "workspace-lock-snapshot-result") {
+        const ok = Boolean(payload.ok);
+        if (ok && payload.snapshot) {
+          state.lastLockSnapshot = payload.snapshot;
+          setStatus(String(payload.message || "锁快照已更新"));
+          if (state.lastPrecheck) {
+            renderPrecheckDiagnostics(state.lastPrecheck);
+          }
+        } else {
+          state.lastLockSnapshot = null;
+          setStatus(String(payload.message || "锁快照不可用"));
+        }
+        return;
+      }
       if (type === "service-status-result") {
         if (!payload.ok) {
           serviceStatus.textContent = "服务状态读取失败: " + String(payload.error || "unknown");
@@ -3225,6 +3285,16 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (action === "precheck-editable") {
           setWorkspaceReadonly(false, "已退出只读模式");
           openSystemModal("sys-topo");
+          return;
+        }
+        if (action === "precheck-lock-snapshot") {
+          const selectors = extractSelectorsFromPrecheck(state.lastPrecheck);
+          post("workspace-lock-snapshot", {
+            workspaceId: String(workspaceId?.value || "").trim(),
+            topologyYaml: getTopologyYamlForSave(),
+            selectors,
+          });
+          setStatus("正在拉取锁快照...");
         }
       });
     }

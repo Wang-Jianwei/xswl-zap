@@ -24,6 +24,7 @@ namespace vna {
 
 static const char* VnaControl_method_names[] = {
   "/vna.VnaControl/ValidateTopology",
+  "/vna.VnaControl/PrecheckWorkspaceTopology",
   "/vna.VnaControl/UpsertWorkspaceTopology",
   "/vna.VnaControl/GetWorkspaceTopology",
   "/vna.VnaControl/ListWorkspaceTopologies",
@@ -46,18 +47,19 @@ std::unique_ptr< VnaControl::Stub> VnaControl::NewStub(const std::shared_ptr< ::
 
 VnaControl::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_ValidateTopology_(VnaControl_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpsertWorkspaceTopology_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetWorkspaceTopology_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListWorkspaceTopologies_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetActiveWorkspace_(VnaControl_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetServiceStatus_(VnaControl_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetInstanceCapabilities_(VnaControl_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetScanState_(VnaControl_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetScanState_(VnaControl_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Acquire_(VnaControl_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ImportAcquisition_(VnaControl_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_CompareImportedAcquisition_(VnaControl_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_StreamAcquisition_(VnaControl_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  , rpcmethod_PrecheckWorkspaceTopology_(VnaControl_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpsertWorkspaceTopology_(VnaControl_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetWorkspaceTopology_(VnaControl_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListWorkspaceTopologies_(VnaControl_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetActiveWorkspace_(VnaControl_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetServiceStatus_(VnaControl_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetInstanceCapabilities_(VnaControl_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetScanState_(VnaControl_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetScanState_(VnaControl_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Acquire_(VnaControl_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ImportAcquisition_(VnaControl_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CompareImportedAcquisition_(VnaControl_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_StreamAcquisition_(VnaControl_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
 ::grpc::Status VnaControl::Stub::ValidateTopology(::grpc::ClientContext* context, const ::vna::Topology& request, ::vna::ValidationResult* response) {
@@ -79,6 +81,29 @@ void VnaControl::Stub::async::ValidateTopology(::grpc::ClientContext* context, c
 ::grpc::ClientAsyncResponseReader< ::vna::ValidationResult>* VnaControl::Stub::AsyncValidateTopologyRaw(::grpc::ClientContext* context, const ::vna::Topology& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncValidateTopologyRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status VnaControl::Stub::PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::vna::TopologyPrecheckResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PrecheckWorkspaceTopology_, context, request, response);
+}
+
+void VnaControl::Stub::async::PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PrecheckWorkspaceTopology_, context, request, response, std::move(f));
+}
+
+void VnaControl::Stub::async::PrecheckWorkspaceTopology(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PrecheckWorkspaceTopology_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>* VnaControl::Stub::PrepareAsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::TopologyPrecheckResult, ::vna::TopologyPrecheckRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PrecheckWorkspaceTopology_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::TopologyPrecheckResult>* VnaControl::Stub::AsyncPrecheckWorkspaceTopologyRaw(::grpc::ClientContext* context, const ::vna::TopologyPrecheckRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncPrecheckWorkspaceTopologyRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -366,6 +391,16 @@ VnaControl::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       VnaControl_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::TopologyPrecheckRequest, ::vna::TopologyPrecheckResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](VnaControl::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::TopologyPrecheckRequest* req,
+             ::vna::TopologyPrecheckResult* resp) {
+               return service->PrecheckWorkspaceTopology(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      VnaControl_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceTopologyUpsertRequest, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
              ::grpc::ServerContext* ctx,
@@ -374,7 +409,7 @@ VnaControl::Service::Service() {
                return service->UpsertWorkspaceTopology(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[2],
+      VnaControl_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceRef, ::vna::WorkspaceTopologyConfig, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -384,7 +419,7 @@ VnaControl::Service::Service() {
                return service->GetWorkspaceTopology(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[3],
+      VnaControl_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::Empty, ::vna::WorkspaceTopologyList, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -394,7 +429,7 @@ VnaControl::Service::Service() {
                return service->ListWorkspaceTopologies(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[4],
+      VnaControl_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::WorkspaceRef, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -404,7 +439,7 @@ VnaControl::Service::Service() {
                return service->SetActiveWorkspace(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[5],
+      VnaControl_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::Empty, ::vna::ServiceStatus, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -414,7 +449,7 @@ VnaControl::Service::Service() {
                return service->GetServiceStatus(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[6],
+      VnaControl_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::InstanceSelector, ::vna::InstanceCapabilities, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -424,7 +459,7 @@ VnaControl::Service::Service() {
                return service->GetInstanceCapabilities(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[7],
+      VnaControl_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::ScanStateRequest, ::vna::ScanStateResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -434,7 +469,7 @@ VnaControl::Service::Service() {
                return service->SetScanState(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[8],
+      VnaControl_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::InstanceSelector, ::vna::ScanStateResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -444,7 +479,7 @@ VnaControl::Service::Service() {
                return service->GetScanState(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[9],
+      VnaControl_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -454,7 +489,7 @@ VnaControl::Service::Service() {
                return service->Acquire(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[10],
+      VnaControl_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::ImportAcquisitionRequest, ::vna::AcquisitionResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -464,7 +499,7 @@ VnaControl::Service::Service() {
                return service->ImportAcquisition(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[11],
+      VnaControl_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< VnaControl::Service, ::vna::CompareImportedAcquisitionRequest, ::vna::CompareImportedAcquisitionResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](VnaControl::Service* service,
@@ -474,7 +509,7 @@ VnaControl::Service::Service() {
                return service->CompareImportedAcquisition(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      VnaControl_method_names[12],
+      VnaControl_method_names[13],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< VnaControl::Service, ::vna::AcquisitionRequest, ::vna::AcquisitionResult>(
           [](VnaControl::Service* service,
@@ -489,6 +524,13 @@ VnaControl::Service::~Service() {
 }
 
 ::grpc::Status VnaControl::Service::ValidateTopology(::grpc::ServerContext* context, const ::vna::Topology* request, ::vna::ValidationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status VnaControl::Service::PrecheckWorkspaceTopology(::grpc::ServerContext* context, const ::vna::TopologyPrecheckRequest* request, ::vna::TopologyPrecheckResult* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -581,6 +623,10 @@ VnaControl::Service::~Service() {
 
 
 static const char* ResourceBroker_method_names[] = {
+  "/vna.ResourceBroker/AcquireLock",
+  "/vna.ResourceBroker/RenewLock",
+  "/vna.ResourceBroker/ReleaseLock",
+  "/vna.ResourceBroker/GetLockSnapshot",
   "/vna.ResourceBroker/Acquire",
   "/vna.ResourceBroker/Renew",
   "/vna.ResourceBroker/Release",
@@ -593,10 +639,106 @@ std::unique_ptr< ResourceBroker::Stub> ResourceBroker::NewStub(const std::shared
 }
 
 ResourceBroker::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_Acquire_(ResourceBroker_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Renew_(ResourceBroker_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_Release_(ResourceBroker_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_AcquireLock_(ResourceBroker_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RenewLock_(ResourceBroker_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ReleaseLock_(ResourceBroker_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetLockSnapshot_(ResourceBroker_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Acquire_(ResourceBroker_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Renew_(ResourceBroker_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Release_(ResourceBroker_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
+
+::grpc::Status ResourceBroker::Stub::AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::vna::LockAcquireResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::LockAcquireRequest, ::vna::LockAcquireResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AcquireLock_, context, request, response);
+}
+
+void ResourceBroker::Stub::async::AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::LockAcquireRequest, ::vna::LockAcquireResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AcquireLock_, context, request, response, std::move(f));
+}
+
+void ResourceBroker::Stub::async::AcquireLock(::grpc::ClientContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AcquireLock_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>* ResourceBroker::Stub::PrepareAsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::LockAcquireResult, ::vna::LockAcquireRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AcquireLock_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockAcquireResult>* ResourceBroker::Stub::AsyncAcquireLockRaw(::grpc::ClientContext* context, const ::vna::LockAcquireRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAcquireLockRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ResourceBroker::Stub::RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::vna::LockOperationResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::LockRenewRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_RenewLock_, context, request, response);
+}
+
+void ResourceBroker::Stub::async::RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::LockRenewRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RenewLock_, context, request, response, std::move(f));
+}
+
+void ResourceBroker::Stub::async::RenewLock(::grpc::ClientContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_RenewLock_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* ResourceBroker::Stub::PrepareAsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::LockOperationResult, ::vna::LockRenewRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_RenewLock_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* ResourceBroker::Stub::AsyncRenewLockRaw(::grpc::ClientContext* context, const ::vna::LockRenewRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncRenewLockRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ResourceBroker::Stub::ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::vna::LockOperationResult* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::LockReleaseRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ReleaseLock_, context, request, response);
+}
+
+void ResourceBroker::Stub::async::ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::LockReleaseRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ReleaseLock_, context, request, response, std::move(f));
+}
+
+void ResourceBroker::Stub::async::ReleaseLock(::grpc::ClientContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ReleaseLock_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* ResourceBroker::Stub::PrepareAsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::LockOperationResult, ::vna::LockReleaseRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ReleaseLock_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockOperationResult>* ResourceBroker::Stub::AsyncReleaseLockRaw(::grpc::ClientContext* context, const ::vna::LockReleaseRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncReleaseLockRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ResourceBroker::Stub::GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::vna::LockSnapshot* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::vna::LockSnapshotRequest, ::vna::LockSnapshot, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetLockSnapshot_, context, request, response);
+}
+
+void ResourceBroker::Stub::async::GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::vna::LockSnapshotRequest, ::vna::LockSnapshot, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetLockSnapshot_, context, request, response, std::move(f));
+}
+
+void ResourceBroker::Stub::async::GetLockSnapshot(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetLockSnapshot_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>* ResourceBroker::Stub::PrepareAsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::vna::LockSnapshot, ::vna::LockSnapshotRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetLockSnapshot_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::vna::LockSnapshot>* ResourceBroker::Stub::AsyncGetLockSnapshotRaw(::grpc::ClientContext* context, const ::vna::LockSnapshotRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetLockSnapshotRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
 
 ::grpc::Status ResourceBroker::Stub::Acquire(::grpc::ClientContext* context, const ::vna::ResourceRequest& request, ::vna::LeaseInfo* response) {
   return ::grpc::internal::BlockingUnaryCall< ::vna::ResourceRequest, ::vna::LeaseInfo, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Acquire_, context, request, response);
@@ -671,6 +813,46 @@ ResourceBroker::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ResourceBroker_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LockAcquireRequest, ::vna::LockAcquireResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ResourceBroker::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::LockAcquireRequest* req,
+             ::vna::LockAcquireResult* resp) {
+               return service->AcquireLock(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ResourceBroker_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LockRenewRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ResourceBroker::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::LockRenewRequest* req,
+             ::vna::LockOperationResult* resp) {
+               return service->RenewLock(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ResourceBroker_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LockReleaseRequest, ::vna::LockOperationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ResourceBroker::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::LockReleaseRequest* req,
+             ::vna::LockOperationResult* resp) {
+               return service->ReleaseLock(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ResourceBroker_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LockSnapshotRequest, ::vna::LockSnapshot, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ResourceBroker::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::vna::LockSnapshotRequest* req,
+             ::vna::LockSnapshot* resp) {
+               return service->GetLockSnapshot(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ResourceBroker_method_names[4],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::ResourceRequest, ::vna::LeaseInfo, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ResourceBroker::Service* service,
              ::grpc::ServerContext* ctx,
@@ -679,7 +861,7 @@ ResourceBroker::Service::Service() {
                return service->Acquire(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ResourceBroker_method_names[1],
+      ResourceBroker_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LeaseInfo, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ResourceBroker::Service* service,
@@ -689,7 +871,7 @@ ResourceBroker::Service::Service() {
                return service->Renew(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ResourceBroker_method_names[2],
+      ResourceBroker_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ResourceBroker::Service, ::vna::LeaseInfo, ::vna::ValidationResult, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ResourceBroker::Service* service,
@@ -701,6 +883,34 @@ ResourceBroker::Service::Service() {
 }
 
 ResourceBroker::Service::~Service() {
+}
+
+::grpc::Status ResourceBroker::Service::AcquireLock(::grpc::ServerContext* context, const ::vna::LockAcquireRequest* request, ::vna::LockAcquireResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ResourceBroker::Service::RenewLock(::grpc::ServerContext* context, const ::vna::LockRenewRequest* request, ::vna::LockOperationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ResourceBroker::Service::ReleaseLock(::grpc::ServerContext* context, const ::vna::LockReleaseRequest* request, ::vna::LockOperationResult* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ResourceBroker::Service::GetLockSnapshot(::grpc::ServerContext* context, const ::vna::LockSnapshotRequest* request, ::vna::LockSnapshot* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
 ::grpc::Status ResourceBroker::Service::Acquire(::grpc::ServerContext* context, const ::vna::ResourceRequest* request, ::vna::LeaseInfo* response) {

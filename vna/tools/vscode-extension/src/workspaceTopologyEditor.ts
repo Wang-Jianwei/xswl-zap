@@ -1117,20 +1117,31 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       if (msg.type === 'workspace-save-result') {
         const precheck = msg.precheck || null;
         if (!msg.ok && precheck) {
-          const conflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
-          const first = conflicts[0] || null;
-          if (first && first.selector && first.holderOwner) {
-            const resourceId = String(first.selector.resourceId || 'unknown-resource');
-            const holder = String(first.holderOwner.workspaceId || 'unknown-workspace');
-            setHint((msg.message || 'Save blocked.') + ' [resource=' + resourceId + ', holder=' + holder + ']');
-          } else {
-            setHint(msg.message || 'Save blocked by precheck.');
+          const hintLines = [msg.message || 'Save blocked by precheck.'];
+          if (msg.lockSnapshotSummary) {
+            hintLines.push(String(msg.lockSnapshotSummary));
           }
+          setHint(hintLines.join('\n'));
         } else {
           setHint(msg.message || 'Save done.');
         }
         if (msg.ok) {
           vscode.postMessage({ type: 'workspace-list' });
+        }
+        return;
+      }
+      if (msg.type === 'workspace-lock-snapshot-result') {
+        if (msg.ok && msg.snapshot && Array.isArray(msg.snapshot.leases)) {
+          const leases = msg.snapshot.leases;
+          if (leases.length === 0) {
+            setHint('Lock snapshot: no active leases on selected resources.');
+          } else {
+            const first = leases[0] || {};
+            const resourceId = String(first?.selector?.resourceId || 'unknown-resource');
+            const workspaceId = String(first?.owner?.workspaceId || 'unknown-workspace');
+            const actor = String(first?.owner?.actor || 'unknown-actor');
+            setHint('Lock snapshot: resource=' + resourceId + ', holder=' + workspaceId + '/' + actor);
+          }
         }
         return;
       }

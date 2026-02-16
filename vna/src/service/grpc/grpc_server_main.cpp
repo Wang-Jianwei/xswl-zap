@@ -14,6 +14,7 @@
 #include "service/grpc/grpc_bootstrap_paths.h"
 #include "service/vna_control_inproc_handler.h"
 #include "service/vna_control_service.h"
+#include "service/grpc/resource_broker_grpc_service.h"
 #include "service/grpc/vna_control_grpc_service.h"
 
 int main(int argc, char** argv) {
@@ -66,6 +67,7 @@ int main(int argc, char** argv) {
 
   vna::service::ProcessManager processManager;
   vna::service::ServiceStatusService statusService;
+  vna::service::ResourceBrokerService brokerService;
   vna::service::VnaControlService controlService;
   vna::service::VnaControlInProcessHandler inprocHandler;
 
@@ -135,7 +137,9 @@ int main(int argc, char** argv) {
       &statusService,
       &inprocHandler,
       config.streamThrottleEveryNFrames,
-      config.streamThrottleMs);
+      config.streamThrottleMs,
+      &brokerService);
+    vna::service::ResourceBrokerGrpcService brokerGrpcService(&brokerService);
 
   std::vector<std::string> addresses;
   addresses.push_back(config.bindAddress + ":" + std::to_string(config.port));
@@ -147,6 +151,7 @@ int main(int argc, char** argv) {
     grpc::ServerBuilder builder;
     builder.AddListeningPort(addresses[i], grpc::InsecureServerCredentials());
     builder.RegisterService(&grpcService);
+    builder.RegisterService(&brokerGrpcService);
 
     std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
     if (!server) {

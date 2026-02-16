@@ -14,6 +14,7 @@ import {
 } from "./statusFormatter";
 import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
+import { buildLockSnapshotSummary, collectConflictSelectors } from "./lockDiagnostics";
 import { buildWaveformPreviewHtml, buildWaveformPreviewUpdatePayload } from "./waveformPreview";
 import { buildWorkspaceTopologyEditorHtml } from "./workspaceTopologyEditor";
 import { buildUnifiedControlCenterHtml } from "./unifiedControlCenter";
@@ -307,6 +308,7 @@ export function activate(context: vscode.ExtensionContext): void {
         topologyId?: string;
         topologyYaml?: string;
         activate?: boolean;
+        selectors?: Array<{ type?: number; resourceId?: string }>;
       };
 
       const workspaceId = String(payload.workspaceId ?? "").trim();
@@ -342,9 +344,15 @@ export function activate(context: vscode.ExtensionContext): void {
 
           if (precheck && !precheck.ok) {
             const failureMessage = buildPrecheckFailureMessage(precheck);
+            const selectors = collectConflictSelectors(precheck.lockConflicts);
+            const lockSnapshot = selectors.length > 0
+              ? await client.getLockSnapshot(selectors)
+              : null;
+            const lockSnapshotSummary = buildLockSnapshotSummary(lockSnapshot, precheck.lockConflicts.length);
             logBlock(outputChannel, "INFO", `[WorkspaceTopologyPrecheckBlocked][requestId=${requestId}]`, [
               `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
               failureMessage,
+              `conflictCount=${precheck.lockConflicts.length}, snapshotLeases=${lockSnapshot?.leases.length ?? -1}`,
             ]);
             showOutputIfEnabled(outputChannel, autoOpenOutput);
 
@@ -352,6 +360,9 @@ export function activate(context: vscode.ExtensionContext): void {
               type: "workspace-save-result",
               ok: false,
               message: `Precheck failed: ${failureMessage}`,
+              lockSnapshotSummary,
+              lockSnapshot,
+              lockSnapshotSelectors: selectors,
               precheck: {
                 code: precheck.code,
                 message: precheck.message,
@@ -389,6 +400,31 @@ export function activate(context: vscode.ExtensionContext): void {
           return;
         }
 
+        if (payload.type === "workspace-lock-snapshot") {
+          const rawSelectors = Array.isArray(payload.selectors) ? payload.selectors : [];
+          const normalizedSelectors = rawSelectors
+            .map((item) => ({
+              type: Number(item?.type ?? 1),
+              resourceId: String(item?.resourceId ?? "").trim(),
+            }))
+            .filter((item) => item.resourceId.length > 0);
+          const selectors = normalizedSelectors.length > 0
+            ? normalizedSelectors
+            : extractRequiredResourcesFromTopologyYaml(topologyYaml);
+
+          const snapshot = await client.getLockSnapshot(selectors);
+          await panel.webview.postMessage({
+            type: "workspace-lock-snapshot-result",
+            ok: Boolean(snapshot),
+            selectors,
+            snapshot,
+            message: snapshot
+              ? `Lock snapshot loaded (${snapshot.leases.length} leases).`
+              : "Lock snapshot is unavailable on current server.",
+          });
+          return;
+        }
+
         if (payload.type === "workspace-activate") {
           const result = await client.setActiveWorkspace(workspaceId);
           const messageText = formatValidationResult(result);
@@ -416,6 +452,8 @@ export function activate(context: vscode.ExtensionContext): void {
           resultType = "workspace-save-result";
         } else if (payload.type === "workspace-activate") {
           resultType = "workspace-activate-result";
+        } else if (payload.type === "workspace-lock-snapshot") {
+          resultType = "workspace-lock-snapshot-result";
         }
         await panel.webview.postMessage({
           type: resultType,
@@ -486,6 +524,7 @@ export function activate(context: vscode.ExtensionContext): void {
         scanState?: WaveformScanState;
         sampleCount?: number;
         mode?: "frequency" | "time";
+        selectors?: Array<{ type?: number; resourceId?: string }>;
       };
 
       const workspaceId = String(payload.workspaceId ?? "").trim();
@@ -583,6 +622,37 @@ export function activate(context: vscode.ExtensionContext): void {
           if (result.ok) {
             await postWorkspaceList();
           }
+          return;
+        }
+
+        if (payload.type === "workspace-lock-snapshot") {
+          const rawSelectors = Array.isArray(payload.selectors) ? payload.selectors : [];
+          const normalizedSelectors = rawSelectors
+            .map((item) => ({
+              type: Number(item?.type ?? 1),
+              resourceId: String(item?.resourceId ?? "").trim(),
+            }))
+            .filter((item) => item.resourceId.length > 0);
+          const selectors = normalizedSelectors.length > 0
+            ? normalizedSelectors
+            : extractRequiredResourcesFromTopologyYaml(topologyYaml);
+          const snapshot = await client.getLockSnapshot(selectors);
+
+          logBlock(outputChannel, "INFO", `[ControlCenterLockSnapshot][requestId=${requestId}]`, [
+            `workspaceId=${workspaceId || ""}, selectors=${selectors.length}`,
+            snapshot ? `leases=${snapshot.leases.length}` : "snapshot-unavailable",
+          ]);
+          showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+          await postMessage({
+            type: "workspace-lock-snapshot-result",
+            ok: Boolean(snapshot),
+            selectors,
+            snapshot,
+            message: snapshot
+              ? `Lock snapshot loaded (${snapshot.leases.length} leases).`
+              : "Lock snapshot is unavailable on current server.",
+          });
           return;
         }
 
