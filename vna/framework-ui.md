@@ -184,6 +184,8 @@ flowchart LR
 - **冲突稳定指纹**：诊断 JSON 提供 `conflictFingerprint`，用于将同构冲突在日志与工单中快速聚类。
 - **最小重试建议**：诊断 JSON 提供 `retryAdvice`（recommendation/reason/retryDelayMs/autoRetrySuggested），帮助界面与自动化流程选择下一步动作。
 - **建议动作一键执行**：Control Center 与 `Workspace Quick Edit` 可根据 `retryAdvice` 自动触发对应操作（重试保存/切只读或刷新快照/切换 YAML 修复）。
+- **虚拟设备直达拓扑**：Hardware 列表提供“配置拓扑”按钮，可从虚拟设备直接进入拓扑编辑并自动建立/定位关联 board，避免跨页手工关联。
+- **拓扑层级收敛**：Topology 不再与 Hardware 同级展示；在 Hardware 行内点击“配置拓扑”进入子页面，顶部展示 `⬅️ dev-xxx / topology config` 并支持返回 Hardware 列表。
 - **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
 
 ---

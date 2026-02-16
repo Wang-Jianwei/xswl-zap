@@ -1075,7 +1075,6 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                   <div class="sp-tab" data-tab="cal-adv">Advanced<br>Settings</div>
               </div>
               <div id="panel-cal-basic" class="sp-content-panel active">
-                  <div class="sp-item" data-view="topology">Launch Topology Editor</div>
                   <div class="sp-item" data-action="open-visual-topology">Port Manager</div>
               </div>
               <div id="panel-cal-adv" class="sp-content-panel">
@@ -1118,8 +1117,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       <div class="topbar">
         <strong>${title}</strong>
         <div class="topbar-actions">
-          <button id="workspaceStatusBtn" class="secondary">WS: <span id="workspaceStatusText">(未激活)</span><span id="workspaceReadonlyTag" class="readonly-tag">READONLY</span></button>
-          <button id="topbarWorkspaceBtn" class="secondary">Workspace</button>
+          <button id="workspaceStatusBtn" class="secondary">工作区: <span id="workspaceStatusText">(未激活)</span><span id="workspaceReadonlyTag" class="readonly-tag">READONLY</span></button>
+          <button id="topbarWorkspaceBtn" class="secondary">工作区配置</button>
           <div class="status" id="statusLine">准备就绪</div>
         </div>
       </div>
@@ -1178,8 +1177,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
       <!-- Sidebar -->
       <div class="sc-sidebar">
-        <div class="sc-nav-item active" data-target="sys-topo">Topology</div>
-        <div class="sc-nav-item" data-target="sys-ws">Workspace List</div>
+        <div class="sc-nav-item active" data-target="sys-ws">工作区配置</div>
         <div class="sc-nav-item" data-target="sys-hw">Hardware</div>
         <div class="sc-nav-item" data-target="sys-lic">Licenses</div>
       </div>
@@ -1188,7 +1186,11 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       <div class="sc-content">
         
         <!-- Tab: Topology (Visual Editor) -->
-        <div id="tab-pane-sys-topo" class="sc-tab-pane active">
+          <div id="tab-pane-sys-topo" class="sc-tab-pane">
+            <div class="line inline" style="margin:0 0 8px 0; gap:8px; align-items:center;">
+              <button id="btnTopologyBack" class="secondary" style="padding:4px 10px;">⬅️</button>
+              <div id="topologyConfigPath" style="font-size:12px; opacity:0.9;">workspace / topology config</div>
+            </div>
            <div class="sc-section-title">Visual Topology Editor</div>
            
            <div class="topology-mode">
@@ -1224,13 +1226,13 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         
         <!-- Tab: Workspace (Management) -->
         <div id="tab-pane-sys-ws" class="sc-tab-pane">
-            <div class="sc-section-title">Workspace Manager</div>
+            <div class="sc-section-title">工作区配置</div>
             <div class="card">
                <div class="line inline">
                  <label>Current Workspace ID:</label>
                  <input id="workspaceId" placeholder="e.g. ws-default" style="flex:1;" />
-                 <label>Topology ID:</label>
-                 <input id="topologyId" placeholder="e.g. topo-main" style="flex:1;" />
+                 <label>Topology ID (可选):</label>
+                 <select id="topologyId" style="flex:1;"></select>
                </div>
                <div class="actions" style="margin-top:8px;">
                  <button id="btnWorkspaceLoad">Load</button>
@@ -1248,11 +1250,6 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                 <tbody id="workspaceRows"></tbody>
               </table>
             </div>
-            <!-- Hidden Helpers for old logic if needed -->
-            <button id="btnTopologyLoad" style="display:none;">(Hidden Load)</button>
-            <button id="btnTopologyToYaml" style="display:none;">(Hidden Sync)</button>
-            <button id="btnTopologySave" style="display:none;">(Hidden Save)</button>
-            <button id="btnTopologySaveActivate" style="display:none;">(Hidden SaveAct)</button>
         </div>
 
         <!-- Tab: Hardware (Device Manager) -->
@@ -1314,6 +1311,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       lastLockSnapshotUpdatedAtMs: 0,
       lastDiagnosticPayload: null,
       expandedBoards: new Set(), // Track expanded state separately
+      topologyContextDeviceId: "",
     };
 
     function escapeHtml(value) {
@@ -1366,6 +1364,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     const workspaceReadonlyTag = document.getElementById("workspaceReadonlyTag");
     const workspaceStatusBtn = document.getElementById("workspaceStatusBtn");
     const topbarWorkspaceBtn = document.getElementById("topbarWorkspaceBtn");
+    const btnTopologyBack = document.getElementById("btnTopologyBack");
+    const topologyConfigPath = document.getElementById("topologyConfigPath");
 
     state.topologyMode = "visual";
     state.draggingVirtualPort = "";
@@ -1434,6 +1434,43 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         return "-";
       }
       return new Date(ms).toLocaleString();
+    }
+
+    function ensureTopologyOption(topologyIdValue) {
+      const value = String(topologyIdValue || "").trim();
+      if (!value) {
+        return;
+      }
+      const exists = Array.from(topologyId.options).some((opt) => String(opt.value || "") === value);
+      if (!exists) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        topologyId.appendChild(option);
+      }
+    }
+
+    function refreshTopologyOptions(preferredTopologyId) {
+      const values = new Set(["topo-main"]);
+      for (const item of Array.isArray(state.items) ? state.items : []) {
+        const id = String(item && item.topologyId ? item.topologyId : "").trim();
+        if (id) {
+          values.add(id);
+        }
+      }
+
+      const previousValue = String(topologyId.value || "").trim();
+      topologyId.innerHTML = "";
+      Array.from(values).sort((left, right) => left.localeCompare(right)).forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        topologyId.appendChild(option);
+      });
+
+      const preferred = String(preferredTopologyId || "").trim() || previousValue || "topo-main";
+      ensureTopologyOption(preferred);
+      topologyId.value = preferred;
     }
 
     function renderWorkspaceRows() {
@@ -1593,6 +1630,64 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       return options.join("");
     }
 
+    function ensureBoardForDeviceTemplate(deviceId) {
+      if (!deviceId) {
+        return null;
+      }
+      let board = state.topology.boards.find((item) => item.deviceTemplateId === deviceId);
+      if (board) {
+        return board;
+      }
+      const device = state.deviceRegistry.find((item) => item.id === deviceId);
+      if (!device) {
+        return null;
+      }
+
+      board = {
+        id: "card" + String(state.topology.boards.length + 1),
+        kind: "board",
+        portsCsv: "p1,p2",
+        deviceTemplateId: device.id,
+        driver: device.driver || (device.type === "virtual" ? "virtual" : "pxi"),
+        device: device.device || (device.type === "virtual" ? ("virtual-device-" + String(state.topology.boards.length + 1)) : ""),
+        resource: device.resource || "",
+        cardIndex: String(state.topology.boards.length + 1),
+        detail: "",
+      };
+      state.topology.boards.push(board);
+      return board;
+    }
+
+    function setTopologyContextDevice(deviceId) {
+      const normalized = String(deviceId || "").trim();
+      state.topologyContextDeviceId = normalized;
+      const label = normalized || "workspace";
+      if (topologyConfigPath) {
+        topologyConfigPath.textContent = label + " / topology config";
+      }
+    }
+
+    function openTopologyForDevice(deviceId) {
+      const device = state.deviceRegistry.find((item) => item.id === deviceId);
+      if (!device) {
+        setStatus("设备不存在，无法打开拓扑配置");
+        return;
+      }
+
+      const board = ensureBoardForDeviceTemplate(deviceId);
+      if (board) {
+        state.expandedBoards.add(board.id);
+      }
+      setTopologyContextDevice(device.id);
+      openSystemModal("sys-topo");
+      setTopologyMode("visual");
+      renderTopologyVisual();
+
+      const modeText = device.type === "virtual" ? "虚拟设备" : "设备";
+      const boardText = board ? (", board=" + board.id) : "";
+      setStatus("已打开" + modeText + "拓扑配置: " + device.id + boardText);
+    }
+
     function renderDeviceManager() {
       if (!deviceManagerRows) {
         return;
@@ -1611,6 +1706,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           '<input data-field="driver" value="' + escapeAttr(item.driver) + '" placeholder="driver" />' +
           '<input data-field="device" value="' + escapeAttr(item.device) + '" placeholder="device" />' +
           '<input data-field="resource" value="' + escapeAttr(item.resource) + '" placeholder="resource" />' +
+          '<button data-action="edit-device-topology" class="secondary">配置拓扑</button>' +
           '<button data-action="delete-device" class="secondary">删除</button>' +
         '</div>'
       ).join("");
@@ -2266,8 +2362,6 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       const buttonIds = [
         "btnWorkspaceSave",
         "btnWorkspaceSaveActivate",
-        "btnTopologySave",
-        "btnTopologySaveActivate",
         "btnAddVirtualPort",
         "btnAddBoard",
         "btnAutoLayout",
@@ -2510,7 +2604,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             String(Boolean(payload.retryAdvice.autoRetrySuggested)),
           );
         }
-        return lines.join("\n");
+        return lines.join("\\n");
       }
 
       const precheck = state.lastPrecheck || null;
@@ -2567,7 +2661,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         });
       }
 
-      return lines.join("\n");
+      return lines.join("\\n");
     }
 
     function buildPrecheckCopyJson() {
@@ -2922,15 +3016,15 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (!sysModal) return;
         sysModal.classList.add('is-open');
         
-        let tabName = targetTab || 'sys-topo'; // Default
+      let tabName = targetTab || 'sys-ws'; // Default
         
-        // Handle "workspace" or "topology" legacy names from data-view attributes
+        // Handle legacy name from data-view attributes
         if (targetTab === 'workspace') tabName = 'sys-ws';
-        if (targetTab === 'topology') tabName = 'sys-topo';
+      const navActiveTab = tabName === 'sys-topo' ? 'sys-hw' : tabName;
 
         // Switch
         sysNavItems.forEach(nav => {
-           if (nav.dataset.target === tabName) {
+         if (nav.dataset.target === navActiveTab) {
                nav.classList.add('active');
            } else {
                nav.classList.remove('active');
@@ -2947,6 +3041,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         
         // Refresh Topology
         if (tabName === 'sys-topo') {
+             if (!state.topologyContextDeviceId) {
+            setTopologyContextDevice('');
+             }
              setTimeout(() => renderTopologyVisual(), 50);
         }
     }
@@ -2957,6 +3054,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
     if (closeSysBtn) closeSysBtn.addEventListener('click', closeSystemModal);
     if (cancelSysBtn) cancelSysBtn.addEventListener('click', closeSystemModal);
+
+    if (btnTopologyBack) {
+      btnTopologyBack.addEventListener("click", () => {
+        openSystemModal("sys-hw");
+      });
+    }
     
     // Switch tabs
     sysNavItems.forEach(item => {
@@ -2971,6 +3074,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
              if (pane) pane.classList.add('active');
              
              if (target === 'sys-topo') {
+                 if (!state.topologyContextDeviceId) {
+                   setTopologyContextDevice('');
+                 }
                  setTimeout(() => renderTopologyVisual(), 0);
              }
         });
@@ -2985,7 +3091,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     // Intercept data-view clicks for modal targets
     document.querySelectorAll("[data-view]").forEach((node) => {
          const view = node.getAttribute("data-view");
-         if (view === "workspace" || view === "topology") {
+       if (view === "workspace") {
              // Remove old listener effectively by replacing logic?
              // Actually, we can just attach a new listener that stops propagation
              // But the old listener is already attached. 
@@ -2993,7 +3099,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
              // Since we can't, we rely on switchView failing gracefully (which it does).
              node.addEventListener("click", (e) => {
                  e.stopImmediatePropagation();
-                 openSystemModal(view); // 'workspace' or 'topology'
+           openSystemModal(view);
              }, true); // Capture phase to beat the old listener?
          }
     });
@@ -3018,8 +3124,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       node.addEventListener("click", (e) => {
         const view = node.getAttribute("data-view");
         
-        // Intercept modal views
-        if (view === "workspace" || view === "topology") {
+        // Intercept modal view
+        if (view === "workspace") {
              e.preventDefault();
              e.stopPropagation();
              openSystemModal(view);
@@ -3385,12 +3491,20 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       if (!(target instanceof HTMLElement)) {
         return;
       }
-      if (target.getAttribute("data-action") !== "delete-device") {
+      const action = target.getAttribute("data-action") || "";
+      if (!action) {
         return;
       }
       const row = target.closest(".device-row");
       const deviceId = row ? row.getAttribute("data-device-id") : "";
       if (!deviceId) {
+        return;
+      }
+      if (action === "edit-device-topology") {
+        openTopologyForDevice(deviceId);
+        return;
+      }
+      if (action !== "delete-device") {
         return;
       }
       for (const board of state.topology.boards) {
@@ -3404,11 +3518,6 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
     // Old auto-bind button removed
     // document.getElementById("btnAutoBind").addEventListener("click", () => { ... });
-
-    document.getElementById("btnTopologyToYaml").addEventListener("click", () => {
-      topologyYaml.value = topologyToYaml();
-      setStatus("已从可视化模型生成 YAML");
-    });
 
     document.querySelectorAll("[data-action='open-new-workspace-modal']").forEach((node) => {
       node.addEventListener("click", async () => {
@@ -3453,15 +3562,6 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       submitWorkspaceSave(false, false);
     });
     document.getElementById("btnWorkspaceSaveActivate").addEventListener("click", () => {
-      submitWorkspaceSave(true, false);
-    });
-    document.getElementById("btnTopologyLoad").addEventListener("click", () => {
-      post("workspace-load", { workspaceId: workspaceId.value.trim() });
-    });
-    document.getElementById("btnTopologySave").addEventListener("click", () => {
-      submitWorkspaceSave(false, false);
-    });
-    document.getElementById("btnTopologySaveActivate").addEventListener("click", () => {
       submitWorkspaceSave(true, false);
     });
     document.getElementById("btnRefreshService").addEventListener("click", () => post("service-status", {}));
@@ -3515,6 +3615,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       if (type === "workspace-list-result") {
         state.items = Array.isArray(payload.items) ? payload.items : [];
         state.activeWorkspaceId = String(payload.activeWorkspaceId || "");
+        refreshTopologyOptions(String(topologyId?.value || "").trim());
         renderWorkspaceRows();
         if (workspaceStatusText) {
           workspaceStatusText.textContent = state.activeWorkspaceId || "(未激活)";
@@ -3530,7 +3631,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         state.lastDiagnosticPayload = null;
         const item = payload.item;
         workspaceId.value = String(item.workspaceId || "");
-        topologyId.value = String(item.topologyId || "");
+        refreshTopologyOptions(String(item.topologyId || "topo-main"));
+        topologyId.value = String(item.topologyId || "topo-main");
         topologyYaml.value = String(item.topologyYaml || "");
         parseTopologyYaml(topologyYaml.value);
         if (workspaceStatusText) {
@@ -3691,6 +3793,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 
   syncDeviceRegistryFromBoards();
   renderDeviceManager();
+    refreshTopologyOptions("topo-main");
     renderTopologyVisual();
     setTopologyMode("visual");
 

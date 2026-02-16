@@ -214,8 +214,8 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
   </div>
 
   <div class="row">
-    <label for="topologyId">Topology ID</label>
-    <input id="topologyId" placeholder="topology-main" />
+    <label for="topologyId">Topology ID (可选)</label>
+    <select id="topologyId"></select>
   </div>
 
   <div class="mode-toggle">
@@ -1039,11 +1039,49 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
         syncFromCards();
         sanitizeBindings();
       }
+      const topologyIdValue = String(topologyIdInput.value || '').trim() || 'topo-main';
       return {
         workspaceId: String(workspaceIdInput.value || '').trim(),
-        topologyId: String(topologyIdInput.value || '').trim(),
+        topologyId: topologyIdValue,
         topologyYaml: visualMode ? toYamlModel() : String(topologyYamlInput.value || ''),
       };
+    }
+
+    function ensureTopologyOption(topologyId) {
+      const value = String(topologyId || '').trim();
+      if (!value) {
+        return;
+      }
+      const exists = Array.from(topologyIdInput.options).some((opt) => String(opt.value || '') === value);
+      if (!exists) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        topologyIdInput.appendChild(option);
+      }
+    }
+
+    function setTopologyOptions(items, preferredTopologyId) {
+      const values = new Set(['topo-main']);
+      for (const item of Array.isArray(items) ? items : []) {
+        const topologyId = String(item && item.topologyId ? item.topologyId : '').trim();
+        if (topologyId) {
+          values.add(topologyId);
+        }
+      }
+
+      const previousValue = String(topologyIdInput.value || '').trim();
+      topologyIdInput.innerHTML = '';
+      Array.from(values).sort((left, right) => left.localeCompare(right)).forEach((value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        topologyIdInput.appendChild(option);
+      });
+
+      const preferred = String(preferredTopologyId || '').trim() || previousValue || 'topo-main';
+      ensureTopologyOption(preferred);
+      topologyIdInput.value = preferred;
     }
 
     function setWorkspaceList(items, activeWorkspaceId) {
@@ -1063,6 +1101,8 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       if (workspaceSelect.value) {
         workspaceIdInput.value = workspaceSelect.value;
       }
+
+      setTopologyOptions(items, String(topologyIdInput.value || '').trim());
     }
 
     document.getElementById('reloadBtn').addEventListener('click', () => {
@@ -1239,7 +1279,8 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
         updateDiagnosticSelectors([]);
         if (msg.ok && msg.item) {
           workspaceIdInput.value = msg.item.workspaceId || '';
-          topologyIdInput.value = msg.item.topologyId || '';
+          ensureTopologyOption(msg.item.topologyId || 'topo-main');
+          topologyIdInput.value = msg.item.topologyId || 'topo-main';
           topologyYamlInput.value = msg.item.topologyYaml || '';
           const parsed = parseFromYaml(topologyYamlInput.value);
           cards = parsed.cards;

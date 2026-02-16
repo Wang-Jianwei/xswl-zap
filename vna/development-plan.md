@@ -40,6 +40,8 @@
 - **WU-119（完成）**：诊断 payload 新增最小重试建议 `retryAdvice`（动作/原因/延迟/自动重试建议），并在双入口提示透出。
 - **WU-120（完成）**：Control Center 基于 `retryAdvice` 新增“一键执行建议动作”，自动分发到重试保存/切只读/修复拓扑/刷新锁快照路径。
 - **WU-121（完成）**：Workspace Quick Edit 同步接入建议动作执行入口，保证与 Control Center 的冲突处理闭环一致。
+- **WU-122（完成）**：Hardware 设备列表新增“配置拓扑”入口，支持从虚拟设备一键跳转拓扑编辑并自动确保对应 board 存在。
+- **WU-123（完成）**：Topology 不再作为 Hardware 同级导航，改为 Hardware 内子页面；点击设备“配置拓扑”后进入带返回路径头（`⬅️ dev-xxx / topology config`）的拓扑配置页。
 
 ---
 
