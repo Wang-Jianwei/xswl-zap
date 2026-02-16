@@ -221,13 +221,16 @@ import {
     channel: "workspace-editor",
   });
 
-  assert.equal(workspacePayload.schemaVersion, "1.1.0");
+  assert.equal(workspacePayload.schemaVersion, "1.2.0");
   assert.equal(workspacePayload.requestId, "req-123");
   assert.equal(workspacePayload.channel, "workspace-editor");
   assert.equal(workspacePayload.workspaceId, "ws-dev");
   assert.equal(workspacePayload.topologyId, "topo-main");
   assert.equal(workspacePayload.code, "LOCK_CONFLICT");
   assert.equal(workspacePayload.snapshotAvailable, true);
+  assert(workspacePayload.conflictFingerprint.startsWith("fp-"));
+  assert.equal(workspacePayload.retryAdvice.recommendation, "fix-topology");
+  assert.equal(workspacePayload.retryAdvice.autoRetrySuggested, false);
   assert.equal(workspacePayload.counts.lockConflicts, 1);
   assert.equal(workspacePayload.conflictGroups[0]?.resourceId, "dev-a");
   assert.equal(workspacePayload.snapshotGroups[0]?.holders[0]?.leaseIds[0], "lease-1");

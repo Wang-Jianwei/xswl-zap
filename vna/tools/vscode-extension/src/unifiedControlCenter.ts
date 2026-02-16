@@ -2483,6 +2483,36 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     }
 
     function buildPrecheckCopySummary() {
+      if (state.lastDiagnosticPayload && typeof state.lastDiagnosticPayload === "object") {
+        const payload = state.lastDiagnosticPayload;
+        const lines = [];
+        lines.push("[XSWL VNA] Precheck Diagnostics");
+        lines.push("workspace=" + String(payload.workspaceId || "unknown-workspace") + ", topology=" + String(payload.topologyId || "unknown-topology"));
+        lines.push("code=" + String(payload.code || "PRECHECK_FAILED") + ", message=" + String(payload.message || "precheck failed"));
+        lines.push("updatedAt=" + String(payload.updatedAtIso || "-"));
+        lines.push("schema=" + String(payload.schemaVersion || "-") + ", requestId=" + String(payload.requestId || "-") + ", channel=" + String(payload.channel || "-"));
+        lines.push(
+          "topologyErrors=" +
+          String(payload.counts && typeof payload.counts.topologyErrors === "number" ? payload.counts.topologyErrors : 0) +
+          ", lockConflicts=" +
+          String(payload.counts && typeof payload.counts.lockConflicts === "number" ? payload.counts.lockConflicts : 0) +
+          ", snapshotLeases=" +
+          String(payload.counts && typeof payload.counts.snapshotLeases === "number" ? payload.counts.snapshotLeases : -1),
+        );
+        lines.push("fingerprint=" + String(payload.conflictFingerprint || "-"));
+        if (payload.retryAdvice) {
+          lines.push(
+            "retryAdvice=" +
+            String(payload.retryAdvice.recommendation || "-") +
+            ", delayMs=" +
+            String(payload.retryAdvice.retryDelayMs || 0) +
+            ", autoRetry=" +
+            String(Boolean(payload.retryAdvice.autoRetrySuggested)),
+          );
+        }
+        return lines.join("\n");
+      }
+
       const precheck = state.lastPrecheck || null;
       if (!precheck) {
         return "No precheck diagnostics available.";
@@ -2573,6 +2603,56 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       return JSON.stringify(payload, null, 2);
     }
 
+    function applyRetryAdviceAction() {
+      const payload = state.lastDiagnosticPayload && typeof state.lastDiagnosticPayload === "object"
+        ? state.lastDiagnosticPayload
+        : null;
+      const advice = payload && payload.retryAdvice ? payload.retryAdvice : null;
+      const recommendation = advice ? String(advice.recommendation || "") : "";
+
+      if (recommendation === "retry-save") {
+        if (state.workspaceReadonly) {
+          setWorkspaceReadonly(false, "已退出只读模式，执行建议动作：重试保存");
+        }
+        const last = state.lastSaveRequest;
+        if (last && last.workspaceId) {
+          workspaceId.value = last.workspaceId;
+          topologyId.value = last.topologyId;
+          submitWorkspaceSave(Boolean(last.activate), false);
+        } else {
+          submitWorkspaceSave(true, false);
+        }
+        return;
+      }
+
+      if (recommendation === "switch-readonly") {
+        setWorkspaceReadonly(true, "已执行建议动作：切换只读模式");
+        openSystemModal("sys-topo");
+        return;
+      }
+
+      if (recommendation === "fix-topology") {
+        setWorkspaceReadonly(false, "已执行建议动作：请修复拓扑后重试");
+        openSystemModal("sys-topo");
+        setTopologyMode("yaml");
+        setStatus("建议已执行：切换到 YAML 模式，请先修复拓扑错误");
+        return;
+      }
+
+      if (recommendation === "contact-holder") {
+        const selectors = extractSelectorsFromPrecheck(state.lastPrecheck);
+        post("workspace-lock-snapshot", {
+          workspaceId: String(workspaceId?.value || "").trim(),
+          topologyYaml: getTopologyYamlForSave(),
+          selectors,
+        });
+        setStatus("建议已执行：已刷新锁快照，请联系占用方后重试");
+        return;
+      }
+
+      setStatus("暂无可执行的建议动作");
+    }
+
     function renderPrecheckDiagnostics(precheck) {
       if (!precheckDiagnostics) {
         return;
@@ -2609,6 +2689,18 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         const requestId = String(payload.requestId || "-");
         const channel = String(payload.channel || "-");
         lines.push('<div style="margin-top:2px; opacity:0.8;">schema=' + escapeHtml(schemaVersion) + ', requestId=' + escapeHtml(requestId) + ', channel=' + escapeHtml(channel) + '</div>');
+        lines.push('<div style="margin-top:2px; opacity:0.8;">fingerprint=' + escapeHtml(String(payload.conflictFingerprint || '-')) + '</div>');
+        if (payload.retryAdvice) {
+          lines.push(
+            '<div style="margin-top:2px; opacity:0.8;">retry=' +
+            escapeHtml(String(payload.retryAdvice.recommendation || '-')) +
+            ', delayMs=' +
+            escapeHtml(String(payload.retryAdvice.retryDelayMs || 0)) +
+            ', autoRetry=' +
+            escapeHtml(String(Boolean(payload.retryAdvice.autoRetrySuggested))) +
+            '</div>',
+          );
+        }
       }
 
       if (topologyErrors.length > 0) {
@@ -2652,6 +2744,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         lines.push('<button data-action="precheck-readonly" class="secondary">只读打开拓扑</button>');
         lines.push('<button data-action="precheck-editable" class="secondary">退出只读模式</button>');
         lines.push('<button data-action="precheck-lock-snapshot" class="secondary">查看锁快照</button>');
+        lines.push('<button data-action="precheck-apply-advice" class="secondary">执行建议动作</button>');
         lines.push('<button data-action="precheck-copy-summary" class="secondary">复制冲突摘要</button>');
         lines.push('<button data-action="precheck-copy-json" class="secondary">复制JSON摘要</button>');
         lines.push('</div>');
@@ -3570,6 +3663,10 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             selectors,
           });
           setStatus("正在拉取锁快照...");
+          return;
+        }
+        if (action === "precheck-apply-advice") {
+          applyRetryAdviceAction();
           return;
         }
         if (action === "precheck-copy-summary") {

@@ -44,4 +44,6 @@ import { buildUnifiedControlCenterHtml } from "../src/unifiedControlCenter";
   assert(html.includes("复制冲突摘要"));
   assert(html.includes("precheck-copy-json"));
   assert(html.includes("复制JSON摘要"));
+  assert(html.includes("precheck-apply-advice"));
+  assert(html.includes("执行建议动作"));
 })();

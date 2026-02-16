@@ -36,6 +36,10 @@
 - **WU-115（完成）**：预检诊断结构化 payload 下沉到 `lockDiagnostics` 统一构建，提升复用性与测试可维护性。
 - **WU-116（完成）**：诊断 JSON payload 增加 `schemaVersion/requestId/channel/snapshotAvailable` 字段，增强可追踪与脚本化消费能力。
 - **WU-117（完成）**：Control Center 与 Workspace Quick Edit 对齐展示并复制上述追踪字段（含 requestId），支持跨日志关联定位。
+- **WU-118（完成）**：诊断 payload 新增冲突稳定指纹 `conflictFingerprint`，用于同类冲突聚类与跨次保存比对。
+- **WU-119（完成）**：诊断 payload 新增最小重试建议 `retryAdvice`（动作/原因/延迟/自动重试建议），并在双入口提示透出。
+- **WU-120（完成）**：Control Center 基于 `retryAdvice` 新增“一键执行建议动作”，自动分发到重试保存/切只读/修复拓扑/刷新锁快照路径。
+- **WU-121（完成）**：Workspace Quick Edit 同步接入建议动作执行入口，保证与 Control Center 的冲突处理闭环一致。
 
 ---
 

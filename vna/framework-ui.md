@@ -181,6 +181,9 @@ flowchart LR
 - **双格式复制**：Control Center 与 `Workspace Quick Edit` 均支持“复制文本摘要 + 复制 JSON 摘要”，兼容人工沟通与自动化处理两类场景。
 - **结构化诊断复用**：扩展侧基于统一诊断 payload 构建文本摘要与 JSON 摘要，降低多入口文案漂移风险。
 - **追踪字段标准化**：诊断 JSON 携带 `schemaVersion/requestId/channel/snapshotAvailable`，并在 UI 透出 requestId/schema 以支持跨链路追踪。
+- **冲突稳定指纹**：诊断 JSON 提供 `conflictFingerprint`，用于将同构冲突在日志与工单中快速聚类。
+- **最小重试建议**：诊断 JSON 提供 `retryAdvice`（recommendation/reason/retryDelayMs/autoRetrySuggested），帮助界面与自动化流程选择下一步动作。
+- **建议动作一键执行**：Control Center 与 `Workspace Quick Edit` 可根据 `retryAdvice` 自动触发对应操作（重试保存/切只读或刷新快照/切换 YAML 修复）。
 - **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
 
 ---

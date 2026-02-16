@@ -56,6 +56,13 @@ export interface WorkspacePrecheckDiagnosticPayload {
     snapshotLeases: number;
   };
   snapshotAvailable: boolean;
+  conflictFingerprint: string;
+  retryAdvice: {
+    recommendation: "retry-save" | "switch-readonly" | "fix-topology" | "contact-holder";
+    reason: string;
+    retryDelayMs: number;
+    autoRetrySuggested: boolean;
+  };
   topologyErrors: string[];
   conflictGroups: Array<{
     resourceId: string;
@@ -212,6 +219,10 @@ export function buildWorkspacePrecheckDiagnosticSummary(
   lines.push(
     `topologyErrors=${payload.counts.topologyErrors}, lockConflicts=${payload.counts.lockConflicts}, snapshotLeases=${payload.counts.snapshotLeases}`,
   );
+  lines.push(`fingerprint=${payload.conflictFingerprint}`);
+  lines.push(
+    `retryAdvice=${payload.retryAdvice.recommendation}, delayMs=${payload.retryAdvice.retryDelayMs}, autoRetry=${String(payload.retryAdvice.autoRetrySuggested)}`,
+  );
 
   if (payload.topologyErrors.length > 0) {
     lines.push("TopologyErrors:");
@@ -262,9 +273,11 @@ export function buildWorkspacePrecheckDiagnosticPayload(
     ? params.lockSnapshot.leases.length
     : -1;
   const snapshotAvailable = Boolean(params.lockSnapshot);
+  const conflictFingerprint = buildConflictFingerprint(code, topologyId, conflictGroups);
+  const retryAdvice = buildRetryAdvice(topologyErrors.length, lockConflicts.length, snapshotLeaseCount);
 
   return {
-    schemaVersion: "1.1.0",
+    schemaVersion: "1.2.0",
     requestId,
     channel,
     workspaceId,
@@ -278,6 +291,8 @@ export function buildWorkspacePrecheckDiagnosticPayload(
       snapshotLeases: snapshotLeaseCount,
     },
     snapshotAvailable,
+    conflictFingerprint,
+    retryAdvice,
     topologyErrors: topologyErrors.slice(0, 5).map((item) => String(item?.message ?? "invalid topology")),
     conflictGroups: conflictGroups.slice(0, 8).map((group) => ({
       resourceId: group.resourceId,
@@ -293,5 +308,68 @@ export function buildWorkspacePrecheckDiagnosticPayload(
         leaseIds: holder.leaseIds,
       })),
     })),
+  };
+}
+
+function buildConflictFingerprint(code: string, topologyId: string, groups: LockConflictGroup[]): string {
+  const normalizedGroups = groups
+    .map((group) => {
+      const holders = group.holders
+        .map((holder) => `${holder.holder}:${holder.count}`)
+        .sort((left, right) => left.localeCompare(right))
+        .join("|");
+      return `${group.resourceId}#${group.total}#${holders}`;
+    })
+    .sort((left, right) => left.localeCompare(right))
+    .join(";");
+
+  const seed = `${code}::${topologyId}::${normalizedGroups}`;
+  return `fp-${fnv1a32(seed)}`;
+}
+
+function fnv1a32(input: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, "0");
+}
+
+function buildRetryAdvice(topologyErrorCount: number, conflictCount: number, snapshotLeaseCount: number): {
+  recommendation: "retry-save" | "switch-readonly" | "fix-topology" | "contact-holder";
+  reason: string;
+  retryDelayMs: number;
+  autoRetrySuggested: boolean;
+} {
+  if (topologyErrorCount > 0) {
+    return {
+      recommendation: "fix-topology",
+      reason: "topology validation failed",
+      retryDelayMs: 0,
+      autoRetrySuggested: false,
+    };
+  }
+  if (conflictCount > 0 && snapshotLeaseCount > 0) {
+    return {
+      recommendation: "contact-holder",
+      reason: "resource currently held by another workspace/session",
+      retryDelayMs: 3000,
+      autoRetrySuggested: false,
+    };
+  }
+  if (conflictCount > 0) {
+    return {
+      recommendation: "retry-save",
+      reason: "conflict detected but no active lease in snapshot",
+      retryDelayMs: 1500,
+      autoRetrySuggested: true,
+    };
+  }
+  return {
+    recommendation: "switch-readonly",
+    reason: "no explicit conflict detail, inspect readonly mode first",
+    retryDelayMs: 1000,
+    autoRetrySuggested: false,
   };
 }
