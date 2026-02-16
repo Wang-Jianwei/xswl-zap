@@ -1312,6 +1312,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       lastPrecheckUpdatedAtMs: 0,
       lastLockSnapshot: null,
       lastLockSnapshotUpdatedAtMs: 0,
+      lastDiagnosticPayload: null,
       expandedBoards: new Set(), // Track expanded state separately
     };
 
@@ -2539,6 +2540,39 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       return lines.join("\n");
     }
 
+    function buildPrecheckCopyJson() {
+      if (state.lastDiagnosticPayload && typeof state.lastDiagnosticPayload === "object") {
+        return JSON.stringify(state.lastDiagnosticPayload, null, 2);
+      }
+      const precheck = state.lastPrecheck || null;
+      if (!precheck) {
+        return "{}";
+      }
+      const workspaceValue = String(workspaceId && workspaceId.value ? workspaceId.value : "").trim() || "unknown-workspace";
+      const topologyValue = String(topologyId && topologyId.value ? topologyId.value : "").trim() || "unknown-topology";
+      const lockConflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+      const conflictGroups = aggregateConflictGroups(lockConflicts);
+      const snapshot = state.lastLockSnapshot && Array.isArray(state.lastLockSnapshot.leases)
+        ? state.lastLockSnapshot
+        : null;
+      const snapshotGroups = snapshot ? aggregateSnapshotGroups(snapshot.leases) : [];
+      const payload = {
+        workspaceId: workspaceValue,
+        topologyId: topologyValue,
+        code: String(precheck.code || "PRECHECK_FAILED"),
+        message: String(precheck.message || "precheck failed"),
+        updatedAt: formatDateTime(state.lastPrecheckUpdatedAtMs),
+        counts: {
+          topologyErrors: Array.isArray(precheck.topologyErrors) ? precheck.topologyErrors.length : 0,
+          lockConflicts: lockConflicts.length,
+          snapshotLeases: snapshot && Array.isArray(snapshot.leases) ? snapshot.leases.length : -1,
+        },
+        conflictGroups,
+        snapshotGroups,
+      };
+      return JSON.stringify(payload, null, 2);
+    }
+
     function renderPrecheckDiagnostics(precheck) {
       if (!precheckDiagnostics) {
         return;
@@ -2548,6 +2582,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         state.lastPrecheckUpdatedAtMs = 0;
         state.lastLockSnapshot = null;
         state.lastLockSnapshotUpdatedAtMs = 0;
+        state.lastDiagnosticPayload = null;
         precheckDiagnostics.style.display = "none";
         precheckDiagnostics.innerHTML = "";
         return;
@@ -2568,6 +2603,13 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       lines.push('<div style="font-weight:600; color:var(--vscode-errorForeground);">Precheck Blocked: ' + escapeHtml(code) + '</div>');
       lines.push('<div style="margin-top:4px;">' + escapeHtml(message) + '</div>');
       lines.push('<div style="margin-top:4px; opacity:0.8;">workspace=' + escapeHtml(currentWorkspaceId) + ', topology=' + escapeHtml(currentTopologyId) + ', updatedAt=' + escapeHtml(precheckUpdatedAt) + '</div>');
+      if (state.lastDiagnosticPayload && typeof state.lastDiagnosticPayload === "object") {
+        const payload = state.lastDiagnosticPayload;
+        const schemaVersion = String(payload.schemaVersion || "-");
+        const requestId = String(payload.requestId || "-");
+        const channel = String(payload.channel || "-");
+        lines.push('<div style="margin-top:2px; opacity:0.8;">schema=' + escapeHtml(schemaVersion) + ', requestId=' + escapeHtml(requestId) + ', channel=' + escapeHtml(channel) + '</div>');
+      }
 
       if (topologyErrors.length > 0) {
         lines.push('<div style="margin-top:8px; font-weight:600;">Topology Errors</div>');
@@ -2611,6 +2653,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         lines.push('<button data-action="precheck-editable" class="secondary">退出只读模式</button>');
         lines.push('<button data-action="precheck-lock-snapshot" class="secondary">查看锁快照</button>');
         lines.push('<button data-action="precheck-copy-summary" class="secondary">复制冲突摘要</button>');
+        lines.push('<button data-action="precheck-copy-json" class="secondary">复制JSON摘要</button>');
         lines.push('</div>');
       }
 
@@ -3391,6 +3434,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           return;
         }
         renderPrecheckDiagnostics(null);
+        state.lastDiagnosticPayload = null;
         const item = payload.item;
         workspaceId.value = String(item.workspaceId || "");
         topologyId.value = String(item.topologyId || "");
@@ -3416,6 +3460,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           post("workspace-list", {});
         }
         if (!ok) {
+          state.lastDiagnosticPayload = payload.diagnosticPayload || null;
           renderPrecheckDiagnostics(payload.precheck || null);
           await openModal({ title: "操作失败", body: message || "未知错误" });
         }
@@ -3530,6 +3575,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         if (action === "precheck-copy-summary") {
           copyTextToClipboard(buildPrecheckCopySummary()).then((copied) => {
             setStatus(copied ? "冲突摘要已复制到剪贴板" : "冲突摘要复制失败");
+          });
+          return;
+        }
+        if (action === "precheck-copy-json") {
+          copyTextToClipboard(buildPrecheckCopyJson()).then((copied) => {
+            setStatus(copied ? "JSON 摘要已复制到剪贴板" : "JSON 摘要复制失败");
           });
         }
       });

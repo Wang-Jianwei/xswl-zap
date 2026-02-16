@@ -260,6 +260,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     <button id="saveActivateBtn">Save + Activate</button>
     <button id="activateBtn" class="secondary">Set Active</button>
     <button id="copyDiagBtn" class="secondary" disabled>复制冲突摘要</button>
+    <button id="copyDiagJsonBtn" class="secondary" disabled>复制JSON摘要</button>
   </div>
 
   <div id="hint" class="hint">Ready.</div>
@@ -288,6 +289,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     const virtualPortPool = document.getElementById('virtualPortPool');
     const bindingPreview = document.getElementById('bindingPreview');
     const copyDiagBtn = document.getElementById('copyDiagBtn');
+    const copyDiagJsonBtn = document.getElementById('copyDiagJsonBtn');
 
     let visualMode = true;
     let cards = [];
@@ -295,6 +297,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     let bindings = {};
     let draggingVirtualPort = '';
     let lastDiagnosticSummary = '';
+    let lastDiagnosticPayload = null;
 
     function escapeHtml(value) {
       return String(value || '')
@@ -409,6 +412,13 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       lastDiagnosticSummary = String(summary || '').trim();
       if (copyDiagBtn) {
         copyDiagBtn.disabled = lastDiagnosticSummary.length === 0;
+      }
+    }
+
+    function updateDiagnosticPayload(payload) {
+      lastDiagnosticPayload = payload && typeof payload === 'object' ? payload : null;
+      if (copyDiagJsonBtn) {
+        copyDiagJsonBtn.disabled = !lastDiagnosticPayload;
       }
     }
 
@@ -1141,6 +1151,15 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       setHint(copied ? '冲突摘要已复制到剪贴板。' : '冲突摘要复制失败。');
     });
 
+    copyDiagJsonBtn.addEventListener('click', async () => {
+      if (!lastDiagnosticPayload) {
+        setHint('暂无可复制的 JSON 摘要。');
+        return;
+      }
+      const copied = await copyTextToClipboard(JSON.stringify(lastDiagnosticPayload, null, 2));
+      setHint(copied ? 'JSON 摘要已复制到剪贴板。' : 'JSON 摘要复制失败。');
+    });
+
     workspaceSelect.addEventListener('change', () => {
       const selected = String(workspaceSelect.value || '').trim();
       workspaceIdInput.value = selected;
@@ -1158,6 +1177,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       }
       if (msg.type === 'workspace-load-result') {
         updateDiagnosticSummary('');
+        updateDiagnosticPayload(null);
         if (msg.ok && msg.item) {
           workspaceIdInput.value = msg.item.workspaceId || '';
           topologyIdInput.value = msg.item.topologyId || '';
@@ -1181,19 +1201,27 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
             msg.conflictCount ?? (Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts.length : 0),
           );
           const snapshotLeaseCount = Number(msg.snapshotLeaseCount ?? -1);
+          const diagnosticPayload = msg.diagnosticPayload && typeof msg.diagnosticPayload === 'object'
+            ? msg.diagnosticPayload
+            : null;
+          const schemaVersion = diagnosticPayload ? String(diagnosticPayload.schemaVersion || '-') : '-';
+          const requestId = String(msg.diagnosticRequestId || (diagnosticPayload ? diagnosticPayload.requestId : '') || '-');
           const workspaceText = String(workspaceIdInput.value || '').trim() || 'unknown-workspace';
           const topologyText = String(topologyIdInput.value || '').trim() || 'unknown-topology';
           const hintLines = [msg.message || 'Save blocked by precheck.'];
           hintLines.push('workspace=' + workspaceText + ', topology=' + topologyText);
           hintLines.push('updatedAt=' + updatedAtText + ', conflicts=' + String(conflictCount) + ', snapshotLeases=' + String(snapshotLeaseCount));
+          hintLines.push('schema=' + schemaVersion + ', requestId=' + requestId);
           if (msg.lockSnapshotSummary) {
             hintLines.push(String(msg.lockSnapshotSummary));
           }
           setHint(hintLines.join('\n'));
           updateDiagnosticSummary(String(msg.diagnosticSummary || msg.lockSnapshotSummary || hintLines.join('\n')));
+          updateDiagnosticPayload(msg.diagnosticPayload || null);
         } else {
           setHint(msg.message || 'Save done.');
           updateDiagnosticSummary('');
+          updateDiagnosticPayload(null);
         }
         if (msg.ok) {
           vscode.postMessage({ type: 'workspace-list' });
@@ -1238,6 +1266,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
 
     setMode(true);
     updateDiagnosticSummary('');
+    updateDiagnosticPayload(null);
     vscode.postMessage({ type: 'workspace-list' });
   </script>
 </body>

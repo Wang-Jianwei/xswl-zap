@@ -37,6 +37,36 @@ export interface WorkspacePrecheckDiagnosticSummaryParams {
   };
   lockSnapshot: LockSnapshotResult | null;
   generatedAtMs: number;
+  requestId?: string;
+  channel?: "workspace-editor" | "control-center" | "unknown";
+}
+
+export interface WorkspacePrecheckDiagnosticPayload {
+  schemaVersion: string;
+  requestId: string;
+  channel: "workspace-editor" | "control-center" | "unknown";
+  workspaceId: string;
+  topologyId: string;
+  code: string;
+  message: string;
+  updatedAtIso: string;
+  counts: {
+    topologyErrors: number;
+    lockConflicts: number;
+    snapshotLeases: number;
+  };
+  snapshotAvailable: boolean;
+  topologyErrors: string[];
+  conflictGroups: Array<{
+    resourceId: string;
+    conflicts: number;
+    holders: Array<{ holder: string; count: number }>;
+  }>;
+  snapshotGroups: Array<{
+    resourceId: string;
+    leases: number;
+    holders: Array<{ holder: string; count: number; leaseIds: string[] }>;
+  }>;
 }
 
 export function collectConflictSelectors(conflicts: LockConflictDetail[]): LockSelectorRequest[] {
@@ -172,6 +202,53 @@ export function groupLockSnapshot(snapshot: LockSnapshotResult | null): LockSnap
 export function buildWorkspacePrecheckDiagnosticSummary(
   params: WorkspacePrecheckDiagnosticSummaryParams,
 ): string {
+  const payload = buildWorkspacePrecheckDiagnosticPayload(params);
+
+  const lines: string[] = [];
+  lines.push("[XSWL VNA] Workspace Precheck Diagnostics");
+  lines.push(`workspace=${payload.workspaceId}, topology=${payload.topologyId}`);
+  lines.push(`code=${payload.code}, message=${payload.message}`);
+  lines.push(`updatedAt=${payload.updatedAtIso}`);
+  lines.push(
+    `topologyErrors=${payload.counts.topologyErrors}, lockConflicts=${payload.counts.lockConflicts}, snapshotLeases=${payload.counts.snapshotLeases}`,
+  );
+
+  if (payload.topologyErrors.length > 0) {
+    lines.push("TopologyErrors:");
+    payload.topologyErrors.slice(0, 5).forEach((item) => {
+      lines.push(`- ${item}`);
+    });
+  }
+
+  if (payload.conflictGroups.length > 0) {
+    lines.push("ConflictGroups:");
+    payload.conflictGroups.slice(0, 8).forEach((group) => {
+      lines.push(`- resource=${group.resourceId}, conflicts=${group.conflicts}`);
+      group.holders.slice(0, 4).forEach((holder) => {
+        lines.push(`  - holder=${holder.holder}, count=${holder.count}`);
+      });
+    });
+  }
+
+  if (payload.snapshotGroups.length > 0) {
+    lines.push("SnapshotGroups:");
+    payload.snapshotGroups.slice(0, 8).forEach((group) => {
+      lines.push(`- resource=${group.resourceId}, leases=${group.leases}`);
+      group.holders.slice(0, 4).forEach((holder) => {
+        const leaseText = holder.leaseIds.length > 0 ? `, lease=${holder.leaseIds.join(",")}` : "";
+        lines.push(`  - holder=${holder.holder}, count=${holder.count}${leaseText}`);
+      });
+    });
+  }
+
+  return lines.join("\n");
+}
+
+export function buildWorkspacePrecheckDiagnosticPayload(
+  params: WorkspacePrecheckDiagnosticSummaryParams,
+): WorkspacePrecheckDiagnosticPayload {
+  const requestId = String(params.requestId || "").trim() || "unknown-request";
+  const channel = params.channel || "unknown";
   const workspaceId = String(params.workspaceId || "").trim() || "unknown-workspace";
   const topologyId = String(params.topologyId || "").trim() || "unknown-topology";
   const precheck = params.precheck;
@@ -184,41 +261,37 @@ export function buildWorkspacePrecheckDiagnosticSummary(
   const snapshotLeaseCount = params.lockSnapshot && Array.isArray(params.lockSnapshot.leases)
     ? params.lockSnapshot.leases.length
     : -1;
+  const snapshotAvailable = Boolean(params.lockSnapshot);
 
-  const lines: string[] = [];
-  lines.push("[XSWL VNA] Workspace Precheck Diagnostics");
-  lines.push(`workspace=${workspaceId}, topology=${topologyId}`);
-  lines.push(`code=${code}, message=${message}`);
-  lines.push(`updatedAt=${new Date(params.generatedAtMs).toISOString()}`);
-  lines.push(`topologyErrors=${topologyErrors.length}, lockConflicts=${lockConflicts.length}, snapshotLeases=${snapshotLeaseCount}`);
-
-  if (topologyErrors.length > 0) {
-    lines.push("TopologyErrors:");
-    topologyErrors.slice(0, 5).forEach((item) => {
-      lines.push(`- ${String(item?.message ?? "invalid topology")}`);
-    });
-  }
-
-  if (conflictGroups.length > 0) {
-    lines.push("ConflictGroups:");
-    conflictGroups.slice(0, 8).forEach((group) => {
-      lines.push(`- resource=${group.resourceId}, conflicts=${group.total}`);
-      group.holders.slice(0, 4).forEach((holder) => {
-        lines.push(`  - holder=${holder.holder}, count=${holder.count}`);
-      });
-    });
-  }
-
-  if (snapshotGroups.length > 0) {
-    lines.push("SnapshotGroups:");
-    snapshotGroups.slice(0, 8).forEach((group) => {
-      lines.push(`- resource=${group.resourceId}, leases=${group.total}`);
-      group.holders.slice(0, 4).forEach((holder) => {
-        const leaseText = holder.leaseIds.length > 0 ? `, lease=${holder.leaseIds.join(",")}` : "";
-        lines.push(`  - holder=${holder.holder}, count=${holder.count}${leaseText}`);
-      });
-    });
-  }
-
-  return lines.join("\n");
+  return {
+    schemaVersion: "1.1.0",
+    requestId,
+    channel,
+    workspaceId,
+    topologyId,
+    code,
+    message,
+    updatedAtIso: new Date(params.generatedAtMs).toISOString(),
+    counts: {
+      topologyErrors: topologyErrors.length,
+      lockConflicts: lockConflicts.length,
+      snapshotLeases: snapshotLeaseCount,
+    },
+    snapshotAvailable,
+    topologyErrors: topologyErrors.slice(0, 5).map((item) => String(item?.message ?? "invalid topology")),
+    conflictGroups: conflictGroups.slice(0, 8).map((group) => ({
+      resourceId: group.resourceId,
+      conflicts: group.total,
+      holders: group.holders.slice(0, 4).map((holder) => ({ holder: holder.holder, count: holder.count })),
+    })),
+    snapshotGroups: snapshotGroups.slice(0, 8).map((group) => ({
+      resourceId: group.resourceId,
+      leases: group.total,
+      holders: group.holders.slice(0, 4).map((holder) => ({
+        holder: holder.holder,
+        count: holder.count,
+        leaseIds: holder.leaseIds,
+      })),
+    })),
+  };
 }

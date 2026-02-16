@@ -178,6 +178,9 @@ flowchart LR
 - **诊断元信息透出**：冲突区展示 workspace/topology/更新时间及冲突数、lease 数，支持跨时段比对与回溯。
 - **Workspace 摘要复制对齐**：`Workspace Quick Edit` 同步提供“复制冲突摘要”，并与 Control Center 保持统一摘要结构。
 - **Workspace 元信息对齐**：`Workspace Quick Edit` 冲突提示同步展示 workspace/topology/更新时间/冲突数/lease 数，降低跨入口排障差异。
+- **双格式复制**：Control Center 与 `Workspace Quick Edit` 均支持“复制文本摘要 + 复制 JSON 摘要”，兼容人工沟通与自动化处理两类场景。
+- **结构化诊断复用**：扩展侧基于统一诊断 payload 构建文本摘要与 JSON 摘要，降低多入口文案漂移风险。
+- **追踪字段标准化**：诊断 JSON 携带 `schemaVersion/requestId/channel/snapshotAvailable`，并在 UI 透出 requestId/schema 以支持跨链路追踪。
 - **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
 
 ---

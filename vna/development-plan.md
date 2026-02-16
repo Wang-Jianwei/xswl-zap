@@ -32,6 +32,10 @@
 - **WU-111（完成）**：Control Center 诊断区新增上下文元信息（workspace/topology/更新时间/冲突与 lease 计数），提升问题追踪可审计性。
 - **WU-112（完成）**：Workspace Quick Edit 接入“复制冲突摘要”能力，并复用可测试的 precheck 诊断文本构建逻辑。
 - **WU-113（完成）**：Workspace Quick Edit 冲突提示补充元信息（workspace/topology/更新时间/冲突数/lease 数），支持快速定位与跨端协同。
+- **WU-114（完成）**：冲突诊断复制能力升级为双格式（文本 + JSON），覆盖 Control Center 与 Workspace Quick Edit 双入口。
+- **WU-115（完成）**：预检诊断结构化 payload 下沉到 `lockDiagnostics` 统一构建，提升复用性与测试可维护性。
+- **WU-116（完成）**：诊断 JSON payload 增加 `schemaVersion/requestId/channel/snapshotAvailable` 字段，增强可追踪与脚本化消费能力。
+- **WU-117（完成）**：Control Center 与 Workspace Quick Edit 对齐展示并复制上述追踪字段（含 requestId），支持跨日志关联定位。
 
 ---
 

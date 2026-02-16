@@ -16,6 +16,7 @@ import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
 import {
   buildLockSnapshotSummary,
+  buildWorkspacePrecheckDiagnosticPayload,
   buildWorkspacePrecheckDiagnosticSummary,
   collectConflictSelectors,
 } from "./lockDiagnostics";
@@ -353,7 +354,22 @@ export function activate(context: vscode.ExtensionContext): void {
               ? await client.getLockSnapshot(selectors)
               : null;
             const diagnosticUpdatedAtMs = Date.now();
+            const diagnosticRequestId = createRequestId();
             const lockSnapshotSummary = buildLockSnapshotSummary(lockSnapshot, precheck.lockConflicts.length);
+            const diagnosticPayload = buildWorkspacePrecheckDiagnosticPayload({
+              workspaceId,
+              topologyId,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+              lockSnapshot,
+              generatedAtMs: diagnosticUpdatedAtMs,
+              requestId: diagnosticRequestId,
+              channel: "workspace-editor",
+            });
             const diagnosticSummary = buildWorkspacePrecheckDiagnosticSummary({
               workspaceId,
               topologyId,
@@ -365,6 +381,8 @@ export function activate(context: vscode.ExtensionContext): void {
               },
               lockSnapshot,
               generatedAtMs: diagnosticUpdatedAtMs,
+              requestId: diagnosticRequestId,
+              channel: "workspace-editor",
             });
             logBlock(outputChannel, "INFO", `[WorkspaceTopologyPrecheckBlocked][requestId=${requestId}]`, [
               `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
@@ -381,6 +399,8 @@ export function activate(context: vscode.ExtensionContext): void {
               lockSnapshot,
               lockSnapshotSelectors: selectors,
               diagnosticSummary,
+              diagnosticPayload,
+              diagnosticRequestId,
               diagnosticUpdatedAtMs,
               conflictCount: precheck.lockConflicts.length,
               snapshotLeaseCount: lockSnapshot?.leases.length ?? -1,
@@ -597,10 +617,46 @@ export function activate(context: vscode.ExtensionContext): void {
 
           if (precheck && !precheck.ok) {
             const failureMessage = buildPrecheckFailureMessage(precheck);
+            const selectors = collectConflictSelectors(precheck.lockConflicts);
+            const lockSnapshot = selectors.length > 0
+              ? await client.getLockSnapshot(selectors)
+              : null;
+            const diagnosticUpdatedAtMs = Date.now();
+            const diagnosticRequestId = createRequestId();
+            const lockSnapshotSummary = buildLockSnapshotSummary(lockSnapshot, precheck.lockConflicts.length);
+            const diagnosticPayload = buildWorkspacePrecheckDiagnosticPayload({
+              workspaceId,
+              topologyId,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+              lockSnapshot,
+              generatedAtMs: diagnosticUpdatedAtMs,
+              requestId: diagnosticRequestId,
+              channel: "control-center",
+            });
+            const diagnosticSummary = buildWorkspacePrecheckDiagnosticSummary({
+              workspaceId,
+              topologyId,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+              lockSnapshot,
+              generatedAtMs: diagnosticUpdatedAtMs,
+              requestId: diagnosticRequestId,
+              channel: "control-center",
+            });
 
             logBlock(outputChannel, "INFO", `[ControlCenterWorkspacePrecheckBlocked][requestId=${requestId}]`, [
               `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
               failureMessage,
+              `conflictCount=${precheck.lockConflicts.length}, snapshotLeases=${lockSnapshot?.leases.length ?? -1}`,
             ]);
             showOutputIfEnabled(outputChannel, autoOpenOutput);
 
@@ -608,6 +664,15 @@ export function activate(context: vscode.ExtensionContext): void {
               type: "workspace-save-result",
               ok: false,
               message: `Precheck failed: ${failureMessage}`,
+              lockSnapshotSummary,
+              lockSnapshot,
+              lockSnapshotSelectors: selectors,
+              diagnosticSummary,
+              diagnosticPayload,
+              diagnosticRequestId,
+              diagnosticUpdatedAtMs,
+              conflictCount: precheck.lockConflicts.length,
+              snapshotLeaseCount: lockSnapshot?.leases.length ?? -1,
               precheck: {
                 code: precheck.code,
                 message: precheck.message,

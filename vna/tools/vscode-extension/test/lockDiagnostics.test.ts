@@ -1,5 +1,6 @@
 import { strict as assert } from "node:assert";
 import {
+  buildWorkspacePrecheckDiagnosticPayload,
   buildLockSnapshotSummary,
   buildWorkspacePrecheckDiagnosticSummary,
   collectConflictSelectors,
@@ -183,6 +184,53 @@ import {
   assert(workspaceSummary.includes("TopologyErrors:"));
   assert(workspaceSummary.includes("ConflictGroups:"));
   assert(workspaceSummary.includes("SnapshotGroups:"));
+
+  const workspacePayload = buildWorkspacePrecheckDiagnosticPayload({
+    workspaceId: "ws-dev",
+    topologyId: "topo-main",
+    precheck: {
+      code: "LOCK_CONFLICT",
+      message: "resource occupied",
+      topologyErrors: [{ message: "board missing" }],
+      lockConflicts: [
+        {
+          selector: { type: "1", resourceId: "dev-a" },
+          holderLeaseId: "",
+          holderOwner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+          holderFencingToken: 0,
+          holderExpireAtMs: 0,
+          suggestion: "",
+        },
+      ],
+    },
+    lockSnapshot: {
+      leases: [
+        {
+          leaseId: "lease-1",
+          selector: { type: "1", resourceId: "dev-a" },
+          owner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+          mode: "LOCK_MODE_EXCLUSIVE",
+          fencingToken: 1,
+          acquiredAtMs: 1,
+          expireAtMs: 2,
+        },
+      ],
+    },
+    generatedAtMs: 1,
+    requestId: "req-123",
+    channel: "workspace-editor",
+  });
+
+  assert.equal(workspacePayload.schemaVersion, "1.1.0");
+  assert.equal(workspacePayload.requestId, "req-123");
+  assert.equal(workspacePayload.channel, "workspace-editor");
+  assert.equal(workspacePayload.workspaceId, "ws-dev");
+  assert.equal(workspacePayload.topologyId, "topo-main");
+  assert.equal(workspacePayload.code, "LOCK_CONFLICT");
+  assert.equal(workspacePayload.snapshotAvailable, true);
+  assert.equal(workspacePayload.counts.lockConflicts, 1);
+  assert.equal(workspacePayload.conflictGroups[0]?.resourceId, "dev-a");
+  assert.equal(workspacePayload.snapshotGroups[0]?.holders[0]?.leaseIds[0], "lease-1");
 
   process.stdout.write("lockDiagnostics.test passed\n");
 })();
