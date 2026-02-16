@@ -1,0 +1,452 @@
+<!-- Generated from vna/docs/ui-workbench-redesign.md - interactive prototype -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UI Workbench — Interactive Preview</title>
+  <style>
+    :root { --bg-header:#2d2d2d; --bg-sidebar:#252526; --bg-canvas:#1e1e1e; --bg-status:#007acc; --border:#3e3e42; }
+    html,body{height:100%;margin:0;background:#1e1e1e;color:#ccc;font-family:sans-serif}
+    .app-shell{display:grid;grid-template-rows:auto 1fr auto;height:100vh;border:1px solid #444;overflow:hidden}
+    .header-complex{background:var(--bg-header);border-bottom:1px solid var(--border)}
+    .menubar{display:flex;align-items:center;padding:6px 12px;font-size:13px;background:#333}
+    .menu-item{margin-right:14px;color:#bdbdbd;cursor:pointer}
+    .menu-item:hover{color:#fff}
+    .toolbar{display:flex;gap:8px;padding:6px 12px;background:var(--bg-header);border-bottom:1px solid var(--border)}
+    .sidebar{background:var(--bg-sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;width:260px}
+    .stage{background:#000;flex:1;display:flex;flex-direction:column}
+    .status-stream{background:var(--bg-status);color:#fff;padding:6px 10px;font-size:12px;display:flex;align-items:center;gap:12px}
+    button{background:#3e3e42;border:1px solid #555;color:#fff;padding:4px 8px;cursor:pointer}
+    button:hover{background:#505050}
+    /* Window / plot styling */
+    .tabs{display:flex;background:#2d2d2d;border-bottom:1px solid var(--border)}
+    .tab{padding:8px 12px;color:#aaa}
+    .tab.active{background:#1e1e1e;border-top:2px solid #007acc;color:#fff}
+    .canvas-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;background:#111}
+    .plot{background:#000;border:1px solid #333;position:relative;display:grid}
+    .plot.header{font-size:11px;padding:6px;background:#1e1e1e;border-bottom:1px solid #333}
+    .y-axis{width:48px;padding:6px 8px;color:#aaa;font-size:10px;text-align:right;display:flex;flex-direction:column;justify-content:space-between}
+    .graph-area{border-left:1px solid #444;border-bottom:1px solid #444;position:relative}
+    .trace-label{background:rgba(0,0,0,0.45);padding:4px 6px;border-radius:2px;font-size:11px}
+    /* Footer sweep controls responsive */
+    .sweep-buttons button.active{background:#005a9e}
+    .sweep-select{display:none}
+    @media (max-width:520px){
+      .sweep-buttons{display:none}
+      .sweep-select{display:inline-block}
+      .status-stream{gap:6px}
+    }
+    /* small utilities */
+    .message-area{color:#4db3ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:360px}
+    .metric{opacity:0.85;font-size:11px;margin-left:auto}
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- A. Header -->
+    <header class="header-complex">
+      <div class="menubar">
+        <div style="flex:1">
+          <span class="menu-item">File</span>
+          <span class="menu-item">Edit</span>
+          <span class="menu-item">View</span>
+          <span class="menu-item">Calibration</span>
+        </div>
+        <div id="workspace-status" style="font-size:12px;opacity:0.8;cursor:pointer;border:1px solid transparent;padding:2px 6px;border-radius:3px" title="Click to configure Topology">
+          Workspace: <strong>Main Lab ⚙️</strong>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div style="display:flex;gap:6px">
+          <button title="Undo">↩</button>
+          <button title="Redo">↪</button>
+        </div>
+        <div style="width:1px;background:#444;margin:0 6px"></div>
+        <div style="display:flex;gap:6px">
+          <button id="marker-toggle">Marker</button>
+          <button id="peak-toggle">Peak</button>
+        </div>
+        <div style="width:1px;background:#444;margin:0 6px"></div>
+        <div id="trace-controls" style="display:flex;gap:8px;align-items:center">
+          <label style="color:yellow;font-size:12px"><input id="tr1-toggle" type="checkbox" checked style="vertical-align:middle;margin-right:4px"/>Tr1</label>
+          <label style="color:cyan;font-size:12px"><input id="tr2-toggle" type="checkbox" checked style="vertical-align:middle;margin-right:4px"/>Tr2</label>
+          <label style="color:magenta;font-size:12px"><input id="tr3-toggle" type="checkbox" checked style="vertical-align:middle;margin-right:4px"/>Tr3</label>
+          <select id="scale-select" title="Y scale" style="background:#2d2d2d;color:#ccc;border:1px solid #555;padding:2px 6px">
+            <option value="log">Log (dB)</option>
+            <option value="lin">Lin</option>
+          </select>
+          <button id="add-marker" title="Add marker">Mkr+</button>
+          <button id="remove-marker" title="Remove marker">Mkr−</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Modal: Workspace & Device Manager -->
+    <div id="modal-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center">
+      <div style="background:#252526;border:1px solid #444;width:700px;height:500px;box-shadow:0 12px 24px rgba(0,0,0,0.6);display:grid;grid-template-columns:180px 1fr;grid-template-rows:auto 1fr auto;">
+        
+        <!-- Header -->
+        <div style="grid-column:1 / span 2;padding:12px 16px;background:#1e1e1e;border-bottom:1px solid #333;font-weight:600;display:flex;justify-content:space-between;align-items:center">
+          <span>⚙️ System Configuration</span>
+          <span id="close-modal" style="cursor:pointer;opacity:0.7;font-size:16px">✕</span>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <div style="background:#1e1e1e;border-right:1px solid #333;padding:10px 0;">
+          <div class="chk-group" style="padding:8px 16px;background:#2d2d2d;color:#fff;border-left:3px solid #007acc;cursor:pointer">Topology</div>
+          <div class="chk-group" style="padding:8px 16px;opacity:0.7;cursor:pointer;color:#ccc">Hardware</div>
+          <div class="chk-group" style="padding:8px 16px;opacity:0.7;cursor:pointer;color:#ccc">Workspace</div>
+          <div class="chk-group" style="padding:8px 16px;opacity:0.7;cursor:pointer;color:#ccc">Licenses</div>
+        </div>
+
+        <!-- Content Area -->
+        <div style="padding:24px;background:#252526;overflow:auto;">
+          
+          <!-- Section: Topology -->
+          <h3 style="margin-top:0;font-size:14px;border-bottom:1px solid #444;padding-bottom:8px">Active Topology</h3>
+          <div style="margin-bottom:16px;padding:12px;background:#2d2d2d;border:1px solid #444;border-radius:4px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+              <div style="width:40px;height:40px;background:#333;border:1px solid #555;display:flex;align-items:center;justify-content:center;border-radius:4px">📡</div>
+              <div style="flex:1">
+                <div style="font-weight:bold;color:#fff">VNA-PXI-01 (Master)</div>
+                <div style="font-size:11px;color:#888">SN: PXI-10982-A | Firmware: v2.4.1</div>
+              </div>
+              <div style="color:#4caf50;font-size:11px">● Connected</div>
+            </div>
+            <div style="display:flex;gap:16px;font-size:11px;color:#aaa;padding-top:8px;border-top:1px solid #3e3e42">
+               <span>Ports: <strong>4</strong></span>
+               <span>Freq: <strong>100k - 26.5G</strong></span>
+               <span>Modules: <strong>M1, M2</strong></span>
+            </div>
+          </div>
+
+          <div style="border:1px dashed #444;padding:12px;text-align:center;color:#666;border-radius:4px;cursor:pointer;font-size:12px">
+            + Add Virtual Device / Simulate
+          </div>
+
+          <!-- Section: Clock & Trig (Simplified) -->
+          <h3 style="margin-top:24px;font-size:14px;border-bottom:1px solid #444;padding-bottom:8px">Sync & Hardware</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12px">
+            <div>
+              <label style="display:block;color:#aaa;margin-bottom:4px">Reference Clock</label>
+              <select style="width:100%;padding:4px;background:#333;border:1px solid #555;color:#ddd"><option>Internal (10 MHz)</option><option>External (Backplane)</option></select>
+            </div>
+            <div>
+              <label style="display:block;color:#aaa;margin-bottom:4px">Trigger Line</label>
+              <select style="width:100%;padding:4px;background:#333;border:1px solid #555;color:#ddd"><option>PXI_Trig0</option><option>Software</option></select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="grid-column:1 / span 2;border-top:1px solid #333;padding:12px 16px;text-align:right;background:#1e1e1e">
+            <span style="float:left;font-size:11px;color:#d85555;padding-top:6px">⚠️ Applying changes will reset measurement</span>
+            <button id="cancel-modal" style="background:transparent;border:1px solid #555;margin-right:8px">Cancel</button>
+            <button style="background:#007acc;border:none">Apply Changes</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- B+C. Main -->
+    <main style="display:grid;grid-template-columns:260px 1fr;overflow:hidden;">
+      <aside class="sidebar">
+        <!-- Sidebar Tabs -->
+        <div style="display:flex;border-bottom:1px solid var(--border)">
+          <div id="tab-channels-btn" class="sb-tab active" style="padding:10px;font-weight:600;border-bottom:2px solid #007acc;flex:1;text-align:center;cursor:pointer">Channels</div>
+          <div id="tab-setup-btn" class="sb-tab" style="padding:10px;color:#888;flex:1;text-align:center;cursor:pointer">Setup</div>
+        </div>
+
+        <!-- Tab: Channels -->
+        <div id="tab-channels-content" style="padding:12px;overflow:auto;flex:1">
+          <div style="margin-bottom:16px;color:#888;font-size:11px;text-transform:uppercase">Active Channels</div>
+          <div style="padding:8px;background:#2f2f34;margin-bottom:6px;border-left:3px solid #4caf50;color:#ddd;cursor:pointer">CH1: S11 LogMag</div>
+          <div style="padding:8px;background:#2f2f34;border-left:3px solid #ff9800;color:#ddd;cursor:pointer">CH2: S21 Phase</div>
+          <div style="margin-top:16px;padding:8px;border:1px dashed #444;color:#666;text-align:center;font-size:11px;cursor:pointer">+ Add Channel</div>
+        </div>
+
+        <!-- Tab: Setup (Hidden by default) -->
+        <div id="tab-setup-content" style="padding:0;overflow:auto;flex:1;display:none">
+          <!-- Accordion 1: Stimulus (Freq/Power/Sweep) -->
+          <div class="acc-header" style="padding:10px 12px;background:#252526;border-bottom:1px solid #333;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">
+            <span>Stimulus</span><span>▼</span>
+          </div>
+          <div class="acc-body" style="padding:12px;display:grid;gap:8px;background:#1e1e1e;border-bottom:1px solid #333">
+            <div><label style="color:#aaa;font-size:11px">Center Freq</label><input type="text" value="3.005 GHz" style="width:100%;background:#333;border:1px solid #555;color:#fff;padding:2px"/></div>
+            <div><label style="color:#aaa;font-size:11px">Span</label><input type="text" value="5.99 GHz" style="width:100%;background:#333;border:1px solid #555;color:#fff;padding:2px"/></div>
+            <div><label style="color:#aaa;font-size:11px">Power</label><input type="text" value="-10 dBm" style="width:100%;background:#333;border:1px solid #555;color:#fff;padding:2px"/></div>
+            <div><label style="color:#aaa;font-size:11px">IF Bandwidth</label><select style="width:100%;background:#333;border:1px solid #555;color:#fff"><option>1 kHz</option><option>10 kHz</option><option>100 kHz</option></select></div>
+          </div>
+
+          <!-- Accordion 2: Response (Meas/Format/Scale) -->
+          <div class="acc-header" style="padding:10px 12px;background:#252526;border-bottom:1px solid #333;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">
+             <span>Response</span><span>▼</span>
+          </div>
+          <div class="acc-body" style="padding:12px;display:none;gap:8px;background:#1e1e1e;border-bottom:1px solid #333">
+             <div style="padding:4px;border:1px solid #444;background:#2a2a2a;text-align:center;margin-bottom:4px">Measure: <strong>S11</strong></div>
+             <div style="padding:4px;border:1px solid #444;background:#2a2a2a;text-align:center;margin-bottom:4px">Format: <strong>LogMag</strong></div>
+             <div style="padding:4px;border:1px solid #444;background:#2a2a2a;text-align:center">Scale: <strong>Auto</strong></div>
+          </div>
+
+          <!-- Accordion 3: Calibration -->
+          <div class="acc-header" style="padding:10px 12px;background:#252526;border-bottom:1px solid #333;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">
+             <span>Calibration</span><span>▶</span>
+          </div>
+
+          <!-- Accordion 4: Marker / Analysis -->
+          <div class="acc-header" style="padding:10px 12px;background:#252526;border-bottom:1px solid #333;font-weight:600;cursor:pointer;display:flex;justify-content:space-between">
+             <span>Marker / Analysis</span><span>▶</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="stage">
+        <div class="tabs">
+          <div class="tab active">Waveform View</div>
+          <!-- Topology Editor Tab Removed -->
+        </div>
+
+        <div class="canvas-grid">
+          <!-- Window 1 -->
+          <div class="plot" style="display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:56px 1fr;">
+            <div style="grid-column:1 / span 2;display:flex;gap:8px;align-items:center;padding:8px;background:#1e1e1e;border-bottom:1px solid #333;font-size:11px">
+              <div class="trace-label" style="color:yellow;font-weight:700">▶ Tr1 S11 LogM 10.00 dB / 0.00 dB</div>
+              <div class="trace-label" style="color:cyan">Tr2 S21 Phase 90.00° / 0.00°</div>
+            </div>
+            <div class="y-axis">
+              <div>50</div><div>40</div><div>30</div><div>20</div><div>10</div><div>0</div><div>-10</div><div>-20</div><div>-30</div><div>-40</div>
+            </div>
+            <div class="graph-area">
+              <svg width="100%" height="100%" viewBox="0 0 300 200" preserveAspectRatio="none" style="display:block;">
+                <defs>
+                  <pattern id="gridH" width="300" height="20" patternUnits="userSpaceOnUse"><path d="M 0 20 L 300 20" fill="none" stroke="#222" stroke-width="1"/></pattern>
+                  <pattern id="gridV" width="30" height="200" patternUnits="userSpaceOnUse"><path d="M 30 0 L 30 200" fill="none" stroke="#222" stroke-width="1"/></pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#gridH)" />
+                <rect width="100%" height="100%" fill="url(#gridV)" />
+                <path id="tr1" d="M0,100 Q50,80 100,100 T200,120 T300,80" data-d-log="M0,100 Q50,80 100,100 T200,120 T300,80" data-d-lin="M0,140 Q50,120 100,140 T200,160 T300,120" fill="none" stroke="yellow" stroke-width="2"/>
+                <path id="tr2" d="M0,150 Q60,120 120,40 T240,80 T300,130" data-d-log="M0,150 Q60,120 120,40 T240,80 T300,130" data-d-lin="M0,130 Q60,100 120,60 T240,100 T300,130" fill="none" stroke="cyan" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <circle id="marker1" cx="150" cy="100" r="4" fill="#fff" stroke="#000" style="display:none"/>
+                <text id="marker1-label" x="156" y="96" fill="#fff" font-size="10" style="display:none">Mkr1</text>
+              </svg>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;font-size:10px;color:#aaa">
+              <div>Start: 10 MHz</div>
+              <div>Center: 3.005 GHz</div>
+              <div>Stop: 6 GHz</div>
+            </div>
+          </div>
+
+          <!-- Window 2 (Smith) -->
+          <div class="plot" style="display:grid;grid-template-rows:auto 1fr auto;">
+            <div style="padding:8px;background:#1e1e1e;border-bottom:1px solid #333;font-size:11px;display:flex;gap:8px;align-items:center">
+              <div class="trace-label" style="color:magenta">▶ Tr3 S12 Smith 1.00 U / 0.00 U</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;background:#000">
+              <svg width="180" height="180" viewBox="-110 -110 220 220" style="display:block">
+                <circle cx="0" cy="0" r="100" stroke="#444" fill="none" stroke-width="1"/>
+                <circle cx="50" cy="0" r="50" stroke="#222" fill="none"/>
+                <circle cx="75" cy="0" r="25" stroke="#222" fill="none"/>
+                <path d="M -100 0 A 100 100 0 0 1 100 0" fill="none" stroke="#222"/>
+                <path d="M 0 -100 A 100 100 0 0 0 0 100" fill="none" stroke="#222" stroke-dasharray="2,2"/>
+                <line x1="-100" y1="0" x2="100" y2="0" stroke="#333"/>
+                <path d="M -20 -30 Q 10 -60 50 -10 T 80 20" fill="none" stroke="magenta" stroke-width="2"/>
+              </svg>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:6px 10px;color:#aaa;font-size:10px">
+              <div>10 MHz</div>
+              <div>6 GHz</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- D. Footer / Status Stream -->
+    <footer class="status-stream">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="sweep-buttons" style="display:flex;gap:6px">
+          <button data-mode="continue" class="active">CONTINUE</button>
+          <button data-mode="single">SINGLE</button>
+          <button data-mode="hold">HOLD</button>
+        </div>
+        <select id="sweep-select" class="sweep-select">
+          <option value="continue">CONTINUE</option>
+          <option value="single">SINGLE</option>
+          <option value="hold">HOLD</option>
+        </select>
+      </div>
+
+      <div class="message-area">ℹ️ Calibration loaded for CH1... — Last SCPI: *:INIT1;*WAI</div>
+      <div class="metric">Scan: 45ms | 1024 pts</div>
+      <div style="padding:0 8px;margin-left:8px;border-left:1px solid rgba(255,255,255,0.2);font-size:11px">CORR</div>
+    </footer>
+
+  </div>
+
+  <script>
+    // enhanced interactions: trace toggles, scale switch, marker demo + sweep sync
+    document.addEventListener('DOMContentLoaded', () => {
+      const tr1 = document.getElementById('tr1');
+      const tr2 = document.getElementById('tr2');
+      const tr3 = document.getElementById('tr3');
+      const tr1Toggle = document.getElementById('tr1-toggle');
+      const tr2Toggle = document.getElementById('tr2-toggle');
+      const tr3Toggle = document.getElementById('tr3-toggle');
+      const scaleSelect = document.getElementById('scale-select');
+      const addMarkerBtn = document.getElementById('add-marker');
+      const removeMarkerBtn = document.getElementById('remove-marker');
+      const marker = document.getElementById('marker1');
+      const markerLabel = document.getElementById('marker1-label');
+      const yAxis = document.querySelector('.y-axis');
+      const messageArea = document.querySelector('.message-area');
+
+      const sweepSelect = document.getElementById('sweep-select');
+      const sweepButtons = Array.from(document.querySelectorAll('.sweep-buttons button'));
+
+      function showMessage(msg, timeout = 3500) {
+        if (!messageArea) return;
+        messageArea.textContent = msg;
+        if (timeout > 0) setTimeout(() => { if (messageArea.textContent === msg) messageArea.textContent = ''; }, timeout);
+      }
+
+      function setTraceVisibility(el, visible) {
+        if (!el) return;
+        el.style.display = visible ? 'inline' : 'none';
+      }
+
+      tr1Toggle && tr1Toggle.addEventListener('change', (e) => { setTraceVisibility(tr1, e.target.checked); showMessage('Tr1 ' + (e.target.checked ? 'shown' : 'hidden')); });
+      tr2Toggle && tr2Toggle.addEventListener('change', (e) => { setTraceVisibility(tr2, e.target.checked); showMessage('Tr2 ' + (e.target.checked ? 'shown' : 'hidden')); });
+      tr3Toggle && tr3Toggle.addEventListener('change', (e) => { setTraceVisibility(tr3, e.target.checked); showMessage('Tr3 ' + (e.target.checked ? 'shown' : 'hidden')); });
+
+      function setScale(mode) {
+        try {
+          if (tr1) tr1.setAttribute('d', tr1.getAttribute('data-d-' + mode));
+          if (tr2) tr2.setAttribute('d', tr2.getAttribute('data-d-' + mode));
+        } catch (err) { /* ignore in mock */ }
+        if (yAxis) {
+          if (mode === 'log') {
+            yAxis.innerHTML = '<div>50</div><div>40</div><div>30</div><div>20</div><div>10</div><div>0</div><div>-10</div><div>-20</div><div>-30</div><div>-40</div>';
+          } else {
+            yAxis.innerHTML = '<div>1.0</div><div>0.8</div><div>0.6</div><div>0.4</div><div>0.2</div><div>0.0</div><div>-0.2</div><div>-0.4</div><div>-0.6</div><div>-0.8</div>';
+          }
+        }
+        showMessage('Scale changed to ' + mode.toUpperCase());
+      }
+
+      scaleSelect && scaleSelect.addEventListener('change', (e) => setScale(e.target.value));
+
+      addMarkerBtn && addMarkerBtn.addEventListener('click', () => {
+        if (!tr1 || !marker) return showMessage('No trace available');
+        try {
+          const len = tr1.getTotalLength();
+          const pt = tr1.getPointAtLength(len * 0.5);
+          marker.setAttribute('cx', pt.x);
+          marker.setAttribute('cy', pt.y);
+          marker.style.display = 'inline';
+          markerLabel.setAttribute('x', pt.x + 6);
+          markerLabel.setAttribute('y', pt.y - 4);
+          markerLabel.style.display = 'inline';
+          const dB = Math.round((100 - pt.y) / 2);
+          markerLabel.textContent = 'Mkr1: ' + dB + ' dB';
+          showMessage('Marker added (approx. ' + dB + ' dB)');
+        } catch (err) {
+          marker.setAttribute('cx', 150);
+          marker.setAttribute('cy', 100);
+          marker.style.display = 'inline';
+          markerLabel.setAttribute('x', 156);
+          markerLabel.setAttribute('y', 96);
+          markerLabel.style.display = 'inline';
+          markerLabel.textContent = 'Mkr1';
+          showMessage('Marker added (fallback)');
+        }
+      });
+
+      removeMarkerBtn && removeMarkerBtn.addEventListener('click', () => {
+        if (marker) marker.style.display = 'none';
+        if (markerLabel) markerLabel.style.display = 'none';
+        showMessage('Marker removed');
+      });
+
+      sweepButtons.forEach(b => b.addEventListener('click', () => {
+        sweepButtons.forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        if (sweepSelect) sweepSelect.value = b.dataset.mode || b.textContent.toLowerCase();
+        showMessage('Sweep: ' + (b.dataset.mode || b.textContent));
+      }));
+      if (sweepSelect) sweepSelect.addEventListener('change', (e) => {
+        sweepButtons.forEach(x => x.classList.remove('active'));
+        const hit = sweepButtons.find(x => x.dataset.mode === e.target.value);
+        if (hit) hit.classList.add('active');
+        showMessage('Sweep: ' + e.target.value);
+      });
+
+      // initial state
+      setScale(scaleSelect ? scaleSelect.value : 'log');
+      // ensure visibility flags sync with checkboxes
+      if (tr1Toggle) tr1Toggle.dispatchEvent(new Event('change'));
+      if (tr2Toggle) tr2Toggle.dispatchEvent(new Event('change'));
+      if (tr3Toggle) tr3Toggle.dispatchEvent(new Event('change'));
+
+      // Modal Logic
+      const modal = document.getElementById('modal-overlay');
+      const wsStatus = document.getElementById('workspace-status');
+      const closeModal = document.getElementById('close-modal');
+      const cancelModal = document.getElementById('cancel-modal');
+
+      function toggleModal(show) {
+        if (modal) modal.style.display = show ? 'flex' : 'none';
+      }
+
+      if (wsStatus) wsStatus.addEventListener('click', () => toggleModal(true));
+      if (wsStatus) wsStatus.addEventListener('mouseenter', () => wsStatus.style.borderColor = '#555');
+      if (wsStatus) wsStatus.addEventListener('mouseleave', () => wsStatus.style.borderColor = 'transparent');
+
+      if (closeModal) closeModal.addEventListener('click', () => toggleModal(false));
+      if (cancelModal) cancelModal.addEventListener('click', () => toggleModal(false));
+      // Close on outside click
+      if (modal) modal.addEventListener('click', (e) => {
+         if (e.target === modal) toggleModal(false);
+      });
+
+      // Sidebar Tabs & Accordion Logic
+      const tabCh = document.getElementById('tab-channels-btn');
+      const tabSet = document.getElementById('tab-setup-btn');
+      const contentCh = document.getElementById('tab-channels-content');
+      const contentSet = document.getElementById('tab-setup-content');
+
+      function switchSidebarTab(target) {
+        if (target === 'channels') {
+          tabCh.classList.add('active'); tabCh.style.borderBottom = '2px solid #007acc'; tabCh.style.color = '#ccc';
+          tabSet.classList.remove('active'); tabSet.style.borderBottom = 'none'; tabSet.style.color = '#888';
+          contentCh.style.display = 'block';
+          contentSet.style.display = 'none';
+        } else {
+          tabSet.classList.add('active'); tabSet.style.borderBottom = '2px solid #007acc'; tabSet.style.color = '#ccc';
+          tabCh.classList.remove('active'); tabCh.style.borderBottom = 'none'; tabCh.style.color = '#888';
+          contentCh.style.display = 'none';
+          contentSet.style.display = 'block';
+        }
+      }
+
+      if (tabCh) tabCh.addEventListener('click', () => switchSidebarTab('channels'));
+      if (tabSet) tabSet.addEventListener('click', () => switchSidebarTab('setup'));
+
+      // Simple accordion toggle
+      document.querySelectorAll('.acc-header').forEach(h => {
+        h.addEventListener('click', () => {
+          const body = h.nextElementSibling;
+          if (body && body.classList.contains('acc-body')) {
+            const isVis = body.style.display !== 'none';
+            body.style.display = isVis ? 'none' : (body.style.display === 'grid' ? 'grid' : 'block');
+            h.querySelector('span:last-child').textContent = isVis ? '▶' : '▼';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

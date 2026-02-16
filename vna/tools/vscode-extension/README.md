@@ -5,6 +5,10 @@
 - Command: `XSWL: Get Service Status`
 - Command: `XSWL: Validate Topology` (reads YAML from current editor)
 - Command: `XSWL: Open Control Center`（统一入口 App：多级菜单切换工作区/拓扑/扫描/波形；支持弹框交互；拓扑页内嵌可视化编辑（虚拟端口拖拽绑定到板卡端口）+ YAML 高级模式；内置工作区保存/激活、扫描状态控制、snapshot/live 波形）
+- Activity Bar 入口：新增 `XSWL VNA` 活动栏图标，点击直接打开 `Control Center` 侧边栏（非文件型页面）
+- 侧边栏标题栏动作：提供与聊天面板一致的标题按钮风格（最大化、关闭）
+- 侧边栏最大化：`Control Center` 视图标题栏可一键 `Open Control Center (Maximized)`，切换到主编辑区大面板
+- 侧边栏关闭：`Control Center` 视图标题栏可一键关闭侧边栏
 - Command: `XSWL: Edit Workspace Topology`（Webview 可视化编辑工作区拓扑：明确区分“虚拟 VNA 端口”和“板卡端口”，通过拖拽完成虚拟端口→板卡端口绑定；板卡类型支持 `board` / `virtual-vna`；支持 Auto Assign / Assign To Selected / Clear Assignments；支持保存/加载/激活，保留 YAML 高级模式）
 - Command: `XSWL: Acquire Once` (inputs instanceId/sampleCount and shows frame summary)
 - Command: `XSWL: Stream Preview` (cancellable stream preview with frame count summary)
@@ -112,7 +116,9 @@ npm run test
 - Open this folder in VS Code
 - Press `F5`
 - Run command `XSWL: Get Service Status`
-- Run command `XSWL: Open Control Center` to enter one integrated app-style UI for workspace/topology/scan/waveform
+- Click Activity Bar icon `XSWL VNA` to open `Control Center` sidebar directly
+- Run command `XSWL: Open Control Center` to focus the sidebar entry
+- Run command `XSWL: Open Control Center (Maximized)` to open the same UI as a maximized panel
 - Open a topology YAML file and run `XSWL: Validate Topology`
 - Run command `XSWL: Edit Workspace Topology` to edit workspace-scoped topology config via UI
 - Run command `XSWL: Acquire Once`

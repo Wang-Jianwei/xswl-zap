@@ -34,48 +34,373 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       background: var(--vscode-editor-background);
     }
     .app {
-      display: grid;
-      grid-template-columns: 280px 1fr;
+      display: flex;
       height: 100vh;
       overflow: hidden;
+      position: relative;
     }
-    .sidebar {
-      border-right: 1px solid var(--vscode-panel-border);
+    .sidebar-stub {
+      width: 48px;
+      flex-shrink: 0;
+      background: var(--vscode-activityBar-background);
+      border-right: 1px solid var(--vscode-activityBar-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 8px;
+      z-index: 20;
+    }
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-width: 0;
+      z-index: 10;
+      transition: margin-left 0.2s ease-in-out; 
+    }
+    /* Setup Drawer: Push mode */
+    .setup-drawer {
+      position: relative; /* Changed from absolute to flow in flex container */
+      width: 0; /* Collapsed by default */
+      min-width: 0; 
       background: var(--vscode-sideBar-background);
-      color: var(--vscode-sideBar-foreground);
-      padding: 12px;
-      overflow-y: auto;
+      border-right: 1px solid var(--vscode-panel-border);
+      /* transform: translateX(-100%);  Removed transform for push effect */
+      transition: width 0.2s ease-in-out;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden; /* Hide content when collapsed */
+      flex-shrink: 0; /* Prevent flex shrink */
     }
-    .brand {
+    .setup-drawer.open {
+      width: 260px; /* Expanded width */
+      /* box-shadow removed as it's not floating anymore */
+    }
+    
+    /* Reuse sl-tab styles but adapt for stub */
+    .stub-tab {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--vscode-activityBar-inactiveForeground);
+    }
+    .stub-tab:hover {
+      color: var(--vscode-activityBar-foreground);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .stub-tab.active {
+      color: var(--vscode-activityBar-foreground);
+    }
+    .stub-tab.active::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      width: 3px;
+      height: 24px;
+      background: var(--vscode-activityBar-activeBorder);
+      border-radius: 2px;
+    }
+    
+    .drawer-header {
+      padding: 8px 12px;
       font-weight: 600;
-      margin-bottom: 12px;
+      border-bottom: 1px solid var(--vscode-panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--vscode-sideBarSectionHeader-background);
+      color: var(--vscode-sideBarSectionHeader-foreground);
+      min-height: 36px;
     }
-    .menu-group {
-      margin-bottom: 10px;
+    
+    /* Breadcrumb style */
+    .drawer-breadcrumb {
+        font-size: 11px;
+        color: var(--vscode-descriptionForeground);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .drawer-breadcrumb span:last-child {
+        color: var(--vscode-foreground);
+        font-weight: 600;
+    }
+
+    .drawer-content {
+      flex: 1;
+      overflow: hidden;
+      padding: 0;
+      display: flex;
+      flex-direction: column; /* Ensure drawer content stacks vertically */
+    }
+
+    /* Setup page override */
+    .setup-page {
+      display: none;
+      flex: 1;
+      flex-direction: row; /* FORCE ROW LAYOUT: TABS | CONTENT */
+      overflow: hidden;
+      padding: 0;
+    }
+    /* Force Row Layout for Setup Page */
+    .setup-page.active {
+      display: flex !important;
+      flex-direction: row !important; /* Ensure Tabs (Left) | Content (Right) */
+      align-items: stretch;
+    }
+
+    .sp-tabs {
+        display: flex;
+        flex-direction: column; /* Vertical Tabs */
+        width: 80px; 
+        flex-shrink: 0;
+        border-right: 1px solid var(--vscode-panel-border);
+        border-bottom: none;
+        background: var(--vscode-sideBar-background); 
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .sp-tab {
+        padding: 8px 4px; 
+        cursor: pointer;
+        font-size: 11px;
+        border-right: none;
+        border-bottom: 1px solid var(--vscode-panel-border);
+        background: transparent;
+        color: var(--vscode-sideBar-foreground); /* Use sidebar foreground */
+        opacity: 0.7;
+        /* flex: 1 removed so they don't stretch */
+        min-height: 48px; 
+        display: flex;
+        flex-direction: row; /* Ensure content flows horizontally */
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.2;
+        word-break: normal; /* Allow normal breaking */
+        flex: 0 0 auto;
+        white-space: normal; /* Force wrapping if needed */
+    }
+    .sp-tab:hover {
+        background: var(--vscode-list-hoverBackground);
+        opacity: 1;
+    }
+    .sp-tab.active {
+        background: var(--vscode-list-activeSelectionBackground);
+        color: var(--vscode-list-activeSelectionForeground);
+        border-bottom: 1px solid var(--vscode-panel-border);
+        /* box-shadow: inset 3px 0 0 var(--vscode-tab-activeBorder);  Remove left border indicator */
+        font-weight: 600;
+        opacity: 1;
+    }
+    
+    /* Content panel background should be slightly different if needed, but let's keep simple */
+    .sp-content-panel {
+        display: none;
+        flex: 1; /* Take remaining space */
+        padding: 16px; /* Increases padding */
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto; 
+        background: var(--vscode-editor-background); /* Distinct from sidebar */
+    }
+    .sp-content-panel.active {
+        display: flex;
+    }
+
+    /* Legacy sidebar removed */
+    .sidebar { display: none; }
+
+    .sidebar-hint {
+      color: var(--vscode-descriptionForeground);
+      font-size: 12px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .sidebar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sidebar-item {
+      border: 1px solid var(--vscode-panel-border);
+      border-left: 3px solid var(--vscode-charts-blue);
+      border-radius: 4px;
+      padding: 6px 8px;
+      background: var(--vscode-editorWidget-background);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .sidebar-item.secondary {
+      border-left-color: var(--vscode-charts-green);
+    }
+    .sidebar-group {
       border: 1px solid var(--vscode-panel-border);
       border-radius: 6px;
       overflow: hidden;
+      background: var(--vscode-editorWidget-background);
     }
-    .menu-title {
-      width: 100%;
-      text-align: left;
+    .sidebar-group-title {
       padding: 8px 10px;
-      border: 0;
-      cursor: pointer;
-      color: inherit;
       background: var(--vscode-editor-inactiveSelectionBackground);
+      font-weight: 600;
+      border-bottom: 1px solid var(--vscode-panel-border);
     }
-    .submenu {
-      display: none;
+    .sidebar-group-actions {
       padding: 8px;
-      gap: 6px;
+      display: flex;
       flex-direction: column;
+      gap: 6px;
+    }
+    
+    /* New Setup Layout: Vertical Tabs + Content */
+    .setup-container {
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+    }
+    .setup-left-nav {
+      width: 48px;
+      flex-shrink: 0;
+      background: var(--vscode-activityBar-background);
+      border-right: 1px solid var(--vscode-activityBar-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 8px;
+      gap: 4px;
+    }
+    .sl-tab {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--vscode-activityBar-inactiveForeground);
+      font-size: 18px; /* Icon size */
+      position: relative;
+    }
+    .sl-tab:hover {
+      color: var(--vscode-activityBar-foreground);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .sl-tab.active {
+      color: var(--vscode-activityBar-foreground);
+    }
+    .sl-tab.active::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: var(--vscode-activityBar-activeBorder);
+      border-radius: 2px;
+    }
+    
+    .setup-right-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
       background: var(--vscode-sideBar-background);
     }
-    .menu-group.is-open .submenu {
+    .setup-page {
+      display: none;
+      padding: 10px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .setup-page.active {
       display: flex;
     }
-    .submenu button,
+    .sp-header {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--vscode-sideBarSectionHeader-foreground);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--vscode-panel-border);
+      margin-bottom: 6px;
+    }
+    .sp-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--vscode-list-hoverBackground);
+      border: 1px solid transparent;
+      margin-bottom: 4px;
+    }
+    .sp-item-title { font-weight: 500; font-size: 12px; }
+    .sp-item-desc { font-size: 11px; opacity: 0.8; }
+    .sp-item:hover {
+      background: var(--vscode-list-activeSelectionBackground);
+      color: var(--vscode-list-activeSelectionForeground);
+    }
+
+    /* Sub-menu styles within Setup Page */
+    .sp-accordion {
+      border: 1px solid var(--vscode-panel-border);
+      border-radius: 4px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      background: var(--vscode-editorWidget-background);
+    }
+    .sp-accordion-header {
+      padding: 6px 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--vscode-editor-inactiveSelectionBackground);
+      font-weight: 600;
+      font-size: 11px;
+    }
+    .sp-accordion-header:hover {
+      background: var(--vscode-list-hoverBackground);
+    }
+    .sp-accordion-body {
+      display: none;
+      padding: 4px;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sp-accordion.open .sp-accordion-body {
+      display: flex;
+    }
+    .sp-sub-item {
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: 3px;
+      color: var(--vscode-foreground);
+    }
+    .sp-sub-item:hover {
+      background: var(--vscode-list-hoverBackground);
+    }
+
+    /* LEGACY/UNUSED CSS REMOVED OR KEPT MINIMAL IF NEEDED */
+    .setup-nav { display: none; } 
+    .setup-section { display: none; }
+
+    .sidebar-pane button,
     .actions button,
     .inline button,
     .dialog-actions button {
@@ -87,14 +412,14 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       cursor: pointer;
       text-align: left;
     }
-    .submenu button.secondary,
+    .sidebar-pane button.secondary,
     .actions button.secondary,
     .inline button.secondary,
     .dialog-actions button.secondary {
       background: var(--vscode-button-secondaryBackground);
       color: var(--vscode-button-secondaryForeground);
     }
-    .submenu button.is-active {
+    .sidebar-pane button.is-active {
       outline: 1px solid var(--vscode-focusBorder);
     }
     .content {
@@ -110,6 +435,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       border-bottom: 1px solid var(--vscode-panel-border);
       padding: 10px 12px;
       gap: 10px;
+    }
+    .topbar-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
     }
     .status {
       color: var(--vscode-descriptionForeground);
@@ -219,22 +550,128 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       justify-content: center;
       padding: 12px;
     }
-    .modal.is-open { display: flex; }
-    .dialog {
-      width: min(520px, 100%);
-      border: 1px solid var(--vscode-panel-border);
-      border-radius: 8px;
-      background: var(--vscode-editor-background);
-      padding: 12px;
+    .sc-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
     }
-    .dialog h3 { margin: 0 0 8px; }
-    .dialog-actions {
-      margin-top: 12px;
+    .sc-modal.is-open {
+      display: flex;
+    }
+    .sc-modal-container {
+      background: var(--vscode-editorWidget-background);
+      border: 1px solid var(--vscode-widget-border);
+      width: 900px;
+      height: 700px;
+      max-width: 95%;
+      max-height: 95%;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+    .sc-modal-header {
+      grid-column: 1 / span 2;
+      padding: 12px 16px;
+      background: var(--vscode-titleBar-activeBackground);
+      color: var(--vscode-titleBar-activeForeground);
+      border-bottom: 1px solid var(--vscode-widget-border);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sc-modal-close {
+      cursor: pointer;
+      opacity: 0.8;
+      font-size: 16px;
+    }
+    .sc-modal-close:hover { opacity: 1; }
+    
+    .sc-sidebar {
+      background: var(--vscode-sideBar-background);
+      border-right: 1px solid var(--vscode-widget-border);
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0;
+    }
+    .sc-nav-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      color: var(--vscode-sideBar-foreground);
+      border-left: 3px solid transparent;
+      opacity: 0.8;
+    }
+    .sc-nav-item:hover {
+      background: var(--vscode-list-hoverBackground);
+      opacity: 1;
+    }
+    .sc-nav-item.active {
+      background: var(--vscode-list-activeSelectionBackground);
+      color: var(--vscode-list-activeSelectionForeground);
+      border-left-color: var(--vscode-activityBar-activeBorder);
+      font-weight: 600;
+      opacity: 1;
+    }
+    
+    .sc-content {
+      background: var(--vscode-editor-background);
+      padding: 24px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .sc-tab-pane {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      gap: 12px;
+    }
+    .sc-tab-pane.active {
+      display: flex;
+    }
+    
+    .sc-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--vscode-widget-border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      color: var(--vscode-foreground);
+    }
+
+    .sc-modal-footer {
+      grid-column: 1 / span 2;
+      border-top: 1px solid var(--vscode-widget-border);
+      padding: 12px 16px;
+      text-align: right;
+      background: var(--vscode-editorWidget-background);
       display: flex;
       justify-content: flex-end;
       gap: 8px;
     }
-    .topology-mode { display: flex; gap: 8px; margin-bottom: 8px; }
+    
+    /* Layout Overrides for inside modal */
+    .sc-content .topology-layout-new {
+       height: 100%;
+       min-height: 400px;
+       border: 1px solid var(--vscode-widget-border);
+    }
+    .sc-content .device-manager {
+       max-height: 200px;
+    }
+
     .topology-layout {
       display: grid;
       grid-template-columns: 280px 1fr;
@@ -497,122 +934,162 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
 </head>
 <body>
   <div class="app">
-    <aside class="sidebar">
-      <div class="brand">XSWL VNA Control Center</div>
-
-      <div class="menu-group is-open" data-group="workspace">
-        <button class="menu-title" data-menu-toggle="workspace">工作区管理</button>
-        <div class="submenu">
-          <button data-view="workspace" class="is-active">工作区配置</button>
-          <button data-action="open-new-workspace-modal" class="secondary">新建工作区（弹框）</button>
+    <div class="app">
+      <!-- Activity Bar / Nav Stub -->
+      <aside class="sidebar-stub">
+        <div class="stub-tab active" data-target="home" title="Home / Channels">
+           <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/></svg>
         </div>
-      </div>
-
-      <div class="menu-group" data-group="topology">
-        <button class="menu-title" data-menu-toggle="topology">拓扑管理</button>
-        <div class="submenu">
-          <button data-view="topology">拓扑编辑</button>
-          <button data-action="open-visual-topology" class="secondary">打开独立拓扑编辑器</button>
+        <div style="height:1px; width:32px; background:var(--vscode-activityBar-foreground); opacity:0.2; margin:4px 0;"></div>
+        
+        <div class="stub-tab" data-target="stim" title="Stimulus">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M9.5 1.5a.5.5 0 0 1 .5.5v2.793l2.854 2.853a.5.5 0 0 1 0 .708l-2.854 2.853V14a.5.5 0 0 1-1 0v-2.793L6.146 8.354a.5.5 0 0 1 0-.708L9 4.793V2a.5.5 0 0 1 .5-.5z"/></svg>
         </div>
-      </div>
-
-      <div class="menu-group" data-group="scan">
-        <button class="menu-title" data-menu-toggle="scan">扫描控制</button>
-        <div class="submenu">
-          <button data-view="scan">扫描状态</button>
-          <button data-view="waveform" class="secondary">实时波形</button>
+        <div class="stub-tab" data-target="resp" title="Response">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5l.5-.5h7l.5.5v11l-.5.5h-7l-.5-.5v-11zM5 3v10h6V3H5z"/></svg>
         </div>
-      </div>
-    </aside>
-
-    <main class="content">
-      <div class="topbar">
-        <strong>${title}</strong>
-        <div class="status" id="statusLine">准备就绪</div>
-      </div>
-
-      <section id="view-workspace" class="view is-active">
-        <div class="grid">
-          <div class="card">
-            <h3>当前工作区</h3>
-            <div class="line"><label>Workspace ID</label><input id="workspaceId" placeholder="例如: ws-default" /></div>
-            <div class="line"><label>Topology ID</label><input id="topologyId" placeholder="例如: topo-main" /></div>
-            <div class="actions">
-              <button id="btnWorkspaceLoad">加载</button>
-              <button id="btnWorkspaceSave">保存</button>
-              <button id="btnWorkspaceSaveActivate" class="secondary">保存并激活</button>
-            </div>
-          </div>
-          <div class="card">
-            <h3>服务状态</h3>
-            <div id="serviceStatus" class="help">未加载</div>
-            <div class="actions" style="margin-top:8px;"><button id="btnRefreshService">刷新状态</button></div>
-          </div>
+        <div class="stub-tab" data-target="cal" title="Calibration">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zm0 11a5 5 0 1 1 0-10 5 5 0 0 1 0 10zM8 4a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
         </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Workspace</th><th>Topology</th><th>更新时间</th><th>状态</th><th>操作</th></tr></thead>
-            <tbody id="workspaceRows"></tbody>
-          </table>
+        <div class="stub-tab" data-target="trig" title="Trigger">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M11.354 5.646L8.5 2.793V1.5a.5.5 0 0 0-1 0v1.293L4.646 5.646a.5.5 0 1 0 .708.708L7.5 4.207V13.5a.5.5 0 0 0 1 0V4.207l2.146 2.147a.5.5 0 0 0 .708-.708z"/></svg>
         </div>
-      </section>
+        <div class="stub-tab" data-target="anal" title="Analysis">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 13.5h-13v-1h13v1zm0-3h-13v-1h13v1zm0-3h-13v-1h13v1zm-4-4v-1h-6v1h6z"/></svg>
+        </div>
+        <div style="flex:1"></div>
+        <div class="stub-tab" data-target="sys" title="System">
+          <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+        </div>
+      </aside>
 
-      <section id="view-topology" class="view">
-        <div class="card fit">
-          <h3>拓扑编辑（内嵌可视化）</h3>
-          <div class="topology-mode">
-            <button id="topologyVisualMode">可视化模式</button>
-            <button id="topologyYamlMode" class="secondary">YAML 高级模式</button>
-            <button id="btnTopologyLoad">从工作区加载</button>
-            <button id="btnTopologyToYaml" class="secondary">从可视化生成 YAML</button>
-          </div>
-
-          <div id="topologyVisualSection" class="topology-layout-new">
-            <div class="topology-toolbar">
-              <div class="line inline" style="margin:0;">
-                <button id="btnAddVirtualPort">新增虚拟端口</button>
-                <button id="btnAddBoard">新增板卡</button>
-                <button id="btnAutoLayout" class="secondary">自动排列</button>
+      <!-- Flyout Drawer -->
+      <div id="setupDrawer" class="setup-drawer">
+         <div class="drawer-header">
+           <div id="drawerBreadcrumb" class="drawer-breadcrumb">
+               <span>Setup</span><span>/</span><span id="bcMain">Stimulus</span><span id="bcSubSep">/</span><span id="bcSub">Frequency</span>
+           </div>
+           <!-- <span class="drawer-close" id="drawerClose">✕</span> Optional close X if needed -->
+         </div>
+         <div class="drawer-content">
+            <!-- STIMULUS -->
+            <div id="page-stim" class="setup-page active">
+              <div class="sp-tabs">
+                  <div class="sp-tab active" data-tab="stim-freq">Frequency<br>Range</div>
+                  <div class="sp-tab" data-tab="stim-pwr">Power<br>Level</div>
+                  <div class="sp-tab" data-tab="stim-swp">Sweep<br>Points</div>
               </div>
-              <div class="help" style="margin-left:auto; font-size:12px;">
-                拖拽标题移动 | 拖拽端口连线 | 点击连线删除
+              
+              <div id="panel-stim-freq" class="sp-content-panel active">
+                  <div class="sp-item" data-view="workspace">
+                     <div class="sp-item-title">Frequency Control</div>
+                  </div>
+                  <div class="line"><label>Start</label><input value="10 MHz"></div>
+                  <div class="line"><label>Stop</label><input value="6 GHz"></div>
+                  <div class="line"><label>Center</label><input value="3.005 GHz"></div>
+                  <div class="line"><label>Span</label><input value="5.99 GHz"></div>
+              </div>
+              
+              <div id="panel-stim-pwr" class="sp-content-panel">
+                 <div class="sp-item" data-action="setup-placeholder">Power Settings</div>
+                 <div class="line"><label>Source Power</label><input value="-10 dBm"></div>
+                 <div class="line"><label>Slope</label><input value="0 dB/GHz"></div>
+              </div>
+
+              <div id="panel-stim-swp" class="sp-content-panel">
+                 <div class="sp-item" data-view="scan">Sweep Settings</div>
+                 <div class="line"><label>Points</label><input value="201"></div>
+                 <div class="line"><label>IF Bandwidth</label><input value="1 kHz"></div>
               </div>
             </div>
 
-            <div class="device-manager">
-              <div class="line inline" style="margin:0;">
-                <strong>设备管理器</strong>
-                <button id="btnAddDevice" class="secondary">新增设备</button>
+            <!-- RESPONSE -->
+            <div id="page-resp" class="setup-page">
+              <div class="sp-tabs">
+                  <div class="sp-tab active" data-tab="resp-meas">Measure<br>Param</div>
+                  <div class="sp-tab" data-tab="resp-fmt">Format<br>Scale</div>
               </div>
-              <div id="deviceManagerRows" class="help">暂无设备，请先新增（支持物理/虚拟设备）。</div>
+              
+              <div id="panel-resp-meas" class="sp-content-panel active">
+                   <div class="sp-item" data-action="setup-placeholder">S-Parameters</div>
+                   <div class="chip-list">
+                       <span class="chip is-bound">S11</span>
+                       <span class="chip">S21</span>
+                       <span class="chip">S12</span>
+                       <span class="chip">S22</span>
+                   </div>
+              </div>
+              
+              <div id="panel-resp-fmt" class="sp-content-panel">
+                  <div class="sp-item" data-action="setup-placeholder">Format</div>
+                  <div class="line">
+                      <select>
+                          <option>Log Mag</option>
+                          <option>Phase</option>
+                          <option>Smith Chart</option>
+                      </select>
+                  </div>
+                  <div class="sp-item" data-action="setup-placeholder">Autoscale</div>
+              </div>
+            </div>
+
+            <!-- CALIBRATION -->
+            <div id="page-cal" class="setup-page">
+              <div class="sp-tabs">
+                  <div class="sp-tab active" data-tab="cal-basic">Basic<br>Cal</div>
+                  <div class="sp-tab" data-tab="cal-adv">Advanced<br>Settings</div>
+              </div>
+              <div id="panel-cal-basic" class="sp-content-panel active">
+                  <div class="sp-item" data-view="topology">Launch Topology Editor</div>
+                  <div class="sp-item" data-action="open-visual-topology">Port Manager</div>
+              </div>
+              <div id="panel-cal-adv" class="sp-content-panel">
+                  <div class="sp-item">Cal Kit Definitions</div>
+              </div>
             </div>
             
-            <div id="topologyCanvasContainer" class="topology-canvas-container">
-              <!-- SVG Layer for Links (Z-Index 0) -->
-              <svg id="topologyConnections" width="100%" height="100%">
-                <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#569cd6" />
-                  </marker>
-                </defs>
-              </svg>
-              <!-- HTML Layer for Nodes (Z-Index 1) -->
-              <div id="topologyNodes"></div>
+            <!-- TRIGGER -->
+            <div id="page-trig" class="setup-page">
+               <div class="sp-tabs"><div class="sp-tab active" data-tab="trig-src">Source</div></div>
+               <div id="panel-trig-src" class="sp-content-panel active">
+                   <div class="sp-item" data-view="scan">Trigger Source</div>
+                   <div class="line">
+                       <select><option>Internal</option><option>External</option><option>Manual</option></select>
+                   </div>
+               </div>
             </div>
-          </div>
+            
+            <!-- ANALYSIS -->
+             <div id="page-anal" class="setup-page">
+               <div class="sp-tabs"><div class="sp-tab active" data-tab="anal-mk">Markers</div></div>
+               <div id="panel-anal-mk" class="sp-content-panel active">
+                   <div class="sp-item" data-view="waveform">Marker Setup</div>
+                   <div class="actions"><button class="secondary">+ Add Marker</button></div>
+               </div>
+            </div>
+            
+             <!-- SYSTEM -->
+             <div id="page-sys" class="setup-page">
+               <div class="sp-tabs"><div class="sp-tab active" data-tab="sys-ws">Workspace</div></div>
+               <div id="panel-sys-ws" class="sp-content-panel active">
+                   <div class="sp-item" data-view="workspace">Workspace Manager</div>
+               </div>
+            </div>
+         </div>
+      </div>
 
-          <div id="topologyYamlSection" class="hidden">
-            <div class="line"><textarea id="topologyYaml" placeholder="virtual_vna:\n  ports:\n    - vna-port1\nboards:\n  - id: card1\n    kind: board\n    ports:\n      - p1\nbindings:\n  - vna_port: vna-port1\n    board_id: card1\n    board_port: p1\ninstances:\n  - id: card1\n    driver: pxi\n    device: pxi-mock-0\n    resource: dev0"></textarea></div>
-          </div>
+    <main class="content-area"> <!-- Was main.content -->
 
-          <div class="actions">
-            <button id="btnTopologySave">保存拓扑</button>
-            <button id="btnTopologySaveActivate" class="secondary">保存并激活</button>
-          </div>
+      <div class="topbar">
+        <strong>${title}</strong>
+        <div class="topbar-actions">
+          <button id="workspaceStatusBtn" class="secondary">WS: <span id="workspaceStatusText">(未激活)</span></button>
+          <button id="topbarWorkspaceBtn" class="secondary">Workspace</button>
+          <div class="status" id="statusLine">准备就绪</div>
         </div>
-      </section>
+      </div>
 
+      <!-- Workspace & Topology Views Moved to Modal -->
       <section id="view-scan" class="view">
         <div class="grid">
           <div class="card">
@@ -652,6 +1129,124 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- System Configuration Modal -->
+  <div id="sysConfigModal" class="sc-modal" role="dialog">
+    <div class="sc-modal-container">
+      
+      <!-- Header -->
+      <div class="sc-modal-header">
+        <span>⚙️ System Configuration</span>
+        <span id="closeSysconfig" class="sc-modal-close">✕</span>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sc-sidebar">
+        <div class="sc-nav-item active" data-target="sys-topo">Topology</div>
+        <div class="sc-nav-item" data-target="sys-ws">Workspace List</div>
+        <div class="sc-nav-item" data-target="sys-hw">Hardware</div>
+        <div class="sc-nav-item" data-target="sys-lic">Licenses</div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="sc-content">
+        
+        <!-- Tab: Topology (Visual Editor) -->
+        <div id="tab-pane-sys-topo" class="sc-tab-pane active">
+           <div class="sc-section-title">Visual Topology Editor</div>
+           
+           <div class="topology-mode">
+              <button id="topologyVisualMode">Visual Mode</button>
+              <button id="topologyYamlMode" class="secondary">YAML Mode</button>
+              <button id="btnAutoLayout" class="secondary">Auto Layout</button>
+              <button id="btnAddVirtualPort">Add Port</button>
+              <button id="btnAddBoard">Add Board</button>
+           </div>
+
+           <!-- Topology Visual Canvas -->
+           <div id="topologyVisualSection" class="topology-layout-new" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+              <div class="topology-toolbar">
+                 <div class="help" style="font-size:12px;">Drag headers to move | Drag ports to connect | Click lines to delete</div>
+              </div>
+              <div id="topologyCanvasContainer" class="topology-canvas-container" style="flex:1; overflow:hidden;">
+                <svg id="topologyConnections" width="100%" height="100%" style="position:absolute; top:0; left:0; z-index:0; pointer-events:none;">
+                   <defs>
+                      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#569cd6" />
+                      </marker>
+                   </defs>
+                </svg>
+                <div id="topologyNodes" style="position:absolute; top:0; left:0; z-index:1; width:100%; height:100%;"></div>
+              </div>
+           </div>
+
+           <!-- Helper YAML Section (Hidden by default) -->
+           <div id="topologyYamlSection" class="hidden" style="flex:1;">
+              <textarea id="topologyYaml" style="width:100%; height:100%; font-family:monospace;" placeholder="YAML definition..."></textarea>
+           </div>
+        </div>
+        
+        <!-- Tab: Workspace (Management) -->
+        <div id="tab-pane-sys-ws" class="sc-tab-pane">
+            <div class="sc-section-title">Workspace Manager</div>
+            <div class="card">
+               <div class="line inline">
+                 <label>Current Workspace ID:</label>
+                 <input id="workspaceId" placeholder="e.g. ws-default" style="flex:1;" />
+                 <label>Topology ID:</label>
+                 <input id="topologyId" placeholder="e.g. topo-main" style="flex:1;" />
+               </div>
+               <div class="actions" style="margin-top:8px;">
+                 <button id="btnWorkspaceLoad">Load</button>
+                 <button id="btnWorkspaceSave">Save</button>
+                 <button id="btnWorkspaceSaveActivate" class="secondary">Save & Activate</button>
+                 <button id="btnRefreshService" class="secondary">Refresh Service</button>
+               </div>
+               <div id="serviceStatus" class="help" style="margin-top:6px;">Service: Unknown</div>
+            </div>
+            
+            <div class="table-wrap" style="flex:1; margin-top:12px;">
+              <table>
+                <thead><tr><th>Workspace</th><th>Topology</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="workspaceRows"></tbody>
+              </table>
+            </div>
+            <!-- Hidden Helpers for old logic if needed -->
+            <button id="btnTopologyLoad" style="display:none;">(Hidden Load)</button>
+            <button id="btnTopologyToYaml" style="display:none;">(Hidden Sync)</button>
+            <button id="btnTopologySave" style="display:none;">(Hidden Save)</button>
+            <button id="btnTopologySaveActivate" style="display:none;">(Hidden SaveAct)</button>
+        </div>
+
+        <!-- Tab: Hardware (Device Manager) -->
+        <div id="tab-pane-sys-hw" class="sc-tab-pane">
+            <div class="sc-section-title">Hardware & Device Registry</div>
+             <div class="device-manager" style="flex:1; max-height:none;">
+                <div class="line inline" style="margin:0; margin-bottom:8px;">
+                  <button id="btnAddDevice">Add Device Definition</button>
+                  <span class="help">Define physical or virtual hardware resources here.</span>
+                </div>
+                <div id="deviceManagerRows">Waiting for devices...</div>
+             </div>
+        </div>
+
+        <!-- Tab: Licenses -->
+        <div id="tab-pane-sys-lic" class="sc-tab-pane">
+             <div class="sc-section-title">License Management</div>
+             <div class="help">No license modules loaded.</div>
+        </div>
+
+      </div>
+      
+      <!-- Footer -->
+      <div class="sc-modal-footer">
+        <span style="margin-right:auto; font-size:11px; color:#d85555; padding-top:6px;">⚠️ Applying changes might reset measurement state.</span>
+        <button id="cancelSysconfig" class="secondary">Close</button>
+        <button id="applySysconfig">Apply & Save Topology</button>
+      </div>
+      
+    </div>
   </div>
 
   <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -723,9 +1318,13 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     const modalInput = document.getElementById("modalInput");
     const modalCancel = document.getElementById("modalCancel");
     const modalConfirm = document.getElementById("modalConfirm");
+    const workspaceStatusText = document.getElementById("workspaceStatusText");
+    const workspaceStatusBtn = document.getElementById("workspaceStatusBtn");
+    const topbarWorkspaceBtn = document.getElementById("topbarWorkspaceBtn");
 
     state.topologyMode = "visual";
     state.draggingVirtualPort = "";
+
     state.topology = {
       virtualPorts: ["vna-port1", "vna-port2"],
       boards: [
@@ -773,17 +1372,16 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         view.classList.add("is-active");
       }
 
-      for (const node of document.querySelectorAll(".submenu button[data-view]")) {
-        node.classList.toggle("is-active", node.getAttribute("data-view") === viewName);
+      // If switching to waveform, we might want to ensure drawer is closed or home tab is active
+      if (viewName === "waveform") {
+         const drawer = document.getElementById('setupDrawer');
+         if (drawer) drawer.classList.remove('open');
+         const homeTab = document.querySelector('[data-target="home"]');
+         if (homeTab) {
+             document.querySelectorAll('.stub-tab').forEach(t => t.classList.remove('active'));
+             homeTab.classList.add('active');
+         }
       }
-    }
-
-    function toggleMenu(groupName) {
-      const group = document.querySelector('.menu-group[data-group="' + groupName + '"]');
-      if (!group) {
-        return;
-      }
-      group.classList.toggle("is-open");
     }
 
     function formatDateTime(ms) {
@@ -1609,18 +2207,265 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       vscode.postMessage({ type, ...payload });
     }
 
-    document.querySelectorAll("[data-menu-toggle]").forEach((node) => {
+    // -- DRAWER / STUB LOGIC --
+    const drawer = document.getElementById('setupDrawer');
+    const drawerClose = document.getElementById('drawerClose');
+    const stubTabs = document.querySelectorAll('.stub-tab[data-target]');
+    const drawerPages = document.querySelectorAll('.setup-page');
+    // Breadcrumb Elements
+    const bcMain = document.getElementById('bcMain');
+    const bcSub = document.getElementById('bcSub');
+
+    // Utility to get plain text from multiline tab
+    function getTabLabel(el) {
+        if (!el) return '';
+        // Clone to not mess up original, replace <br> with space
+        const clone = el.cloneNode(true);
+        const brs = clone.getElementsByTagName('br');
+        while (brs.length) {
+            brs[0].parentNode.replaceChild(document.createTextNode(' '), brs[0]);
+        }
+        return clone.textContent.trim();
+    }
+
+    const separator = document.getElementById('bcSubSep');
+
+    function updateBreadcrumb(main, sub) {
+        if (bcMain) bcMain.textContent = main || '';
+        if (bcSub) bcSub.textContent = sub || '';
+        if (separator) separator.style.display = sub ? 'inline' : 'none';
+    }
+
+    function closeDrawer() {
+        if (drawer) drawer.classList.remove('open');
+        const activeView = document.querySelector('.view.is-active');
+        if (activeView && activeView.id === 'view-waveform') {
+            stubTabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-target') === 'home'));
+        } else {
+             stubTabs.forEach(t => t.classList.remove('active'));
+        }
+    }
+
+    if (drawerClose) {
+        drawerClose.addEventListener('click', closeDrawer);
+    }
+    
+    // Tab switching inside drawer
+    document.querySelectorAll('.sp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+             const parentPage = tab.closest('.setup-page');
+             if (!parentPage) return;
+             
+             const targetId = tab.getAttribute('data-tab'); // e.g. stim-freq
+             const targetPanel = document.getElementById('panel-' + targetId);
+             
+             // Deactivate siblings
+             parentPage.querySelectorAll('.sp-tab').forEach(t => t.classList.remove('active'));
+             tab.classList.add('active');
+             
+             parentPage.querySelectorAll('.sp-content-panel').forEach(p => p.classList.remove('active'));
+             if (targetPanel) targetPanel.classList.add('active');
+             
+             // Update Breadcrumb Sub
+             updateBreadcrumb(bcMain.textContent, getTabLabel(tab));
+        });
+    });
+    
+    stubTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+             const target = tab.getAttribute('data-target');
+             const title = tab.getAttribute('title') || 'Setup';
+
+             // Update active state on stub
+             stubTabs.forEach(t => t.classList.remove('active'));
+             tab.classList.add('active');
+
+             if (target === 'home') {
+                 closeDrawer();
+                 switchView('waveform');
+                 // Re-add active to home after closeDrawer might have cleared it
+                 tab.classList.add('active'); 
+             } else {
+                 // Open drawer
+                 if (drawer) {
+                     drawer.classList.add('open');
+                     // Switch page
+                     drawerPages.forEach(p => p.classList.remove('active'));
+                     const page = document.getElementById('page-' + target);
+                     if (page) {
+                         page.classList.add('active');
+                         // Auto-select active tab inside page to update breadcrumb
+                         const activeTab = page.querySelector('.sp-tab.active') || page.querySelector('.sp-tab');
+                         if (activeTab) {
+                             // Simulate click or just update state? Better update state manually to avoid side effects
+                             // But actually we want the panel to be shown
+                             const tabId = activeTab.getAttribute('data-tab');
+                             const panel = document.getElementById('panel-' + tabId);
+                             
+                             // Reset tabs in this page
+                             page.querySelectorAll('.sp-tab').forEach(t => t.classList.remove('active'));
+                             activeTab.classList.add('active');
+                             
+                             page.querySelectorAll('.sp-content-panel').forEach(p => p.classList.remove('active'));
+                             if (panel) panel.classList.add('active');
+                             
+                             updateBreadcrumb(title, getTabLabel(activeTab));
+                         } else {
+                             updateBreadcrumb(title, '');
+                         }
+                     } else {
+                         // Fallback
+                         const defaultPage = document.querySelector('.setup-page');
+                         if(defaultPage) defaultPage.classList.add('active');
+                         updateBreadcrumb(title, '');
+                     }
+                 }
+             }
+        });
+    });
+
+    if (workspaceStatusBtn) {
+      workspaceStatusBtn.addEventListener("click", () => openSystemModal("sys-ws"));
+    }
+    if (topbarWorkspaceBtn) {
+      topbarWorkspaceBtn.addEventListener("click", () => openSystemModal("sys-ws"));
+    }
+
+    // --- System Configuration Modal Logic ---
+    const sysModal = document.getElementById('sysConfigModal');
+    const closeSysBtn = document.getElementById('closeSysconfig');
+    const cancelSysBtn = document.getElementById('cancelSysconfig');
+    const applySysBtn = document.getElementById('applySysconfig');
+    const sysNavItems = document.querySelectorAll('.sc-nav-item');
+    const sysTabPanes = document.querySelectorAll('.sc-tab-pane');
+
+    function openSystemModal(targetTab) {
+        if (!sysModal) return;
+        sysModal.classList.add('is-open');
+        
+        let tabName = targetTab || 'sys-topo'; // Default
+        
+        // Handle "workspace" or "topology" legacy names from data-view attributes
+        if (targetTab === 'workspace') tabName = 'sys-ws';
+        if (targetTab === 'topology') tabName = 'sys-topo';
+
+        // Switch
+        sysNavItems.forEach(nav => {
+           if (nav.dataset.target === tabName) {
+               nav.classList.add('active');
+           } else {
+               nav.classList.remove('active');
+           }
+        });
+        
+        sysTabPanes.forEach(pane => {
+            if (pane.id === 'tab-pane-' + tabName) {
+                pane.classList.add('active');
+            } else {
+                pane.classList.remove('active');
+            }
+        });
+        
+        // Refresh Topology
+        if (tabName === 'sys-topo') {
+             setTimeout(() => renderTopologyVisual(), 50);
+        }
+    }
+
+    function closeSystemModal() {
+        if (sysModal) sysModal.classList.remove('is-open');
+    }
+
+    if (closeSysBtn) closeSysBtn.addEventListener('click', closeSystemModal);
+    if (cancelSysBtn) cancelSysBtn.addEventListener('click', closeSystemModal);
+    
+    // Switch tabs
+    sysNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+             // Deactivate old
+             sysNavItems.forEach(n => n.classList.remove('active'));
+             item.classList.add('active');
+             
+             const target = item.dataset.target;
+             sysTabPanes.forEach(p => p.classList.remove('active'));
+             const pane = document.getElementById('tab-pane-' + target);
+             if (pane) pane.classList.add('active');
+             
+             if (target === 'sys-topo') {
+                 setTimeout(() => renderTopologyVisual(), 0);
+             }
+        });
+    });
+    
+    if (applySysBtn) {
+        applySysBtn.addEventListener('click', () => {
+             const wsId = document.getElementById('workspaceId');
+             if (wsId) {
+                 post("workspace-save", {
+                    workspaceId: wsId.value.trim(),
+                    topologyId: "topo-main", // simplify for now
+                    topologyYaml: getTopologyYamlForSave(),
+                    activate: true,
+                 });
+             }
+             closeSystemModal();
+        });
+    }
+
+    // Intercept data-view clicks for modal targets
+    document.querySelectorAll("[data-view]").forEach((node) => {
+         const view = node.getAttribute("data-view");
+         if (view === "workspace" || view === "topology") {
+             // Remove old listener effectively by replacing logic?
+             // Actually, we can just attach a new listener that stops propagation
+             // But the old listener is already attached. 
+             // Instead, let's modify the old listener logic if possible.
+             // Since we can't, we rely on switchView failing gracefully (which it does).
+             node.addEventListener("click", (e) => {
+                 e.stopImmediatePropagation();
+                 openSystemModal(view); // 'workspace' or 'topology'
+             }, true); // Capture phase to beat the old listener?
+         }
+    });
+
+
+    document.querySelectorAll("[data-setup-toggle]").forEach((node) => {
+
       node.addEventListener("click", () => {
-        toggleMenu(node.getAttribute("data-menu-toggle"));
+        const section = node.closest(".setup-section");
+        if (!section) {
+          return;
+        }
+        const expanded = section.classList.toggle("is-open");
+        const indicator = node.querySelector("span:last-child");
+        if (indicator) {
+          indicator.textContent = expanded ? "▼" : "▶";
+        }
       });
     });
 
     document.querySelectorAll("[data-view]").forEach((node) => {
-      node.addEventListener("click", () => {
+      node.addEventListener("click", (e) => {
         const view = node.getAttribute("data-view");
+        
+        // Intercept modal views
+        if (view === "workspace" || view === "topology") {
+             e.preventDefault();
+             e.stopPropagation();
+             openSystemModal(view);
+             return;
+        }
+
         if (view) {
           switchView(view);
         }
+      }, true); // Use capture to intercept before any legacy listeners
+    });
+
+    document.querySelectorAll("[data-action='setup-placeholder']").forEach((node) => {
+      node.addEventListener("click", () => {
+        const label = node.getAttribute("data-label") || "Setup Item";
+        setStatus("Setup 菜单：" + label + "（待接入）");
       });
     });
 
@@ -2121,6 +2966,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         state.items = Array.isArray(payload.items) ? payload.items : [];
         state.activeWorkspaceId = String(payload.activeWorkspaceId || "");
         renderWorkspaceRows();
+        if (workspaceStatusText) {
+          workspaceStatusText.textContent = state.activeWorkspaceId || "(未激活)";
+        }
         return;
       }
       if (type === "workspace-load-result") {
@@ -2133,6 +2981,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         topologyId.value = String(item.topologyId || "");
         topologyYaml.value = String(item.topologyYaml || "");
         parseTopologyYaml(topologyYaml.value);
+        if (workspaceStatusText) {
+          workspaceStatusText.textContent = workspaceId.value || "(未激活)";
+        }
         setStatus("已加载工作区: " + workspaceId.value);
         return;
       }

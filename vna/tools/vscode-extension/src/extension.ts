@@ -349,28 +349,30 @@ export function activate(context: vscode.ExtensionContext): void {
     });
   });
 
-  const openControlCenterCommand = vscode.commands.registerCommand("xswlZapVna.openControlCenter", async () => {
+  const controlCenterSidebarViewId = "xswlZapVna.controlCenterView";
+  const controlCenterContainerId = "xswlZapVna";
+  const controlCenterContainerCommandId = `workbench.view.extension.${controlCenterContainerId}`;
+  const controlCenterFocusCommandId = `${controlCenterSidebarViewId}.focus`;
+  let controlCenterSidebarView: vscode.WebviewView | null = null;
+  let controlCenterSidebarSession: vscode.Disposable | null = null;
+
+  const createControlCenterSession = (webview: vscode.Webview): vscode.Disposable => {
     const requestId = createRequestId();
-    const panel = vscode.window.createWebviewPanel(
-      "xswlZapVna.controlCenter",
-      "XSWL VNA Control Center",
-      vscode.ViewColumn.One,
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true,
-      },
-    );
-
-    panel.webview.html = buildUnifiedControlCenterHtml(panel.webview, createNonce());
-
     const { address, deadlineMs, autoOpenOutput } = readConfig();
     const client = new ServiceClient({ address, deadlineMs });
     let liveAbortController: AbortController | null = null;
-    let panelDisposed = false;
+    let disposed = false;
+
+    const postMessage = async (payload: Record<string, unknown>) => {
+      if (disposed) {
+        return;
+      }
+      await webview.postMessage(payload);
+    };
 
     const postWorkspaceList = async () => {
       const list = await client.listWorkspaceTopologies();
-      await panel.webview.postMessage({
+      await postMessage({
         type: "workspace-list-result",
         items: list.items,
         activeWorkspaceId: list.activeWorkspaceId,
@@ -379,7 +381,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const postServiceStatus = async () => {
       const status = await client.getServiceStatus();
-      await panel.webview.postMessage({ type: "service-status-result", ok: true, status });
+      await postMessage({ type: "service-status-result", ok: true, status });
     };
 
     const stopLiveStream = async (instanceId: string) => {
@@ -392,21 +394,10 @@ export function activate(context: vscode.ExtensionContext): void {
       } catch {
         // ignore scan stop errors to avoid blocking UI lifecycle
       }
-      if (!panelDisposed) {
-        await panel.webview.postMessage({ type: "live-state", active: false });
-      }
+      await postMessage({ type: "live-state", active: false });
     };
 
-    panel.onDidDispose(() => {
-      panelDisposed = true;
-      if (liveAbortController) {
-        liveAbortController.abort();
-        liveAbortController = null;
-      }
-      client.dispose();
-    });
-
-    panel.webview.onDidReceiveMessage(async (message: unknown) => {
+    const messageDisposable = webview.onDidReceiveMessage(async (message: unknown) => {
       const payload = message as {
         type?: string;
         workspaceId?: string;
@@ -446,7 +437,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
         if (payload.type === "workspace-load") {
           const item = await client.getWorkspaceTopology(workspaceId);
-          await panel.webview.postMessage({ type: "workspace-load-result", ok: true, item });
+          await postMessage({ type: "workspace-load-result", ok: true, item });
           return;
         }
 
@@ -465,7 +456,7 @@ export function activate(context: vscode.ExtensionContext): void {
           ]);
           showOutputIfEnabled(outputChannel, autoOpenOutput);
 
-          await panel.webview.postMessage({
+          await postMessage({
             type: "workspace-save-result",
             ok: result.ok,
             message: result.ok
@@ -488,7 +479,7 @@ export function activate(context: vscode.ExtensionContext): void {
           ]);
           showOutputIfEnabled(outputChannel, autoOpenOutput);
 
-          await panel.webview.postMessage({
+          await postMessage({
             type: "workspace-activate-result",
             ok: result.ok,
             message: result.ok ? `Active workspace switched to ${workspaceId}.` : `Activate failed: ${messageText}`,
@@ -507,20 +498,20 @@ export function activate(context: vscode.ExtensionContext): void {
 
         if (payload.type === "scan-get") {
           const scan = await client.getScanState(instanceId);
-          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+          await postMessage({ type: "scan-state-result", ok: true, ...scan });
           return;
         }
 
         if (payload.type === "scan-set") {
           const desiredState = payload.scanState === "single" || payload.scanState === "hold" ? payload.scanState : "continuous";
           const scan = await client.setScanState(instanceId, desiredState);
-          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+          await postMessage({ type: "scan-state-result", ok: true, ...scan });
           return;
         }
 
         if (payload.type === "waveform-snapshot") {
           const waveform = await client.acquireWaveform(instanceId, sampleCount, mode, "frame", 0, []);
-          await panel.webview.postMessage({ type: "waveform-frame", waveform });
+          await postMessage({ type: "waveform-frame", waveform });
           return;
         }
 
@@ -528,8 +519,8 @@ export function activate(context: vscode.ExtensionContext): void {
           await stopLiveStream(instanceId);
 
           const started = await client.setScanState(instanceId, "continuous");
-          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...started });
-          await panel.webview.postMessage({ type: "live-state", active: true });
+          await postMessage({ type: "scan-state-result", ok: true, ...started });
+          await postMessage({ type: "live-state", active: true });
 
           liveAbortController = new AbortController();
           const localAbort = liveAbortController;
@@ -544,8 +535,8 @@ export function activate(context: vscode.ExtensionContext): void {
               [],
               0,
               async (waveform) => {
-                if (!panelDisposed && liveAbortController === localAbort) {
-                  await panel.webview.postMessage({ type: "waveform-frame", waveform });
+                if (!disposed && liveAbortController === localAbort) {
+                  await postMessage({ type: "waveform-frame", waveform });
                 }
               },
               localAbort.signal,
@@ -553,17 +544,17 @@ export function activate(context: vscode.ExtensionContext): void {
             .then(async () => {
               if (liveAbortController === localAbort) {
                 liveAbortController = null;
-                await panel.webview.postMessage({ type: "live-state", active: false });
+                await postMessage({ type: "live-state", active: false });
               }
             })
             .catch(async (error) => {
               if (liveAbortController === localAbort) {
                 liveAbortController = null;
-                await panel.webview.postMessage({
+                await postMessage({
                   type: "app-error",
                   message: error instanceof Error ? error.message : String(error),
                 });
-                await panel.webview.postMessage({ type: "live-state", active: false });
+                await postMessage({ type: "live-state", active: false });
               }
             });
           return;
@@ -572,18 +563,96 @@ export function activate(context: vscode.ExtensionContext): void {
         if (payload.type === "waveform-live-stop") {
           await stopLiveStream(instanceId);
           const scan = await client.getScanState(instanceId);
-          await panel.webview.postMessage({ type: "scan-state-result", ok: true, ...scan });
+          await postMessage({ type: "scan-state-result", ok: true, ...scan });
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         logBlock(outputChannel, "ERROR", `[ControlCenter][requestId=${requestId}]`, [errorMessage]);
         showOutputIfEnabled(outputChannel, autoOpenOutput);
-        await panel.webview.postMessage({
+        await postMessage({
           type: "app-error",
           message: errorMessage,
         });
       }
     });
+
+    return new vscode.Disposable(() => {
+      disposed = true;
+      if (liveAbortController) {
+        liveAbortController.abort();
+        liveAbortController = null;
+      }
+      messageDisposable.dispose();
+      client.dispose();
+    });
+  };
+
+  const controlCenterSidebarProvider: vscode.WebviewViewProvider = {
+    resolveWebviewView(webviewView) {
+      controlCenterSidebarView = webviewView;
+      webviewView.webview.options = {
+        enableScripts: true,
+      };
+      webviewView.webview.html = buildUnifiedControlCenterHtml(webviewView.webview, createNonce());
+
+      if (controlCenterSidebarSession) {
+        controlCenterSidebarSession.dispose();
+      }
+      controlCenterSidebarSession = createControlCenterSession(webviewView.webview);
+    },
+  };
+
+  const controlCenterViewProviderRegistration = vscode.window.registerWebviewViewProvider(
+    controlCenterSidebarViewId,
+    controlCenterSidebarProvider,
+    {
+      webviewOptions: {
+        retainContextWhenHidden: true,
+      },
+    },
+  );
+
+  const openControlCenterCommand = vscode.commands.registerCommand("xswlZapVna.openControlCenter", async () => {
+    await vscode.commands.executeCommand(controlCenterContainerCommandId);
+    await vscode.commands.executeCommand(controlCenterFocusCommandId);
+    controlCenterSidebarView?.show?.(true);
+  });
+
+  const openControlCenterMaximizedCommand = vscode.commands.registerCommand("xswlZapVna.openControlCenterMaximized", async () => {
+    await vscode.commands.executeCommand(controlCenterContainerCommandId);
+    await vscode.commands.executeCommand(controlCenterFocusCommandId);
+    controlCenterSidebarView?.show?.(true);
+
+    const commandCandidates = [
+      "workbench.action.toggleMaximizedView",
+    ];
+
+    const allCommands = new Set(await vscode.commands.getCommands(true));
+    let executed = false;
+    for (const commandId of commandCandidates) {
+      if (!allCommands.has(commandId)) {
+        continue;
+      }
+      try {
+        await vscode.commands.executeCommand(commandId);
+        executed = true;
+        break;
+      } catch {
+        // try next candidate for compatibility across VS Code versions/layouts
+      }
+    }
+
+    if (!executed) {
+      vscode.window.showInformationMessage("当前 VS Code 版本不支持该视图最大化命令，已保持侧边栏原布局（不会切换到编辑区）。");
+    }
+  });
+
+  const closeControlCenterSidebarCommand = vscode.commands.registerCommand("xswlZapVna.closeControlCenterSidebar", async () => {
+    try {
+      await vscode.commands.executeCommand("workbench.action.closeSidebar");
+    } catch {
+      // no-op if sidebar is not visible in current layout
+    }
   });
 
   const getInstanceCapabilitiesCommand = vscode.commands.registerCommand("xswlZapVna.getInstanceCapabilities", async () => {
@@ -1528,6 +1597,14 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     outputChannel,
+    controlCenterViewProviderRegistration,
+    new vscode.Disposable(() => {
+      if (controlCenterSidebarSession) {
+        controlCenterSidebarSession.dispose();
+        controlCenterSidebarSession = null;
+      }
+      controlCenterSidebarView = null;
+    }),
     openOutputCommand,
     clearOutputCommand,
     getServiceStatusCommand,
@@ -1535,6 +1612,8 @@ export function activate(context: vscode.ExtensionContext): void {
     validateTopologyCommand,
     editWorkspaceTopologyCommand,
     openControlCenterCommand,
+    openControlCenterMaximizedCommand,
+    closeControlCenterSidebarCommand,
     acquireOnceCommand,
     streamPreviewCommand,
     importAcquisitionCommand,

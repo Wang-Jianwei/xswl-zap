@@ -11,7 +11,28 @@
     "Other"
   ],
   "main": "./out/src/extension.js",
+  "activationEvents": [
+    "onView:xswlZapVna.controlCenterView"
+  ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "xswlZapVna",
+          "title": "XSWL VNA",
+          "icon": "resources/xswl-vna-activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "xswlZapVna": [
+        {
+          "id": "xswlZapVna.controlCenterView",
+          "name": "Control Center",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "xswlZapVna.getServiceStatus",
@@ -32,6 +53,16 @@
       {
         "command": "xswlZapVna.openControlCenter",
         "title": "XSWL: Open Control Center"
+      },
+      {
+        "command": "xswlZapVna.openControlCenterMaximized",
+        "title": "Maximize Control Center",
+        "icon": "$(screen-full)"
+      },
+      {
+        "command": "xswlZapVna.closeControlCenterSidebar",
+        "title": "Close Control Center Sidebar",
+        "icon": "$(close)"
       },
       {
         "command": "xswlZapVna.acquireOnce",
@@ -77,6 +108,18 @@
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "xswlZapVna.openControlCenterMaximized",
+          "when": "view == xswlZapVna.controlCenterView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "xswlZapVna.closeControlCenterSidebar",
+          "when": "view == xswlZapVna.controlCenterView",
+          "group": "navigation@2"
+        }
+      ],
       "editor/context": [
         {
           "command": "xswlZapVna.openOutput",
@@ -113,7 +156,7 @@
   "scripts": {
     "build": "tsc -p .",
     "watch": "tsc -p . -w",
-    "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js && node ./out/test/liveWaveformOverlay.test.js && node ./out/test/serviceClient.test.js && node ./out/test/unifiedControlCenter.test.js",
+    "test": "npm run build && node ./out/test/statusFormatter.test.js && node ./out/test/waveformPreview.test.js && node ./out/test/liveWaveformOverlay.test.js && node ./out/test/serviceClient.test.js && node ./out/test/unifiedControlCenter.test.js && node ./out/test/extensionManifest.test.js",
     "test:ui": "npm run build && node ./out/test/waveformPreview.ui.test.js && node ./out/test/unifiedControlCenter.ui.test.js",
     "test:ui:control-center": "npm run build && node ./out/test/unifiedControlCenter.ui.test.js",
     "test:ui:grpc": "npm run build && node ./out/test/waveformPreview.grpc.ui.e2e.test.js",

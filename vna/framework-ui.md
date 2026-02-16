@@ -128,6 +128,9 @@ flowchart LR
 - 扫描状态语义收敛为“后端主导”：`hold/continuous/single` 通过显式控制 RPC 下发到后端，前端仅在收到后端确认后更新状态显示。
 - 新增命令 `XSWL: Get Instance Capabilities`，可直接查询并展示实例能力（pulse/multi-tone/external-clock 及关键阈值）。
 - 新增命令 `XSWL: Edit Workspace Topology`，通过 Webview 可视化卡片编辑工作区级拓扑（左侧端口池 + 右侧 Card 槽位拖拽绑定，配置 instance/driver/device/resource/detail），支持保存、加载、激活，工作区配置相互独立；同时保留 YAML 高级模式作为兼容兜底。
+- `Control Center` 新增 VS Code 活动栏入口（与文件/搜索/调试同级的侧栏按钮），点击后直接打开侧边栏 Webview（非文件型页签）。
+- `Control Center` 侧栏支持“最大化打开”操作：可从视图标题栏一键切换到主编辑区 Webview 面板。
+- `Control Center` 侧栏导航升级为 `Channels / Setup` 双标签：`Channels` 聚焦 Trace/波形快捷入口，`Setup` 聚焦 Workspace/Topology/Scan/Waveform 配置路径。
 - 拓扑编辑页新增“设备管理器”（支持物理/虚拟设备），可集中维护 `driver/device/resource`；板卡展开详情区支持选择设备模板并直接编辑资源地址，详情显示位于端口列表下方，减少弹窗编辑打断。
 - 板卡选择设备模板后进入“强绑定”模式：设备管理器内该模板属性变更会自动同步到所有绑定板卡；若在板卡详情直接改写 `driver/device/resource`，则自动切回“自定义”解除模板绑定。
 - 波形预览在打开前会先查询实例能力；若实例不支持 pulse，选择 `time` 模式时自动降级为 `frequency` 并提示。
@@ -543,4 +546,10 @@ flowchart TD
 
 ---
 
-*如需，我可以把上面的 proto 存入 `proto/vna.proto` 并生成 C++/TS 的 stub（gRPC），或直接生成 VS Code adapter + minimal backend stub。你想先把 proto 文件加入到 repo 吗？*
+---
+
+> 第 13 与 14 节（Modern Instrument Workbench Layout / Control Center v2）已迁移至单独文档：
+>
+> - `vna/docs/ui-workbench-redesign.md`
+>
+> 详细设计与实施路线请移步至该文档阅读与讨论。
