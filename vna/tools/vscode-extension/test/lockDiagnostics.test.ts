@@ -1,5 +1,10 @@
 import { strict as assert } from "node:assert";
-import { buildLockSnapshotSummary, collectConflictSelectors } from "../src/lockDiagnostics";
+import {
+  buildLockSnapshotSummary,
+  collectConflictSelectors,
+  groupLockConflicts,
+  groupLockSnapshot,
+} from "../src/lockDiagnostics";
 
 (() => {
   const selectors = collectConflictSelectors([
@@ -68,6 +73,75 @@ import { buildLockSnapshotSummary, collectConflictSelectors } from "../src/lockD
 
   assert(leaseSummary.includes("resource=dev0, holder=ws-a/editor-a"));
   assert(leaseSummary.includes("+1 more leases"));
+
+  const conflictGroups = groupLockConflicts([
+    {
+      selector: { type: "1", resourceId: "dev-b" },
+      holderLeaseId: "",
+      holderOwner: { workspaceId: "ws-z", instanceId: "", sessionId: "", actor: "actor-1" },
+      holderFencingToken: 0,
+      holderExpireAtMs: 0,
+      suggestion: "",
+    },
+    {
+      selector: { type: "1", resourceId: "dev-a" },
+      holderLeaseId: "",
+      holderOwner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+      holderFencingToken: 0,
+      holderExpireAtMs: 0,
+      suggestion: "",
+    },
+    {
+      selector: { type: "1", resourceId: "dev-a" },
+      holderLeaseId: "",
+      holderOwner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+      holderFencingToken: 0,
+      holderExpireAtMs: 0,
+      suggestion: "",
+    },
+  ]);
+
+  assert.equal(conflictGroups[0]?.resourceId, "dev-a");
+  assert.equal(conflictGroups[0]?.total, 2);
+  assert.equal(conflictGroups[0]?.holders[0]?.holder, "ws-a/actor-1");
+  assert.equal(conflictGroups[0]?.holders[0]?.count, 2);
+
+  const snapshotGroups = groupLockSnapshot({
+    leases: [
+      {
+        leaseId: "lease-1",
+        selector: { type: "1", resourceId: "dev-a" },
+        owner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+        mode: "LOCK_MODE_EXCLUSIVE",
+        fencingToken: 1,
+        acquiredAtMs: 1,
+        expireAtMs: 2,
+      },
+      {
+        leaseId: "lease-2",
+        selector: { type: "1", resourceId: "dev-a" },
+        owner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+        mode: "LOCK_MODE_EXCLUSIVE",
+        fencingToken: 2,
+        acquiredAtMs: 1,
+        expireAtMs: 2,
+      },
+      {
+        leaseId: "lease-3",
+        selector: { type: "1", resourceId: "dev-b" },
+        owner: { workspaceId: "ws-b", instanceId: "", sessionId: "", actor: "actor-2" },
+        mode: "LOCK_MODE_EXCLUSIVE",
+        fencingToken: 3,
+        acquiredAtMs: 1,
+        expireAtMs: 2,
+      },
+    ],
+  });
+
+  assert.equal(snapshotGroups[0]?.resourceId, "dev-a");
+  assert.equal(snapshotGroups[0]?.total, 2);
+  assert.equal(snapshotGroups[0]?.holders[0]?.holder, "ws-a/actor-1");
+  assert.equal(snapshotGroups[0]?.holders[0]?.leaseIds.join(","), "lease-1,lease-2");
 
   process.stdout.write("lockDiagnostics.test passed\n");
 })();

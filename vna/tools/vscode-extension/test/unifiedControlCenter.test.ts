@@ -40,4 +40,6 @@ import { buildUnifiedControlCenterHtml } from "../src/unifiedControlCenter";
   assert(html.includes("board-port-slot"));
   assert(html.includes("open-visual-topology"));
   assert(html.includes("<canvas id=\"waveCanvas\"></canvas>"));
+  assert(html.includes("precheck-copy-summary"));
+  assert(html.includes("复制冲突摘要"));
 })();

@@ -1309,7 +1309,9 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       workspaceReadonly: false,
       lastSaveRequest: null,
       lastPrecheck: null,
+      lastPrecheckUpdatedAtMs: 0,
       lastLockSnapshot: null,
+      lastLockSnapshotUpdatedAtMs: 0,
       expandedBoards: new Set(), // Track expanded state separately
     };
 
@@ -2344,28 +2346,228 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       return Array.from(selectorMap.values());
     }
 
+    function aggregateConflictGroups(lockConflicts) {
+      const resourceMap = new Map();
+      lockConflicts.forEach((item) => {
+        const selector = item && item.selector ? item.selector : {};
+        const owner = item && item.holderOwner ? item.holderOwner : {};
+        const resourceId = String(selector.resourceId || "unknown-resource");
+        const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
+        const holderActor = String(owner.actor || "unknown-actor");
+        const holderKey = holderWorkspace + "/" + holderActor;
+
+        let group = resourceMap.get(resourceId);
+        if (!group) {
+          group = {
+            resourceId,
+            total: 0,
+            holders: new Map(),
+          };
+          resourceMap.set(resourceId, group);
+        }
+
+        group.total += 1;
+        const holderCount = Number(group.holders.get(holderKey) || 0);
+        group.holders.set(holderKey, holderCount + 1);
+      });
+
+      return Array.from(resourceMap.values())
+        .map((group) => ({
+          resourceId: group.resourceId,
+          total: group.total,
+          holders: Array.from(group.holders.entries())
+            .map((entry) => ({ holder: entry[0], count: Number(entry[1]) }))
+            .sort((left, right) => {
+              if (right.count !== left.count) {
+                return right.count - left.count;
+              }
+              return left.holder.localeCompare(right.holder);
+            }),
+        }))
+        .sort((left, right) => {
+          if (right.total !== left.total) {
+            return right.total - left.total;
+          }
+          return left.resourceId.localeCompare(right.resourceId);
+        });
+    }
+
+    function aggregateSnapshotGroups(snapshotLeases) {
+      const resourceMap = new Map();
+      snapshotLeases.forEach((lease) => {
+        const selector = lease && lease.selector ? lease.selector : {};
+        const owner = lease && lease.owner ? lease.owner : {};
+        const resourceId = String(selector.resourceId || "unknown-resource");
+        const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
+        const holderActor = String(owner.actor || "unknown-actor");
+        const holderKey = holderWorkspace + "/" + holderActor;
+
+        let group = resourceMap.get(resourceId);
+        if (!group) {
+          group = {
+            resourceId,
+            total: 0,
+            holders: new Map(),
+          };
+          resourceMap.set(resourceId, group);
+        }
+
+        group.total += 1;
+        let holderInfo = group.holders.get(holderKey);
+        if (!holderInfo) {
+          holderInfo = { count: 0, leaseIds: [] };
+          group.holders.set(holderKey, holderInfo);
+        }
+        holderInfo.count += 1;
+        const leaseId = String(lease && lease.leaseId ? lease.leaseId : "");
+        if (leaseId && holderInfo.leaseIds.length < 2) {
+          holderInfo.leaseIds.push(leaseId);
+        }
+      });
+
+      return Array.from(resourceMap.values())
+        .map((group) => ({
+          resourceId: group.resourceId,
+          total: group.total,
+          holders: Array.from(group.holders.entries())
+            .map((entry) => ({
+              holder: entry[0],
+              count: Number(entry[1].count || 0),
+              leaseIds: Array.isArray(entry[1].leaseIds) ? entry[1].leaseIds : [],
+            }))
+            .sort((left, right) => {
+              if (right.count !== left.count) {
+                return right.count - left.count;
+              }
+              return left.holder.localeCompare(right.holder);
+            }),
+        }))
+        .sort((left, right) => {
+          if (right.total !== left.total) {
+            return right.total - left.total;
+          }
+          return left.resourceId.localeCompare(right.resourceId);
+        });
+    }
+
+    async function copyTextToClipboard(text) {
+      const content = String(text || "");
+      if (!content) {
+        return false;
+      }
+      try {
+        if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+          await navigator.clipboard.writeText(content);
+          return true;
+        }
+      } catch {
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = content;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      let copied = false;
+      try {
+        copied = document.execCommand("copy");
+      } catch {
+        copied = false;
+      }
+      document.body.removeChild(textarea);
+      return copied;
+    }
+
+    function buildPrecheckCopySummary() {
+      const precheck = state.lastPrecheck || null;
+      if (!precheck) {
+        return "No precheck diagnostics available.";
+      }
+
+      const workspaceValue = String(workspaceId && workspaceId.value ? workspaceId.value : "").trim() || "unknown-workspace";
+      const topologyValue = String(topologyId && topologyId.value ? topologyId.value : "").trim() || "unknown-topology";
+      const code = String(precheck.code || "PRECHECK_FAILED");
+      const message = String(precheck.message || "precheck failed");
+      const topologyErrors = Array.isArray(precheck.topologyErrors) ? precheck.topologyErrors : [];
+      const lockConflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+      const conflictGroups = aggregateConflictGroups(lockConflicts);
+      const snapshot = state.lastLockSnapshot && Array.isArray(state.lastLockSnapshot.leases)
+        ? state.lastLockSnapshot
+        : null;
+      const snapshotGroups = snapshot ? aggregateSnapshotGroups(snapshot.leases) : [];
+
+      const lines = [];
+      lines.push("[XSWL VNA] Precheck Diagnostics");
+      lines.push("workspace=" + workspaceValue + ", topology=" + topologyValue);
+      lines.push("code=" + code + ", message=" + message);
+      lines.push("updatedAt=" + formatDateTime(state.lastPrecheckUpdatedAtMs));
+      lines.push("topologyErrors=" + String(topologyErrors.length) + ", lockConflicts=" + String(lockConflicts.length));
+
+      if (topologyErrors.length > 0) {
+        lines.push("TopologyErrors:");
+        topologyErrors.slice(0, 5).forEach((item) => {
+          lines.push("- " + String(item && item.message ? item.message : "invalid topology"));
+        });
+      }
+
+      if (conflictGroups.length > 0) {
+        lines.push("ConflictGroups:");
+        conflictGroups.slice(0, 8).forEach((group) => {
+          lines.push("- resource=" + group.resourceId + ", conflicts=" + String(group.total));
+          group.holders.slice(0, 4).forEach((holder) => {
+            lines.push("  - holder=" + holder.holder + ", count=" + String(holder.count));
+          });
+        });
+      }
+
+      if (!snapshot) {
+        lines.push("LockSnapshot: unavailable");
+      } else {
+        lines.push("LockSnapshot: leases=" + String(snapshot.leases.length) + ", updatedAt=" + formatDateTime(state.lastLockSnapshotUpdatedAtMs));
+        snapshotGroups.slice(0, 8).forEach((group) => {
+          lines.push("- resource=" + group.resourceId + ", leases=" + String(group.total));
+          group.holders.slice(0, 4).forEach((holder) => {
+            const leaseText = holder.leaseIds.length > 0 ? ", lease=" + holder.leaseIds.join(",") : "";
+            lines.push("  - holder=" + holder.holder + ", count=" + String(holder.count) + leaseText);
+          });
+        });
+      }
+
+      return lines.join("\n");
+    }
+
     function renderPrecheckDiagnostics(precheck) {
       if (!precheckDiagnostics) {
         return;
       }
       if (!precheck) {
         state.lastPrecheck = null;
+        state.lastPrecheckUpdatedAtMs = 0;
         state.lastLockSnapshot = null;
+        state.lastLockSnapshotUpdatedAtMs = 0;
         precheckDiagnostics.style.display = "none";
         precheckDiagnostics.innerHTML = "";
         return;
       }
 
       state.lastPrecheck = precheck;
+      state.lastPrecheckUpdatedAtMs = Date.now();
 
       const code = String(precheck.code || "PRECHECK_FAILED");
       const message = String(precheck.message || "precheck failed");
       const topologyErrors = Array.isArray(precheck.topologyErrors) ? precheck.topologyErrors : [];
       const lockConflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+      const currentWorkspaceId = String(workspaceId && workspaceId.value ? workspaceId.value : "").trim() || "unknown-workspace";
+      const currentTopologyId = String(topologyId && topologyId.value ? topologyId.value : "").trim() || "unknown-topology";
+      const precheckUpdatedAt = formatDateTime(state.lastPrecheckUpdatedAtMs);
 
       const lines = [];
       lines.push('<div style="font-weight:600; color:var(--vscode-errorForeground);">Precheck Blocked: ' + escapeHtml(code) + '</div>');
       lines.push('<div style="margin-top:4px;">' + escapeHtml(message) + '</div>');
+      lines.push('<div style="margin-top:4px; opacity:0.8;">workspace=' + escapeHtml(currentWorkspaceId) + ', topology=' + escapeHtml(currentTopologyId) + ', updatedAt=' + escapeHtml(precheckUpdatedAt) + '</div>');
 
       if (topologyErrors.length > 0) {
         lines.push('<div style="margin-top:8px; font-weight:600;">Topology Errors</div>');
@@ -2377,22 +2579,38 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       }
 
       if (lockConflicts.length > 0) {
+        const groupedConflicts = aggregateConflictGroups(lockConflicts);
         lines.push('<div style="margin-top:8px; font-weight:600;">Resource Conflicts</div>');
         lines.push('<ul style="margin:4px 0 0 16px; padding:0;">');
-        lockConflicts.slice(0, 5).forEach((item) => {
-          const selector = item && item.selector ? item.selector : {};
-          const owner = item && item.holderOwner ? item.holderOwner : {};
-          const resourceId = String(selector.resourceId || "unknown-resource");
-          const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
-          const holderActor = String(owner.actor || "unknown-actor");
-          lines.push('<li>resource=' + escapeHtml(resourceId) + ', holder=' + escapeHtml(holderWorkspace + '/' + holderActor) + '</li>');
+        groupedConflicts.slice(0, 6).forEach((group) => {
+          lines.push(
+            '<li><strong>resource=' +
+            escapeHtml(group.resourceId) +
+            '</strong> (conflicts=' +
+            String(group.total) +
+            ', holders=' +
+            String(group.holders.length) +
+            ')</li>',
+          );
+          lines.push('<ul style="margin:2px 0 6px 16px; padding:0;">');
+          group.holders.slice(0, 3).forEach((holder) => {
+            lines.push('<li>holder=' + escapeHtml(holder.holder) + ', count=' + String(holder.count) + '</li>');
+          });
+          if (group.holders.length > 3) {
+            lines.push('<li>... +' + String(group.holders.length - 3) + ' more holders</li>');
+          }
+          lines.push('</ul>');
         });
+        if (groupedConflicts.length > 6) {
+          lines.push('<li>... +' + String(groupedConflicts.length - 6) + ' more resources</li>');
+        }
         lines.push('</ul>');
-        lines.push('<div style="margin-top:8px; display:flex; gap:8px;">');
+        lines.push('<div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">');
         lines.push('<button data-action="precheck-retry" class="secondary">重试保存</button>');
         lines.push('<button data-action="precheck-readonly" class="secondary">只读打开拓扑</button>');
         lines.push('<button data-action="precheck-editable" class="secondary">退出只读模式</button>');
         lines.push('<button data-action="precheck-lock-snapshot" class="secondary">查看锁快照</button>');
+        lines.push('<button data-action="precheck-copy-summary" class="secondary">复制冲突摘要</button>');
         lines.push('</div>');
       }
 
@@ -2401,19 +2619,29 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         : null;
       if (snapshot) {
         lines.push('<div style="margin-top:8px; font-weight:600;">Lock Snapshot</div>');
+        lines.push('<div style="margin-top:4px; opacity:0.8;">updatedAt=' + escapeHtml(formatDateTime(state.lastLockSnapshotUpdatedAtMs)) + ', leases=' + String(snapshot.leases.length) + '</div>');
         if (snapshot.leases.length === 0) {
           lines.push('<div style="margin-top:4px;">No active leases on selected resources.</div>');
         } else {
+          const groupedSnapshot = aggregateSnapshotGroups(snapshot.leases);
           lines.push('<ul style="margin:4px 0 0 16px; padding:0;">');
-          snapshot.leases.slice(0, 8).forEach((lease) => {
-            const selector = lease && lease.selector ? lease.selector : {};
-            const owner = lease && lease.owner ? lease.owner : {};
-            const resourceId = String(selector.resourceId || "unknown-resource");
-            const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
-            const holderActor = String(owner.actor || "unknown-actor");
-            const leaseId = String(lease.leaseId || "");
-            lines.push('<li>resource=' + escapeHtml(resourceId) + ', holder=' + escapeHtml(holderWorkspace + '/' + holderActor) + ', lease=' + escapeHtml(leaseId) + '</li>');
+          groupedSnapshot.slice(0, 6).forEach((group) => {
+            lines.push('<li><strong>resource=' + escapeHtml(group.resourceId) + '</strong> (leases=' + String(group.total) + ')</li>');
+            lines.push('<ul style="margin:2px 0 6px 16px; padding:0;">');
+            group.holders.slice(0, 3).forEach((holder) => {
+              const leaseText = holder.leaseIds.length > 0
+                ? ', lease=' + holder.leaseIds.map((id) => escapeHtml(id)).join(',')
+                : '';
+              lines.push('<li>holder=' + escapeHtml(holder.holder) + ', count=' + String(holder.count) + leaseText + '</li>');
+            });
+            if (group.holders.length > 3) {
+              lines.push('<li>... +' + String(group.holders.length - 3) + ' more holders</li>');
+            }
+            lines.push('</ul>');
           });
+          if (groupedSnapshot.length > 6) {
+            lines.push('<li>... +' + String(groupedSnapshot.length - 6) + ' more resources</li>');
+          }
           lines.push('</ul>');
         }
       }
@@ -3197,12 +3425,14 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         const ok = Boolean(payload.ok);
         if (ok && payload.snapshot) {
           state.lastLockSnapshot = payload.snapshot;
+          state.lastLockSnapshotUpdatedAtMs = Date.now();
           setStatus(String(payload.message || "锁快照已更新"));
           if (state.lastPrecheck) {
             renderPrecheckDiagnostics(state.lastPrecheck);
           }
         } else {
           state.lastLockSnapshot = null;
+          state.lastLockSnapshotUpdatedAtMs = 0;
           setStatus(String(payload.message || "锁快照不可用"));
         }
         return;
@@ -3295,6 +3525,12 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
             selectors,
           });
           setStatus("正在拉取锁快照...");
+          return;
+        }
+        if (action === "precheck-copy-summary") {
+          copyTextToClipboard(buildPrecheckCopySummary()).then((copied) => {
+            setStatus(copied ? "冲突摘要已复制到剪贴板" : "冲突摘要复制失败");
+          });
         }
       });
     }

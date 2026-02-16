@@ -27,6 +27,9 @@
 - **WU-106（完成）**：补齐 gRPC 适配层（`VnaControl.PrecheckWorkspaceTopology` + `ResourceBroker` 锁服务），并新增适配层回归测试。
 - **WU-107（完成）**：扩展侧接入 `GetLockSnapshot` 诊断链路（client + control center + workspace editor），支持冲突后查看实时锁占用者。
 - **WU-108（完成）**：工作区编辑器 precheck 冲突链路升级为“按全部冲突资源批量拉取锁快照并聚合提示”，减少二次操作并提升冲突定位效率。
+- **WU-109（完成）**：Control Center 预检冲突面板升级为按资源/持有者分组排序展示，并对锁快照结果执行同口径聚合，提升多冲突场景可读性。
+- **WU-110（完成）**：Control Center 冲突诊断新增“一键复制摘要”（含剪贴板降级路径），便于工单/IM 快速协同。
+- **WU-111（完成）**：Control Center 诊断区新增上下文元信息（workspace/topology/更新时间/冲突与 lease 计数），提升问题追踪可审计性。
 
 ---
 
