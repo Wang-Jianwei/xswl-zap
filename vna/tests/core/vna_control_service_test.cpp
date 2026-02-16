@@ -52,6 +52,44 @@ int main() {
         hasTabIndentError = true;
         assert(structured.errors[i].field == "topology.yaml");
       }
+
+  // Precheck should detect active lock conflicts before workspace save/activate.
+  {
+    vna::service::ResourceBrokerService broker;
+
+    vna::service::LockAcquireRequest lockReq;
+    lockReq.selector.type = vna::service::LockResourceType::kPhysicalDevice;
+    lockReq.selector.resourceId = "dev-precheck-0";
+    lockReq.owner.workspaceId = "workspace-lock-holder";
+    lockReq.owner.sessionId = "sess-holder";
+    lockReq.owner.actor = "holder";
+    lockReq.mode = vna::service::LockMode::kExclusive;
+    lockReq.ttlSeconds = 3;
+
+    vna::service::LockAcquireResult lockResult;
+    assert(broker.AcquireLock(lockReq, lockResult) == vna::core::Status::kOk);
+
+    vna::service::TopologyPrecheckRequest precheck;
+    precheck.workspaceId = "workspace-a";
+    precheck.topology.id = "topo-precheck";
+    precheck.topology.yaml =
+        "instances:\n"
+        "  - id: inst0\n"
+        "    driver: pxi\n"
+        "    device: pxi-mock-0\n"
+        "    resource: dev-precheck-0\n";
+    precheck.requiredResources.push_back(lockReq.selector);
+    precheck.requester.workspaceId = "workspace-a";
+    precheck.requester.sessionId = "sess-a";
+    precheck.requester.actor = "editor-a";
+
+    const vna::service::TopologyPrecheckResult precheckResult =
+        service.PrecheckWorkspaceTopology(precheck, &broker);
+    assert(!precheckResult.ok);
+    assert(precheckResult.code == "LOCK_CONFLICT");
+    assert(!precheckResult.lockConflicts.empty());
+    assert(precheckResult.lockConflicts[0].holderOwner.workspaceId == "workspace-lock-holder");
+  }
     }
     assert(hasTabIndentError);
   }
@@ -380,6 +418,35 @@ int main() {
 
     assert(service.Stop() == vna::core::Status::kOk);
     assert(service.ActiveLeaseCount() == 0);
+  }
+
+  // Precheck should block destructive topology change while runtime is started.
+  {
+    vna::service::VnaControlService runningService;
+
+    vna::core::Topology topology;
+    topology.id = "t_precheck_running";
+    topology.yaml =
+        "instances:\n"
+        "  - id: inst0\n"
+        "    driver: pxi\n"
+        "    device: pxi-mock-0\n"
+        "    resource: dev0\n";
+
+    assert(runningService.ApplyTopology(topology, "ws-running", 2) == vna::core::Status::kOk);
+    assert(runningService.Start() == vna::core::Status::kOk);
+
+    vna::service::TopologyPrecheckRequest destructive;
+    destructive.workspaceId = "ws-running";
+    destructive.topology = topology;
+    destructive.destructiveChange = true;
+
+    const vna::service::TopologyPrecheckResult destructiveResult =
+        runningService.PrecheckWorkspaceTopology(destructive, nullptr);
+    assert(!destructiveResult.ok);
+    assert(destructiveResult.code == "TOPOLOGY_DESTRUCTIVE_WHILE_RUNNING");
+
+    assert(runningService.Stop() == vna::core::Status::kOk);
   }
 
   // Acquire before Start should fail.

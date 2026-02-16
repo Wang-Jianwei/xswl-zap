@@ -2399,15 +2399,19 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     
     if (applySysBtn) {
         applySysBtn.addEventListener('click', () => {
-             const wsId = document.getElementById('workspaceId');
-             if (wsId) {
-                 post("workspace-save", {
-                    workspaceId: wsId.value.trim(),
-                    topologyId: "topo-main", // simplify for now
-                    topologyYaml: getTopologyYamlForSave(),
-                    activate: true,
-                 });
+             const wsValue = String(workspaceId?.value || "").trim();
+             const topoValue = String(topologyId?.value || "").trim();
+             if (!wsValue) {
+               setStatus("请先填写 Workspace ID");
+               return;
              }
+             setStatus("正在保存并激活工作区: " + wsValue + " (topology=" + (topoValue || "topo-main") + ")");
+             post("workspace-save", {
+                workspaceId: wsValue,
+                topologyId: topoValue || "topo-main",
+                topologyYaml: getTopologyYamlForSave(),
+                activate: true,
+             });
              closeSystemModal();
         });
     }
@@ -2991,6 +2995,13 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         const ok = Boolean(payload.ok);
         const message = String(payload.message || payload.error || "");
         setStatus(message || (ok ? "操作成功" : "操作失败"));
+        if (ok) {
+          const currentWorkspaceId = String(workspaceId?.value || "").trim();
+          if (workspaceStatusText && currentWorkspaceId) {
+            workspaceStatusText.textContent = currentWorkspaceId;
+          }
+          post("workspace-list", {});
+        }
         if (!ok) {
           await openModal({ title: "操作失败", body: message || "未知错误" });
         }

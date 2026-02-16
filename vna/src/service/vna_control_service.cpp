@@ -190,6 +190,51 @@ core::Status VnaControlService::SetActiveWorkspace(const std::string& workspaceI
   return core::Status::kOk;
 }
 
+TopologyPrecheckResult VnaControlService::PrecheckWorkspaceTopology(
+    const TopologyPrecheckRequest& request,
+    const ResourceBrokerService* brokerService) const {
+  TopologyPrecheckResult result;
+
+  if (request.workspaceId.empty()) {
+    result.ok = false;
+    result.code = "INVALID_ARGUMENT";
+    result.message = "workspace_id is required";
+    return result;
+  }
+
+  const TopologyValidationReport report = ValidateTopologyStructured(request.topology);
+  if (!report.ok) {
+    result.ok = false;
+    result.code = "TOPOLOGY_INVALID";
+    result.message = "topology validation failed";
+    result.topologyErrors = report.errors;
+    return result;
+  }
+
+  if (request.destructiveChange && started_) {
+    result.ok = false;
+    result.code = "TOPOLOGY_DESTRUCTIVE_WHILE_RUNNING";
+    result.message = "destructive topology change is blocked while measurement is running";
+    return result;
+  }
+
+  if (brokerService != nullptr && !request.requiredResources.empty()) {
+    std::vector<LockConflictDetail> conflicts;
+    if (brokerService->HasActiveConflicts(request.requiredResources, request.requester, conflicts)) {
+      result.ok = false;
+      result.code = "LOCK_CONFLICT";
+      result.message = "required resources are occupied";
+      result.lockConflicts = conflicts;
+      return result;
+    }
+  }
+
+  result.ok = true;
+  result.code = "OK";
+  result.message = "precheck passed";
+  return result;
+}
+
 std::string VnaControlService::GetActiveWorkspaceId() const {
   std::lock_guard<std::mutex> lock(workspaceTopologyMutex_);
   return activeWorkspaceId_;

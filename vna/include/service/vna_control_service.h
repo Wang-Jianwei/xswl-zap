@@ -12,6 +12,7 @@
 #include "core/measurement_data.h"
 #include "core/processors/de_embedding_processor.h"
 #include "core/status.h"
+#include "service/resource_broker_service.h"
 #include "core/topology_types.h"
 #include "core/vna_runtime.h"
 
@@ -36,6 +37,23 @@ struct WorkspaceTopologyConfig {
   std::uint64_t updatedAtMs = 0;
 };
 
+struct TopologyPrecheckRequest {
+  std::string workspaceId;
+  core::Topology topology;
+  std::vector<LockSelector> requiredResources;
+  bool activate = false;
+  bool destructiveChange = false;
+  LockOwner requester;
+};
+
+struct TopologyPrecheckResult {
+  bool ok = false;
+  std::string code;
+  std::string message;
+  std::vector<TopologyErrorDetail> topologyErrors;
+  std::vector<LockConflictDetail> lockConflicts;
+};
+
 // VnaControlService is a minimal, in-process service facade over core runtime.
 // It is intended to be wrapped by a transport layer later (e.g. grpc-cpp).
 class VnaControlService {
@@ -57,6 +75,10 @@ class VnaControlService {
   std::vector<WorkspaceTopologyConfig> ListWorkspaceTopologies() const;
 
   core::Status SetActiveWorkspace(const std::string& workspaceId);
+
+  TopologyPrecheckResult PrecheckWorkspaceTopology(
+      const TopologyPrecheckRequest& request,
+      const ResourceBrokerService* brokerService = nullptr) const;
 
   std::string GetActiveWorkspaceId() const;
 

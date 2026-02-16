@@ -180,6 +180,127 @@ message ResourceRequest {
   uint32 timeout_ms = 4;
 }
 
+enum LockResourceType {
+  LOCK_RESOURCE_TYPE_UNSPECIFIED = 0;
+  LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE = 1;
+  LOCK_RESOURCE_TYPE_MOCK_DEVICE = 2;
+  LOCK_RESOURCE_TYPE_VIRTUAL_VNA = 3;
+  LOCK_RESOURCE_TYPE_TRIGGER_LINE = 4;
+  LOCK_RESOURCE_TYPE_CLOCK_DOMAIN = 5;
+  LOCK_RESOURCE_TYPE_WORKSPACE_SESSION = 6;
+}
+
+enum LockMode {
+  LOCK_MODE_UNSPECIFIED = 0;
+  LOCK_MODE_SHARED = 1;
+  LOCK_MODE_EXCLUSIVE = 2;
+}
+
+enum LockState {
+  LOCK_STATE_UNSPECIFIED = 0;
+  LOCK_STATE_ACQUIRED = 1;
+  LOCK_STATE_REFRESHED = 2;
+  LOCK_STATE_RELEASED = 3;
+  LOCK_STATE_CONFLICT = 4;
+  LOCK_STATE_STALE = 5;
+  LOCK_STATE_EXPIRED = 6;
+}
+
+message LockSelector {
+  LockResourceType type = 1;
+  string resource_id = 2;
+}
+
+message LockOwner {
+  string workspace_id = 1;
+  string instance_id = 2;
+  string session_id = 3;
+  string actor = 4;
+}
+
+message LockLease {
+  string lease_id = 1;
+  LockSelector selector = 2;
+  LockOwner owner = 3;
+  LockMode mode = 4;
+  uint64 fencing_token = 5;
+  uint64 acquired_at_ms = 6;
+  uint64 expire_at_ms = 7;
+}
+
+message LockConflictDetail {
+  LockSelector selector = 1;
+  string holder_lease_id = 2;
+  LockOwner holder_owner = 3;
+  uint64 holder_fencing_token = 4;
+  uint64 holder_expire_at_ms = 5;
+  string suggestion = 6;
+}
+
+message LockAcquireRequest {
+  LockSelector selector = 1;
+  LockOwner owner = 2;
+  LockMode mode = 3;
+  uint32 ttl_seconds = 4;
+  uint32 wait_timeout_ms = 5;
+  uint64 expected_min_fencing_token = 6;
+}
+
+message LockAcquireResult {
+  bool ok = 1;
+  string code = 2;
+  string message = 3;
+  LockState state = 4;
+  LockLease lease = 5;
+  repeated LockConflictDetail conflicts = 6;
+}
+
+message LockRenewRequest {
+  string lease_id = 1;
+  LockOwner owner = 2;
+  uint64 fencing_token = 3;
+  uint32 ttl_seconds = 4;
+}
+
+message LockReleaseRequest {
+  string lease_id = 1;
+  LockOwner owner = 2;
+  uint64 fencing_token = 3;
+}
+
+message LockOperationResult {
+  bool ok = 1;
+  string code = 2;
+  string message = 3;
+  LockState state = 4;
+  LockLease lease = 5;
+  repeated LockConflictDetail conflicts = 6;
+}
+
+message LockSnapshotRequest {
+  repeated LockSelector selectors = 1;
+}
+
+message LockSnapshot {
+  repeated LockLease leases = 1;
+}
+
+message TopologyPrecheckRequest {
+  string workspace_id = 1;
+  Topology topology = 2;
+  repeated LockSelector required_resources = 3;
+  bool activate = 4;
+  bool destructive_change = 5;
+}
+
+message TopologyPrecheckResult {
+  bool ok = 1;
+  string code = 2;
+  string message = 3;
+  repeated TopologyErrorDetail topology_errors = 4;
+  repeated LockConflictDetail lock_conflicts = 5;
+}
+
 message LeaseInfo {
   string lease_id = 1;
   string resource_id = 2;
@@ -229,6 +350,7 @@ message ServiceStatus {
 
 service VnaControl {
   rpc ValidateTopology(Topology) returns (ValidationResult);
+  rpc PrecheckWorkspaceTopology(TopologyPrecheckRequest) returns (TopologyPrecheckResult);
   rpc UpsertWorkspaceTopology(WorkspaceTopologyUpsertRequest) returns (ValidationResult);
   rpc GetWorkspaceTopology(WorkspaceRef) returns (WorkspaceTopologyConfig);
   rpc ListWorkspaceTopologies(Empty) returns (WorkspaceTopologyList);
@@ -244,6 +366,11 @@ service VnaControl {
 }
 
 service ResourceBroker {
+  rpc AcquireLock(LockAcquireRequest) returns (LockAcquireResult);
+  rpc RenewLock(LockRenewRequest) returns (LockOperationResult);
+  rpc ReleaseLock(LockReleaseRequest) returns (LockOperationResult);
+  rpc GetLockSnapshot(LockSnapshotRequest) returns (LockSnapshot);
+
   rpc Acquire(ResourceRequest) returns (LeaseInfo);
   rpc Renew(LeaseInfo) returns (ValidationResult);
   rpc Release(LeaseInfo) returns (ValidationResult);
