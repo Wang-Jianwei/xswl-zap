@@ -11,6 +11,7 @@ import type {
   StreamPreviewSummary,
   ValidationResult,
   TopologyErrorDetail,
+  TopologyPrecheckResult,
   WaveformMode,
   WaveformPreviewData,
   WaveformScanState,
@@ -145,6 +146,112 @@ export class ServiceClient {
 
     this.client = new VnaControlCtor(options.address, grpc.credentials.createInsecure());
     this.deadlineMs = options.deadlineMs;
+  }
+
+  precheckWorkspaceTopology(
+    workspaceId: string,
+    topologyId: string,
+    topologyYaml: string,
+    requiredResources: Array<{ type: number; resourceId: string }>,
+    activate: boolean,
+    destructiveChange: boolean,
+    requester?: {
+      workspaceId?: string;
+      instanceId?: string;
+      sessionId?: string;
+      actor?: string;
+    },
+  ): Promise<TopologyPrecheckResult | null> {
+    const deadline = new Date(Date.now() + this.deadlineMs);
+    return new Promise<TopologyPrecheckResult | null>((resolve, reject) => {
+      const grpcClient = this.client as unknown as {
+        precheckWorkspaceTopology?: (
+          request: Record<string, unknown>,
+          options: grpc.CallOptions,
+          callback: (error: grpc.ServiceError | null, response: Record<string, unknown>) => void,
+        ) => void;
+      };
+
+      if (typeof grpcClient.precheckWorkspaceTopology !== "function") {
+        resolve(null);
+        return;
+      }
+
+      grpcClient.precheckWorkspaceTopology(
+        {
+          workspaceId,
+          topology: {
+            id: topologyId,
+            yaml: topologyYaml,
+          },
+          requiredResources,
+          activate,
+          destructiveChange,
+          requester: {
+            workspaceId: String(requester?.workspaceId ?? ""),
+            instanceId: String(requester?.instanceId ?? ""),
+            sessionId: String(requester?.sessionId ?? ""),
+            actor: String(requester?.actor ?? "vscode-extension"),
+          },
+        },
+        { deadline },
+        (error, response) => {
+          if (error) {
+            if (error.code === grpc.status.UNIMPLEMENTED) {
+              resolve(null);
+              return;
+            }
+            reject(error);
+            return;
+          }
+
+          const topologyErrorsRaw = response.topologyErrors;
+          const topologyErrors: TopologyErrorDetail[] = Array.isArray(topologyErrorsRaw)
+            ? topologyErrorsRaw.map((item) => {
+                const detail = item as Record<string, unknown>;
+                return {
+                  code: String(detail.code ?? ""),
+                  field: String(detail.field ?? ""),
+                  message: String(detail.message ?? ""),
+                };
+              })
+            : [];
+
+          const lockConflictsRaw = response.lockConflicts;
+          const lockConflicts = Array.isArray(lockConflictsRaw)
+            ? lockConflictsRaw.map((item) => {
+                const conflict = item as Record<string, unknown>;
+                const selector = (conflict.selector as Record<string, unknown> | undefined) ?? {};
+                const holderOwner = (conflict.holderOwner as Record<string, unknown> | undefined) ?? {};
+                return {
+                  selector: {
+                    type: String(selector.type ?? ""),
+                    resourceId: String(selector.resourceId ?? ""),
+                  },
+                  holderLeaseId: String(conflict.holderLeaseId ?? ""),
+                  holderOwner: {
+                    workspaceId: String(holderOwner.workspaceId ?? ""),
+                    instanceId: String(holderOwner.instanceId ?? ""),
+                    sessionId: String(holderOwner.sessionId ?? ""),
+                    actor: String(holderOwner.actor ?? ""),
+                  },
+                  holderFencingToken: Number(conflict.holderFencingToken ?? 0),
+                  holderExpireAtMs: Number(conflict.holderExpireAtMs ?? 0),
+                  suggestion: String(conflict.suggestion ?? ""),
+                };
+              })
+            : [];
+
+          resolve({
+            ok: Boolean(response.ok),
+            code: String(response.code ?? ""),
+            message: String(response.message ?? ""),
+            topologyErrors,
+            lockConflicts,
+          });
+        },
+      );
+    });
   }
 
   getServiceStatus(): Promise<ServiceStatus> {

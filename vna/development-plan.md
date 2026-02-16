@@ -17,6 +17,14 @@
 - 已新增工作区拓扑配置主链路（后端 + gRPC + VS Code 扩展）：支持按 workspace 保存/加载/列表/激活拓扑配置。
 - 已新增 `XSWL: Edit Workspace Topology` Webview 编辑器，并升级为可视化 Card + Ports 拓扑配置模式（非手写 YAML 为主），用于 UI 方式编辑工作区拓扑并执行配置流程。
 
+## 最新进展（2026-02-16）
+
+- **WU-101（完成）**：契约先行，新增锁与 precheck 协议（owner/ttl/fencing/conflict + `PrecheckWorkspaceTopology`）。
+- **WU-102（完成）**：服务侧落地最小可用互斥能力（内存锁表 + precheck 实现），并补并发冲突测试。
+- **WU-103（完成）**：VS Code 扩展接入保存前 best-effort precheck（服务不支持时自动回退旧路径）。
+- **WU-104（完成）**：控制中心/工作区编辑器接入结构化冲突展示、重试保存、只读打开、只读退出与状态透出（`READONLY` / `active-readonly`）。
+- **WU-105（完成）**：文档同步更新（架构/UI/计划），确保实现与文档口径一致。
+
 ---
 
 ## 1. 执行总则

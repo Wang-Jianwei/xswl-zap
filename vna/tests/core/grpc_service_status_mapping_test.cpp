@@ -22,6 +22,7 @@ int main() {
 
   vna::service::ServiceStatusService statusService;
   vna::service::VnaControlInProcessHandler inprocHandler;
+  vna::service::ResourceBrokerService brokerService;
 
   vna::service::ServiceConfig config;
   config.bindAddress = "127.0.0.1";
@@ -45,7 +46,44 @@ int main() {
       &statusService,
       &inprocHandler,
       4,
-      10);
+      10,
+      &brokerService);
+
+    vna::service::LockAcquireRequest lockReq;
+    lockReq.selector.type = vna::service::LockResourceType::kPhysicalDevice;
+    lockReq.selector.resourceId = "dev0";
+    lockReq.owner.workspaceId = "ws-lock-holder";
+    lockReq.owner.actor = "grpc-test";
+    lockReq.mode = vna::service::LockMode::kExclusive;
+    lockReq.ttlSeconds = 60;
+    lockReq.waitTimeoutMs = 0;
+
+    vna::service::LockAcquireResult lockResult;
+    assert(brokerService.AcquireLock(lockReq, lockResult) == vna::core::Status::kOk);
+    assert(lockResult.status == vna::core::Status::kOk);
+
+    vna::TopologyPrecheckRequest precheckReq;
+    precheckReq.set_workspace_id("ws-a");
+    precheckReq.mutable_topology()->set_id("topo-a");
+    precheckReq.mutable_topology()->set_yaml(
+      "instances:\n"
+      "  - id: inst0\n"
+      "    driver: pxi\n"
+      "    device: pxi-mock-0\n"
+      "    resource: dev0\n");
+    precheckReq.set_activate(true);
+    precheckReq.set_destructive_change(false);
+    precheckReq.add_required_resources()->set_type(vna::LockResourceType::LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE);
+    precheckReq.mutable_required_resources(0)->set_resource_id("dev0");
+
+    vna::TopologyPrecheckResult precheckResp;
+    grpc::Status precheckStatus = grpcService.PrecheckWorkspaceTopology(nullptr, &precheckReq, &precheckResp);
+    assert(precheckStatus.ok());
+    assert(!precheckResp.ok());
+    assert(precheckResp.code() == "LOCK_CONFLICT");
+    assert(precheckResp.lock_conflicts_size() > 0);
+    assert(precheckResp.lock_conflicts(0).selector().resource_id() == "dev0");
+    assert(precheckResp.lock_conflicts(0).holder_owner().workspace_id() == "ws-lock-holder");
 
     vna::WorkspaceTopologyUpsertRequest upsertReqA;
     upsertReqA.set_workspace_id("ws-a");

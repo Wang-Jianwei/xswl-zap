@@ -651,6 +651,41 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       color: var(--vscode-foreground);
     }
 
+    .readonly-tag {
+      display: none;
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--vscode-errorForeground);
+      color: var(--vscode-errorForeground);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .status-chip {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--vscode-panel-border);
+      font-size: 11px;
+      line-height: 1.4;
+      background: var(--vscode-editorWidget-background);
+    }
+    .status-chip.idle {
+      color: var(--vscode-descriptionForeground);
+    }
+    .status-chip.active {
+      color: var(--vscode-testing-iconPassed);
+      border-color: var(--vscode-testing-iconPassed);
+    }
+    .status-chip.active-readonly {
+      color: var(--vscode-errorForeground);
+      border-color: var(--vscode-errorForeground);
+    }
+    tr.workspace-row-active-readonly {
+      background: color-mix(in srgb, var(--vscode-editor-background) 88%, var(--vscode-errorForeground) 12%);
+    }
+
     .sc-modal-footer {
       grid-column: 1 / span 2;
       border-top: 1px solid var(--vscode-widget-border);
@@ -1083,7 +1118,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       <div class="topbar">
         <strong>${title}</strong>
         <div class="topbar-actions">
-          <button id="workspaceStatusBtn" class="secondary">WS: <span id="workspaceStatusText">(未激活)</span></button>
+          <button id="workspaceStatusBtn" class="secondary">WS: <span id="workspaceStatusText">(未激活)</span><span id="workspaceReadonlyTag" class="readonly-tag">READONLY</span></button>
           <button id="topbarWorkspaceBtn" class="secondary">Workspace</button>
           <div class="status" id="statusLine">准备就绪</div>
         </div>
@@ -1204,6 +1239,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
                  <button id="btnRefreshService" class="secondary">Refresh Service</button>
                </div>
                <div id="serviceStatus" class="help" style="margin-top:6px;">Service: Unknown</div>
+               <div id="precheckDiagnostics" class="help" style="margin-top:8px; padding:8px; border:1px solid var(--vscode-panel-border); border-radius:4px; display:none;"></div>
             </div>
             
             <div class="table-wrap" style="flex:1; margin-top:12px;">
@@ -1270,6 +1306,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       liveActive: false,
       latestWaveform: null,
       modalResolver: null,
+      workspaceReadonly: false,
+      lastSaveRequest: null,
       expandedBoards: new Set(), // Track expanded state separately
     };
 
@@ -1305,6 +1343,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     const deviceManagerRows = document.getElementById("deviceManagerRows");
     const btnAddDevice = document.getElementById("btnAddDevice");
     const serviceStatus = document.getElementById("serviceStatus");
+    const precheckDiagnostics = document.getElementById("precheckDiagnostics");
     const scanStatus = document.getElementById("scanStatus");
     const waveMeta = document.getElementById("waveMeta");
     const waveHint = document.getElementById("waveHint");
@@ -1319,6 +1358,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     const modalCancel = document.getElementById("modalCancel");
     const modalConfirm = document.getElementById("modalConfirm");
     const workspaceStatusText = document.getElementById("workspaceStatusText");
+    const workspaceReadonlyTag = document.getElementById("workspaceReadonlyTag");
     const workspaceStatusBtn = document.getElementById("workspaceStatusBtn");
     const topbarWorkspaceBtn = document.getElementById("topbarWorkspaceBtn");
 
@@ -1395,12 +1435,18 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       workspaceRows.innerHTML = "";
       for (const item of state.items) {
         const tr = document.createElement("tr");
-        const active = item.workspaceId === state.activeWorkspaceId ? "active" : "idle";
+        const isActive = item.workspaceId === state.activeWorkspaceId;
+        const active = isActive
+          ? (state.workspaceReadonly ? "active-readonly" : "active")
+          : "idle";
+        if (active === "active-readonly") {
+          tr.className = "workspace-row-active-readonly";
+        }
         tr.innerHTML =
           '<td>' + escapeHtml(item.workspaceId) + '</td>' +
           '<td>' + escapeHtml(item.topologyId) + '</td>' +
           '<td>' + escapeHtml(formatDateTime(item.updatedAtMs)) + '</td>' +
-          '<td>' + escapeHtml(active) + '</td>' +
+          '<td><span class="status-chip ' + escapeAttr(active) + '">' + escapeHtml(active) + '</span></td>' +
           '<td><button data-action="pick" data-workspace="' + escapeAttr(item.workspaceId) + '">选择</button> ' +
           '<button class="secondary" data-action="activate" data-workspace="' + escapeAttr(item.workspaceId) + '">激活</button></td>';
         workspaceRows.appendChild(tr);
@@ -2207,6 +2253,129 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       vscode.postMessage({ type, ...payload });
     }
 
+    function setWorkspaceReadonly(readonly, reason) {
+      state.workspaceReadonly = Boolean(readonly);
+      if (workspaceReadonlyTag) {
+        workspaceReadonlyTag.style.display = state.workspaceReadonly ? "inline-block" : "none";
+      }
+      const buttonIds = [
+        "btnWorkspaceSave",
+        "btnWorkspaceSaveActivate",
+        "btnTopologySave",
+        "btnTopologySaveActivate",
+        "btnAddVirtualPort",
+        "btnAddBoard",
+        "btnAutoLayout",
+        "applySysconfig",
+      ];
+      buttonIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.disabled = state.workspaceReadonly;
+          el.title = state.workspaceReadonly ? "只读模式：资源占用中，禁止编辑" : "";
+        }
+      });
+
+      const canvasContainer = document.getElementById("topologyCanvasContainer");
+      if (canvasContainer) {
+        canvasContainer.style.pointerEvents = state.workspaceReadonly ? "none" : "auto";
+        canvasContainer.style.opacity = state.workspaceReadonly ? "0.9" : "1";
+      }
+
+      if (state.workspaceReadonly) {
+        setStatus(reason || "只读模式：资源占用中，可查看不可编辑");
+      }
+
+      if (Array.isArray(state.items) && state.items.length > 0) {
+        renderWorkspaceRows();
+      }
+    }
+
+    function submitWorkspaceSave(activate, closeModalAfter) {
+      if (state.workspaceReadonly) {
+        setStatus("只读模式下禁止保存，请先解除冲突后重试");
+        return;
+      }
+      const wsValue = String(workspaceId?.value || "").trim();
+      const topoValue = String(topologyId?.value || "").trim() || "topo-main";
+      if (!wsValue) {
+        setStatus("请先填写 Workspace ID");
+        return;
+      }
+      state.lastSaveRequest = {
+        workspaceId: wsValue,
+        topologyId: topoValue,
+        activate: Boolean(activate),
+      };
+      setStatus(
+        (activate ? "正在保存并激活工作区: " : "正在保存工作区: ") +
+        wsValue +
+        " (topology=" +
+        topoValue +
+        ")",
+      );
+      post("workspace-save", {
+        workspaceId: wsValue,
+        topologyId: topoValue,
+        topologyYaml: getTopologyYamlForSave(),
+        activate: Boolean(activate),
+      });
+      if (closeModalAfter) {
+        closeSystemModal();
+      }
+    }
+
+    function renderPrecheckDiagnostics(precheck) {
+      if (!precheckDiagnostics) {
+        return;
+      }
+      if (!precheck) {
+        precheckDiagnostics.style.display = "none";
+        precheckDiagnostics.innerHTML = "";
+        return;
+      }
+
+      const code = String(precheck.code || "PRECHECK_FAILED");
+      const message = String(precheck.message || "precheck failed");
+      const topologyErrors = Array.isArray(precheck.topologyErrors) ? precheck.topologyErrors : [];
+      const lockConflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+
+      const lines = [];
+      lines.push('<div style="font-weight:600; color:var(--vscode-errorForeground);">Precheck Blocked: ' + escapeHtml(code) + '</div>');
+      lines.push('<div style="margin-top:4px;">' + escapeHtml(message) + '</div>');
+
+      if (topologyErrors.length > 0) {
+        lines.push('<div style="margin-top:8px; font-weight:600;">Topology Errors</div>');
+        lines.push('<ul style="margin:4px 0 0 16px; padding:0;">');
+        topologyErrors.slice(0, 5).forEach((item) => {
+          lines.push('<li>' + escapeHtml(String(item.message || "invalid topology")) + '</li>');
+        });
+        lines.push('</ul>');
+      }
+
+      if (lockConflicts.length > 0) {
+        lines.push('<div style="margin-top:8px; font-weight:600;">Resource Conflicts</div>');
+        lines.push('<ul style="margin:4px 0 0 16px; padding:0;">');
+        lockConflicts.slice(0, 5).forEach((item) => {
+          const selector = item && item.selector ? item.selector : {};
+          const owner = item && item.holderOwner ? item.holderOwner : {};
+          const resourceId = String(selector.resourceId || "unknown-resource");
+          const holderWorkspace = String(owner.workspaceId || "unknown-workspace");
+          const holderActor = String(owner.actor || "unknown-actor");
+          lines.push('<li>resource=' + escapeHtml(resourceId) + ', holder=' + escapeHtml(holderWorkspace + '/' + holderActor) + '</li>');
+        });
+        lines.push('</ul>');
+        lines.push('<div style="margin-top:8px; display:flex; gap:8px;">');
+        lines.push('<button data-action="precheck-retry" class="secondary">重试保存</button>');
+        lines.push('<button data-action="precheck-readonly" class="secondary">只读打开拓扑</button>');
+        lines.push('<button data-action="precheck-editable" class="secondary">退出只读模式</button>');
+        lines.push('</div>');
+      }
+
+      precheckDiagnostics.innerHTML = lines.join('');
+      precheckDiagnostics.style.display = "block";
+    }
+
     // -- DRAWER / STUB LOGIC --
     const drawer = document.getElementById('setupDrawer');
     const drawerClose = document.getElementById('drawerClose');
@@ -2399,20 +2568,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
     
     if (applySysBtn) {
         applySysBtn.addEventListener('click', () => {
-             const wsValue = String(workspaceId?.value || "").trim();
-             const topoValue = String(topologyId?.value || "").trim();
-             if (!wsValue) {
-               setStatus("请先填写 Workspace ID");
-               return;
-             }
-             setStatus("正在保存并激活工作区: " + wsValue + " (topology=" + (topoValue || "topo-main") + ")");
-             post("workspace-save", {
-                workspaceId: wsValue,
-                topologyId: topoValue || "topo-main",
-                topologyYaml: getTopologyYamlForSave(),
-                activate: true,
-             });
-             closeSystemModal();
+             submitWorkspaceSave(true, true);
         });
     }
 
@@ -2884,39 +3040,19 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
       post("workspace-load", { workspaceId: workspaceId.value.trim() });
     });
     document.getElementById("btnWorkspaceSave").addEventListener("click", () => {
-      post("workspace-save", {
-        workspaceId: workspaceId.value.trim(),
-        topologyId: topologyId.value.trim(),
-        topologyYaml: getTopologyYamlForSave(),
-        activate: false,
-      });
+      submitWorkspaceSave(false, false);
     });
     document.getElementById("btnWorkspaceSaveActivate").addEventListener("click", () => {
-      post("workspace-save", {
-        workspaceId: workspaceId.value.trim(),
-        topologyId: topologyId.value.trim(),
-        topologyYaml: getTopologyYamlForSave(),
-        activate: true,
-      });
+      submitWorkspaceSave(true, false);
     });
     document.getElementById("btnTopologyLoad").addEventListener("click", () => {
       post("workspace-load", { workspaceId: workspaceId.value.trim() });
     });
     document.getElementById("btnTopologySave").addEventListener("click", () => {
-      post("workspace-save", {
-        workspaceId: workspaceId.value.trim(),
-        topologyId: topologyId.value.trim(),
-        topologyYaml: getTopologyYamlForSave(),
-        activate: false,
-      });
+      submitWorkspaceSave(false, false);
     });
     document.getElementById("btnTopologySaveActivate").addEventListener("click", () => {
-      post("workspace-save", {
-        workspaceId: workspaceId.value.trim(),
-        topologyId: topologyId.value.trim(),
-        topologyYaml: getTopologyYamlForSave(),
-        activate: true,
-      });
+      submitWorkspaceSave(true, false);
     });
     document.getElementById("btnRefreshService").addEventListener("click", () => post("service-status", {}));
 
@@ -2980,6 +3116,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           setStatus("加载失败: " + String(payload.error || payload.message || "unknown"));
           return;
         }
+        renderPrecheckDiagnostics(null);
         const item = payload.item;
         workspaceId.value = String(item.workspaceId || "");
         topologyId.value = String(item.topologyId || "");
@@ -2996,6 +3133,8 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         const message = String(payload.message || payload.error || "");
         setStatus(message || (ok ? "操作成功" : "操作失败"));
         if (ok) {
+          renderPrecheckDiagnostics(null);
+          setWorkspaceReadonly(false, "");
           const currentWorkspaceId = String(workspaceId?.value || "").trim();
           if (workspaceStatusText && currentWorkspaceId) {
             workspaceStatusText.textContent = currentWorkspaceId;
@@ -3003,6 +3142,7 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
           post("workspace-list", {});
         }
         if (!ok) {
+          renderPrecheckDiagnostics(payload.precheck || null);
           await openModal({ title: "操作失败", body: message || "未知错误" });
         }
         return;
@@ -3052,6 +3192,42 @@ export function buildUnifiedControlCenterHtml(webview: vscode.Webview, nonce: st
         await openModal({ title: "错误", body: message });
       }
     });
+
+    if (precheckDiagnostics) {
+      precheckDiagnostics.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+        const action = target.getAttribute("data-action");
+        if (!action) {
+          return;
+        }
+        if (action === "precheck-retry") {
+          if (state.workspaceReadonly) {
+            setWorkspaceReadonly(false, "已退出只读模式，准备重试保存");
+          }
+          const last = state.lastSaveRequest;
+          if (last && last.workspaceId) {
+            workspaceId.value = last.workspaceId;
+            topologyId.value = last.topologyId;
+            submitWorkspaceSave(Boolean(last.activate), false);
+          } else {
+            submitWorkspaceSave(true, false);
+          }
+          return;
+        }
+        if (action === "precheck-readonly") {
+          setWorkspaceReadonly(true, "已切换只读模式：检测到资源冲突");
+          openSystemModal("sys-topo");
+          return;
+        }
+        if (action === "precheck-editable") {
+          setWorkspaceReadonly(false, "已退出只读模式");
+          openSystemModal("sys-topo");
+        }
+      });
+    }
 
     window.addEventListener("resize", () => {
       if (state.latestWaveform) {

@@ -47,6 +47,46 @@ namespace {
   return ::vna::ScanState::SCAN_STATE_CONTINUOUS;
 }
 
+::vna::service::LockResourceType ToServiceLockResourceType(::vna::LockResourceType type) {
+  switch (type) {
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE:
+      return ::vna::service::LockResourceType::kPhysicalDevice;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_MOCK_DEVICE:
+      return ::vna::service::LockResourceType::kMockDevice;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_VIRTUAL_VNA:
+      return ::vna::service::LockResourceType::kVirtualVna;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_TRIGGER_LINE:
+      return ::vna::service::LockResourceType::kTriggerLine;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_CLOCK_DOMAIN:
+      return ::vna::service::LockResourceType::kClockDomain;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_WORKSPACE_SESSION:
+      return ::vna::service::LockResourceType::kWorkspaceSession;
+    case ::vna::LockResourceType::LOCK_RESOURCE_TYPE_UNSPECIFIED:
+      return ::vna::service::LockResourceType::kUnspecified;
+  }
+  return ::vna::service::LockResourceType::kUnspecified;
+}
+
+::vna::LockResourceType ToProtoLockResourceType(::vna::service::LockResourceType type) {
+  switch (type) {
+    case ::vna::service::LockResourceType::kPhysicalDevice:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_PHYSICAL_DEVICE;
+    case ::vna::service::LockResourceType::kMockDevice:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_MOCK_DEVICE;
+    case ::vna::service::LockResourceType::kVirtualVna:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_VIRTUAL_VNA;
+    case ::vna::service::LockResourceType::kTriggerLine:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_TRIGGER_LINE;
+    case ::vna::service::LockResourceType::kClockDomain:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_CLOCK_DOMAIN;
+    case ::vna::service::LockResourceType::kWorkspaceSession:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_WORKSPACE_SESSION;
+    case ::vna::service::LockResourceType::kUnspecified:
+      return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_UNSPECIFIED;
+  }
+  return ::vna::LockResourceType::LOCK_RESOURCE_TYPE_UNSPECIFIED;
+}
+
 std::uint64_t NowMs() {
   return static_cast<std::uint64_t>(
       std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -256,10 +296,12 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
                                              ServiceStatusService* statusService,
                                              VnaControlInProcessHandler* inprocHandler,
                                              std::uint32_t streamThrottleEveryNFrames,
-                                             std::uint32_t streamThrottleMs)
+                                             std::uint32_t streamThrottleMs,
+                                             ResourceBrokerService* brokerService)
     : controlService_(controlService),
       statusService_(statusService),
       inprocHandler_(inprocHandler),
+      brokerService_(brokerService),
       streamThrottleEveryNFrames_(streamThrottleEveryNFrames),
       streamThrottleMs_(streamThrottleMs) {}
 
@@ -287,6 +329,67 @@ VnaControlGrpcService::VnaControlGrpcService(VnaControlService* controlService,
     detail->set_code(report.errors[i].code);
     detail->set_field(report.errors[i].field);
     detail->set_message(report.errors[i].message);
+  }
+
+  return ::grpc::Status::OK;
+}
+
+::grpc::Status VnaControlGrpcService::PrecheckWorkspaceTopology(
+    ::grpc::ServerContext* /*context*/,
+    const ::vna::TopologyPrecheckRequest* request,
+    ::vna::TopologyPrecheckResult* response) {
+  if (controlService_ == nullptr || request == nullptr || response == nullptr) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "invalid arguments");
+  }
+
+  if (request->workspace_id().empty()) {
+    return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT, "workspace_id is required");
+  }
+
+  ::vna::service::TopologyPrecheckRequest precheckRequest;
+  precheckRequest.workspaceId = request->workspace_id();
+  precheckRequest.topology.id = request->topology().id();
+  precheckRequest.topology.yaml = request->topology().yaml();
+  precheckRequest.activate = request->activate();
+  precheckRequest.destructiveChange = request->destructive_change();
+  precheckRequest.requester.workspaceId = request->workspace_id();
+  precheckRequest.requester.actor = "grpc.vna_control";
+
+  for (int i = 0; i < request->required_resources_size(); ++i) {
+    const ::vna::LockSelector& in = request->required_resources(i);
+    ::vna::service::LockSelector selector;
+    selector.type = ToServiceLockResourceType(in.type());
+    selector.resourceId = in.resource_id();
+    precheckRequest.requiredResources.push_back(selector);
+  }
+
+  const ::vna::service::TopologyPrecheckResult precheckResult =
+      controlService_->PrecheckWorkspaceTopology(precheckRequest, brokerService_);
+
+  response->set_ok(precheckResult.ok);
+  response->set_code(precheckResult.code);
+  response->set_message(precheckResult.message);
+
+  for (std::size_t i = 0; i < precheckResult.topologyErrors.size(); ++i) {
+    ::vna::TopologyErrorDetail* detail = response->add_topology_errors();
+    detail->set_code(precheckResult.topologyErrors[i].code);
+    detail->set_field(precheckResult.topologyErrors[i].field);
+    detail->set_message(precheckResult.topologyErrors[i].message);
+  }
+
+  for (std::size_t i = 0; i < precheckResult.lockConflicts.size(); ++i) {
+    const ::vna::service::LockConflictDetail& conflict = precheckResult.lockConflicts[i];
+    ::vna::LockConflictDetail* out = response->add_lock_conflicts();
+    out->mutable_selector()->set_type(ToProtoLockResourceType(conflict.selector.type));
+    out->mutable_selector()->set_resource_id(conflict.selector.resourceId);
+    out->set_holder_lease_id(conflict.holderLeaseId);
+    out->mutable_holder_owner()->set_workspace_id(conflict.holderOwner.workspaceId);
+    out->mutable_holder_owner()->set_instance_id(conflict.holderOwner.instanceId);
+    out->mutable_holder_owner()->set_session_id(conflict.holderOwner.sessionId);
+    out->mutable_holder_owner()->set_actor(conflict.holderOwner.actor);
+    out->set_holder_fencing_token(conflict.holderFencingToken);
+    out->set_holder_expire_at_ms(conflict.holderExpireAtMs);
+    out->set_suggestion(conflict.suggestion);
   }
 
   return ::grpc::Status::OK;

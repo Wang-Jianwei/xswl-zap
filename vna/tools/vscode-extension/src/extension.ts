@@ -79,6 +79,48 @@ function withScanState(
   };
 }
 
+function extractRequiredResourcesFromTopologyYaml(topologyYaml: string): Array<{ type: number; resourceId: string }> {
+  const resources = new Set<string>();
+  const lines = topologyYaml.split(/\r?\n/);
+  for (const line of lines) {
+    const match = line.match(/^\s*resource\s*:\s*(.+?)\s*$/);
+    if (!match || !match[1]) {
+      continue;
+    }
+    const resourceId = match[1].trim().replace(/^['"]|['"]$/g, "");
+    if (resourceId.length > 0) {
+      resources.add(resourceId);
+    }
+  }
+
+  const lockResourceTypePhysicalDevice = 1;
+  return Array.from(resources).map((resourceId) => ({
+    type: lockResourceTypePhysicalDevice,
+    resourceId,
+  }));
+}
+
+function buildPrecheckFailureMessage(result: {
+  code: string;
+  message: string;
+  topologyErrors: Array<{ message: string }>;
+  lockConflicts: Array<{ selector: { resourceId: string }; holderOwner: { workspaceId: string; actor: string } }>;
+}): string {
+  const header = result.message || result.code || "precheck failed";
+  const topologyError = result.topologyErrors[0]?.message;
+  const firstConflict = result.lockConflicts[0];
+  if (firstConflict) {
+    const holderWorkspace = firstConflict.holderOwner.workspaceId || "unknown-workspace";
+    const holderActor = firstConflict.holderOwner.actor || "unknown-actor";
+    const resourceId = firstConflict.selector.resourceId || "unknown-resource";
+    return `${header} (resource=${resourceId}, holder=${holderWorkspace}/${holderActor})`;
+  }
+  if (topologyError) {
+    return `${header} (${topologyError})`;
+  }
+  return header;
+}
+
 function collectJsonFilesRecursively(rootDir: string): string[] {
   const results: string[] = [];
   const stack: string[] = [rootDir];
@@ -284,6 +326,42 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         if (payload.type === "workspace-save") {
+          const requiredResources = extractRequiredResourcesFromTopologyYaml(topologyYaml);
+          const precheck = await client.precheckWorkspaceTopology(
+            workspaceId,
+            topologyId,
+            topologyYaml,
+            requiredResources,
+            Boolean(payload.activate),
+            Boolean(payload.activate),
+            {
+              workspaceId,
+              actor: "vscode.workspaceTopologyEditor",
+            },
+          );
+
+          if (precheck && !precheck.ok) {
+            const failureMessage = buildPrecheckFailureMessage(precheck);
+            logBlock(outputChannel, "INFO", `[WorkspaceTopologyPrecheckBlocked][requestId=${requestId}]`, [
+              `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
+              failureMessage,
+            ]);
+            showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+            await panel.webview.postMessage({
+              type: "workspace-save-result",
+              ok: false,
+              message: `Precheck failed: ${failureMessage}`,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+            });
+            return;
+          }
+
           const result = await client.upsertWorkspaceTopology(
             workspaceId,
             topologyId,
@@ -442,6 +520,44 @@ export function activate(context: vscode.ExtensionContext): void {
         }
 
         if (payload.type === "workspace-save") {
+          const requiredResources = extractRequiredResourcesFromTopologyYaml(topologyYaml);
+          const precheck = await client.precheckWorkspaceTopology(
+            workspaceId,
+            topologyId,
+            topologyYaml,
+            requiredResources,
+            Boolean(payload.activate),
+            Boolean(payload.activate),
+            {
+              workspaceId,
+              instanceId,
+              actor: "vscode.controlCenter",
+            },
+          );
+
+          if (precheck && !precheck.ok) {
+            const failureMessage = buildPrecheckFailureMessage(precheck);
+
+            logBlock(outputChannel, "INFO", `[ControlCenterWorkspacePrecheckBlocked][requestId=${requestId}]`, [
+              `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
+              failureMessage,
+            ]);
+            showOutputIfEnabled(outputChannel, autoOpenOutput);
+
+            await postMessage({
+              type: "workspace-save-result",
+              ok: false,
+              message: `Precheck failed: ${failureMessage}`,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+            });
+            return;
+          }
+
           const result = await client.upsertWorkspaceTopology(
             workspaceId,
             topologyId,

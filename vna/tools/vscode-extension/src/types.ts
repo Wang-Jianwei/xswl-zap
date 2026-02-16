@@ -34,6 +34,35 @@ export interface ValidationResult {
   errorDetails: TopologyErrorDetail[];
 }
 
+export interface LockSelector {
+  type: string;
+  resourceId: string;
+}
+
+export interface LockOwner {
+  workspaceId: string;
+  instanceId: string;
+  sessionId: string;
+  actor: string;
+}
+
+export interface LockConflictDetail {
+  selector: LockSelector;
+  holderLeaseId: string;
+  holderOwner: LockOwner;
+  holderFencingToken: number;
+  holderExpireAtMs: number;
+  suggestion: string;
+}
+
+export interface TopologyPrecheckResult {
+  ok: boolean;
+  code: string;
+  message: string;
+  topologyErrors: TopologyErrorDetail[];
+  lockConflicts: LockConflictDetail[];
+}
+
 export interface WorkspaceTopologyConfig {
   workspaceId: string;
   topologyId: string;

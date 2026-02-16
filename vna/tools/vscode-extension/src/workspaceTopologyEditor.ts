@@ -1115,7 +1115,20 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
         return;
       }
       if (msg.type === 'workspace-save-result') {
-        setHint(msg.message || 'Save done.');
+        const precheck = msg.precheck || null;
+        if (!msg.ok && precheck) {
+          const conflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+          const first = conflicts[0] || null;
+          if (first && first.selector && first.holderOwner) {
+            const resourceId = String(first.selector.resourceId || 'unknown-resource');
+            const holder = String(first.holderOwner.workspaceId || 'unknown-workspace');
+            setHint((msg.message || 'Save blocked.') + ' [resource=' + resourceId + ', holder=' + holder + ']');
+          } else {
+            setHint(msg.message || 'Save blocked by precheck.');
+          }
+        } else {
+          setHint(msg.message || 'Save done.');
+        }
         if (msg.ok) {
           vscode.postMessage({ type: 'workspace-list' });
         }

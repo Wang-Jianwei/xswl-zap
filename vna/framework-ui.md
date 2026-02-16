@@ -162,6 +162,17 @@ flowchart LR
 - 成功反馈附带复制字符数，Clipboard 不可用时给出显式错误提示。
 - 目标：先满足“可见波形”主线验收，再逐步补充多 trace、marker 与交互缩放。
 
+### 3.10 Virtual VNA Studio / Workspace Quick Edit（2026-02 增量）
+
+- **语义分层**：Topology 表示虚拟 VNA 设备构成；Workspace 选择目标虚拟 VNA 执行测量任务。
+- **双入口一致性**：
+  - `System Studio`：面向全局虚拟 VNA 组装与管理；
+  - `Workspace Quick Edit`：面向当前已选目标 VNA 的快捷编辑；
+  - 两者复用同一拓扑编辑组件（同交互、同保存链路、同校验能力）。
+- **保存前 precheck**：UI 在提交保存前触发后端预检查（拓扑错误 + 资源占用冲突）。
+- **冲突可视化**：UI 显示结构化冲突详情（resource / holder），并提供 `重试保存`、`只读打开`、`退出只读`。
+- **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
+
 ---
 
 ## 4. UX Patterns / Notifications

@@ -20,11 +20,16 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
                         ServiceStatusService* statusService,
                         VnaControlInProcessHandler* inprocHandler,
                         std::uint32_t streamThrottleEveryNFrames = 4,
-                        std::uint32_t streamThrottleMs = 10);
+                        std::uint32_t streamThrottleMs = 10,
+                        ResourceBrokerService* brokerService = nullptr);
 
   ::grpc::Status ValidateTopology(::grpc::ServerContext* context,
                                   const ::vna::Topology* request,
                                   ::vna::ValidationResult* response) override;
+
+  ::grpc::Status PrecheckWorkspaceTopology(::grpc::ServerContext* context,
+                                           const ::vna::TopologyPrecheckRequest* request,
+                                           ::vna::TopologyPrecheckResult* response) override;
 
   ::grpc::Status UpsertWorkspaceTopology(::grpc::ServerContext* context,
                                          const ::vna::WorkspaceTopologyUpsertRequest* request,
@@ -79,6 +84,7 @@ class VnaControlGrpcService final : public ::vna::VnaControl::Service {
   VnaControlService* controlService_;
   ServiceStatusService* statusService_;
   VnaControlInProcessHandler* inprocHandler_;
+  ResourceBrokerService* brokerService_;
   std::uint32_t streamThrottleEveryNFrames_;
   std::uint32_t streamThrottleMs_;
   mutable std::mutex scanStateMutex_;
