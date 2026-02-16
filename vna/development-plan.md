@@ -42,6 +42,7 @@
 - **WU-121（完成）**：Workspace Quick Edit 同步接入建议动作执行入口，保证与 Control Center 的冲突处理闭环一致。
 - **WU-122（完成）**：Hardware 设备列表新增“配置拓扑”入口，支持从虚拟设备一键跳转拓扑编辑并自动确保对应 board 存在。
 - **WU-123（完成）**：Topology 不再作为 Hardware 同级导航，改为 Hardware 内子页面；点击设备“配置拓扑”后进入带返回路径头（`⬅️ dev-xxx / topology config`）的拓扑配置页。
+- **WU-124（完成）**：移除 Setup/Calibration 中 `Launch Topology Editor` 入口，拓扑配置入口收敛为 Hardware 行内“配置拓扑”单一路径。
 
 ---
 
