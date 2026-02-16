@@ -1,6 +1,7 @@
 import { strict as assert } from "node:assert";
 import {
   buildLockSnapshotSummary,
+  buildWorkspacePrecheckDiagnosticSummary,
   collectConflictSelectors,
   groupLockConflicts,
   groupLockSnapshot,
@@ -142,6 +143,46 @@ import {
   assert.equal(snapshotGroups[0]?.total, 2);
   assert.equal(snapshotGroups[0]?.holders[0]?.holder, "ws-a/actor-1");
   assert.equal(snapshotGroups[0]?.holders[0]?.leaseIds.join(","), "lease-1,lease-2");
+
+  const workspaceSummary = buildWorkspacePrecheckDiagnosticSummary({
+    workspaceId: "ws-dev",
+    topologyId: "topo-main",
+    precheck: {
+      code: "LOCK_CONFLICT",
+      message: "resource occupied",
+      topologyErrors: [{ message: "board missing" }],
+      lockConflicts: [
+        {
+          selector: { type: "1", resourceId: "dev-a" },
+          holderLeaseId: "",
+          holderOwner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+          holderFencingToken: 0,
+          holderExpireAtMs: 0,
+          suggestion: "",
+        },
+      ],
+    },
+    lockSnapshot: {
+      leases: [
+        {
+          leaseId: "lease-1",
+          selector: { type: "1", resourceId: "dev-a" },
+          owner: { workspaceId: "ws-a", instanceId: "", sessionId: "", actor: "actor-1" },
+          mode: "LOCK_MODE_EXCLUSIVE",
+          fencingToken: 1,
+          acquiredAtMs: 1,
+          expireAtMs: 2,
+        },
+      ],
+    },
+    generatedAtMs: 1,
+  });
+
+  assert(workspaceSummary.includes("workspace=ws-dev, topology=topo-main"));
+  assert(workspaceSummary.includes("code=LOCK_CONFLICT, message=resource occupied"));
+  assert(workspaceSummary.includes("TopologyErrors:"));
+  assert(workspaceSummary.includes("ConflictGroups:"));
+  assert(workspaceSummary.includes("SnapshotGroups:"));
 
   process.stdout.write("lockDiagnostics.test passed\n");
 })();

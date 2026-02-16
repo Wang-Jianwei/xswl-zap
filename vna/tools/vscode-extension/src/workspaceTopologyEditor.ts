@@ -259,6 +259,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     <button id="saveBtn">Save Topology</button>
     <button id="saveActivateBtn">Save + Activate</button>
     <button id="activateBtn" class="secondary">Set Active</button>
+    <button id="copyDiagBtn" class="secondary" disabled>复制冲突摘要</button>
   </div>
 
   <div id="hint" class="hint">Ready.</div>
@@ -286,12 +287,14 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     const addVirtualPortBtn = document.getElementById('addVirtualPortBtn');
     const virtualPortPool = document.getElementById('virtualPortPool');
     const bindingPreview = document.getElementById('bindingPreview');
+    const copyDiagBtn = document.getElementById('copyDiagBtn');
 
     let visualMode = true;
     let cards = [];
     let virtualPorts = [];
     let bindings = {};
     let draggingVirtualPort = '';
+    let lastDiagnosticSummary = '';
 
     function escapeHtml(value) {
       return String(value || '')
@@ -361,6 +364,52 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
 
     function setHint(text) {
       hint.textContent = text;
+    }
+
+    function formatDateTime(ms) {
+      const value = Number(ms || 0);
+      if (!Number.isFinite(value) || value <= 0) {
+        return '-';
+      }
+      return new Date(value).toLocaleString();
+    }
+
+    async function copyTextToClipboard(text) {
+      const content = String(text || '');
+      if (!content) {
+        return false;
+      }
+      try {
+        if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(content);
+          return true;
+        }
+      } catch {
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = content;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.top = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      let copied = false;
+      try {
+        copied = document.execCommand('copy');
+      } catch {
+        copied = false;
+      }
+      document.body.removeChild(textarea);
+      return copied;
+    }
+
+    function updateDiagnosticSummary(summary) {
+      lastDiagnosticSummary = String(summary || '').trim();
+      if (copyDiagBtn) {
+        copyDiagBtn.disabled = lastDiagnosticSummary.length === 0;
+      }
     }
 
     function refreshSelectedCardOptions() {
@@ -1083,6 +1132,15 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       setHint('Activating workspace ' + s.workspaceId + ' ...');
     });
 
+    copyDiagBtn.addEventListener('click', async () => {
+      if (!lastDiagnosticSummary) {
+        setHint('暂无可复制的冲突摘要。');
+        return;
+      }
+      const copied = await copyTextToClipboard(lastDiagnosticSummary);
+      setHint(copied ? '冲突摘要已复制到剪贴板。' : '冲突摘要复制失败。');
+    });
+
     workspaceSelect.addEventListener('change', () => {
       const selected = String(workspaceSelect.value || '').trim();
       workspaceIdInput.value = selected;
@@ -1099,6 +1157,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
         return;
       }
       if (msg.type === 'workspace-load-result') {
+        updateDiagnosticSummary('');
         if (msg.ok && msg.item) {
           workspaceIdInput.value = msg.item.workspaceId || '';
           topologyIdInput.value = msg.item.topologyId || '';
@@ -1117,13 +1176,24 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
       if (msg.type === 'workspace-save-result') {
         const precheck = msg.precheck || null;
         if (!msg.ok && precheck) {
+          const updatedAtText = formatDateTime(msg.diagnosticUpdatedAtMs || Date.now());
+          const conflictCount = Number(
+            msg.conflictCount ?? (Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts.length : 0),
+          );
+          const snapshotLeaseCount = Number(msg.snapshotLeaseCount ?? -1);
+          const workspaceText = String(workspaceIdInput.value || '').trim() || 'unknown-workspace';
+          const topologyText = String(topologyIdInput.value || '').trim() || 'unknown-topology';
           const hintLines = [msg.message || 'Save blocked by precheck.'];
+          hintLines.push('workspace=' + workspaceText + ', topology=' + topologyText);
+          hintLines.push('updatedAt=' + updatedAtText + ', conflicts=' + String(conflictCount) + ', snapshotLeases=' + String(snapshotLeaseCount));
           if (msg.lockSnapshotSummary) {
             hintLines.push(String(msg.lockSnapshotSummary));
           }
           setHint(hintLines.join('\n'));
+          updateDiagnosticSummary(String(msg.diagnosticSummary || msg.lockSnapshotSummary || hintLines.join('\n')));
         } else {
           setHint(msg.message || 'Save done.');
+          updateDiagnosticSummary('');
         }
         if (msg.ok) {
           vscode.postMessage({ type: 'workspace-list' });
@@ -1167,6 +1237,7 @@ export function buildWorkspaceTopologyEditorHtml(webview: vscode.Webview, nonce:
     bindings = { 'vna-port1': { cardIndex: 0, boardPort: 'p1' }, 'vna-port2': { cardIndex: 0, boardPort: 'p2' } };
 
     setMode(true);
+    updateDiagnosticSummary('');
     vscode.postMessage({ type: 'workspace-list' });
   </script>
 </body>

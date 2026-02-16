@@ -14,7 +14,11 @@ import {
 } from "./statusFormatter";
 import { ServiceClient } from "./serviceClient";
 import { applyLiveFrequencyOverlays, createLiveWaveformOverlayState } from "./liveWaveformOverlay";
-import { buildLockSnapshotSummary, collectConflictSelectors } from "./lockDiagnostics";
+import {
+  buildLockSnapshotSummary,
+  buildWorkspacePrecheckDiagnosticSummary,
+  collectConflictSelectors,
+} from "./lockDiagnostics";
 import { buildWaveformPreviewHtml, buildWaveformPreviewUpdatePayload } from "./waveformPreview";
 import { buildWorkspaceTopologyEditorHtml } from "./workspaceTopologyEditor";
 import { buildUnifiedControlCenterHtml } from "./unifiedControlCenter";
@@ -348,7 +352,20 @@ export function activate(context: vscode.ExtensionContext): void {
             const lockSnapshot = selectors.length > 0
               ? await client.getLockSnapshot(selectors)
               : null;
+            const diagnosticUpdatedAtMs = Date.now();
             const lockSnapshotSummary = buildLockSnapshotSummary(lockSnapshot, precheck.lockConflicts.length);
+            const diagnosticSummary = buildWorkspacePrecheckDiagnosticSummary({
+              workspaceId,
+              topologyId,
+              precheck: {
+                code: precheck.code,
+                message: precheck.message,
+                topologyErrors: precheck.topologyErrors,
+                lockConflicts: precheck.lockConflicts,
+              },
+              lockSnapshot,
+              generatedAtMs: diagnosticUpdatedAtMs,
+            });
             logBlock(outputChannel, "INFO", `[WorkspaceTopologyPrecheckBlocked][requestId=${requestId}]`, [
               `workspaceId=${workspaceId}, topologyId=${topologyId}, activate=${Boolean(payload.activate)}`,
               failureMessage,
@@ -363,6 +380,10 @@ export function activate(context: vscode.ExtensionContext): void {
               lockSnapshotSummary,
               lockSnapshot,
               lockSnapshotSelectors: selectors,
+              diagnosticSummary,
+              diagnosticUpdatedAtMs,
+              conflictCount: precheck.lockConflicts.length,
+              snapshotLeaseCount: lockSnapshot?.leases.length ?? -1,
               precheck: {
                 code: precheck.code,
                 message: precheck.message,

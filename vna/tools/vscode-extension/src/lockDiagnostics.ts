@@ -26,6 +26,19 @@ export interface LockSnapshotGroup {
   holders: LockSnapshotHolder[];
 }
 
+export interface WorkspacePrecheckDiagnosticSummaryParams {
+  workspaceId: string;
+  topologyId: string;
+  precheck: {
+    code: string;
+    message: string;
+    topologyErrors: Array<{ message: string }>;
+    lockConflicts: LockConflictDetail[];
+  };
+  lockSnapshot: LockSnapshotResult | null;
+  generatedAtMs: number;
+}
+
 export function collectConflictSelectors(conflicts: LockConflictDetail[]): LockSelectorRequest[] {
   const dedup = new Map<string, LockSelectorRequest>();
   for (const conflict of conflicts) {
@@ -154,4 +167,58 @@ export function groupLockSnapshot(snapshot: LockSnapshotResult | null): LockSnap
       }
       return left.resourceId.localeCompare(right.resourceId);
     });
+}
+
+export function buildWorkspacePrecheckDiagnosticSummary(
+  params: WorkspacePrecheckDiagnosticSummaryParams,
+): string {
+  const workspaceId = String(params.workspaceId || "").trim() || "unknown-workspace";
+  const topologyId = String(params.topologyId || "").trim() || "unknown-topology";
+  const precheck = params.precheck;
+  const code = String(precheck.code || "PRECHECK_FAILED");
+  const message = String(precheck.message || "precheck failed");
+  const topologyErrors = Array.isArray(precheck.topologyErrors) ? precheck.topologyErrors : [];
+  const lockConflicts = Array.isArray(precheck.lockConflicts) ? precheck.lockConflicts : [];
+  const conflictGroups = groupLockConflicts(lockConflicts);
+  const snapshotGroups = groupLockSnapshot(params.lockSnapshot);
+  const snapshotLeaseCount = params.lockSnapshot && Array.isArray(params.lockSnapshot.leases)
+    ? params.lockSnapshot.leases.length
+    : -1;
+
+  const lines: string[] = [];
+  lines.push("[XSWL VNA] Workspace Precheck Diagnostics");
+  lines.push(`workspace=${workspaceId}, topology=${topologyId}`);
+  lines.push(`code=${code}, message=${message}`);
+  lines.push(`updatedAt=${new Date(params.generatedAtMs).toISOString()}`);
+  lines.push(`topologyErrors=${topologyErrors.length}, lockConflicts=${lockConflicts.length}, snapshotLeases=${snapshotLeaseCount}`);
+
+  if (topologyErrors.length > 0) {
+    lines.push("TopologyErrors:");
+    topologyErrors.slice(0, 5).forEach((item) => {
+      lines.push(`- ${String(item?.message ?? "invalid topology")}`);
+    });
+  }
+
+  if (conflictGroups.length > 0) {
+    lines.push("ConflictGroups:");
+    conflictGroups.slice(0, 8).forEach((group) => {
+      lines.push(`- resource=${group.resourceId}, conflicts=${group.total}`);
+      group.holders.slice(0, 4).forEach((holder) => {
+        lines.push(`  - holder=${holder.holder}, count=${holder.count}`);
+      });
+    });
+  }
+
+  if (snapshotGroups.length > 0) {
+    lines.push("SnapshotGroups:");
+    snapshotGroups.slice(0, 8).forEach((group) => {
+      lines.push(`- resource=${group.resourceId}, leases=${group.total}`);
+      group.holders.slice(0, 4).forEach((holder) => {
+        const leaseText = holder.leaseIds.length > 0 ? `, lease=${holder.leaseIds.join(",")}` : "";
+        lines.push(`  - holder=${holder.holder}, count=${holder.count}${leaseText}`);
+      });
+    });
+  }
+
+  return lines.join("\n");
 }

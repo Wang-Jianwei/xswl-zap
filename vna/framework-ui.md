@@ -176,6 +176,8 @@ flowchart LR
 - **控制中心冲突视图增强**：Control Center 在 precheck 冲突与锁快照区域按“资源→持有者”分组并按冲突/lease 数排序，优先展示影响面最大的资源。
 - **冲突摘要复制**：Control Center 冲突诊断支持一键复制摘要（包含 precheck code/message、分组冲突、锁快照摘要），用于快速同步到工单与协作渠道。
 - **诊断元信息透出**：冲突区展示 workspace/topology/更新时间及冲突数、lease 数，支持跨时段比对与回溯。
+- **Workspace 摘要复制对齐**：`Workspace Quick Edit` 同步提供“复制冲突摘要”，并与 Control Center 保持统一摘要结构。
+- **Workspace 元信息对齐**：`Workspace Quick Edit` 冲突提示同步展示 workspace/topology/更新时间/冲突数/lease 数，降低跨入口排障差异。
 - **只读状态可见**：顶部 `WS` 状态和 Workspace 列表均可展示 `READONLY / active-readonly`，防止误操作。
 
 ---

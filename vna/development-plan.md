@@ -30,6 +30,8 @@
 - **WU-109（完成）**：Control Center 预检冲突面板升级为按资源/持有者分组排序展示，并对锁快照结果执行同口径聚合，提升多冲突场景可读性。
 - **WU-110（完成）**：Control Center 冲突诊断新增“一键复制摘要”（含剪贴板降级路径），便于工单/IM 快速协同。
 - **WU-111（完成）**：Control Center 诊断区新增上下文元信息（workspace/topology/更新时间/冲突与 lease 计数），提升问题追踪可审计性。
+- **WU-112（完成）**：Workspace Quick Edit 接入“复制冲突摘要”能力，并复用可测试的 precheck 诊断文本构建逻辑。
+- **WU-113（完成）**：Workspace Quick Edit 冲突提示补充元信息（workspace/topology/更新时间/冲突数/lease 数），支持快速定位与跨端协同。
 
 ---
 
